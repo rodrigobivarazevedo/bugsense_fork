@@ -1,15 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Logo } from '../../components/Logo';
-import * as S from './LandingScreen.styles';
+import * as S from './Home.styles';
 
-export const LandingScreen: React.FC = () => {
+export const Home: React.FC = () => {
   const { t } = useTranslation();
 
   return (
     <S.Root>
-      <Logo />
-      <S.Title>{t('bugsense')}</S.Title>
+      <S.Title>
+        Welcome to the app
+      </S.Title>
       <S.Subtitle>
         {t('check_health_in_colors')}
       </S.Subtitle>
@@ -19,3 +19,5 @@ export const LandingScreen: React.FC = () => {
     </S.Root>
   );
 };
+
+export default Home;
