@@ -16,7 +16,7 @@ export const Container = styled.View<ContainerProps>`
   padding-top: ${(props: ContainerProps) => props.insets.top + rem(0.5)}px;
   padding-left: ${(props: ContainerProps) => props.insets.left + rem(1)}px;
   padding-right: ${(props: ContainerProps) => props.insets.right + rem(1)}px;
-  background-color: ${colors.bg};
+  background-color: ${colors.accent};
   border-bottom-width: ${rem(0.0625)}px;
   border-bottom-color: ${colors.secondary};
 `;
