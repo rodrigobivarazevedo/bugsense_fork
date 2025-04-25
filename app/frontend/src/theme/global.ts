@@ -2,8 +2,9 @@ export const colors = {
     primary: '#2E2747',
     secondary: '#ECE6FF',
     accent: '#E2F6EB',
-    bg: '#FFFFFF',
     text: '#333333',
+    white: '#FFFFFF',
+    black: '#000000',
 };
 
 export const typography = {
