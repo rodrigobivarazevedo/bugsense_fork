@@ -6,6 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LandingScreen } from './screens/landing/LandingScreen';
 import HeaderBar from './components/HeaderBar';
+import BottomBar from './components/BottomBar';
 import styled from 'styled-components/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -31,6 +32,7 @@ export default function App() {
                 <Stack.Screen name="Landing" component={LandingScreen} />
               </Stack.Navigator>
             </ContentContainer>
+            <BottomBar />
           </AppContainer>
         </NavigationContainer>
       </I18nextProvider>
