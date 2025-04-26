@@ -1,15 +1,15 @@
 import React from 'react';
 import * as S from './Home.styles';
 
-export const Menu: React.FC = () => {
+export const More: React.FC = () => {
 
     return (
         <S.Root>
             <S.Title>
-                Menu Page
+                More Page
             </S.Title>
         </S.Root>
     );
 };
 
-export default Menu;
+export default More;
