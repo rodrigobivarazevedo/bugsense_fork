@@ -12,17 +12,16 @@ import BottomBar from './components/BottomBar';
 import Login from './screens/Login';
 import Home from './screens/Home';
 import Scan from './screens/Scan';
-import Discover from './screens/Discover';
 import Results from './screens/Results';
-import Menu from './screens/Menu';
+import More from './screens/More';
 
+// TODO: uncomment login screen after login is implemented
 const routes = [
-  { name: 'Login', component: Login, wrapped: false },
+  // { name: 'Login', component: Login, wrapped: false },
   { name: 'Home', component: Home, wrapped: true },
   { name: 'Scan', component: Scan, wrapped: true },
-  { name: 'Discover', component: Discover, wrapped: true },
   { name: 'Results', component: Results, wrapped: true },
-  { name: 'Menu', component: Menu, wrapped: true },
+  { name: 'More', component: More, wrapped: true },
 ];
 
 export default function App() {
