@@ -6,6 +6,7 @@ export const themeColors = {
     white: '#FFFFFF',
     black: '#000000',
     bgDark: '#1a1a1a',
+    gray: '#757575',
 };
 
 export const themeTypography = {
