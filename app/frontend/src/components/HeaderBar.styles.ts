@@ -25,8 +25,3 @@ export const LogoWrapper = styled.View`
   flex-direction: row;
   align-items: center;
 `;
-
-export const ProfileIcon = styled(MaterialIcons)`
-  color: ${themeColors.primary};
-  font-size: ${rem(2)}px;
-`;

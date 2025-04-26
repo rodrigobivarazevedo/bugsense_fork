@@ -4,6 +4,8 @@ import * as S from './BottomBar.styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import NavigationRoute, { RouteName } from './NavigationRoute';
 import { useNavigationState } from '@react-navigation/native';
+import IconRenderer from './IconRenderer';
+import { themeColors } from '../theme/global';
 
 const BottomBar: React.FC = () => {
     const insets = useSafeAreaInsets();
@@ -13,9 +15,8 @@ const BottomBar: React.FC = () => {
     useEffect(() => {
         if (navigationState && navigationState.routes.length > 0) {
             const currentRoute = navigationState.routes[navigationState.index].name.toLowerCase() as RouteName;
-            if (currentRoute === 'home' || currentRoute === 'discover' ||
-                currentRoute === 'scan' || currentRoute === 'results' ||
-                currentRoute === 'menu') {
+            if (currentRoute === 'home' || currentRoute === 'scan' ||
+                currentRoute === 'results' || currentRoute === 'more') {
                 setActiveTab(currentRoute);
             }
         }
@@ -30,17 +31,13 @@ const BottomBar: React.FC = () => {
             <NavigationRoute route="home">
                 <TouchableOpacity onPress={() => handleTabChange('home')}>
                     <S.IconWrapper>
-                        <S.Icon name="home" size={24} isActive={activeTab === 'home'} />
-                        {activeTab === 'home' && <S.ActiveIndicator />}
-                    </S.IconWrapper>
-                </TouchableOpacity>
-            </NavigationRoute>
-
-            <NavigationRoute route="discover">
-                <TouchableOpacity onPress={() => handleTabChange('discover')}>
-                    <S.IconWrapper>
-                        <S.Icon name="search" size={24} isActive={activeTab === 'discover'} />
-                        {activeTab === 'discover' && <S.ActiveIndicator />}
+                        <IconRenderer
+                            family="foundation"
+                            icon="home"
+                            fontSize={24}
+                            color={activeTab === 'home' ? themeColors.primary : themeColors.gray}
+                        />
+                        <S.Label isActive={activeTab === 'home'}>Home</S.Label>
                     </S.IconWrapper>
                 </TouchableOpacity>
             </NavigationRoute>
@@ -48,8 +45,13 @@ const BottomBar: React.FC = () => {
             <NavigationRoute route="scan">
                 <TouchableOpacity onPress={() => handleTabChange('scan')}>
                     <S.IconWrapper>
-                        <S.Icon name="camera-alt" size={24} isActive={activeTab === 'scan'} />
-                        {activeTab === 'scan' && <S.ActiveIndicator />}
+                        <IconRenderer
+                            family="entypo"
+                            icon="camera"
+                            fontSize={24}
+                            color={activeTab === 'scan' ? themeColors.primary : themeColors.gray}
+                        />
+                        <S.Label isActive={activeTab === 'scan'}>Scan</S.Label>
                     </S.IconWrapper>
                 </TouchableOpacity>
             </NavigationRoute>
@@ -57,17 +59,27 @@ const BottomBar: React.FC = () => {
             <NavigationRoute route="results">
                 <TouchableOpacity onPress={() => handleTabChange('results')}>
                     <S.IconWrapper>
-                        <S.Icon name="assessment" size={24} isActive={activeTab === 'results'} />
-                        {activeTab === 'results' && <S.ActiveIndicator />}
+                        <IconRenderer
+                            family="foundation"
+                            icon="results"
+                            fontSize={24}
+                            color={activeTab === 'results' ? themeColors.primary : themeColors.gray}
+                        />
+                        <S.Label isActive={activeTab === 'results'}>Results</S.Label>
                     </S.IconWrapper>
                 </TouchableOpacity>
             </NavigationRoute>
 
-            <NavigationRoute route="menu">
-                <TouchableOpacity onPress={() => handleTabChange('menu')}>
+            <NavigationRoute route="more">
+                <TouchableOpacity onPress={() => handleTabChange('more')}>
                     <S.IconWrapper>
-                        <S.Icon name="menu" size={24} isActive={activeTab === 'menu'} />
-                        {activeTab === 'menu' && <S.ActiveIndicator />}
+                        <IconRenderer
+                            family="feather"
+                            icon="more-horizontal"
+                            fontSize={24}
+                            color={activeTab === 'more' ? themeColors.primary : themeColors.gray}
+                        />
+                        <S.Label isActive={activeTab === 'more'}>More</S.Label>
                     </S.IconWrapper>
                 </TouchableOpacity>
             </NavigationRoute>
