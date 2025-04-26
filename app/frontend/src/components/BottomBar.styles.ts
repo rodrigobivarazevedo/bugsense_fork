@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { colors } from '../theme/global';
+import { themeColors } from '../theme/global';
 import { EdgeInsets } from 'react-native-safe-area-context';
 import { Platform } from 'react-native';
 import { rem } from '../utils/responsive';
@@ -26,7 +26,7 @@ export const Container = styled.View<ContainerProps>`
   padding-bottom: ${(props: ContainerProps) => props.insets.bottom - rem(0.75)}px;
   padding-left: ${(props: ContainerProps) => props.insets.left}px;
   padding-right: ${(props: ContainerProps) => props.insets.right}px;
-  background-color: ${colors.accent};
+  background-color: ${themeColors.accent};
   border-top-width: ${rem(0.0625)}px;
   border-top-color: ${customColors.border};
   height: ${Platform.OS === 'ios' ? rem(4) : rem(3)}px;

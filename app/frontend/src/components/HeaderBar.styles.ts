@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { colors } from '../theme/global';
+import { themeColors } from '../theme/global';
 import { EdgeInsets } from 'react-native-safe-area-context';
 import { rem } from '../utils/responsive';
 
@@ -20,7 +20,7 @@ export const Container = styled.View<ContainerProps>`
   padding-top: ${(props: ContainerProps) => props.insets.top + rem(0.25)}px;
   padding-left: ${(props: ContainerProps) => props.insets.left + rem(1)}px;
   padding-right: ${(props: ContainerProps) => props.insets.right + rem(1)}px;
-  background-color: ${colors.accent};
+  background-color: ${themeColors.accent};
   border-bottom-width: ${rem(0.0625)}px;
   border-bottom-color: ${customColors.border};
 `;
@@ -31,6 +31,6 @@ export const LogoWrapper = styled.View`
 `;
 
 export const ProfileIcon = styled(MaterialIcons)`
-  color: ${colors.primary};
+  color: ${themeColors.primary};
   font-size: ${rem(2)}px;
 `;
