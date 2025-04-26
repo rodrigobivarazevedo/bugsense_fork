@@ -4,15 +4,14 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
     Home: undefined;
-    Discover: undefined;
     Scan: undefined;
     Results: undefined;
-    Menu: undefined;
+    More: undefined;
 };
 
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-export type RouteName = 'home' | 'discover' | 'scan' | 'results' | 'menu';
+export type RouteName = 'home' | 'scan' | 'results' | 'more';
 
 interface NavigationRouteProps {
     route: RouteName;
