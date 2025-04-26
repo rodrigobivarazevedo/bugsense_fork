@@ -8,10 +8,6 @@ interface ContainerProps {
   insets: EdgeInsets;
 }
 
-const customColors = {
-  border: '#D8EBE0',
-}
-
 export const Container = styled.View<ContainerProps>`
   flex-direction: row;
   align-items: center;
@@ -20,9 +16,9 @@ export const Container = styled.View<ContainerProps>`
   padding-top: ${(props: ContainerProps) => props.insets.top + rem(0.25)}px;
   padding-left: ${(props: ContainerProps) => props.insets.left + rem(1)}px;
   padding-right: ${(props: ContainerProps) => props.insets.right + rem(1)}px;
-  background-color: ${themeColors.accent};
+  background-color: ${themeColors.secondary};
   border-bottom-width: ${rem(0.0625)}px;
-  border-bottom-color: ${customColors.border};
+  border-bottom-color: ${themeColors.secondary};
 `;
 
 export const LogoWrapper = styled.View`
