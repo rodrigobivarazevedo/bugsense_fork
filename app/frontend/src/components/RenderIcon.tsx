@@ -39,14 +39,14 @@ const IconsMap = {
 
 type IconFamily = keyof typeof IconsMap;
 
-interface IconRendererProps {
+interface RenderIconProps {
     family: IconFamily;
     icon: string;
     fontSize: number;
     color: keyof typeof themeColors | string;
 }
 
-const IconRenderer: React.FC<IconRendererProps> = ({
+const RenderIcon: React.FC<RenderIconProps> = ({
     family,
     icon,
     fontSize,
@@ -67,4 +67,4 @@ const IconRenderer: React.FC<IconRendererProps> = ({
     );
 };
 
-export default IconRenderer;
+export default RenderIcon;

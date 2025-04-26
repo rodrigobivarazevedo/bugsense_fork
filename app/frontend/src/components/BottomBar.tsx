@@ -4,8 +4,7 @@ import * as S from './BottomBar.styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import NavigationRoute, { RouteName } from './NavigationRoute';
 import { useNavigationState } from '@react-navigation/native';
-import IconRenderer from './IconRenderer';
-import { themeColors } from '../theme/global';
+import RenderIcon from './RenderIcon';
 
 const BottomBar: React.FC = () => {
     const insets = useSafeAreaInsets();
@@ -31,7 +30,7 @@ const BottomBar: React.FC = () => {
             <NavigationRoute route="home">
                 <TouchableOpacity onPress={() => handleTabChange('home')}>
                     <S.IconWrapper>
-                        <IconRenderer
+                        <RenderIcon
                             family="foundation"
                             icon="home"
                             fontSize={24}
@@ -45,7 +44,7 @@ const BottomBar: React.FC = () => {
             <NavigationRoute route="scan">
                 <TouchableOpacity onPress={() => handleTabChange('scan')}>
                     <S.IconWrapper>
-                        <IconRenderer
+                        <RenderIcon
                             family="entypo"
                             icon="camera"
                             fontSize={24}
@@ -59,7 +58,7 @@ const BottomBar: React.FC = () => {
             <NavigationRoute route="results">
                 <TouchableOpacity onPress={() => handleTabChange('results')}>
                     <S.IconWrapper>
-                        <IconRenderer
+                        <RenderIcon
                             family="foundation"
                             icon="results"
                             fontSize={24}
@@ -73,7 +72,7 @@ const BottomBar: React.FC = () => {
             <NavigationRoute route="more">
                 <TouchableOpacity onPress={() => handleTabChange('more')}>
                     <S.IconWrapper>
-                        <IconRenderer
+                        <RenderIcon
                             family="feather"
                             icon="more-horizontal"
                             fontSize={24}
