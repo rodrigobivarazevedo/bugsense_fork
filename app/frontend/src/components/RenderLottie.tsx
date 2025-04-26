@@ -27,7 +27,9 @@ export const RenderLottie = ({
 
     useEffect(() => {
         animationRef.current?.play();
-        animationRef.current?.play(startFrame, endFrame);
+        setTimeout(() => {
+            animationRef.current?.play(startFrame, endFrame);
+        }, 50);
     }, []);
 
     return (
