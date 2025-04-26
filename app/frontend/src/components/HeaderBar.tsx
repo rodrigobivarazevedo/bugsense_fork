@@ -4,7 +4,6 @@ import Logo from './Logo';
 import * as S from './HeaderBar.styles'
 import IconRenderer from './IconRenderer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { themeColors } from '../theme/global';
 
 const HeaderBar: React.FC = () => {
     const insets = useSafeAreaInsets();
@@ -19,7 +18,7 @@ const HeaderBar: React.FC = () => {
                     family="materialIcons"
                     icon="account-circle"
                     fontSize={32}
-                    color={themeColors.primary}
+                    color="primary"
                 />
             </TouchableOpacity>
         </S.Container>

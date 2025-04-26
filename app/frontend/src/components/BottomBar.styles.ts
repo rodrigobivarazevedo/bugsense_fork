@@ -46,7 +46,7 @@ export const IconBackground = styled.View`
 `;
 
 export const Label = styled.Text<IconProps>`
-  color: ${(props: IconProps) => props.isActive ? themeColors.primary : themeColors.gray};
+  color: ${(props: IconProps) => props.isActive ? themeColors.primary : themeColors.themeGray};
   font-size: ${rem(0.9)}px;
   font-weight: 500;
   margin-top: ${rem(0.25)}px;

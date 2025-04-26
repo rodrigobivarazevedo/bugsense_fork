@@ -35,7 +35,7 @@ const BottomBar: React.FC = () => {
                             family="foundation"
                             icon="home"
                             fontSize={24}
-                            color={activeTab === 'home' ? themeColors.primary : themeColors.gray}
+                            color={activeTab === 'home' ? "primary" : "themeGray"}
                         />
                         <S.Label isActive={activeTab === 'home'}>Home</S.Label>
                     </S.IconWrapper>
@@ -49,7 +49,7 @@ const BottomBar: React.FC = () => {
                             family="entypo"
                             icon="camera"
                             fontSize={24}
-                            color={activeTab === 'scan' ? themeColors.primary : themeColors.gray}
+                            color={activeTab === 'scan' ? "primary" : "themeGray"}
                         />
                         <S.Label isActive={activeTab === 'scan'}>Scan</S.Label>
                     </S.IconWrapper>
@@ -63,7 +63,7 @@ const BottomBar: React.FC = () => {
                             family="foundation"
                             icon="results"
                             fontSize={24}
-                            color={activeTab === 'results' ? themeColors.primary : themeColors.gray}
+                            color={activeTab === 'results' ? "primary" : "themeGray"}
                         />
                         <S.Label isActive={activeTab === 'results'}>Results</S.Label>
                     </S.IconWrapper>
@@ -77,7 +77,7 @@ const BottomBar: React.FC = () => {
                             family="feather"
                             icon="more-horizontal"
                             fontSize={24}
-                            color={activeTab === 'more' ? themeColors.primary : themeColors.gray}
+                            color={activeTab === 'more' ? "primary" : "themeGray"}
                         />
                         <S.Label isActive={activeTab === 'more'}>More</S.Label>
                     </S.IconWrapper>
