@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import Logo from './Logo';
 import * as S from './HeaderBar.styles'
 import RenderIcon from './RenderIcon';
@@ -13,14 +13,27 @@ const HeaderBar: React.FC = () => {
             <S.LogoWrapper>
                 <Logo width={120} height={20} />
             </S.LogoWrapper>
-            <TouchableOpacity onPress={() => { /* Handle profile press */ }}>
-                <RenderIcon
-                    family="materialIcons"
-                    icon="account-circle"
-                    fontSize={32}
-                    color="primary"
-                />
-            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <TouchableOpacity
+                    style={{ marginRight: 12 }}
+                    onPress={() => { /* Handle notification press */ }}
+                >
+                    <RenderIcon
+                        family="materialIcons"
+                        icon="notifications"
+                        fontSize={28}
+                        color="primary"
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => { /* Handle profile press */ }}>
+                    <RenderIcon
+                        family="materialIcons"
+                        icon="account-circle"
+                        fontSize={32}
+                        color="primary"
+                    />
+                </TouchableOpacity>
+            </View>
         </S.Container>
     );
 };
