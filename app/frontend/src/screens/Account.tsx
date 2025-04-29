@@ -1,20 +1,60 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as S from './Account.styles';
 import RenderIcon from '../components/RenderIcon';
 import Logo from '../components/Logo';
 import { rem } from '../utils/responsive';
+import api from '../api/client';
+import { useEffect } from 'react';
+
 
 export const Account: React.FC = () => {
     const { t } = useTranslation();
+
+    // state for current user profile
+    const [user, setUser] = useState<null | {
+        full_name: string;
+        date_joined: string;
+        gender: string;
+        dob: string;
+        email: string;
+        phone_number: string;
+        street: string;
+        city: string;
+        postcode: string;
+        country: string;
+    }>(null);
+
+    useEffect(() => {
+        api.get('users/me/')
+           .then(res => setUser(res.data))
+           .catch(err => console.error('Could not load profile', err));
+    }, []);
+
+    if (!user) {
+        return (
+            <S.Scroll>
+                <S.UserName>{t('Loading...')}</S.UserName>
+            </S.Scroll>
+        );
+    }
+
+    const userName   = user.full_name;
+    const dateJoined = new Date(user.date_joined).toLocaleDateString();
+    const gender     = user.gender;
+    const dob        = new Date(user.dob).toLocaleDateString();
+    const email      = user.email;
+    const phone      = user.phone_number;
+    const address    = `${user.street}\n${user.postcode} ${user.city}\n${user.country}`;
+
     // TODO: get user data from API
-    const userName = 'Jane Julian Vernonica Doe';
-    const dateJoined = '01.04.2022';
-    const gender = 'Female';
-    const dob = '02.02.2002';
-    const email = 'somtochukwumbuko@gmail.com';
-    const phone = '0162-7033954';
-    const address = 'Alois-Gäbl-Str. 4\n84347 Pfarrkirchen\nDeutschland';
+    // const userName = 'Jane Julian Vernonica Doe';
+    // const dateJoined = '01.04.2022';
+    // const gender = 'Female';
+    // const dob = '02.02.2002';
+    // const email = 'somtochukwumbuko@gmail.com';
+    // const phone = '0162-7033954';
+    // const address = 'Alois-Gäbl-Str. 4\n84347 Pfarrkirchen\nDeutschland';
 
     return (
         <S.Scroll>
