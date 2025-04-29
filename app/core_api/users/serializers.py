@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = [
             'id', 'email', 'full_name', 'gender', 'dob', 'phone_number',
-            'street', 'city', 'postcode', 'country'
+            'street', 'city', 'postcode', 'country', 'date_joined'
         ]
         read_only_fields = ['id']
 
@@ -29,3 +29,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data = super().validate(attrs)
         data['user'] = UserSerializer(self.user).data
         return data
+
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()

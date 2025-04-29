@@ -6,10 +6,14 @@ import Logo from '../components/Logo';
 import { rem } from '../utils/responsive';
 import api from '../api/client';
 import { useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 
 export const Account: React.FC = () => {
     const { t } = useTranslation();
+    const navigation = useNavigation();
 
     // state for current user profile
     const [user, setUser] = useState<null | {
@@ -30,6 +34,56 @@ export const Account: React.FC = () => {
            .then(res => setUser(res.data))
            .catch(err => console.error('Could not load profile', err));
     }, []);
+
+    // Fetch when screen is focused
+    useFocusEffect(
+        React.useCallback(() => {
+        let isActive = true;
+
+        (async () => {
+            const token = await AsyncStorage.getItem('accessToken');
+            if (!token) {
+                (navigation as any).reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                  });
+            return;
+            }
+            try {
+            const res = await api.get('users/me/');
+            if (isActive) setUser(res.data);
+            } catch (err: any) {
+            if (err.response?.status === 401) {
+                await AsyncStorage.multiRemove(['accessToken','refreshToken','user']);
+                (navigation as any).reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                  });
+            } else {
+                console.error('Could not load profile', err);
+                Alert.alert(t('Error'), t('Could not load profile'));
+            }
+            }
+        })();
+
+        return () => {
+            isActive = false;
+        };
+        }, [navigation, t])
+    );
+
+    const handleSignOut = async () => {
+        const refresh = await AsyncStorage.getItem('refreshToken');
+        if (refresh) await api.post('logout/', { refresh });
+        await AsyncStorage.multiRemove(['accessToken','refreshToken','user']);
+        api.defaults.headers.Authorization = '';
+      
+        (navigation as any).reset({
+            index: 0,
+            routes: [{ name: 'Login' }],
+          });
+      };
+      
 
     if (!user) {
         return (
@@ -164,7 +218,7 @@ export const Account: React.FC = () => {
             <S.ActionButton>
                 <S.ActionButtonText>{t('Change password')}</S.ActionButtonText>
             </S.ActionButton>
-            <S.ActionButton>
+            <S.ActionButton onPress={handleSignOut}>
                 <S.ActionButtonText>{t('Sign out')}</S.ActionButtonText>
             </S.ActionButton>
         </S.Scroll>

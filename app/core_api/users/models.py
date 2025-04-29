@@ -55,6 +55,7 @@ class CustomUser(AbstractUser):
     dob = models.DateField('date of birth', null=True, blank=True)
     phone_number = models.CharField(
         max_length=20, unique=False, null=True, blank=True)
+    date_joined = models.DateField('joined date', null=True, blank=True)
 
     # Address fields
     street = models.CharField(max_length=255, blank=True)
