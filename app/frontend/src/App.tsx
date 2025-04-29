@@ -14,14 +14,15 @@ import Home from './screens/Home';
 import Scan from './screens/Scan';
 import Results from './screens/Results';
 import More from './screens/More';
+import Account from './screens/Account';
 
-// TODO: uncomment login screen after login is implemented
 const routes = [
-  // { name: 'Login', component: Login, wrapped: false },
+  { name: 'Login', component: Login, wrapped: false },
   { name: 'Home', component: Home, wrapped: true },
   { name: 'Scan', component: Scan, wrapped: true },
   { name: 'Results', component: Results, wrapped: true },
   { name: 'More', component: More, wrapped: true },
+  { name: 'Account', component: Account, wrapped: true },
 ];
 
 export default function App() {
