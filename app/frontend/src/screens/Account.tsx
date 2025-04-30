@@ -7,6 +7,7 @@ import { rem } from '../utils/responsive';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Platform, TextInput, Modal, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { themeColors } from '../theme/global';
+import ConfirmationModal from '../components/modal/ConfirmationModal';
 
 interface AddressSuggestion {
     display_name: string;
@@ -48,6 +49,7 @@ export const Account: React.FC = () => {
     // State for editable fields
     const [editingField, setEditingField] = useState<string | null>(null);
     const [tempValue, setTempValue] = useState<string>('');
+    const [showConfirmationModal, setShowConfirmationModal] = useState(false);
     const [userData, setUserData] = useState({
         userName: 'Jane Julian Vernonica Doe',
         email: 'somtochukwumbuko@gmail.com',
@@ -62,6 +64,7 @@ export const Account: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
     const [showAddressModal, setShowAddressModal] = useState(false);
+    const [pendingValue, setPendingValue] = useState<string>('');
 
     const handleEdit = (field: string) => {
         setEditingField(field);
@@ -73,8 +76,12 @@ export const Account: React.FC = () => {
         }
     };
 
+    // Called when user tries to save (onSubmitEditing/onBlur)
     const handleSave = () => {
-        if (editingField) {
+        if (editingField === 'userName' || editingField === 'email') {
+            setPendingValue(tempValue);
+            setShowConfirmationModal(true);
+        } else if (editingField) {
             setUserData(prev => ({
                 ...prev,
                 [editingField]: tempValue
@@ -85,10 +92,25 @@ export const Account: React.FC = () => {
         }
     };
 
+    // Called when user confirms in modal
+    const handleConfirmSave = () => {
+        if (editingField === 'userName' || editingField === 'email') {
+            setUserData(prev => ({
+                ...prev,
+                [editingField]: pendingValue
+            }));
+        }
+        setEditingField(null);
+        setShowConfirmationModal(false);
+        setPendingValue('');
+    };
+
     const handleCancel = () => {
         setEditingField(null);
         setAddressSuggestions([]);
         setShowAddressModal(false);
+        setShowConfirmationModal(false);
+        setPendingValue('');
     };
 
     const handlePhoneChange = (text: string) => {
@@ -364,6 +386,18 @@ export const Account: React.FC = () => {
             <S.ActionButton>
                 <S.ActionButtonText>{t('Sign out')}</S.ActionButtonText>
             </S.ActionButton>
+
+            <ConfirmationModal
+                isOpen={showConfirmationModal}
+                onClose={handleCancel}
+                onConfirm={handleConfirmSave}
+                heading={"Save Changes"}
+                message={editingField === 'userName'
+                    ? t('Are you sure you want to update your name?')
+                    : t('Are you sure you want to update your email address?')}
+                confirmText={t('Confirm')}
+                cancelText={t('Cancel')}
+            />
         </S.Scroll>
     );
 };

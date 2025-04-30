@@ -2,5 +2,8 @@
     "TEST_FRONTEND": "This is a test for the Frontend-EN translation (DO NOT REMOVE!)",
     "bugsense": "BugSense",
     "check_health_in_colors": "Check your health in colors.",
-    "get_started": "Get Started"
+    "get_started": "Get Started",
+    "please_confirm": "Please confirm",
+    "ok_capital": "OK",
+    "cancel": "Cancel"
 }
