@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Platform, TextInput, Modal, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { themeColors } from '../theme/global';
 import ConfirmationModal from '../components/modal/ConfirmationModal';
+import GenericDateTimePicker from '../components/GenericDateTimePicker';
 
 interface AddressSuggestion {
     display_name: string;
@@ -56,6 +57,7 @@ export const Account: React.FC = () => {
         phone: '0162-7033954',
         gender: 'Female',
         address: 'Alois-Gäbl-Str. 4\n84347 Pfarrkirchen\nDeutschland',
+        dob: '02.02.2002',
     });
 
     // Address search states
@@ -65,6 +67,7 @@ export const Account: React.FC = () => {
     const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
     const [showAddressModal, setShowAddressModal] = useState(false);
     const [pendingValue, setPendingValue] = useState<string>('');
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     const handleEdit = (field: string) => {
         setEditingField(field);
@@ -73,6 +76,9 @@ export const Account: React.FC = () => {
             setSearchQuery('');
             setAddressSuggestions([]);
             setShowAddressModal(true);
+        }
+        if (field === 'dob') {
+            setShowDatePicker(true);
         }
     };
 
@@ -166,6 +172,16 @@ export const Account: React.FC = () => {
         setEditingField(null);
         setAddressSuggestions([]);
         setShowAddressModal(false);
+    };
+
+    const handleDateChange = (date: Date) => {
+        setShowDatePicker(false);
+        const formatted = date.toLocaleDateString('de-DE'); // Format as DD.MM.YYYY
+        setUserData(prev => ({
+            ...prev,
+            dob: formatted
+        }));
+        setEditingField(null);
     };
 
     // Cleanup timeout on unmount
@@ -262,6 +278,21 @@ export const Account: React.FC = () => {
                     </Modal>
                 );
             }
+            if (field === 'dob') {
+                return (
+                    <>
+                        <S.ItemValue>{userData.dob}</S.ItemValue>
+                        <GenericDateTimePicker
+                            value={userData.dob ? new Date(userData.dob.split('.').reverse().join('-')) : new Date()}
+                            mode="date"
+                            onChange={handleDateChange}
+                            maximumDate={new Date()}
+                            visible={showDatePicker}
+                            onCancel={() => setShowDatePicker(false)}
+                        />
+                    </>
+                );
+            }
             return (
                 <TextInput
                     value={tempValue}
@@ -337,9 +368,9 @@ export const Account: React.FC = () => {
                 <S.ItemRow>
                     <S.ItemTextCol>
                         <S.ItemLabel>{t('Date of birth')}</S.ItemLabel>
-                        <S.ItemValue>{dob}</S.ItemValue>
+                        {renderEditableField('dob', userData.dob)}
                     </S.ItemTextCol>
-                    <S.EditIconBtnLight>
+                    <S.EditIconBtnLight onPress={() => handleEdit('dob')}>
                         <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
                     </S.EditIconBtnLight>
                 </S.ItemRow>
