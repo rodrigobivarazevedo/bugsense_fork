@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import { MaterialIcons } from '@expo/vector-icons';
 import { themeColors } from '../theme/global';
 import { EdgeInsets } from 'react-native-safe-area-context';
 import { rem } from '../utils/responsive';
