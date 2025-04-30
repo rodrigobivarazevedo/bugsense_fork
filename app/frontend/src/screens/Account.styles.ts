@@ -217,4 +217,78 @@ export const EditIconBtnLight = styled.TouchableOpacity`
   padding: ${rem(0.5)}px;
   margin-left: ${rem(1)}px;
   align-self: flex-start;
+`;
+
+export const ModalOverlay = styled.TouchableOpacity`
+  flex: 1;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ModalContent = styled.View`
+  background-color: ${themeColors.white};
+  border-radius: ${rem(1)}px;
+  padding: ${rem(1.5)}px;
+  width: 80%;
+  max-width: ${rem(20)}px;
+`;
+
+export const ModalTitle = styled.Text`
+  ${themeTypography.h1};
+  color: ${themeColors.primary};
+  margin-bottom: ${rem(1)}px;
+  text-align: center;
+  font-size: ${rem(1.5)}px;
+`;
+
+export const ModalOption = styled.View`
+  padding: ${rem(1)}px;
+  border-bottom-width: 1px;
+  border-bottom-color: ${themeColors.secondary};
+`;
+
+export const ModalOptionText = styled.Text`
+  ${themeTypography.p};
+  color: ${themeColors.primary};
+  text-align: center;
+`;
+
+export const AddressContainer = styled.View`
+  position: relative;
+  width: 100%;
+`;
+
+export const LoadingContainer = styled.View`
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: ${rem(0.5)}px;
+`;
+
+export const SuggestionsContainer = styled.View`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: ${themeColors.white};
+  border-radius: ${rem(0.5)}px;
+  margin-top: ${rem(0.25)}px;
+  elevation: 2;
+  shadow-color: #000;
+  shadow-offset: 0px 2px;
+  shadow-opacity: 0.1;
+  shadow-radius: 4px;
+  z-index: 1;
+`;
+
+export const SuggestionItem = styled.View`
+  padding: ${rem(0.75)}px ${rem(1)}px;
+  border-bottom-width: 1px;
+  border-bottom-color: ${themeColors.secondary};
+`;
+
+export const SuggestionText = styled.Text`
+  ${themeTypography.p};
+  color: ${themeColors.primary};
 `; 
