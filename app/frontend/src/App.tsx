@@ -16,8 +16,9 @@ import Results from './screens/Results';
 import More from './screens/More';
 import Account from './screens/Account';
 
+// TODO: Uncomment these when we have a login API endpoint
 const routes = [
-  { name: 'Login', component: Login, wrapped: false },
+  // { name: 'Login', component: Login, wrapped: false },
   { name: 'Home', component: Home, wrapped: true },
   { name: 'Scan', component: Scan, wrapped: true },
   { name: 'Results', component: Results, wrapped: true },
@@ -54,9 +55,18 @@ export default function App() {
           }}
         >
           <AppContainer>
-            {isWrapped && <HeaderBar />}
             <ContentContainer>
-              <Stack.Navigator screenOptions={{ headerShown: false }}>
+              <Stack.Navigator
+                screenOptions={{
+                  header: (props) => {
+                    const routeConfig = routes.find(r => r.name === props.route.name);
+                    if (routeConfig?.wrapped) {
+                      return <HeaderBar {...props} />;
+                    }
+                    return null;
+                  },
+                }}
+              >
                 {routes.map(({ name, component: Component }) => (
                   <Stack.Screen
                     key={name}
