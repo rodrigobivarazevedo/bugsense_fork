@@ -84,6 +84,7 @@ export const Box = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
   margin-bottom: ${rem(1)}px;
+  elevation: 1;
   shadow-color: #000;
   shadow-offset: 0px 1px;
   shadow-opacity: 0.2;

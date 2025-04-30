@@ -201,6 +201,7 @@ export const LightCard = styled.View`
   border-radius: ${rem(1)}px;
   margin-bottom: ${rem(1.5)}px;
   padding: ${rem(1)}px ${rem(1)}px;
+  elevation: 1;
   shadow-color: #000;
   shadow-offset: 0px 2px;
   shadow-opacity: 0.075;
