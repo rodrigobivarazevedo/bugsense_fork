@@ -4,9 +4,13 @@ import * as S from './Account.styles';
 import RenderIcon from '../components/RenderIcon';
 import Logo from '../components/Logo';
 import { rem } from '../utils/responsive';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Platform } from 'react-native';
 
 export const Account: React.FC = () => {
     const { t } = useTranslation();
+    const insets = useSafeAreaInsets();
+
     // TODO: get user data from API
     const userName = 'Jane Julian Vernonica Doe';
     const dateJoined = '01.04.2022';
@@ -17,7 +21,7 @@ export const Account: React.FC = () => {
     const address = 'Alois-Gäbl-Str. 4\n84347 Pfarrkirchen\nDeutschland';
 
     return (
-        <S.Scroll>
+        <S.Scroll contentContainerStyle={{ paddingBottom: Platform.OS === 'android' ? insets.bottom + 24 : 0 }}>
             <S.ProfileCard>
                 <S.ProfileCardBgLogo>
                     <Logo width={120} height={120} opacity={0.07} />
