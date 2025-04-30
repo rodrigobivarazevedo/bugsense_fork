@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import { themeColors } from '../theme/global';
+import { themeColors } from '../theme/GlobalTheme';
 import { EdgeInsets } from 'react-native-safe-area-context';
 import { rem } from '../utils/responsive';
 

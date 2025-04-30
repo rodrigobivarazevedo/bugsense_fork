@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import { themeColors, themeTypography } from '../theme/global';
+import { themeColors, themeTypography } from '../theme/GlobalTheme';
 import { rem } from '../utils/responsive';
 
 export const Scroll = styled.ScrollView`

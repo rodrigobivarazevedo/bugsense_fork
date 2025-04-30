@@ -1,9 +1,9 @@
 import styled from 'styled-components/native';
 import { rem } from '../utils/responsive';
-import { themeColors } from '../theme/global';
+import { themeColors } from '../theme/GlobalTheme';
 
 type LoginButtonProps = {
-    disabled: boolean;
+  disabled: boolean;
 };
 
 export const Container = styled.View`

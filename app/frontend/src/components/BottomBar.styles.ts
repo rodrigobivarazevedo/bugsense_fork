@@ -1,15 +1,15 @@
 import styled from 'styled-components/native';
-import { themeColors } from '../theme/global';
+import { themeColors } from '../theme/GlobalTheme';
 import { EdgeInsets } from 'react-native-safe-area-context';
 import { Platform } from 'react-native';
 import { rem } from '../utils/responsive';
 
 interface ContainerProps {
-    insets: EdgeInsets;
+  insets: EdgeInsets;
 }
 
 interface IconProps {
-    isActive: boolean;
+  isActive: boolean;
 }
 
 export const Container = styled.View<ContainerProps>`

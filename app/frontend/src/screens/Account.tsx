@@ -6,7 +6,7 @@ import Logo from '../components/Logo';
 import { rem } from '../utils/responsive';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Platform, TextInput, Modal, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
-import { themeColors } from '../theme/global';
+import { themeColors } from '../theme/GlobalTheme';
 import ConfirmationModal from '../components/modal/ConfirmationModal';
 import GenericDateTimePicker from '../components/GenericDateTimePicker';
 

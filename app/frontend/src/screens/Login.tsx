@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './Login.styles';
-import { themeColors } from '../theme/global';
+import { themeColors } from '../theme/GlobalTheme';
 
 type LoginScreenProps = {
     navigation: NativeStackNavigationProp<any>;

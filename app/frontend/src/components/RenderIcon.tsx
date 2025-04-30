@@ -1,5 +1,5 @@
 import React from 'react';
-import { themeColors } from '../theme/global';
+import { themeColors } from '../theme/GlobalTheme';
 import {
     AntDesign,
     Entypo,
