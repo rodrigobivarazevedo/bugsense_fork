@@ -291,4 +291,18 @@ export const SuggestionItem = styled.View`
 export const SuggestionText = styled.Text`
   ${themeTypography.p};
   color: ${themeColors.primary};
+`;
+
+export const SuggestionsModalContent = styled.View`
+  background-color: ${themeColors.white};
+  border-radius: ${rem(1)}px;
+  padding: ${rem(1)}px;
+  width: 90%;
+  max-width: ${rem(25)}px;
+  align-self: center;
+  elevation: 5;
+  shadow-color: #000;
+  shadow-offset: 0px 2px;
+  shadow-opacity: 0.15;
+  shadow-radius: 8px;
 `; 
