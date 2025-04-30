@@ -1,5 +1,5 @@
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from .serializers import CustomTokenObtainPairSerializer, UserSerializer, LogoutSerializer
 from rest_framework.views import APIView
@@ -16,10 +16,11 @@ class LoginView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
 
-class CurrentUserView(RetrieveUpdateAPIView):
+class CurrentUserView(RetrieveUpdateDestroyAPIView):
     """
     GET  /api/users/me/       → returns the logged-in user’s profile
     PUT  /api/users/me/       → update profile
+    DELETE /api/users/me/    → delete account
     """
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]

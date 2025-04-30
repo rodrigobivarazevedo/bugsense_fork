@@ -83,7 +83,33 @@ export const Account: React.FC = () => {
             routes: [{ name: 'Login' }],
           });
       };
-      
+
+      const handleDelete = () => {
+        Alert.alert(
+          t('Delete My Account'),
+          t('Are you sure you want to delete your account? This cannot be undone.'),
+          [
+            { text: t('Cancel'), style: 'cancel' },
+            {
+              text: t('Delete'),
+              style: 'destructive',
+              onPress: async () => {
+                try {
+                  await api.delete('users/me/');
+                  await AsyncStorage.multiRemove(['accessToken','refreshToken','user']);
+                  (navigation as any).reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                  });
+                } catch (err: any) {
+                  console.error('Delete failed', err);
+                  Alert.alert(t('Error'), t('Could not delete account. Please try again.'));
+                }
+              }
+            }
+          ]
+        );
+      };
 
     if (!user) {
         return (
@@ -211,7 +237,7 @@ export const Account: React.FC = () => {
                 </S.ItemRow>
             </S.LightCard>
 
-            <S.DeleteButton>
+            <S.DeleteButton onPress={handleDelete}>
                 <S.DeleteButtonText>{t('Delete My Account')}</S.DeleteButtonText>
             </S.DeleteButton>
 
