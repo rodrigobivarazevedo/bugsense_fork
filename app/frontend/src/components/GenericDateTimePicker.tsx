@@ -7,7 +7,7 @@ import * as S from './GenericDateTimePicker.styles';
 interface GenericDateTimePickerProps {
     value: Date;
     visible: boolean;
-    mode?: 'date' | 'time' | 'datetime';
+    mode: 'date' | 'time' | 'datetime';
     maximumDate?: Date;
     minimumDate?: Date;
     onChange: (date: Date) => void;
@@ -17,7 +17,7 @@ interface GenericDateTimePickerProps {
 const GenericDateTimePicker: React.FC<GenericDateTimePickerProps> = ({
     value,
     visible,
-    mode = 'date',
+    mode,
     maximumDate,
     minimumDate,
     onChange,
