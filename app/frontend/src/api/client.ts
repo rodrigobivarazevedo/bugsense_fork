@@ -1,15 +1,18 @@
-// src/api/client.ts
-
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const api = axios.create({
-  baseURL: 'http://localhost:8000/api/',  // ← your Django host:port
-  timeout: 5000,
+const API_BASE_URL = process.env.API_URL || 'http://192.168.0.193:8000/api/';
+
+const Api = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
 });
 
-// automatically attach the JWT access token to each request
-api.interceptors.request.use(async (config: any) => {
+Api.interceptors.request.use(async (config: any) => {
   const token = await AsyncStorage.getItem('accessToken');
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -17,4 +20,19 @@ api.interceptors.request.use(async (config: any) => {
   return config;
 });
 
-export default api;
+Api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response) {
+      console.error('API Error Response:', error.response.data);
+    } else if (error.request) {
+      console.error('API Error Request:', error.request);
+    } else {
+      console.error('API Error:', error.message);
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default Api;
+

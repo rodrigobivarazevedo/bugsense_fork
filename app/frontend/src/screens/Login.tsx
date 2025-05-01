@@ -7,7 +7,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './Login.styles';
 import { themeColors } from '../theme/GlobalTheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import api from '../api/client';
+import Api from '../api/Client';
 
 type LoginScreenProps = {
     navigation: NativeStackNavigationProp<any>;
@@ -20,29 +20,28 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
 
     const handleLogin = async () => {
         try {
-          const response = await api.post('login/', {
-            email: username,
-            password: password,
-          });
-    
-          const { access, refresh, user } = response.data;
-    
-          // store tokens and user info
-          await AsyncStorage.setItem('accessToken', access);
-          await AsyncStorage.setItem('refreshToken', refresh);
-          await AsyncStorage.setItem('user', JSON.stringify(user));
-    
-          console.log('Login attempted with:', { username, password });
-          navigation.navigate('Home');
+            const response = await Api.post('login/', {
+                email: username,
+                password: password,
+            });
+
+            const { access, refresh, user } = response.data;
+
+            await AsyncStorage.setItem('accessToken', access);
+            await AsyncStorage.setItem('refreshToken', refresh);
+            await AsyncStorage.setItem('user', JSON.stringify(user));
+
+            console.log('Login attempted with:', { username });
+            navigation.navigate('Home');
         } catch (err: any) {
-          console.error('Login error', err);
-          const message =
-            err.response?.data?.detail ||
-            err.response?.data?.non_field_errors?.[0] ||
-            err.message;
-          Alert.alert(t('Login failed'), message);
+            console.error('Login error', err);
+            const message =
+                err.response?.data?.detail ||
+                err.response?.data?.non_field_errors?.[0] ||
+                err.message;
+            Alert.alert(t('Login failed'), message); // TODO: Add error handling
         }
-      };
+    };
 
     const handleForgotPassword = () => {
         // TODO: Implement forgot password logic

@@ -9,6 +9,7 @@ services:
       - DEBUG=1
       - DJANGO_SETTINGS_MODULE=core_api.settings
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - ALLOWED_HOSTS=*
     depends_on:
       - db
     volumes:
@@ -29,6 +30,8 @@ services:
       - NODE_ENV=development
       - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
       - REACT_NATIVE_PACKAGER_HOSTNAME=${HOST_IP}
+      - HOST_IP=${HOST_IP}
+      - API_URL=http://${HOST_IP}:8000/api/
     volumes:
       - ./frontend:/app
       - /app/node_modules

@@ -17,9 +17,8 @@ import More from './screens/More';
 import Account from './screens/Account';
 import LanguageSelection from './screens/LanguageSelection';
 
-// TODO: Uncomment these when we have a login API endpoint
 const routes = [
-  // { name: 'Login', component: Login, wrapped: false },
+  { name: 'Login', component: Login, wrapped: false },
   { name: 'Home', component: Home, wrapped: true },
   { name: 'Scan', component: Scan, wrapped: true },
   { name: 'Results', component: Results, wrapped: true },
