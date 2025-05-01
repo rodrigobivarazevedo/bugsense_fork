@@ -15,6 +15,7 @@ import Scan from './screens/Scan';
 import Results from './screens/Results';
 import More from './screens/More';
 import Account from './screens/Account';
+import LanguageSelection from './screens/LanguageSelection';
 
 // TODO: Uncomment these when we have a login API endpoint
 const routes = [
@@ -24,6 +25,7 @@ const routes = [
   { name: 'Results', component: Results, wrapped: true },
   { name: 'More', component: More, wrapped: true },
   { name: 'Account', component: Account, wrapped: true },
+  { name: 'LanguageSelection', component: LanguageSelection, wrapped: true },
 ];
 
 export default function App() {

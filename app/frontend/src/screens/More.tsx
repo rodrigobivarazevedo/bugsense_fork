@@ -1,5 +1,6 @@
 import React from 'react';
 import { Linking } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import RenderIcon from '../components/RenderIcon';
 import companyInfo from '../utils/companyInfo.json';
 import * as S from './More.styles';
@@ -12,7 +13,7 @@ const options = [
                 iconFamily: 'ionIcons',
                 icon: 'language',
                 label: 'Language',
-                onPress: () => {/* TODO: navigate to language settings */ }
+                onPress: (navigation: any) => navigation.navigate('LanguageSelection')
             },
             {
                 iconFamily: 'materialIcons',
@@ -48,6 +49,7 @@ const options = [
 ];
 
 export const More: React.FC = () => {
+    const navigation = useNavigation();
     return (
         <S.Container>
             {options.map((section, idx) => (
@@ -55,7 +57,7 @@ export const More: React.FC = () => {
                     {idx !== 0 && <S.SectionDivider />}
                     <S.SectionHeader>{section.section}</S.SectionHeader>
                     {section.content.map((opt) => (
-                        <S.OptionButton key={opt.label} onPress={opt.onPress}>
+                        <S.OptionButton key={opt.label} onPress={() => opt.onPress(navigation)}>
                             <S.OptionIconTextWrapper>
                                 <RenderIcon family={opt.iconFamily as any} icon={opt.icon} fontSize={22} color="primary" />
                                 <S.OptionText>{opt.label}</S.OptionText>
