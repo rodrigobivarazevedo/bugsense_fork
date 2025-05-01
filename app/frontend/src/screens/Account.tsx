@@ -314,6 +314,140 @@ export const Account: React.FC = () => {
         return <S.ItemValue>{value}</S.ItemValue>;
     };
 
+
+// import { rem } from '../utils/responsive';
+// import api from '../api/client';
+// import { useEffect } from 'react';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import { Alert } from 'react-native';
+// import { useFocusEffect, useNavigation } from '@react-navigation/native';
+
+
+// export const Account: React.FC = () => {
+//     const { t } = useTranslation();
+//     const navigation = useNavigation();
+
+//     // state for current user profile
+//     const [user, setUser] = useState<null | {
+//         full_name: string;
+//         date_joined: string;
+//         gender: string;
+//         dob: string;
+//         email: string;
+//         phone_number: string;
+//         street: string;
+//         city: string;
+//         postcode: string;
+//         country: string;
+//     }>(null);
+
+//     useEffect(() => {
+//         api.get('users/me/')
+//            .then(res => setUser(res.data))
+//            .catch(err => console.error('Could not load profile', err));
+//     }, []);
+
+//     // Fetch when screen is focused
+//     useFocusEffect(
+//         React.useCallback(() => {
+//         let isActive = true;
+
+//         (async () => {
+//             const token = await AsyncStorage.getItem('accessToken');
+//             if (!token) {
+//                 (navigation as any).reset({
+//                     index: 0,
+//                     routes: [{ name: 'Login' }],
+//                   });
+//             return;
+//             }
+//             try {
+//             const res = await api.get('users/me/');
+//             if (isActive) setUser(res.data);
+//             } catch (err: any) {
+//             if (err.response?.status === 401) {
+//                 await AsyncStorage.multiRemove(['accessToken','refreshToken','user']);
+//                 (navigation as any).reset({
+//                     index: 0,
+//                     routes: [{ name: 'Login' }],
+//                   });
+//             } else {
+//                 console.error('Could not load profile', err);
+//                 Alert.alert(t('Error'), t('Could not load profile'));
+//             }
+//             }
+//         })();
+
+//         return () => {
+//             isActive = false;
+//         };
+//         }, [navigation, t])
+//     );
+
+//     const handleSignOut = async () => {
+//         const refresh = await AsyncStorage.getItem('refreshToken');
+//         if (refresh) await api.post('logout/', { refresh });
+//         await AsyncStorage.multiRemove(['accessToken','refreshToken','user']);
+//         api.defaults.headers.Authorization = '';
+      
+//         (navigation as any).reset({
+//             index: 0,
+//             routes: [{ name: 'Login' }],
+//           });
+//       };
+
+//       const handleDelete = () => {
+//         Alert.alert(
+//           t('Delete My Account'),
+//           t('Are you sure you want to delete your account? This cannot be undone.'),
+//           [
+//             { text: t('Cancel'), style: 'cancel' },
+//             {
+//               text: t('Delete'),
+//               style: 'destructive',
+//               onPress: async () => {
+//                 try {
+//                   await api.delete('users/me/');
+//                   await AsyncStorage.multiRemove(['accessToken','refreshToken','user']);
+//                   (navigation as any).reset({
+//                     index: 0,
+//                     routes: [{ name: 'Login' }],
+//                   });
+//                 } catch (err: any) {
+//                   console.error('Delete failed', err);
+//                   Alert.alert(t('Error'), t('Could not delete account. Please try again.'));
+//                 }
+//               }
+//             }
+//           ]
+//         );
+//       };
+
+//     if (!user) {
+//         return (
+//             <S.Scroll>
+//                 <S.UserName>{t('Loading...')}</S.UserName>
+//             </S.Scroll>
+//         );
+//     }
+
+//     const userName   = user.full_name;
+//     const dateJoined = new Date(user.date_joined).toLocaleDateString();
+//     const gender     = user.gender;
+//     const dob        = new Date(user.dob).toLocaleDateString();
+//     const email      = user.email;
+//     const phone      = user.phone_number;
+//     const address    = `${user.street}\n${user.postcode} ${user.city}\n${user.country}`;
+
+//     // TODO: get user data from API
+//     // const userName = 'Jane Julian Vernonica Doe';
+//     // const dateJoined = '01.04.2022';
+//     // const gender = 'Female';
+//     // const dob = '02.02.2002';
+//     // const email = 'somtochukwumbuko@gmail.com';
+//     // const phone = '0162-7033954';
+//     // const address = 'Alois-Gäbl-Str. 4\n84347 Pfarrkirchen\nDeutschland';
+
     return (
         <S.Scroll contentContainerStyle={{ paddingBottom: Platform.OS === 'android' ? insets.bottom + 24 : 0 }}>
             <S.ProfileCard>
@@ -407,14 +541,14 @@ export const Account: React.FC = () => {
                 </S.ItemRow>
             </S.LightCard>
 
-            <S.DeleteButton>
+            <S.DeleteButton onPress={() => {}}>
                 <S.DeleteButtonText>{t('Delete My Account')}</S.DeleteButtonText>
             </S.DeleteButton>
 
             <S.ActionButton>
                 <S.ActionButtonText>{t('Change password')}</S.ActionButtonText>
             </S.ActionButton>
-            <S.ActionButton>
+            <S.ActionButton onPress={() => {}}>
                 <S.ActionButtonText>{t('Sign out')}</S.ActionButtonText>
             </S.ActionButton>
 
