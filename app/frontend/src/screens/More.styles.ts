@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import { themeColors } from '../theme/GlobalTheme';
-import { rem } from '../utils/responsive';
+import { rem } from '../utils/Responsive';
 
 export const Container = styled.ScrollView`
   flex: 1;

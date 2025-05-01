@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import { rem } from '../utils/responsive';
+import { rem } from '../utils/Responsive';
 import { themeColors } from '../theme/GlobalTheme';
 
 type LoginButtonProps = {

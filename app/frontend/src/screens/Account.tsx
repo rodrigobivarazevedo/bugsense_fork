@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import * as S from './Account.styles';
 import RenderIcon from '../components/RenderIcon';
 import Logo from '../components/Logo';
-import { rem } from '../utils/responsive';
+import { rem } from '../utils/Responsive';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Platform, TextInput, Modal, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { themeColors } from '../theme/GlobalTheme';

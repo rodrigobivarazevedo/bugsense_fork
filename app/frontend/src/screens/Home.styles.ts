@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import { themeColors, themeTypography } from '../theme/GlobalTheme';
-import { rem } from '../utils/responsive';
+import { rem } from '../utils/Responsive';
 
 export const Root = styled.View`
   flex: 1;

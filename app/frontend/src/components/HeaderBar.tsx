@@ -4,7 +4,7 @@ import Logo from './Logo';
 import * as S from './HeaderBar.styles'
 import RenderIcon from './RenderIcon';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { rem } from '../utils/responsive';
+import { rem } from '../utils/Responsive';
 
 const MAIN_TABS = ['Home', 'Scan', 'Results', 'More'];
 

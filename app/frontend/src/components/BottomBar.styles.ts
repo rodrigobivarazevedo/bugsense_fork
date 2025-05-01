@@ -2,7 +2,7 @@ import styled from 'styled-components/native';
 import { themeColors } from '../theme/GlobalTheme';
 import { EdgeInsets } from 'react-native-safe-area-context';
 import { Platform } from 'react-native';
-import { rem } from '../utils/responsive';
+import { rem } from '../utils/Responsive';
 
 interface ContainerProps {
   insets: EdgeInsets;

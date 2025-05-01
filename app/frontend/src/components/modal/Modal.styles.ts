@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 import { themeColors } from "../../theme/GlobalTheme";
-import { rem } from "../../utils/responsive";
+import { rem } from "../../utils/Responsive";
 
 export const styles = StyleSheet.create({
     overlay: {

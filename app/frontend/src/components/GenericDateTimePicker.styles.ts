@@ -1,9 +1,9 @@
 import styled from 'styled-components/native';
-import { rem } from '../utils/responsive';
+import { rem } from '../utils/Responsive';
 import { themeColors } from '../theme/GlobalTheme';
 
 interface TextOnlyProps {
-    textOnly?: boolean;
+  textOnly?: boolean;
 }
 
 export const ModalOverlay = styled.TouchableOpacity`

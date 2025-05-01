@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import * as S from './Home.styles';
 import RenderLottie from '../components/RenderLottie';
 import RenderIcon from '../components/RenderIcon';
-import { rem } from '../utils/responsive';
+import { rem } from '../utils/Responsive';
 
 export const Home: React.FC = () => {
   const { t } = useTranslation();
