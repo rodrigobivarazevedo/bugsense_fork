@@ -10,6 +10,7 @@ services:
       - DJANGO_SETTINGS_MODULE=core_api.settings
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
       - ALLOWED_HOSTS=*
+      - HOST_IP=${HOST_IP}
     depends_on:
       - db
     volumes:
@@ -21,6 +22,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - API_URL=http://${HOST_IP}:8000/api/
     ports:
       - "19000:19000"
       - "19001:19001"

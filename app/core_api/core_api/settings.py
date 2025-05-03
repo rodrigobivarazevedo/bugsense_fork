@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 from datetime import timedelta
 
@@ -26,8 +26,9 @@ SECRET_KEY = "django-insecure-4t+))pqjxq9ods^%4r*k7q_c5x!%91$l*-a!t3uu9vp73qpke-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+HOST_IP = os.environ.get("HOST_IP")
 ALLOWED_HOSTS = [
-    "192.168.0.193",
+    HOST_IP,
 ]
 
 
@@ -87,9 +88,15 @@ TEMPLATES = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:19006",  # Expo default
     "exp://127.0.0.1:19000",  # Expo Go local
-    "exp://192.168.0.193:19000",  # Your host IP (Expo)
-    "http://192.168.0.193:19006",  # Your host IP (Web)
-    "http://192.168.0.193:8000",  # Your API endpoint
+    # "exp://192.168.0.193:19000",  # Your host IP (Expo)
+    # "http://192.168.0.193:19006",  # Your host IP (Web)
+    # "http://192.168.0.193:8000",  # Your API endpoint
+    # "http://192.168.0.177:8000",  # Your API endpoint
+    # "exp://192.168.0.177:19000",  # Your host IP (Expo)
+    # "http://192.168.0.177:19006",  # Your host IP (Web)
+    f"http://{HOST_IP}:8000",
+    f"exp://{HOST_IP}:19000",
+    f"http://{HOST_IP}:19006",
 ]
 
 # Additional CORS settings for development
