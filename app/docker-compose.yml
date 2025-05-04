@@ -21,9 +21,9 @@ services:
     networks:
       - app_network
 
-  frontend:
+  mobile:
     build:
-      context: ./frontend
+      context: ./mobile
       dockerfile: Dockerfile
       args:
         - API_URL=http://${HOST_IP}:8000/api/
@@ -39,7 +39,7 @@ services:
       - HOST_IP=${HOST_IP}
       - API_URL=http://${HOST_IP}:8000/api/
     volumes:
-      - ./frontend:/app
+      - ./mobile:/app
       - /app/node_modules
     depends_on:
       - backend
