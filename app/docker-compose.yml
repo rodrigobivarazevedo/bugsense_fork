@@ -8,13 +8,15 @@ services:
     environment:
       - DEBUG=1
       - DJANGO_SETTINGS_MODULE=core_api.settings
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - DATABASE_URL=postgres://bugsenseadmin:bugsenseadmin@db:5432/bugsense
       - ALLOWED_HOSTS=*
       - HOST_IP=${HOST_IP}
     depends_on:
       - db
     volumes:
       - ./core_api:/app
+      - ./core_api/static:/app/static
+      - ./core_api/static:/app/core_api/static
     networks:
       - app_network
 
@@ -49,9 +51,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=bugsense
+      - POSTGRES_USER=bugsenseadmin
+      - POSTGRES_PASSWORD=bugsenseadmin
     ports:
       - "5432:5432"
     networks:
