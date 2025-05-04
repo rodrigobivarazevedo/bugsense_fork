@@ -15,6 +15,9 @@ COPY package.json yarn.lock ./
 
 RUN yarn install
 
+ARG API_URL
+ENV API_URL=$API_URL
+
 COPY . .
 
 EXPOSE 19000
