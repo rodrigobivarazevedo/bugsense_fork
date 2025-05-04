@@ -86,21 +86,15 @@ TEMPLATES = [
 
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:19006",  # Expo default
-    "exp://127.0.0.1:19000",  # Expo Go local
-    # "exp://192.168.0.193:19000",  # Your host IP (Expo)
-    # "http://192.168.0.193:19006",  # Your host IP (Web)
-    # "http://192.168.0.193:8000",  # Your API endpoint
-    # "http://192.168.0.177:8000",  # Your API endpoint
-    # "exp://192.168.0.177:19000",  # Your host IP (Expo)
-    # "http://192.168.0.177:19006",  # Your host IP (Web)
+    "http://localhost:19006",
+    "exp://127.0.0.1:19000",
     f"http://{HOST_IP}:8000",
     f"exp://{HOST_IP}:19000",
     f"http://{HOST_IP}:19006",
 ]
 
 # Additional CORS settings for development
-CORS_ALLOW_ALL_ORIGINS = True  # Only for development!
+CORS_ALLOW_ALL_ORIGINS = True  # TODO: Remove in production
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
     "DELETE",
@@ -136,8 +130,12 @@ WSGI_APPLICATION = "core_api.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("POSTGRES_DB", "bugsense"),
+        "USER": os.environ.get("POSTGRES_USER", "bugsenseadmin"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "bugsenseadmin"),
+        "HOST": "db",
+        "PORT": "5432",
     }
 }
 
@@ -176,7 +174,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "static"
+
+# Add this for development
+if DEBUG:
+    MIDDLEWARE.insert(0, 'whitenoise.middleware.WhiteNoiseMiddleware')
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
