@@ -38,7 +38,7 @@ This will open the Expo Developer Tools in your browser. From there, you can:
 ## Project Structure
 
 ```
-app/frontend/
+app/mobile/
 ├── src/           # Source code
 ├── index.ts       # Entry point
 ├── app.json       # Expo configuration
