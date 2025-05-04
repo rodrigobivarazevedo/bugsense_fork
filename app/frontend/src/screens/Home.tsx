@@ -4,23 +4,20 @@ import * as S from './Home.styles';
 import RenderLottie from '../components/RenderLottie';
 import RenderIcon from '../components/RenderIcon';
 import { rem } from '../utils/Responsive';
-import api from '../api/Client';
+import Api from '../api/Client';
 import { useEffect } from 'react';
 
 
 export const Home: React.FC = () => {
   const { t } = useTranslation();
 
-  // const [userName, setUserName] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
 
-  // useEffect(() => {
-  //   api.get('users/me/')
-  //     .then((res: any) => setUserName(res.data.full_name))
-  //     .catch((err: any) => console.error('Could not load profile', err));
-  // }, []);
-
-  // TODO: get user name from API
-  const userName = 'Jane Julian Vernonica Doe';
+  useEffect(() => {
+    Api.get('users/me/')
+      .then((res: any) => setUserName(res.data.full_name))
+      .catch((err: any) => console.error('Could not load profile', err));
+  }, []);
 
   return (
     <S.Root>
