@@ -17,6 +17,7 @@ services:
       - ./core_api:/app
       - ./core_api/static:/app/static
       - ./core_api/static:/app/core_api/static
+      - ./setup:/app/setup
     networks:
       - app_network
 

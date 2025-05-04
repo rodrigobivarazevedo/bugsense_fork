@@ -5,10 +5,13 @@ import RenderIcon from '../components/RenderIcon';
 import Logo from '../components/Logo';
 import { rem } from '../utils/Responsive';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Platform, TextInput, Modal, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
+import { Platform, TextInput, Modal, TouchableOpacity, ActivityIndicator, ScrollView, Alert } from 'react-native';
 import { themeColors } from '../theme/GlobalTheme';
 import ConfirmationModal from '../components/modal/ConfirmationModal';
 import GenericDateTimePicker from '../components/GenericDateTimePicker';
+import Api from '../api/Client';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 interface AddressSuggestion {
     display_name: string;
@@ -51,14 +54,6 @@ export const Account: React.FC = () => {
     const [editingField, setEditingField] = useState<string | null>(null);
     const [tempValue, setTempValue] = useState<string>('');
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-    const [userData, setUserData] = useState({
-        userName: 'Jane Julian Vernonica Doe',
-        email: 'somtochukwumbuko@gmail.com',
-        phone: '0162-7033954',
-        gender: 'Female',
-        address: 'Alois-Gäbl-Str. 4\n84347 Pfarrkirchen\nDeutschland',
-        dob: '02.02.2002',
-    });
 
     // Address search states
     const [addressSuggestions, setAddressSuggestions] = useState<AddressSuggestion[]>([]);
@@ -69,9 +64,11 @@ export const Account: React.FC = () => {
     const [pendingValue, setPendingValue] = useState<string>('');
     const [showDatePicker, setShowDatePicker] = useState(false);
 
+    const navigation = useNavigation();
+
     const handleEdit = (field: string) => {
         setEditingField(field);
-        setTempValue(userData[field as keyof typeof userData]);
+        setTempValue(user?.[field as keyof typeof user] || '');
         if (field === 'address') {
             setSearchQuery('');
             setAddressSuggestions([]);
@@ -83,28 +80,38 @@ export const Account: React.FC = () => {
     };
 
     // Called when user tries to save (onSubmitEditing/onBlur)
-    const handleSave = () => {
-        if (editingField === 'userName' || editingField === 'email') {
+    const handleSave = async () => {
+        if (editingField === 'full_name' || editingField === 'email') {
             setPendingValue(tempValue);
             setShowConfirmationModal(true);
-        } else if (editingField) {
-            setUserData(prev => ({
-                ...prev,
-                [editingField]: tempValue
-            }));
-            setEditingField(null);
-            setAddressSuggestions([]);
-            setShowAddressModal(false);
+        } else if (editingField && user) {
+            try {
+                const response = await Api.put('users/me/', {
+                    [editingField]: tempValue
+                });
+                setUser(response.data);
+                setEditingField(null);
+                setAddressSuggestions([]);
+                setShowAddressModal(false);
+            } catch (error) {
+                console.error('Error updating field:', error);
+                Alert.alert(t('Error'), t('Failed to update field. Please try again.'));
+            }
         }
     };
 
     // Called when user confirms in modal
-    const handleConfirmSave = () => {
-        if (editingField === 'userName' || editingField === 'email') {
-            setUserData(prev => ({
-                ...prev,
-                [editingField]: pendingValue
-            }));
+    const handleConfirmSave = async () => {
+        if ((editingField === 'full_name' || editingField === 'email') && user) {
+            try {
+                const response = await Api.put('users/me/', {
+                    [editingField]: pendingValue
+                });
+                setUser(response.data);
+            } catch (error) {
+                console.error('Error updating field:', error);
+                Alert.alert(t('Error'), t('Failed to update field. Please try again.'));
+            }
         }
         setEditingField(null);
         setShowConfirmationModal(false);
@@ -125,11 +132,18 @@ export const Account: React.FC = () => {
         setTempValue(cleanedText);
     };
 
-    const handleGenderSelect = (gender: string) => {
-        setUserData(prev => ({
-            ...prev,
-            gender
-        }));
+    const handleGenderSelect = async (gender: string) => {
+        if (user) {
+            try {
+                const response = await Api.put('users/me/', {
+                    gender
+                });
+                setUser(response.data);
+            } catch (error) {
+                console.error('Error updating gender:', error);
+                Alert.alert(t('Error'), t('Failed to update gender. Please try again.'));
+            }
+        }
         setEditingField(null);
     };
 
@@ -163,25 +177,61 @@ export const Account: React.FC = () => {
         setSearchTimeout(timeout);
     };
 
-    const handleAddressSelect = (address: AddressSuggestion) => {
+    const handleAddressSelect = async (address: AddressSuggestion) => {
         setTempValue(address.display_name);
-        setUserData(prev => ({
-            ...prev,
-            address: address.display_name
-        }));
+        const [street, ...rest] = address.display_name.split(',');
+        const [postcode, city] = rest[0].trim().split(' ');
+        const country = rest[rest.length - 1].trim();
+
+        if (user) {
+            try {
+                const response = await Api.put('users/me/', {
+                    street: street.trim(),
+                    postcode,
+                    city,
+                    country
+                });
+                setUser(response.data);
+            } catch (error) {
+                console.error('Error updating address:', error);
+                Alert.alert(t('Error'), t('Failed to update address. Please try again.'));
+            }
+        }
         setEditingField(null);
         setAddressSuggestions([]);
         setShowAddressModal(false);
     };
 
-    const handleDateChange = (date: Date) => {
+    const handleDateChange = async (date: Date) => {
         setShowDatePicker(false);
-        const formatted = date.toLocaleDateString('de-DE'); // Format as DD.MM.YYYY
-        setUserData(prev => ({
-            ...prev,
-            dob: formatted
-        }));
+        const formatted = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+        if (user) {
+            try {
+                const response = await Api.put('users/me/', {
+                    dob: formatted
+                });
+                setUser(response.data);
+            } catch (error) {
+                console.error('Error updating date of birth:', error);
+                Alert.alert(t('Error'), t('Failed to update date of birth. Please try again.'));
+            }
+        }
         setEditingField(null);
+    };
+
+    const handlePhoneSave = async () => {
+        if (user) {
+            try {
+                const response = await Api.put('users/me/', {
+                    phone_number: tempValue
+                });
+                setUser(response.data);
+                setEditingField(null);
+            } catch (error) {
+                console.error('Error updating phone number:', error);
+                Alert.alert(t('Error'), t('Failed to update phone number. Please try again.'));
+            }
+        }
     };
 
     // Cleanup timeout on unmount
@@ -192,10 +242,6 @@ export const Account: React.FC = () => {
             }
         };
     }, [searchTimeout]);
-
-    // TODO: get user data from API
-    const dateJoined = '01.04.2022';
-    const dob = '02.02.2002';
 
     const renderEditableField = (field: string, value: string) => {
         if (editingField === field) {
@@ -281,9 +327,9 @@ export const Account: React.FC = () => {
             if (field === 'dob') {
                 return (
                     <>
-                        <S.ItemValue>{userData.dob}</S.ItemValue>
+                        <S.ItemValue>{user?.dob}</S.ItemValue>
                         <GenericDateTimePicker
-                            value={userData.dob ? new Date(userData.dob.split('.').reverse().join('-')) : new Date()}
+                            value={user?.dob ? new Date(user?.dob.split('.').reverse().join('-')) : new Date()}
                             mode="date"
                             onChange={handleDateChange}
                             maximumDate={new Date()}
@@ -315,138 +361,110 @@ export const Account: React.FC = () => {
     };
 
 
-// import { rem } from '../utils/responsive';
-// import api from '../api/client';
-// import { useEffect } from 'react';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { Alert } from 'react-native';
-// import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
+    // state for current user profile
+    const [user, setUser] = useState<null | {
+        full_name: string;
+        date_joined: string;
+        gender: string;
+        dob: string;
+        email: string;
+        phone_number: string;
+        street: string;
+        city: string;
+        postcode: string;
+        country: string;
+    }>(null);
 
-// export const Account: React.FC = () => {
-//     const { t } = useTranslation();
-//     const navigation = useNavigation();
+    useEffect(() => {
+        Api.get('users/me/')
+            .then(res => setUser(res.data))
+            .catch(err => console.error('Could not load profile', err));
+    }, []);
 
-//     // state for current user profile
-//     const [user, setUser] = useState<null | {
-//         full_name: string;
-//         date_joined: string;
-//         gender: string;
-//         dob: string;
-//         email: string;
-//         phone_number: string;
-//         street: string;
-//         city: string;
-//         postcode: string;
-//         country: string;
-//     }>(null);
+    // Fetch when screen is focused
+    useFocusEffect(
+        React.useCallback(() => {
+            let isActive = true;
 
-//     useEffect(() => {
-//         api.get('users/me/')
-//            .then(res => setUser(res.data))
-//            .catch(err => console.error('Could not load profile', err));
-//     }, []);
+            (async () => {
+                const token = await AsyncStorage.getItem('accessToken');
+                if (!token) {
+                    (navigation as any).reset({
+                        index: 0,
+                        routes: [{ name: 'Login' }],
+                    });
+                    return;
+                }
+                try {
+                    const res = await Api.get('users/me/');
+                    if (isActive) setUser(res.data);
+                } catch (err: any) {
+                    if (err.response?.status === 401) {
+                        await AsyncStorage.multiRemove(['accessToken', 'refreshToken', 'user']);
+                        (navigation as any).reset({
+                            index: 0,
+                            routes: [{ name: 'Login' }],
+                        });
+                    } else {
+                        console.error('Could not load profile', err);
+                        Alert.alert(t('Error'), t('Could not load profile'));
+                    }
+                }
+            })();
 
-//     // Fetch when screen is focused
-//     useFocusEffect(
-//         React.useCallback(() => {
-//         let isActive = true;
+            return () => {
+                isActive = false;
+            };
+        }, [navigation, t])
+    );
 
-//         (async () => {
-//             const token = await AsyncStorage.getItem('accessToken');
-//             if (!token) {
-//                 (navigation as any).reset({
-//                     index: 0,
-//                     routes: [{ name: 'Login' }],
-//                   });
-//             return;
-//             }
-//             try {
-//             const res = await api.get('users/me/');
-//             if (isActive) setUser(res.data);
-//             } catch (err: any) {
-//             if (err.response?.status === 401) {
-//                 await AsyncStorage.multiRemove(['accessToken','refreshToken','user']);
-//                 (navigation as any).reset({
-//                     index: 0,
-//                     routes: [{ name: 'Login' }],
-//                   });
-//             } else {
-//                 console.error('Could not load profile', err);
-//                 Alert.alert(t('Error'), t('Could not load profile'));
-//             }
-//             }
-//         })();
+    const handleSignOut = async () => {
+        const refresh = await AsyncStorage.getItem('refreshToken');
+        if (refresh) await Api.post('logout/', { refresh });
+        await AsyncStorage.multiRemove(['accessToken', 'refreshToken', 'user']);
+        Api.defaults.headers.Authorization = '';
 
-//         return () => {
-//             isActive = false;
-//         };
-//         }, [navigation, t])
-//     );
+        (navigation as any).reset({
+            index: 0,
+            routes: [{ name: 'Login' }],
+        });
+    };
 
-//     const handleSignOut = async () => {
-//         const refresh = await AsyncStorage.getItem('refreshToken');
-//         if (refresh) await api.post('logout/', { refresh });
-//         await AsyncStorage.multiRemove(['accessToken','refreshToken','user']);
-//         api.defaults.headers.Authorization = '';
-      
-//         (navigation as any).reset({
-//             index: 0,
-//             routes: [{ name: 'Login' }],
-//           });
-//       };
+    const handleDelete = () => {
+        Alert.alert(
+            t('Delete My Account'),
+            t('Are you sure you want to delete your account? This cannot be undone.'),
+            [
+                { text: t('Cancel'), style: 'cancel' },
+                {
+                    text: t('Delete'),
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            await Api.delete('users/me/');
+                            await AsyncStorage.multiRemove(['accessToken', 'refreshToken', 'user']);
+                            (navigation as any).reset({
+                                index: 0,
+                                routes: [{ name: 'Login' }],
+                            });
+                        } catch (err: any) {
+                            console.error('Delete failed', err);
+                            Alert.alert(t('Error'), t('Could not delete account. Please try again.'));
+                        }
+                    }
+                }
+            ]
+        );
+    };
 
-//       const handleDelete = () => {
-//         Alert.alert(
-//           t('Delete My Account'),
-//           t('Are you sure you want to delete your account? This cannot be undone.'),
-//           [
-//             { text: t('Cancel'), style: 'cancel' },
-//             {
-//               text: t('Delete'),
-//               style: 'destructive',
-//               onPress: async () => {
-//                 try {
-//                   await api.delete('users/me/');
-//                   await AsyncStorage.multiRemove(['accessToken','refreshToken','user']);
-//                   (navigation as any).reset({
-//                     index: 0,
-//                     routes: [{ name: 'Login' }],
-//                   });
-//                 } catch (err: any) {
-//                   console.error('Delete failed', err);
-//                   Alert.alert(t('Error'), t('Could not delete account. Please try again.'));
-//                 }
-//               }
-//             }
-//           ]
-//         );
-//       };
-
-//     if (!user) {
-//         return (
-//             <S.Scroll>
-//                 <S.UserName>{t('Loading...')}</S.UserName>
-//             </S.Scroll>
-//         );
-//     }
-
-//     const userName   = user.full_name;
-//     const dateJoined = new Date(user.date_joined).toLocaleDateString();
-//     const gender     = user.gender;
-//     const dob        = new Date(user.dob).toLocaleDateString();
-//     const email      = user.email;
-//     const phone      = user.phone_number;
-//     const address    = `${user.street}\n${user.postcode} ${user.city}\n${user.country}`;
-
-//     // TODO: get user data from API
-//     // const userName = 'Jane Julian Vernonica Doe';
-//     // const dateJoined = '01.04.2022';
-//     // const gender = 'Female';
-//     // const dob = '02.02.2002';
-//     // const email = 'somtochukwumbuko@gmail.com';
-//     // const phone = '0162-7033954';
-//     // const address = 'Alois-Gäbl-Str. 4\n84347 Pfarrkirchen\nDeutschland';
+    if (!user) {
+        return (
+            <S.Scroll>
+                <S.UserName>{t('Loading...')}</S.UserName>
+            </S.Scroll>
+        );
+    }
 
     return (
         <S.Scroll contentContainerStyle={{ paddingBottom: Platform.OS === 'android' ? insets.bottom + 24 : 0 }}>
@@ -464,8 +482,8 @@ export const Account: React.FC = () => {
                         />
                     </S.ProfileImage>
                     <S.ProfileInfo>
-                        <S.UserName>{userData.userName}</S.UserName>
-                        <S.DateJoined>{t('Joined')} {dateJoined}</S.DateJoined>
+                        <S.UserName>{user?.full_name}</S.UserName>
+                        <S.DateJoined>{t('Joined')} {user?.date_joined}</S.DateJoined>
                         <S.QRButton>
                             <RenderIcon
                                 family="materialCommunity"
@@ -484,16 +502,16 @@ export const Account: React.FC = () => {
                 <S.ItemRow>
                     <S.ItemTextCol>
                         <S.ItemLabel>{t('Name')}</S.ItemLabel>
-                        {renderEditableField('userName', userData.userName)}
+                        {renderEditableField('full_name', user?.full_name)}
                     </S.ItemTextCol>
-                    <S.EditIconBtnLight onPress={() => handleEdit('userName')}>
+                    <S.EditIconBtnLight onPress={() => handleEdit('full_name')}>
                         <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
                     </S.EditIconBtnLight>
                 </S.ItemRow>
                 <S.ItemRow>
                     <S.ItemTextCol>
                         <S.ItemLabel>{t('Gender')}</S.ItemLabel>
-                        {renderEditableField('gender', userData.gender)}
+                        {renderEditableField('gender', user?.gender)}
                     </S.ItemTextCol>
                     <S.EditIconBtnLight onPress={() => handleEdit('gender')}>
                         <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
@@ -502,7 +520,7 @@ export const Account: React.FC = () => {
                 <S.ItemRow>
                     <S.ItemTextCol>
                         <S.ItemLabel>{t('Date of birth')}</S.ItemLabel>
-                        {renderEditableField('dob', userData.dob)}
+                        {renderEditableField('dob', user?.dob)}
                     </S.ItemTextCol>
                     <S.EditIconBtnLight onPress={() => handleEdit('dob')}>
                         <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
@@ -515,7 +533,7 @@ export const Account: React.FC = () => {
                 <S.ItemRow>
                     <S.ItemTextCol>
                         <S.ItemLabel>{t('Email address')}</S.ItemLabel>
-                        {renderEditableField('email', userData.email)}
+                        {renderEditableField('email', user?.email)}
                     </S.ItemTextCol>
                     <S.EditIconBtnLight onPress={() => handleEdit('email')}>
                         <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
@@ -524,31 +542,31 @@ export const Account: React.FC = () => {
                 <S.ItemRow>
                     <S.ItemTextCol>
                         <S.ItemLabel>{t('Phone number')}</S.ItemLabel>
-                        {renderEditableField('phone', userData.phone)}
+                        {renderEditableField('phone_number', user?.phone_number)}
                     </S.ItemTextCol>
-                    <S.EditIconBtnLight onPress={() => handleEdit('phone')}>
+                    <S.EditIconBtnLight onPress={() => handleEdit('phone_number')}>
                         <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
                     </S.EditIconBtnLight>
                 </S.ItemRow>
                 <S.ItemRow>
                     <S.ItemTextCol>
                         <S.ItemLabel>{t('Address')}</S.ItemLabel>
-                        {renderEditableField('address', userData.address)}
+                        {renderEditableField('street', user?.street + '\n' + user?.postcode + ' ' + user?.city + '\n' + user?.country)}
                     </S.ItemTextCol>
-                    <S.EditIconBtnLight onPress={() => handleEdit('address')}>
+                    <S.EditIconBtnLight onPress={() => handleEdit('street')}>
                         <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
                     </S.EditIconBtnLight>
                 </S.ItemRow>
             </S.LightCard>
 
-            <S.DeleteButton onPress={() => {}}>
+            <S.DeleteButton onPress={handleDelete}>
                 <S.DeleteButtonText>{t('Delete My Account')}</S.DeleteButtonText>
             </S.DeleteButton>
 
             <S.ActionButton>
                 <S.ActionButtonText>{t('Change password')}</S.ActionButtonText>
             </S.ActionButton>
-            <S.ActionButton onPress={() => {}}>
+            <S.ActionButton onPress={handleSignOut}>
                 <S.ActionButtonText>{t('Sign out')}</S.ActionButtonText>
             </S.ActionButton>
 
@@ -557,7 +575,7 @@ export const Account: React.FC = () => {
                 onClose={handleCancel}
                 onConfirm={handleConfirmSave}
                 heading={"Save Changes"}
-                message={editingField === 'userName'
+                message={editingField === 'full_name'
                     ? t('Are you sure you want to update your name?')
                     : t('Are you sure you want to update your email address?')}
                 confirmText={t('Confirm')}
