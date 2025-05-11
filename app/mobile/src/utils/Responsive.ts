@@ -11,3 +11,5 @@ export const rem = (size: number): number => {
 
     return Math.round(PixelRatio.roundToNearestPixel(newSize));
 };
+
+// TODO: Confirm this works for all device sizes
