@@ -8,6 +8,7 @@ echo "HOST_IP=$HOST_IP" > .env
 
 echo "✨✨✨ Mobile App visible on exp://$HOST_IP:8081 ✨✨✨"
 echo "✨✨✨ Web App visible on http://$HOST_IP:3000 ✨✨✨"
+echo "✨✨✨ Local Web App visible on http://localhost:3000 ✨✨✨"
 
 if [ "$1" = "--build" ]; then
   docker-compose up --build
