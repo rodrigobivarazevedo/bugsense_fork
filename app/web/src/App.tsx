@@ -1,30 +1,29 @@
 import { useTranslation } from 'react-i18next';
 import { I18nextProvider } from 'react-i18next';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import i18n from './translations/18n';
-import logo from './logo.svg';
-import './App.css';
+import Home from './views/Home';
+import Account from './views/Account';
+import HeaderBar from './components/HeaderBar';
+import Root from './root/Root';
 
 function App() {
   const { t } = useTranslation();
 
   return (
     <I18nextProvider i18n={i18n}>
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          {t('hello')}
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-          </a>
-        </header>
-      </div>
+      <Router>
+        <div>
+          <HeaderBar />
+          <Root>
+            <Routes>
+              <Route path="*" element={<div>Page not found</div>} />
+              <Route path="/" element={<Home />} />
+              <Route path="/account" element={<Account />} />
+            </Routes>
+          </Root>
+        </div>
+      </Router>
     </I18nextProvider>
   );
 }
