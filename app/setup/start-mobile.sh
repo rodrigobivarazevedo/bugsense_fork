@@ -1,10 +1,13 @@
 #!/bin/sh
 
+# Create tmp directory if it doesn't exist
+mkdir -p /app/tmp
+
 # Start the mobile app in the background
-yarn start --lan > /tmp/mobile.log 2>&1 &
+yarn start --lan > /app/tmp/mobile.log 2>&1 &
 
 # Wait for the app to be ready
-while ! grep -q "Waiting on http://localhost:8081" /tmp/mobile.log; do
+while ! grep -q "Waiting on http://localhost:8081" /app/tmp/mobile.log; do
     sleep 1
 done
 
@@ -12,4 +15,4 @@ done
 echo "✨✨✨ Mobile App visible on exp://${HOST_IP}:8081 ✨✨✨"
 
 # Keep the container running and show the logs
-tail -f /tmp/mobile.log 
+tail -f /app/tmp/mobile.log 
