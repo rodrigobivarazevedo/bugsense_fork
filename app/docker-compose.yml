@@ -36,11 +36,12 @@ services:
     volumes:
       - ./web:/app
       - /app/node_modules
+      - ./setup:/app/setup
     depends_on:
       - backend
     networks:
       - app_network
-    command: yarn start --lan
+    command: sh /app/setup/start-web.sh
 
   mobile:
     build:
@@ -62,11 +63,12 @@ services:
     volumes:
       - ./mobile:/app
       - /app/node_modules
+      - ./setup:/app/setup
     depends_on:
       - backend
     networks:
       - app_network
-    command: yarn start --lan
+    command: sh /app/setup/start-mobile.sh
 
   db:
     image: postgres:15
