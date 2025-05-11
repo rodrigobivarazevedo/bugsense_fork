@@ -21,6 +21,27 @@ services:
     networks:
       - app_network
 
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        - API_URL=http://${HOST_IP}:8000/api/
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - HOST_IP=${HOST_IP}
+      - API_URL=http://${HOST_IP}:8000/api/
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - app_network
+    command: yarn start --lan
+
   mobile:
     build:
       context: ./mobile
