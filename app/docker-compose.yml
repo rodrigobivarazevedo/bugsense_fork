@@ -74,6 +74,7 @@ services:
     image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./setup:/app/setup
     environment:
       - POSTGRES_DB=bugsense
       - POSTGRES_USER=bugsenseadmin

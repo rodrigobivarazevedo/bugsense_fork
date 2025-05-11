@@ -1,19 +1,24 @@
 #!/bin/sh
 
-# Create tmp directory if it doesn't exist
+echo "Starting web service setup..."
+
 mkdir -p /app/tmp
+echo "Created tmp directory"
 
-# Start the web app in the background
+echo "Starting web app..."
 yarn start --lan > /app/tmp/web.log 2>&1 &
+echo "Web app started in background"
 
-# Wait for the app to be ready
-while ! grep -q "You can now view web in the browser" /app/tmp/web.log; do
-    sleep 1
+echo "Waiting for web app to be ready..."
+while true; do
+    if grep -q "webpack compiled" /app/tmp/web.log; then
+        break
+    fi
+    sleep 2
 done
 
-# Show the URL message
 echo "✨✨✨ Web App visible on http://${HOST_IP}:3000 ✨✨✨"
 echo "✨✨✨ Local Web App visible on http://localhost:3000 ✨✨✨"
 
-# Keep the container running and show the logs
+echo "Starting to show web app logs..."
 tail -f /app/tmp/web.log 
