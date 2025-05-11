@@ -21,6 +21,28 @@ services:
     networks:
       - app_network
 
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        - API_URL=http://${HOST_IP}:8000/api/
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - HOST_IP=${HOST_IP}
+      - API_URL=http://${HOST_IP}:8000/api/
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+      - ./setup:/app/setup
+    depends_on:
+      - backend
+    networks:
+      - app_network
+    command: sh /app/setup/start-web.sh
+
   mobile:
     build:
       context: ./mobile
@@ -41,11 +63,12 @@ services:
     volumes:
       - ./mobile:/app
       - /app/node_modules
+      - ./setup:/app/setup
     depends_on:
       - backend
     networks:
       - app_network
-    command: yarn start --lan
+    command: sh /app/setup/start-mobile.sh
 
   db:
     image: postgres:15
