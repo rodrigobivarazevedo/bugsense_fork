@@ -2,8 +2,6 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from .models import CustomUser
 
-# Our existing UserSerializer
-
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,9 +33,6 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
 
-# Extend the JWT pair serializer to embed user info
-
-
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -54,3 +49,37 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=8)
+
+    class Meta:
+        model = CustomUser
+        fields = [
+            "email",
+            "full_name",
+            "gender",
+            "dob",
+            "phone_number",
+            "street",
+            "city",
+            "postcode",
+            "country",
+            "password",
+        ]
+
+    def create(self, validated_data):
+        user = CustomUser.objects.create_user(
+            email=validated_data["email"],
+            password=validated_data["password"],
+            full_name=validated_data.get("full_name", ""),
+            gender=validated_data.get("gender", ""),
+            dob=validated_data.get("dob", None),
+            phone_number=validated_data.get("phone_number", ""),
+            street=validated_data.get("street", ""),
+            city=validated_data.get("city", ""),
+            postcode=validated_data.get("postcode", ""),
+            country=validated_data.get("country", ""),
+        )
+        return user
