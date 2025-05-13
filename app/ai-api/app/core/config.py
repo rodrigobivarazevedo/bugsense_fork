@@ -59,7 +59,7 @@ class SecretsManager:
                 print("Using Docker for Local Development")
                 if db_name == "ml_bugsense":
                     port = "5432"
-                    ip_adress = "ml_db" 
+                    ip_adress = "ml-db" 
                 
             return f"postgresql+psycopg://{db_user}:{db_password}@{ip_adress}:{port}/{db_name}"
         

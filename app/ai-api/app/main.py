@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import inspect
 from app.db.orm_models import Base
@@ -7,6 +7,7 @@ from app.db.database import get_db
 from app.core.security import get_api_key
 from fastapi import FastAPI, Depends
 from app.core.async_middleware import redis_client, middleware_monitoring, logger
+from app.routers.api import api_router
 
 #==================================== Lifespan events ========================================================
 
@@ -39,14 +40,13 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="App service", 
-    description="API for coreway app", 
+    title="ML BugSense API",
+    description="API for ML BugSense", 
     version="1", 
-     docs_url=None,         # disables /docs
+    docs_url=None,         # disables /docs
     redoc_url=None,        # disables /redoc
     openapi_url=None,       # disables /openapi.json
     lifespan=lifespan,
-    dependencies=[Depends(get_api_key)]  # 🔐 Global API Key Protection
     )
 
 #==================================== Middleware ========================================================
@@ -72,7 +72,7 @@ app.add_middleware(
 )
 
 # Include the API router
-#app.include_router(api_router)
+app.include_router(api_router)
 
 #==================================== Database initialization ========================================================
 
@@ -102,7 +102,7 @@ def create_tables(db_name: str, base):
 
         
         
-@app.get("/health", dependencies=[Depends(get_api_key)])
+@app.get("/health")
 async def health_check():
     return {"status": "ok"}
 
