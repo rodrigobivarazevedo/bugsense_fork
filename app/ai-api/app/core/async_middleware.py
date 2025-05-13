@@ -31,7 +31,7 @@ elif environment == "staging":
     REDIS_DB = int(os.getenv("REDIS_DB", "1"))
     REDIS_MAX_CONNECTIONS = int(os.getenv("REDIS_MAX_CONNECTIONS", "50"))
 else:
-    REDIS_HOST = os.getenv("LOCAL_REDIS_HOST", "redis-service")
+    REDIS_HOST = os.getenv("LOCAL_REDIS_HOST", "ml-redis-service")
     REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
     REDIS_DB = int(os.getenv("REDIS_DB", "0"))
     REDIS_MAX_CONNECTIONS = int(os.getenv("REDIS_MAX_CONNECTIONS", "20"))

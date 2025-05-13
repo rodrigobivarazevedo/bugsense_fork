@@ -2,7 +2,6 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import inspect
-from app.routers.api import api_router
 from app.db.orm_models import Base
 from app.db.database import get_db
 from app.core.security import get_api_key
@@ -61,7 +60,6 @@ origins = [
     "http://localhost:8080",
     "http://localhost:3000",
     "http://localhost:8081",
-    "https://api-coreway.com",
 ]
 
 # CORS middleware configuration
@@ -74,7 +72,7 @@ app.add_middleware(
 )
 
 # Include the API router
-app.include_router(api_router)
+#app.include_router(api_router)
 
 #==================================== Database initialization ========================================================
 
@@ -111,4 +109,4 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    uvicorn.run(app, host="0.0.0.0", port=5001)
