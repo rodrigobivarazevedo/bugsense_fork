@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  ml_service:
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0 --port 5000
+    volumes:
+      - .:/app
+      - ./dump:/app/dump  # Ensure the data directory is mounted
+    ports:
+      - "5000:5000"
+    depends_on:
+      users_db:
+        condition: service_healthy
+      redis-service:
+        condition: service_started  # Ensure Redis is running before the app starts
+    environment:
+      - REDIS_HOST=ml-redis-service
+      - REDIS_PORT=6379  # Using the default Redis port
+
+  ml-redis-service:
+    image: "redis:latest"
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data 
+
+  ml-db:
+    image: postgres:15-alpine
+    restart: always
+    ports:
+      - "5433:5432"  # PostgreSQL is exposed on port 5433
+    volumes:
+      - ./dump/users_db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=ml_bugsense
+      - POSTGRES_USER=bugsense
+      - POSTGRES_PASSWORD=bugsense
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ml_bugsense -U bugsense"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  ml-db_data:
+  ml-redis_data:
+    driver: local

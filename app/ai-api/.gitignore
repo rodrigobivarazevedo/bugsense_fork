@@ -1,0 +1,35 @@
+/dump
+/pgadmin
+/data
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.env/
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+.env
+
+env
+
+bugsense_venv
+
+# Ignore pytest cache directories
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache/
+
+
+secrets.yaml
+
+
