@@ -9,7 +9,7 @@ class UserSchema(BaseModel):
     is_active: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TestStripSchema(BaseModel):
     id: int
@@ -18,7 +18,7 @@ class TestStripSchema(BaseModel):
     description: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class TestResultSchema(BaseModel):
@@ -29,7 +29,7 @@ class TestResultSchema(BaseModel):
     confidence: float
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class BacteriaSpeciesSchema(BaseModel):
@@ -38,7 +38,7 @@ class BacteriaSpeciesSchema(BaseModel):
     description: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ModelPerformanceSchema(BaseModel):
@@ -52,7 +52,7 @@ class ModelPerformanceSchema(BaseModel):
     date_evaluated: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class PredictionHistorySchema(BaseModel):
@@ -65,7 +65,7 @@ class PredictionHistorySchema(BaseModel):
     date_predicted: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class TokenData(BaseModel):
@@ -73,4 +73,4 @@ class TokenData(BaseModel):
     scope: str
     
     class Config:
-        orm_mode = True
+        from_attributes = True

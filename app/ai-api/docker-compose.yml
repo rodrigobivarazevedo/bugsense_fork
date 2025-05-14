@@ -14,15 +14,15 @@ services:
         condition: service_started  # Ensure Redis is running before the app starts
     environment:
       - REDIS_HOST=ml-redis-service
-      - REDIS_PORT=6379  # Using the default Redis port
+      - REDIS_PORT=6379  # Inside container Redis still runs on 6379
 
   ml-redis-service:
     image: "redis:latest"
     restart: always
     ports:
-      - "6379:6379"
+      - "6380:6379"  # Updated host port to avoid conflict
     volumes:
-      - ml-redis_data:/data 
+      - ml-redis_data:/data
 
   ml-db:
     image: postgres:15-alpine
