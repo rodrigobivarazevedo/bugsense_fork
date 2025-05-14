@@ -1,6 +1,6 @@
 import { useState, FC } from 'react';
 import { useTranslation } from 'react-i18next';
-// import RenderLottie from '../components/RenderLottie';
+import RenderLottie from '../components/RenderLottie';
 // import RenderIcon from '../components/RenderIcon';
 import styles from './Home.module.css';
 
@@ -20,11 +20,11 @@ const Home: FC = () => {
                 <div className={styles.headerRow}>
                     <p>THIS IS HOME</p>
                     <div className={styles.lottie}>
-                        {/* <RenderLottie
+                        <RenderLottie
                             name="homeHello"
                             startFrame={0}
                             endFrame={150}
-                        /> */}
+                        />
                     </div>
                 </div>
                 <h1 className={styles.userName}>{userName}</h1>
