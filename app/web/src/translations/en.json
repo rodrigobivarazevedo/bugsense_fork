@@ -9,5 +9,8 @@
     "select_language": "Select Language",
     "hello": "Hello",
     "account": "Account",
-    "home": "Home"
+    "home": "Home",
+    "scan": "Scan",
+    "results": "Results",
+    "more": "More"
 }

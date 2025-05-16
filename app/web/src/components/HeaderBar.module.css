@@ -1,9 +1,10 @@
 .nav {
-  background-color: #ECE6FF;
-  padding: 1rem;
+  background-color: #ece6ff;
+  padding: 0rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
-  gap: 1rem;
+  justify-content: flex-start;
+  align-items: center;
   position: fixed;
   top: 0;
   left: 0;
@@ -12,9 +13,10 @@
 }
 
 .navLink {
-  color: #333;
+  margin: 0 1rem;
+  color: #000000;
   text-decoration: none;
-  padding: 0.5rem 1rem;
+  padding: 1rem;
   border-radius: 4px;
   transition: background-color 0.2s ease;
 }
@@ -24,6 +26,25 @@
 }
 
 .navLink.active {
-  background-color: #e0e0e0;
-  font-weight: 500;
-} 
+  font-weight: bold;
+  color: #2e2747;
+}
+
+.logoLink {
+  margin-right: auto;
+  padding-bottom: 3rem;
+  padding-left: 1.5rem;
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  padding-right: 0.5rem;
+  color: #2e2747;
+}
+
+.icon {
+  margin-left: 1.25rem;
+  cursor: pointer; 
+}

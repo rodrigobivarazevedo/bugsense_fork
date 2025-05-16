@@ -29,7 +29,7 @@ const RenderLottie: FC<RenderLottieProps> = ({
             loop={loop}
             autoplay={autoPlay}
             initialSegment={startFrame && endFrame ? [startFrame, endFrame] : undefined}
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '20%', height: '20%' }}
         />
     );
 };
