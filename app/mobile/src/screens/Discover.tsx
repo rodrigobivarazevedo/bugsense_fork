@@ -6,64 +6,65 @@ import { Platform } from 'react-native';
 
 const bacteriaList = [
     {
-        id: '1',
+        id: 'escherichia-coli',
         name: 'Escherichia coli',
         description: 'Common gut bacteria that can cause foodborne illness',
         image: require('../assets/images/bacteria/escherichia-coli.png')
     },
     {
-        id: '2',
+        id: 'salmonella',
         name: 'Salmonella',
         description: 'Bacteria that can cause food poisoning and typhoid fever',
         image: require('../assets/images/bacteria/salmonella.png')
     },
     {
-        id: '3',
+        id: 'listeria-monocytogenes',
         name: 'Listeria monocytogenes',
         description: 'Can cause serious infections, especially in pregnant women',
         image: require('../assets/images/bacteria/listeria-monocytogenes.png')
     },
     {
-        id: '4',
+        id: 'staphylococcus-aureus',
         name: 'Staphylococcus aureus',
         description: 'Common bacteria that can cause skin infections',
         image: require('../assets/images/bacteria/staphylococcus-aureus.png')
     },
     {
-        id: '5',
+        id: 'campylobacter',
         name: 'Campylobacter',
         description: 'Leading cause of bacterial foodborne illness',
         image: require('../assets/images/bacteria/campylobacter.png')
     },
     {
-        id: '6',
+        id: 'clostridium-perfringens',
         name: 'Clostridium perfringens',
         description: 'Bacteria that can cause food poisoning and gas gangrene',
         image: require('../assets/images/bacteria/clostridium-perfringens.png')
     },
     {
-        id: '7',
+        id: 'streptococcus-pyogenes',
         name: 'Streptococcus pyogenes',
         description: 'Bacteria that can cause strep throat and scarlet fever',
         image: require('../assets/images/bacteria/streptococcus-pyogenes.png')
     },
     {
-        id: '8',
+        id: 'streptococcus-pneumoniae',
         name: 'Streptococcus pneumoniae',
         description: 'Bacteria that can cause pneumonia and meningitis',
         image: require('../assets/images/bacteria/streptococcus-pneumoniae.png')
     },
 ];
 
-export const Discover: React.FC = () => {
+export const Discover: React.FC<any> = ({ navigation }) => {
     const { t } = useTranslation();
     const insets = useSafeAreaInsets();
+
     const handleBacteriaPress = (id: string) => {
-        console.log(`Pressed bacteria with id: ${id}`);
+        navigation.navigate('BacteriaRouter', { id });
     };
 
     return (
-        <S.Root contentContainerStyle={{ paddingBottom: Platform.OS === 'ios' ? insets.bottom + 30 : 60}}>
+        <S.Root contentContainerStyle={{ paddingBottom: Platform.OS === 'ios' ? insets.bottom + 30 : 60 }}>
             <S.Title>{t('discover_bacteria')}</S.Title>
             <S.Subtitle>{t('discover_bacteria_subtitle')}</S.Subtitle>
             <S.BacteriaGrid>
