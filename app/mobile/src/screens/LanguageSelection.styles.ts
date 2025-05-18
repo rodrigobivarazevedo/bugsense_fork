@@ -17,6 +17,7 @@ export const styles = StyleSheet.create({
     languageButton: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
         padding: 15,
         backgroundColor: themeColors.white,
         borderRadius: 10,

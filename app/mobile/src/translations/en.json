@@ -6,6 +6,7 @@
     "please_confirm": "Please confirm",
     "ok_capital": "OK",
     "cancel": "Cancel",
-    "select_language": "Select Language",
-    "hello": "Hello"
+    "select_language": "Select language",
+    "hello": "Hello",
+    "language": "Language"
 }

@@ -8,7 +8,7 @@ import { rem } from '../utils/Responsive';
 
 const MAIN_TABS = ['Home', 'Scan', 'Results', 'More'];
 
-const HeaderBar: React.FC<any> = ({ navigation, route }) => {
+const HeaderBar: React.FC<any> = ({ navigation, route, options }) => {
     const insets = useSafeAreaInsets();
     const isMainTab = MAIN_TABS.includes(route.name);
 
@@ -55,7 +55,7 @@ const HeaderBar: React.FC<any> = ({ navigation, route }) => {
                         />
                     </TouchableOpacity>
                     <Text style={{ fontSize: rem(1.25), color: '#000', fontWeight: '500' }}>
-                        {route.name}
+                        {options?.headerTitle || route.name}
                     </Text>
                 </View>
             )}

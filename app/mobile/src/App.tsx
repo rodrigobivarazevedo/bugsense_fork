@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import './translations/i18n';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './translations/i18n';
+import { useTranslation } from 'react-i18next';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -18,19 +19,19 @@ import Account from './screens/Account';
 import LanguageSelection from './screens/LanguageSelection';
 
 const routes = [
-  { name: 'Login', component: Login, wrapped: false },
+  // { name: 'Login', component: Login, wrapped: false },
   { name: 'Home', component: Home, wrapped: true },
   { name: 'Scan', component: Scan, wrapped: true },
   { name: 'Results', component: Results, wrapped: true },
   { name: 'More', component: More, wrapped: true },
   { name: 'Account', component: Account, wrapped: true },
-  { name: 'LanguageSelection', component: LanguageSelection, wrapped: true },
+  { name: 'LanguageSelection', alias: 'language', component: LanguageSelection, wrapped: true },
 ];
 
 export default function App() {
   const [currentRoute, setCurrentRoute] = useState<string>('Home');
   const navRef = useRef<NavigationContainerRef<any>>(null);
-
+  const { t } = useTranslation();
   const isWrapped = routes.find(r => r.name === currentRoute)?.wrapped;
   const Stack = createNativeStackNavigator();
 
@@ -68,11 +69,14 @@ export default function App() {
                   },
                 }}
               >
-                {routes.map(({ name, component: Component }) => (
+                {routes.map(({ name, alias, component: Component }) => (
                   <Stack.Screen
                     key={name}
                     name={name}
                     component={Component}
+                    options={{
+                      headerTitle: alias ? t(alias) : t(name)
+                    }}
                   />
                 ))}
               </Stack.Navigator>
