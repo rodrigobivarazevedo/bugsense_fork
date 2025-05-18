@@ -6,6 +6,15 @@
     "please_confirm": "Please confirm",
     "ok_capital": "OK",
     "cancel": "Cancel",
-    "select_language": "Select Language",
-    "hello": "Hello"
+    "select_language": "Select language",
+    "hello": "Hello",
+    "language": "Language",
+    "app_settings": "App settings",
+    "more_info_and_support": "More info and support",
+    "device_permissions": "Device permissions",
+    "email_us": "Email us",
+    "call_us": "Call us",
+    "visit_our_website": "Visit our website",
+    "discover_bacteria": "Discover Bacteria",
+    "discover_bacteria_subtitle": "Learn about the bacteria that BugSense test kits can detect"
 }

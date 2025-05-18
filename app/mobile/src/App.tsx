@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import './translations/i18n';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './translations/i18n';
+import { useTranslation } from 'react-i18next';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -16,22 +17,26 @@ import Results from './screens/Results';
 import More from './screens/More';
 import Account from './screens/Account';
 import LanguageSelection from './screens/LanguageSelection';
+import Discover from './screens/Discover';
+import BacteriaRouter from './screens/BacteriaRouter';
 
 const routes = [
   { name: 'Login', component: Login, wrapped: false },
-  { name: 'Home', component: Home, wrapped: true },
-  { name: 'Scan', component: Scan, wrapped: true },
-  { name: 'Results', component: Results, wrapped: true },
-  { name: 'More', component: More, wrapped: true },
-  { name: 'Account', component: Account, wrapped: true },
-  { name: 'LanguageSelection', component: LanguageSelection, wrapped: true },
+  { name: 'Home', component: Home, wrapped: true, showBottomBar: true },
+  { name: 'Scan', component: Scan, wrapped: true, showBottomBar: true },
+  { name: 'Results', component: Results, wrapped: true, showBottomBar: true },
+  { name: 'More', component: More, wrapped: true, showBottomBar: true },
+  { name: 'Account', component: Account, wrapped: true, showBottomBar: true },
+  { name: 'LanguageSelection', alias: 'language', component: LanguageSelection, wrapped: true, showBottomBar: false },
+  { name: 'Discover', component: Discover, wrapped: true, showBottomBar: false },
+  { name: 'BacteriaRouter', alias: 'discover_bacteria', component: BacteriaRouter, wrapped: true, showBottomBar: false },
 ];
 
 export default function App() {
   const [currentRoute, setCurrentRoute] = useState<string>('Home');
   const navRef = useRef<NavigationContainerRef<any>>(null);
-
-  const isWrapped = routes.find(r => r.name === currentRoute)?.wrapped;
+  const { t } = useTranslation();
+  const showBottomBar = routes.find(r => r.name === currentRoute)?.showBottomBar;
   const Stack = createNativeStackNavigator();
 
   const AppContainer = styled.View`
@@ -68,16 +73,19 @@ export default function App() {
                   },
                 }}
               >
-                {routes.map(({ name, component: Component }) => (
+                {routes.map(({ name, alias, component: Component }) => (
                   <Stack.Screen
                     key={name}
                     name={name}
                     component={Component}
+                    options={{
+                      headerTitle: alias ? t(alias) : t(name)
+                    }}
                   />
                 ))}
               </Stack.Navigator>
             </ContentContainer>
-            {isWrapped && <BottomBar />}
+            {showBottomBar && <BottomBar />}
           </AppContainer>
         </NavigationContainer>
       </I18nextProvider>

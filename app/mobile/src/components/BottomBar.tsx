@@ -2,86 +2,61 @@ import React, { useState, useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
 import * as S from './BottomBar.styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import NavigationRoute, { RouteName } from './NavigationRoute';
-import { useNavigationState } from '@react-navigation/native';
+import { useNavigation, useNavigationState } from '@react-navigation/native';
 import RenderIcon from './RenderIcon';
+
+type TabConfig = {
+    key: string;
+    label: string;
+    family: string;
+    icon: string;
+};
+
+const TABS: TabConfig[] = [
+    { key: 'home', label: 'Home', family: 'foundation', icon: 'home' },
+    { key: 'scan', label: 'Scan', family: 'entypo', icon: 'camera' },
+    { key: 'results', label: 'Results', family: 'foundation', icon: 'results' },
+    { key: 'more', label: 'More', family: 'feather', icon: 'more-horizontal' },
+];
 
 const BottomBar: React.FC = () => {
     const insets = useSafeAreaInsets();
-    const [activeTab, setActiveTab] = useState<RouteName>('home');
+    const [activeTab, setActiveTab] = useState<string>('home');
+    const navigation = useNavigation();
     const navigationState = useNavigationState(state => state);
 
     useEffect(() => {
-        if (navigationState && navigationState.routes.length > 0) {
-            const currentRoute = navigationState.routes[navigationState.index].name.toLowerCase() as RouteName;
-            if (currentRoute === 'home' || currentRoute === 'scan' ||
-                currentRoute === 'results' || currentRoute === 'more') {
-                setActiveTab(currentRoute);
-            }
-        }
+        if (!navigationState?.routes?.length) return;
+        const current = navigationState.routes[navigationState.index].name.toLowerCase();
+        setActiveTab(TABS.some(t => t.key === current) ? current : '');
     }, [navigationState]);
 
-    const handleTabChange = (tab: RouteName) => {
-        setActiveTab(tab);
+    const handleTabChange = (key: string) => {
+        setActiveTab(key);
+        const routeName = key.charAt(0).toUpperCase() + key.slice(1);
+        navigation.navigate(routeName as never);
     };
 
     return (
         <S.Container insets={insets}>
-            <NavigationRoute route="home">
-                <TouchableOpacity onPress={() => handleTabChange('home')}>
+            {TABS.map(tab => (
+                <TouchableOpacity
+                    key={tab.key}
+                    onPress={() => handleTabChange(tab.key)}
+                >
                     <S.IconWrapper>
                         <RenderIcon
-                            family="foundation"
-                            icon="home"
+                            family={tab.family as any}
+                            icon={tab.icon}
                             fontSize={24}
-                            color={activeTab === 'home' ? "primary" : "themeGray"}
+                            color={activeTab === tab.key ? 'primary' : 'themeGray'}
                         />
-                        <S.Label isActive={activeTab === 'home'}>Home</S.Label>
+                        <S.Label isActive={activeTab === tab.key}>
+                            {tab.label}
+                        </S.Label>
                     </S.IconWrapper>
                 </TouchableOpacity>
-            </NavigationRoute>
-
-            <NavigationRoute route="scan">
-                <TouchableOpacity onPress={() => handleTabChange('scan')}>
-                    <S.IconWrapper>
-                        <RenderIcon
-                            family="entypo"
-                            icon="camera"
-                            fontSize={24}
-                            color={activeTab === 'scan' ? "primary" : "themeGray"}
-                        />
-                        <S.Label isActive={activeTab === 'scan'}>Scan</S.Label>
-                    </S.IconWrapper>
-                </TouchableOpacity>
-            </NavigationRoute>
-
-            <NavigationRoute route="results">
-                <TouchableOpacity onPress={() => handleTabChange('results')}>
-                    <S.IconWrapper>
-                        <RenderIcon
-                            family="foundation"
-                            icon="results"
-                            fontSize={24}
-                            color={activeTab === 'results' ? "primary" : "themeGray"}
-                        />
-                        <S.Label isActive={activeTab === 'results'}>Results</S.Label>
-                    </S.IconWrapper>
-                </TouchableOpacity>
-            </NavigationRoute>
-
-            <NavigationRoute route="more">
-                <TouchableOpacity onPress={() => handleTabChange('more')}>
-                    <S.IconWrapper>
-                        <RenderIcon
-                            family="feather"
-                            icon="more-horizontal"
-                            fontSize={24}
-                            color={activeTab === 'more' ? "primary" : "themeGray"}
-                        />
-                        <S.Label isActive={activeTab === 'more'}>More</S.Label>
-                    </S.IconWrapper>
-                </TouchableOpacity>
-            </NavigationRoute>
+            ))}
         </S.Container>
     );
 };
