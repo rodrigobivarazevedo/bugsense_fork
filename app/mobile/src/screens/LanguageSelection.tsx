@@ -11,7 +11,7 @@ const languages = [
     { code: 'de', name: 'Deutsch' },
 ];
 
-export const LanguageSelection = () => {
+export const LanguageSelection: React.FC = () => {
     const { t } = useTranslation();
     const currentLanguage = i18n.language;
 
