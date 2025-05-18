@@ -467,7 +467,7 @@ export const Account: React.FC = () => {
     }
 
     return (
-        <S.Scroll contentContainerStyle={{ paddingBottom: Platform.OS === 'android' ? insets.bottom + 24 : 0 }}>
+        <S.Scroll contentContainerStyle={{ paddingBottom: Platform.OS === 'ios' ? insets.bottom + 0 : 24 }}>
             <S.ProfileCard>
                 <S.ProfileCardBgLogo>
                     <Logo width={120} height={120} opacity={0.07} />

@@ -17,6 +17,7 @@ import Results from './screens/Results';
 import More from './screens/More';
 import Account from './screens/Account';
 import LanguageSelection from './screens/LanguageSelection';
+import Discover from './screens/Discover';
 
 const routes = [
   // { name: 'Login', component: Login, wrapped: false },
@@ -26,6 +27,7 @@ const routes = [
   { name: 'More', component: More, wrapped: true, showBottomBar: true },
   { name: 'Account', component: Account, wrapped: true, showBottomBar: true },
   { name: 'LanguageSelection', alias: 'language', component: LanguageSelection, wrapped: true, showBottomBar: false },
+  { name: 'Discover', component: Discover, wrapped: true, showBottomBar: false },
 ];
 
 export default function App() {
