@@ -5,5 +5,11 @@
     "get_started": "Los geht's",
     "select_language": "Sprache auswählen",
     "hello": "Hallo",
-    "language": "Sprache"
+    "language": "Sprache",
+    "app_settings": "App Einstellungen",
+    "more_info_and_support": "Mehr Info und Support",
+    "device_permissions": "Geräterechte",
+    "email_us": "E-Mail an uns",
+    "call_us": "Anruf an uns",
+    "visit_our_website": "Unsere Website besuchen"
 }

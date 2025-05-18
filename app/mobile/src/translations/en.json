@@ -8,5 +8,11 @@
     "cancel": "Cancel",
     "select_language": "Select language",
     "hello": "Hello",
-    "language": "Language"
+    "language": "Language",
+    "app_settings": "App settings",
+    "more_info_and_support": "More info and support",
+    "device_permissions": "Device permissions",
+    "email_us": "Email us",
+    "call_us": "Call us",
+    "visit_our_website": "Visit our website"
 }
