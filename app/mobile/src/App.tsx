@@ -20,19 +20,19 @@ import LanguageSelection from './screens/LanguageSelection';
 
 const routes = [
   // { name: 'Login', component: Login, wrapped: false },
-  { name: 'Home', component: Home, wrapped: true },
-  { name: 'Scan', component: Scan, wrapped: true },
-  { name: 'Results', component: Results, wrapped: true },
-  { name: 'More', component: More, wrapped: true },
-  { name: 'Account', component: Account, wrapped: true },
-  { name: 'LanguageSelection', alias: 'language', component: LanguageSelection, wrapped: true },
+  { name: 'Home', component: Home, wrapped: true, showBottomBar: true },
+  { name: 'Scan', component: Scan, wrapped: true, showBottomBar: true },
+  { name: 'Results', component: Results, wrapped: true, showBottomBar: true },
+  { name: 'More', component: More, wrapped: true, showBottomBar: true },
+  { name: 'Account', component: Account, wrapped: true, showBottomBar: true },
+  { name: 'LanguageSelection', alias: 'language', component: LanguageSelection, wrapped: true, showBottomBar: false },
 ];
 
 export default function App() {
   const [currentRoute, setCurrentRoute] = useState<string>('Home');
   const navRef = useRef<NavigationContainerRef<any>>(null);
   const { t } = useTranslation();
-  const isWrapped = routes.find(r => r.name === currentRoute)?.wrapped;
+  const showBottomBar = routes.find(r => r.name === currentRoute)?.showBottomBar;
   const Stack = createNativeStackNavigator();
 
   const AppContainer = styled.View`
@@ -81,7 +81,7 @@ export default function App() {
                 ))}
               </Stack.Navigator>
             </ContentContainer>
-            {isWrapped && <BottomBar />}
+            {showBottomBar && <BottomBar />}
           </AppContainer>
         </NavigationContainer>
       </I18nextProvider>
