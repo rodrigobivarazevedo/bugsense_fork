@@ -4,6 +4,10 @@ import { useTranslation } from "react-i18next";
 import Logo from "./Logo";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import HomeIcon from "@mui/icons-material/Home";
+import ScanIcon from "@mui/icons-material/CameraAlt";
+import ResultsIcon from "@mui/icons-material/Assessment";
+import MoreIcon from "@mui/icons-material/MoreHoriz";
 
 const HeaderBar: React.FC<any> = () => {
   const { t } = useTranslation();
@@ -13,46 +17,50 @@ const HeaderBar: React.FC<any> = () => {
       <NavLink to="/" className={styles.logoLink}>
         <Logo width={120} height={20} />
       </NavLink>
-      <NavLink
-        to="/"
-        className={({ isActive }) =>
-          `${styles.navLink} ${isActive ? styles.active : ""}`
-        }
-      >
-        {t("home")}
-      </NavLink>
-      <NavLink
-        to="/account"
-        className={({ isActive }) =>
-          `${styles.navLink} ${isActive ? styles.active : ""}`
-        }
-      >
-        {t("account")}
-      </NavLink>
-      <NavLink
-        to="/scan"
-        className={({ isActive }) =>
-          `${styles.navLink} ${isActive ? styles.active : ""}`
-        }
-      >
-        {t("scan")}
-      </NavLink>
-      <NavLink
-        to="/results"
-        className={({ isActive }) =>
-          `${styles.navLink} ${isActive ? styles.active : ""}`
-        }
-      >
-        {t("results")}
-      </NavLink>
-      <NavLink
-        to="/more"
-        className={({ isActive }) =>
-          `${styles.navLink} ${isActive ? styles.active : ""}`
-        }
-      >
-        {t("more")}
-      </NavLink>
+      <div className={styles.navItem}>
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            `${styles.navLink} ${isActive ? styles.active : ""}`
+          }
+        >
+          <HomeIcon />
+          {t("home")}
+        </NavLink>
+      </div>
+      <div className={styles.navItem}>
+        <NavLink
+          to="/scan"
+          className={({ isActive }) =>
+            `${styles.navLink} ${isActive ? styles.active : ""}`
+          }
+        >
+          <ScanIcon />
+          {t("scan")}
+        </NavLink>
+      </div>
+      <div className={styles.navItem}>
+        <NavLink
+          to="/results"
+          className={({ isActive }) =>
+            `${styles.navLink} ${isActive ? styles.active : ""}`
+          }
+        >
+          <ResultsIcon />
+          {t("results")}
+        </NavLink>
+      </div>
+      <div className={styles.navItem}>
+        <NavLink
+          to="/more"
+          className={({ isActive }) =>
+            `${styles.navLink} ${isActive ? styles.active : ""}`
+          }
+        >
+          <MoreIcon />
+          {t("more")}
+        </NavLink>
+      </div>
       <div className={styles.iconContainer}>
         <NotificationsIcon fontSize="large" className={styles.icon} />
         <AccountCircleIcon fontSize="large" className={styles.icon} />
