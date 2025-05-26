@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef, FC } from 'react';
 import {
   CameraView,
   useCameraPermissions,
@@ -10,7 +10,19 @@ import { Platform } from 'react-native';
 import { themeColors } from '../theme/GlobalTheme';
 import * as S from './GenericCamera.styles';
 
-export const GenericCamera = () => {
+interface GenericCameraProps {
+  onPictureTaken?: (photo: string) => void;
+  allowFlashToggle?: boolean;
+  allowFlipCamera?: boolean;
+  imageQuality?: number;
+}
+
+export const GenericCamera: FC<GenericCameraProps> = ({
+  onPictureTaken,
+  allowFlashToggle = false,
+  allowFlipCamera = false,
+  imageQuality = 0.8,
+}) => {
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<FlashMode>('off');
@@ -41,8 +53,19 @@ export const GenericCamera = () => {
 
   const snapPicture = async () => {
     if (!cameraRef.current) return;
-    const photo = await cameraRef.current.takePictureAsync();
-    console.log(photo?.uri);
+
+    try {
+      const photo = await cameraRef.current.takePictureAsync({
+        quality: imageQuality,
+        skipProcessing: false,
+      });
+
+      if (photo?.uri) {
+        onPictureTaken?.(photo.uri);
+      }
+    } catch (error) {
+      console.error('Error taking picture:', error);
+    }
   };
 
   const toggleFlash = () => {
@@ -57,40 +80,44 @@ export const GenericCamera = () => {
         flashMode={flash}
       >
         <S.TopControlsContainer>
-          <S.ControlButton onPress={toggleFlash}>
-            {flash === 'on' ? (
+          {allowFlashToggle && (
+            <S.ControlButton onPress={toggleFlash}>
+              {flash === 'on' ? (
+                <RenderIcon
+                  family='materialIcons'
+                  icon="flash-on"
+                  fontSize={24}
+                  color={themeColors.white}
+                />
+              ) : flash === 'auto' ? (
+                <RenderIcon
+                  family='materialIcons'
+                  icon="flash-auto"
+                  fontSize={24}
+                  color={themeColors.white}
+                />
+              ) : (
+                <RenderIcon
+                  family='materialIcons'
+                  icon="flash-off"
+                  fontSize={24}
+                  color={themeColors.white}
+                />
+              )}
+            </S.ControlButton>
+          )}
+          {allowFlipCamera && (
+            <S.ControlButton
+              onPress={() => setFacing(facing === 'back' ? 'front' : 'back')}
+            >
               <RenderIcon
                 family='materialIcons'
-                icon="flash-on"
+                icon={Platform.OS === 'android' ? 'flip-camera-android' : 'flip-camera-ios'}
                 fontSize={24}
                 color={themeColors.white}
               />
-            ) : flash === 'auto' ? (
-              <RenderIcon
-                family='materialIcons'
-                icon="flash-auto"
-                fontSize={24}
-                color={themeColors.white}
-              />
-            ) : (
-              <RenderIcon
-                family='materialIcons'
-                icon="flash-off"
-                fontSize={24}
-                color={themeColors.white}
-              />
-            )}
-          </S.ControlButton>
-          <S.ControlButton
-            onPress={() => setFacing(facing === 'back' ? 'front' : 'back')}
-          >
-            <RenderIcon
-              family='materialIcons'
-              icon={Platform.OS === 'android' ? 'flip-camera-android' : 'flip-camera-ios'}
-              fontSize={24}
-              color={themeColors.white}
-            />
-          </S.ControlButton>
+            </S.ControlButton>
+          )}
         </S.TopControlsContainer>
         <S.BottomControlsContainer>
           <S.SnapButton onPress={snapPicture}>
