@@ -62,8 +62,22 @@ const HeaderBar: React.FC<any> = () => {
         </NavLink>
       </div>
       <div className={styles.iconContainer}>
-        <NotificationsIcon fontSize="large" className={styles.icon} />
-        <AccountCircleIcon fontSize="large" className={styles.icon} />
+        <NavLink
+          to="/notifications"
+          className={({ isActive }) =>
+            `${styles.iconLink} ${isActive ? styles.active : ""}`
+          }
+        >
+          <NotificationsIcon fontSize="large" className={styles.icon} />
+        </NavLink>
+        <NavLink
+          to="/account"
+          className={({ isActive }) =>
+            `${styles.iconLink} ${isActive ? styles.active : ""}`
+          }
+        >
+          <AccountCircleIcon fontSize="large" className={styles.icon} />
+        </NavLink>
       </div>
     </nav>
   );

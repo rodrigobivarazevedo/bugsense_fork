@@ -14,18 +14,23 @@
 
 .navLink {
   margin: 0;
-  color: #000000;
+  color: #2e2747;
   text-decoration: none;
   padding: 0.5rem;
-  border-radius: 0.25rem;
   transition: background-color 0.2s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-radius: 0.7rem;
+}
+
+.navLink.rounded {
+  border-radius: 20rem;
 }
 
 .navLink:hover {
-  background-color: #f5f5f5;
+  font-weight: bold;
+  color: #2e2747;
 }
 
 .navLink.active {
@@ -55,4 +60,29 @@
 .navItem {
   margin: 0 2rem;
   text-align: center;
+}
+
+.iconLink {
+  margin: 0;
+  color: #2e2747;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  padding: 0;
+}
+
+.iconLink:hover {
+  background-color: #f5f5f5;
+}
+
+.iconLink.active {
+  background-color: #f5f5f5;
+}
+
+.iconLink .icon {
+  margin-left: 0;
 }
