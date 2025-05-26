@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import { CameraView } from 'expo-camera';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, Image } from 'react-native';
 import { rem } from '../utils/Responsive';
 import { themeColors } from '../theme/GlobalTheme';
 
@@ -20,6 +20,12 @@ export const StyledCamera = styled(CameraView)`
   flex: 1;
 `;
 
+export const PreviewImage = styled(Image)`
+  flex: 1;
+  width: 100%;
+  height: 100%;
+`;
+
 export const TopControlsContainer = styled.View`
   position: absolute;
   top: ${rem(1)}px;
@@ -37,7 +43,17 @@ export const BottomControlsContainer = styled.View`
   position: absolute;
   bottom: ${rem(1.5)}px;
   width: 100%;
+  flex-direction: row;
+  padding-horizontal: ${rem(2)}px;
   align-items: center;
+`;
+
+export const TakePictureContainer = styled(BottomControlsContainer)`
+  justify-content: center;
+`;
+
+export const ImagePreviewControlsContainer = styled(BottomControlsContainer)`
+  justify-content: space-between;
 `;
 
 export const ControlButton = styled(TouchableOpacity)`

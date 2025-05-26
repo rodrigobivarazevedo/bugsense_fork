@@ -11,10 +11,11 @@ import { themeColors } from '../theme/GlobalTheme';
 import * as S from './GenericCamera.styles';
 
 interface GenericCameraProps {
-  onPictureTaken?: (photo: string) => void;
+  onPictureTaken: (photo: string) => void;
   allowFlashToggle?: boolean;
   allowFlipCamera?: boolean;
   imageQuality?: number;
+  showImagePreview?: boolean;
 }
 
 export const GenericCamera: FC<GenericCameraProps> = ({
@@ -22,10 +23,12 @@ export const GenericCamera: FC<GenericCameraProps> = ({
   allowFlashToggle = false,
   allowFlipCamera = false,
   imageQuality = 0.8,
+  showImagePreview = true,
 }) => {
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<FlashMode>('off');
+  const [previewUri, setPreviewUri] = useState<string | null>(null);
   const cameraRef = useRef<CameraView>(null);
 
   if (!permission) {
@@ -61,16 +64,57 @@ export const GenericCamera: FC<GenericCameraProps> = ({
       });
 
       if (photo?.uri) {
-        onPictureTaken?.(photo.uri);
+        if (showImagePreview) {
+          setPreviewUri(photo.uri);
+        } else {
+          onPictureTaken(photo.uri);
+        }
       }
     } catch (error) {
       console.error('Error taking picture:', error);
     }
   };
 
+  const handleImagePreviewReject = () => {
+    setPreviewUri(null);
+  };
+
+  const handleImagePreviewApprove = () => {
+    if (previewUri) {
+      onPictureTaken(previewUri);
+      setPreviewUri(null);
+    }
+  };
+
   const toggleFlash = () => {
     setFlash(flash === 'off' ? 'on' : flash === 'on' ? 'auto' : 'off');
   };
+
+  if (previewUri) {
+    return (
+      <S.Root>
+        <S.PreviewImage source={{ uri: previewUri }} />
+          <S.ImagePreviewControlsContainer>
+          <S.ControlButton onPress={handleImagePreviewReject}>
+            <RenderIcon
+              family='materialIcons'
+              icon="close"
+              fontSize={32}
+              color={themeColors.white}
+            />
+          </S.ControlButton>
+          <S.ControlButton onPress={handleImagePreviewApprove}>
+            <RenderIcon
+              family='materialIcons'
+              icon="check"
+              fontSize={32}
+              color={themeColors.white}
+            />
+          </S.ControlButton>
+        </S.ImagePreviewControlsContainer>
+      </S.Root>
+    );
+  }
 
   return (
     <S.Root>
@@ -119,11 +163,11 @@ export const GenericCamera: FC<GenericCameraProps> = ({
             </S.ControlButton>
           )}
         </S.TopControlsContainer>
-        <S.BottomControlsContainer>
+        <S.TakePictureContainer>
           <S.SnapButton onPress={snapPicture}>
             <S.SnapButtonInner />
           </S.SnapButton>
-        </S.BottomControlsContainer>
+        </S.TakePictureContainer>
       </S.StyledCamera>
     </S.Root>
   );
