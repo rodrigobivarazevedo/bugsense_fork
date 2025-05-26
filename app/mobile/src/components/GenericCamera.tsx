@@ -27,7 +27,7 @@ export const GenericCamera: FC<GenericCameraProps> = ({
 }) => {
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>('back');
-  const [flash, setFlash] = useState<FlashMode>('off');
+  const [flash, setFlash] = useState<'off' | 'on'>('off');
   const [previewUri, setPreviewUri] = useState<string | null>(null);
   const cameraRef = useRef<CameraView>(null);
 
@@ -87,14 +87,14 @@ export const GenericCamera: FC<GenericCameraProps> = ({
   };
 
   const toggleFlash = () => {
-    setFlash(flash === 'off' ? 'on' : flash === 'on' ? 'auto' : 'off');
+    setFlash(flash === 'off' ? 'on' : 'off');
   };
 
   if (previewUri) {
     return (
       <S.Root>
         <S.PreviewImage source={{ uri: previewUri }} />
-          <S.ImagePreviewControlsContainer>
+        <S.ImagePreviewControlsContainer>
           <S.ControlButton onPress={handleImagePreviewReject}>
             <RenderIcon
               family='materialIcons'
@@ -121,22 +121,28 @@ export const GenericCamera: FC<GenericCameraProps> = ({
       <S.StyledCamera
         ref={cameraRef}
         facing={facing}
-        flashMode={flash}
+        flashMode={flash as FlashMode}
+        enableTorch={flash === 'on'}
       >
         <S.TopControlsContainer>
-          {allowFlashToggle && (
+          {allowFlipCamera && (
+            <S.ControlButton
+              onPress={() => setFacing(facing === 'back' ? 'front' : 'back')}
+            >
+              <RenderIcon
+                family='materialIcons'
+                icon={Platform.OS === 'android' ? 'flip-camera-android' : 'flip-camera-ios'}
+                fontSize={24}
+                color={themeColors.white}
+              />
+            </S.ControlButton>
+          )}
+          {allowFlashToggle && facing === 'back' && (
             <S.ControlButton onPress={toggleFlash}>
               {flash === 'on' ? (
                 <RenderIcon
                   family='materialIcons'
                   icon="flash-on"
-                  fontSize={24}
-                  color={themeColors.white}
-                />
-              ) : flash === 'auto' ? (
-                <RenderIcon
-                  family='materialIcons'
-                  icon="flash-auto"
                   fontSize={24}
                   color={themeColors.white}
                 />
@@ -148,18 +154,6 @@ export const GenericCamera: FC<GenericCameraProps> = ({
                   color={themeColors.white}
                 />
               )}
-            </S.ControlButton>
-          )}
-          {allowFlipCamera && (
-            <S.ControlButton
-              onPress={() => setFacing(facing === 'back' ? 'front' : 'back')}
-            >
-              <RenderIcon
-                family='materialIcons'
-                icon={Platform.OS === 'android' ? 'flip-camera-android' : 'flip-camera-ios'}
-                fontSize={24}
-                color={themeColors.white}
-              />
             </S.ControlButton>
           )}
         </S.TopControlsContainer>
@@ -177,3 +171,5 @@ export default GenericCamera;
 
 // TODO: Check out Barcode feature
 // For more features, check out CameraView.tsx, Camera.types.ts, etc.
+// Flash modes: off, on, auto
+// Zooming
