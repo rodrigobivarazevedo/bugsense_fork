@@ -58,6 +58,7 @@ const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
         }
     };
 
+    // TODO: Review this with backend
     const handleRegister = async () => {
         if (password !== confirmPassword) {
             Alert.alert(t('Error'), t('Passwords do not match'));
