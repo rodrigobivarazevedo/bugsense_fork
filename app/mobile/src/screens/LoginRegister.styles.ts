@@ -89,3 +89,10 @@ export const Link = styled.Text`
     font-weight: bold;
     margin-left: ${rem(0.3125)}px;
 `;
+
+export const ErrorText = styled.Text`
+    margin-top: ${rem(0.3125)}px;
+    color: red;
+    font-size: ${rem(0.75)}px;
+    font-family: 'System';
+`;

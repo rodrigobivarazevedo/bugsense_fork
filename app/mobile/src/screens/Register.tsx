@@ -16,11 +16,57 @@ const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const { t } = useTranslation();
+
+    const validatePassword = (pass: string): string => {
+        if (pass.length < 8) {
+            return t('Password must be at least 8 characters long');
+        }
+        if (!/[A-Z]/.test(pass)) {
+            return t('Password must contain at least one uppercase letter');
+        }
+        if (!/[a-z]/.test(pass)) {
+            return t('Password must contain at least one lowercase letter');
+        }
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(pass) && !/[0-9]/.test(pass)) {
+            return t('Password must contain at least one special character or number');
+        }
+        if (pass.toLowerCase() === email.toLowerCase() || pass.toLowerCase() === fullName.toLowerCase()) {
+            return t('Password cannot be the same as your email or name');
+        }
+        return '';
+    };
+
+    const handlePasswordChange = (text: string) => {
+        setPassword(text);
+        setPasswordError(validatePassword(text));
+        if (confirmPassword && text !== confirmPassword) {
+            setConfirmPasswordError(t('Passwords do not match'));
+        } else {
+            setConfirmPasswordError('');
+        }
+    };
+
+    const handleConfirmPasswordChange = (text: string) => {
+        setConfirmPassword(text);
+        if (text !== password) {
+            setConfirmPasswordError(t('Passwords do not match'));
+        } else {
+            setConfirmPasswordError('');
+        }
+    };
 
     const handleRegister = async () => {
         if (password !== confirmPassword) {
             Alert.alert(t('Error'), t('Passwords do not match'));
+            return;
+        }
+
+        const passwordValidationError = validatePassword(password);
+        if (passwordValidationError) {
+            Alert.alert(t('Invalid Password'), passwordValidationError);
             return;
         }
 
@@ -58,7 +104,9 @@ const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
         email &&
         password &&
         confirmPassword &&
-        password === confirmPassword
+        password === confirmPassword &&
+        !passwordError &&
+        !confirmPasswordError
     );
 
     return (
@@ -99,9 +147,14 @@ const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
                         placeholderTextColor={themeColors.primary}
                         secureTextEntry
                         value={password}
-                        onChangeText={setPassword}
+                        onChangeText={handlePasswordChange}
                     />
                 </S.InputWrapper>
+                {passwordError ? (
+                    <S.ErrorText>
+                        {passwordError}
+                    </S.ErrorText>
+                ) : null}
             </S.InputContainer>
 
             <S.InputContainer>
@@ -111,9 +164,14 @@ const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
                         placeholderTextColor={themeColors.primary}
                         secureTextEntry
                         value={confirmPassword}
-                        onChangeText={setConfirmPassword}
+                        onChangeText={handleConfirmPasswordChange}
                     />
                 </S.InputWrapper>
+                {confirmPasswordError ? (
+                    <S.ErrorText>
+                        {confirmPasswordError}
+                    </S.ErrorText>
+                ) : null}
             </S.InputContainer>
 
             <S.ActionButton onPress={handleRegister} disabled={!isFormValid}>
