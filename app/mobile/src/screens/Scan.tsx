@@ -1,14 +1,16 @@
 import React from 'react';
-import * as S from './Home.styles';
+import GenericCamera from '../components/GenericCamera';
 
 export const Scan: React.FC = () => {
-
     return (
-        <S.Root>
-            <S.Title>
-                Scan Page
-            </S.Title>
-        </S.Root>
+        <GenericCamera
+            allowFlashToggle
+            allowFlipCamera
+            showImagePreview
+            onPictureTaken={() => {
+                console.log('picture taken!');
+            }}
+        />
     );
 };
 

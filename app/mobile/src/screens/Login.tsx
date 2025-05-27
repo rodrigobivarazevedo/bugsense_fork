@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Alert } from 'react-native';
+import { Alert, TouchableOpacity } from 'react-native';
 import Logo from '../components/Logo';
-import { Ionicons } from '@expo/vector-icons';
+import RenderIcon from '../components/RenderIcon';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import * as S from './Login.styles';
+import * as S from './LoginRegister.styles';
 import { themeColors } from '../theme/GlobalTheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Api from '../api/Client';
@@ -16,6 +16,7 @@ type LoginScreenProps = {
 const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordVisible, setPasswordVisible] = useState(false);
     const { t } = useTranslation();
 
     const handleLogin = async () => {
@@ -43,11 +44,6 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
         }
     };
 
-    const handleForgotPassword = () => {
-        // TODO: Implement forgot password logic
-        console.log('Forgot password');
-    };
-
     return (
         <S.Container>
             <S.LogoContainer>
@@ -57,7 +53,7 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
             <S.InputContainer>
                 <S.InputWrapper>
                     <S.StyledInput
-                        placeholder={t('Username or Email')}
+                        placeholder={t('Email Address')}
                         placeholderTextColor={themeColors.primary}
                         value={username}
                         onChangeText={setUsername}
@@ -72,23 +68,51 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
                     <S.StyledInput
                         placeholder={t('Enter your password')}
                         placeholderTextColor={themeColors.primary}
-                        secureTextEntry
+                        secureTextEntry={!passwordVisible}
                         value={password}
                         onChangeText={setPassword}
                     />
                     <S.IconContainer>
-                        <Ionicons name="finger-print" size={28} color={themeColors.primary} />
+                        <TouchableOpacity onPress={() => setPasswordVisible(v => !v)}>
+                            <RenderIcon
+                                family="materialIcons"
+                                icon={passwordVisible ? 'visibility-off' : 'visibility'}
+                                fontSize={28}
+                                color={themeColors.primary}
+                            />
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                            <RenderIcon
+                                family="ionIcons"
+                                icon="finger-print"
+                                fontSize={28}
+                                color={themeColors.primary}
+                            />
+                        </TouchableOpacity>
                     </S.IconContainer>
                 </S.InputWrapper>
             </S.InputContainer>
 
-            <S.ForgotPasswordButton onPress={handleForgotPassword}>
-                <S.ForgotPasswordText>{t('Password forgotten?')}</S.ForgotPasswordText>
+            <S.ForgotPasswordButton>
+                <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                    <S.ForgotPasswordText>
+                        {t('Forgot password?')}
+                    </S.ForgotPasswordText>
+                </TouchableOpacity>
             </S.ForgotPasswordButton>
 
-            <S.LoginButton onPress={handleLogin} disabled={!username || !password}>
-                <S.LoginButtonText>{t('Login')}</S.LoginButtonText>
-            </S.LoginButton>
+            <S.ActionButton onPress={handleLogin} disabled={!username || !password}>
+                <S.ActionButtonText>{t('Login')}</S.ActionButtonText>
+            </S.ActionButton>
+
+            <S.LinkContainer>
+                <S.LinkText>{t('Don\'t have an account?')}</S.LinkText>
+                <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                    <S.Link>
+                        {t('Register')}
+                    </S.Link>
+                </TouchableOpacity>
+            </S.LinkContainer>
         </S.Container>
     );
 };
