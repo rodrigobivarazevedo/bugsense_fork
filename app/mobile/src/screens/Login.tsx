@@ -43,11 +43,6 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
         }
     };
 
-    const handleForgotPassword = () => {
-        // TODO: Implement forgot password logic
-        console.log('Forgot password');
-    };
-
     return (
         <S.Container>
             <S.LogoContainer>
@@ -57,7 +52,7 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
             <S.InputContainer>
                 <S.InputWrapper>
                     <S.StyledInput
-                        placeholder={t('Username or Email')}
+                        placeholder={t('Email Address')}
                         placeholderTextColor={themeColors.primary}
                         value={username}
                         onChangeText={setUsername}
@@ -82,7 +77,7 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
                 </S.InputWrapper>
             </S.InputContainer>
 
-            <S.ForgotPasswordButton onPress={handleForgotPassword}>
+            <S.ForgotPasswordButton onPress={(() => navigation.navigate('ForgotPassword'))}>
                 <S.ForgotPasswordText>{t('Forgot password?')}</S.ForgotPasswordText>
             </S.ForgotPasswordButton>
 

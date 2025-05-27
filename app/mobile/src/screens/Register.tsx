@@ -6,6 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './LoginRegister.styles';
 import { themeColors } from '../theme/GlobalTheme';
 import Api from '../api/Client';
+import validateEmail from '../utils/ValidateEmail';
 
 type RegisterScreenProps = {
     navigation: NativeStackNavigationProp<any>;
@@ -18,7 +19,14 @@ const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
+    const [emailError, setEmailError] = useState('');
     const { t } = useTranslation();
+
+    const handleEmailChange = (text: string) => {
+        setEmail(text);
+        const { errorMessage } = validateEmail({ email: text });
+        setEmailError(errorMessage);
+    };
 
     const validatePassword = (pass: string): string => {
         if (pass.length < 8) {
@@ -107,7 +115,8 @@ const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
         confirmPassword &&
         password === confirmPassword &&
         !passwordError &&
-        !confirmPasswordError
+        !confirmPasswordError &&
+        !emailError
     );
 
     return (
@@ -134,11 +143,16 @@ const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
                         placeholder={t('Email Address')}
                         placeholderTextColor={themeColors.primary}
                         value={email}
-                        onChangeText={setEmail}
+                        onChangeText={handleEmailChange}
                         autoCapitalize="none"
                         keyboardType="email-address"
                     />
                 </S.InputWrapper>
+                {emailError ? (
+                    <S.ErrorText>
+                        {emailError}
+                    </S.ErrorText>
+                ) : null}
             </S.InputContainer>
 
             <S.InputContainer>

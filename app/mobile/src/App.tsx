@@ -12,6 +12,7 @@ import BottomBar from './components/BottomBar';
 
 import Login from './screens/Login';
 import Register from './screens/Register';
+import ForgotPassword from './screens/ForgotPassword';
 import Home from './screens/Home';
 import Scan from './screens/Scan';
 import Results from './screens/Results';
@@ -24,6 +25,7 @@ import BacteriaRouter from './screens/BacteriaRouter';
 const routes = [
   { name: 'Login', component: Login, wrapped: false },
   { name: 'Register', component: Register, wrapped: false },
+  { name: 'ForgotPassword', component: ForgotPassword, wrapped: false },
   { name: 'Home', component: Home, wrapped: true, showBottomBar: true },
   { name: 'Scan', component: Scan, wrapped: true, showBottomBar: true },
   { name: 'Results', component: Results, wrapped: true, showBottomBar: true },
