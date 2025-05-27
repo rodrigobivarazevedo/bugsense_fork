@@ -169,6 +169,8 @@ export const GenericCamera: FC<GenericCameraProps> = ({
 
 export default GenericCamera;
 
+// TODO: Turn off shutter sound
+
 // TODO: Check out Barcode feature
 // For more features, check out CameraView.tsx, Camera.types.ts, etc.
 // Flash modes: off, on, auto
