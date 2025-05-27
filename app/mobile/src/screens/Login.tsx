@@ -4,7 +4,7 @@ import Logo from '../components/Logo';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import * as S from './Login.styles';
+import * as S from './LoginRegister.styles';
 import { themeColors } from '../theme/GlobalTheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Api from '../api/Client';
@@ -83,12 +83,19 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
             </S.InputContainer>
 
             <S.ForgotPasswordButton onPress={handleForgotPassword}>
-                <S.ForgotPasswordText>{t('Password forgotten?')}</S.ForgotPasswordText>
+                <S.ForgotPasswordText>{t('Forgot password?')}</S.ForgotPasswordText>
             </S.ForgotPasswordButton>
 
-            <S.LoginButton onPress={handleLogin} disabled={!username || !password}>
-                <S.LoginButtonText>{t('Login')}</S.LoginButtonText>
-            </S.LoginButton>
+            <S.ActionButton onPress={handleLogin} disabled={!username || !password}>
+                <S.ActionButtonText>{t('Login')}</S.ActionButtonText>
+            </S.ActionButton>
+
+            <S.LinkContainer>
+                <S.LinkText>{t('Don\'t have an account?')}</S.LinkText>
+                <S.Link onPress={() => navigation.navigate('Register')}>
+                    {t('Register')}
+                </S.Link>
+            </S.LinkContainer>
         </S.Container>
     );
 };
