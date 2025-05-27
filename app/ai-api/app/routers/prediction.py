@@ -4,14 +4,13 @@ from app.core.security import get_current_active_user, get_api_key
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi.responses import JSONResponse
-from app.db.orm_models import PredictionHistory
+from app.db.orm_models import Prediction
 from app.db.schemas import PredictionHistorySchema
 
 router = APIRouter(prefix="/predictions", tags=["Prediction"])
 
 @router.get(
     "/",
-    dependencies=[Depends(get_api_key)],
     summary="Retrieve user's prediction history",
     status_code=status.HTTP_200_OK,
 )
@@ -28,12 +27,12 @@ async def get_predictions(
     
     try:
        
-        # get the last 30 days of daily measurements
+        # get the last prediction
         result = await db.execute(
-            select(PredictionHistory)
-            .filter( PredictionHistory.userId == user_id)
-            .order_by( PredictionHistory.date.desc())
-            .limit(30)
+            select(Prediction)
+            .filter( Prediction.userId == user_id)
+            .order_by( Prediction.date.desc())
+            .limit(1)
         )
         predictions = result.scalars().all()
                 

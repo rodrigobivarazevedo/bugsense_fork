@@ -23,6 +23,7 @@ env
 bugsense_venv
 
 dump
+dump/
 
 # Ignore pytest cache directories
 __pycache__/
