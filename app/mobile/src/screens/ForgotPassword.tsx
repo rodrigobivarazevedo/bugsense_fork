@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert } from 'react-native';
+import { Alert, TouchableOpacity } from 'react-native';
 import Logo from '../components/Logo';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -87,9 +87,11 @@ const ForgotPassword: React.FC<ForgotPasswordScreenProps> = ({ navigation }) => 
 
             <S.LinkContainer>
                 <S.LinkText>{t('Remember your password?')}</S.LinkText>
-                <S.Link onPress={() => navigation.navigate('Login')}>
-                    {t('Login')}
-                </S.Link>
+                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                    <S.Link>
+                        {t('Login')}
+                    </S.Link>
+                </TouchableOpacity>
             </S.LinkContainer>
         </S.Container>
     );

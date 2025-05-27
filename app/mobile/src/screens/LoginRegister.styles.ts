@@ -39,8 +39,13 @@ export const StyledInput = styled.TextInput`
     font-family: 'System';
 `;
 
-export const IconContainer = styled.TouchableOpacity`
-    padding: ${rem(0.625)}px;
+export const IconContainer = styled.View`
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: ${rem(0.625)}px;
+    margin-left: ${rem(0.625)}px;
+    margin-right: ${rem(0.625)}px;
 `;
 
 export const ActionButton = styled.TouchableOpacity<ButtonProps>`
@@ -60,7 +65,7 @@ export const ActionButtonText = styled.Text`
     font-weight: 600;
 `;
 
-export const ForgotPasswordButton = styled.TouchableOpacity`
+export const ForgotPasswordButton = styled.View`
     flex-direction: row;
     justify-content: center;
     margin-top: ${rem(1)}px;

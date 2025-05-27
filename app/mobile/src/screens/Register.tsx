@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert } from 'react-native';
+import { Alert, TouchableOpacity } from 'react-native';
 import Logo from '../components/Logo';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -7,6 +7,7 @@ import * as S from './LoginRegister.styles';
 import { themeColors } from '../theme/GlobalTheme';
 import Api from '../api/Client';
 import validateEmail from '../utils/ValidateEmail';
+import RenderIcon from '../components/RenderIcon';
 
 type RegisterScreenProps = {
     navigation: NativeStackNavigationProp<any>;
@@ -21,6 +22,8 @@ const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const [emailError, setEmailError] = useState('');
     const { t } = useTranslation();
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
     const handleEmailChange = (text: string) => {
         setEmail(text);
@@ -160,10 +163,18 @@ const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
                     <S.StyledInput
                         placeholder={t('Password')}
                         placeholderTextColor={themeColors.primary}
-                        secureTextEntry
+                        secureTextEntry={!passwordVisible}
                         value={password}
                         onChangeText={handlePasswordChange}
                     />
+                    <S.IconContainer onPress={() => setPasswordVisible(v => !v)}>
+                        <RenderIcon
+                            family="materialIcons"
+                            icon={passwordVisible ? 'visibility-off' : 'visibility'}
+                            fontSize={28}
+                            color={themeColors.primary}
+                        />
+                    </S.IconContainer>
                 </S.InputWrapper>
                 {passwordError ? (
                     <S.ErrorText>
@@ -177,10 +188,18 @@ const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
                     <S.StyledInput
                         placeholder={t('Confirm Password')}
                         placeholderTextColor={themeColors.primary}
-                        secureTextEntry
+                        secureTextEntry={!confirmPasswordVisible}
                         value={confirmPassword}
                         onChangeText={handleConfirmPasswordChange}
                     />
+                    <S.IconContainer onPress={() => setConfirmPasswordVisible(v => !v)}>
+                        <RenderIcon
+                            family="materialIcons"
+                            icon={confirmPasswordVisible ? 'visibility-off' : 'visibility'}
+                            fontSize={28}
+                            color={themeColors.primary}
+                        />
+                    </S.IconContainer>
                 </S.InputWrapper>
                 {confirmPasswordError ? (
                     <S.ErrorText>
@@ -195,9 +214,11 @@ const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
 
             <S.LinkContainer>
                 <S.LinkText>{t('Already have an account?')}</S.LinkText>
-                <S.Link onPress={() => navigation.navigate('Login')}>
-                    {t('Login')}
-                </S.Link>
+                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                    <S.Link>
+                        {t('Login')}
+                    </S.Link>
+                </TouchableOpacity>
             </S.LinkContainer>
         </S.Container>
     );
