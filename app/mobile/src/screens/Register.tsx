@@ -167,13 +167,15 @@ const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
                         value={password}
                         onChangeText={handlePasswordChange}
                     />
-                    <S.IconContainer onPress={() => setPasswordVisible(v => !v)}>
-                        <RenderIcon
-                            family="materialIcons"
-                            icon={passwordVisible ? 'visibility-off' : 'visibility'}
-                            fontSize={28}
-                            color={themeColors.primary}
-                        />
+                    <S.IconContainer>
+                        <TouchableOpacity onPress={() => setPasswordVisible(v => !v)}>
+                            <RenderIcon
+                                family="materialIcons"
+                                icon={passwordVisible ? 'visibility-off' : 'visibility'}
+                                fontSize={28}
+                                color={themeColors.primary}
+                            />
+                        </TouchableOpacity>
                     </S.IconContainer>
                 </S.InputWrapper>
                 {passwordError ? (
@@ -192,13 +194,15 @@ const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
                         value={confirmPassword}
                         onChangeText={handleConfirmPasswordChange}
                     />
-                    <S.IconContainer onPress={() => setConfirmPasswordVisible(v => !v)}>
-                        <RenderIcon
-                            family="materialIcons"
-                            icon={confirmPasswordVisible ? 'visibility-off' : 'visibility'}
-                            fontSize={28}
-                            color={themeColors.primary}
-                        />
+                    <S.IconContainer>
+                        <TouchableOpacity onPress={() => setConfirmPasswordVisible(v => !v)}>
+                            <RenderIcon
+                                family="materialIcons"
+                                icon={confirmPasswordVisible ? 'visibility-off' : 'visibility'}
+                                fontSize={28}
+                                color={themeColors.primary}
+                            />
+                        </TouchableOpacity>
                     </S.IconContainer>
                 </S.InputWrapper>
                 {confirmPasswordError ? (
