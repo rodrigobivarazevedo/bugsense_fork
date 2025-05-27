@@ -1,39 +1,43 @@
 ml_fastapi_app/
 ├── app/
 │   ├── __init__.py
-│   ├── main.py               # FastAPI application entry point
-│   ├── config.py             # Configuration settings (database, environment)
-│   ├── database.py           # Database connection and setup
-│   ├── models/               # ORM models (SQLAlchemy)
+│   ├── main.py                         # FastAPI application entry point
+│   ├── core/                    # app core utility functions
+│   │   ├── __init__.py
+│   │   ├── config.py                   # Configuration settings (database, environment)
+│   │   ├── database.py                 # Database connection and setup
+│   │   ├── middleware.py               # middleware checks and protections
+│   │   └── security.py                 # security functions
+│   ├── models/                         # ORM models (SQLAlchemy)
 │   │   ├── __init__.py
 │   │   └── orm_models.py
-│   ├── schemas/              # Pydantic schemas
+│   ├── schemas/                        # Pydantic schemas
 │   │   ├── __init__.py
 │   │   └── pydantic_schemas.py
-│   ├── routers/              # API routers (organized by feature/task)
+│   ├── routers/                        # API routers (organized by feature/task)
 │   │   ├── __init__.py
-│   │   ├── feature.py        # API for feature extraction
-│   │   ├── training.py       # API for training models
-│   │   └── inference.py      # API for serving predictions
-│   ├── services/             # Business logic (ML models, predictions, etc.)
+│   │   ├── feature.py                  # API for feature extraction
+│   │   ├── training.py                 # API for training models
+│   │   └── inference.py                # API for serving predictions
+│   ├── ml_pipeline/                    # Business logic (ML models, predictions, etc.)
 │   │   ├── __init__.py
-│   │   ├── feature_service.py  # Feature extraction logic
-│   │   ├── training_service.py # Model training logic
-│   │   └── inference_service.py # Model inference logic
-│   └── utils/                # Utility functions (helpers, validators)
+│   │   ├── features.py                 # Feature extraction logic
+│   │   ├── training.py                 # Model training logic
+│   │   └── inference.py                # Model inference logic
+│   └── utils/                          # Utility functions (helpers, validators)
 │       ├── __init__.py
 │       └── utils.py
-├── ml_models/                # Directory for ML models (saved models, pipelines)
+├── ml_models/                          # Directory for ML models (saved models, pipelines)
 │   ├── __init__.py
-│   └── model_registry/       # Registry for versioned models
+│   └── model_registry/                 # Registry for versioned models
 │       ├── model_v1.pkl
 │       └── model_v2.pkl
-├── data/                     # Data storage for feature extraction and training
-│   ├── raw/                  # Raw data (unprocessed)
-│   └── processed/            # Processed data (ready for training)
-├── tests/                    # Unit and integration tests
+├── tests/                              # Unit and integration tests
 │   ├── __init__.py
 │   └── test_app.py
-├── .env                      # Environment variables
-├── requirements.txt          # Dependencies
-└── Dockerfile                # Docker configuration (optional)
+├── data/                               # Data storage for feature extraction and training
+│   ├── raw/                            # Raw data (unprocessed)
+│   └── processed/                      # Processed data (ready for training)
+├── .env                                # Environment variables
+├── requirements.txt                    # Dependencies
+└── Dockerfile                          # Docker configuration (optional)
