@@ -14,12 +14,12 @@ const HeaderBar: React.FC<any> = () => {
 
   return (
     <nav className={styles.nav}>
-      <NavLink to="/" className={styles.logoLink}>
+      <NavLink to="/home" className={styles.logoLink}>
         <Logo width={120} height={20} />
       </NavLink>
       <div className={styles.navItem}>
         <NavLink
-          to="/"
+          to="/home"
           className={({ isActive }) =>
             `${styles.navLink} ${isActive ? styles.active : ""}`
           }
