@@ -1,6 +1,7 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from .models import CustomUser
+from django.utils import timezone
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -53,19 +54,14 @@ class LogoutSerializer(serializers.Serializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
+    email = serializers.EmailField(required=True)
+    full_name = serializers.CharField(required=True)
 
     class Meta:
         model = CustomUser
         fields = [
             "email",
             "full_name",
-            "gender",
-            "dob",
-            "phone_number",
-            "street",
-            "city",
-            "postcode",
-            "country",
             "password",
         ]
 
@@ -73,13 +69,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         user = CustomUser.objects.create_user(
             email=validated_data["email"],
             password=validated_data["password"],
-            full_name=validated_data.get("full_name", ""),
-            gender=validated_data.get("gender", ""),
-            dob=validated_data.get("dob", None),
-            phone_number=validated_data.get("phone_number", ""),
-            street=validated_data.get("street", ""),
-            city=validated_data.get("city", ""),
-            postcode=validated_data.get("postcode", ""),
-            country=validated_data.get("country", ""),
+            full_name=validated_data["full_name"],
+            date_joined=timezone.now().date()
         )
         return user
