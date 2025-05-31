@@ -11,6 +11,7 @@ services:
       - DATABASE_URL=postgres://bugsenseadmin:bugsenseadmin@db:5432/bugsense
       - ALLOWED_HOSTS=*
       - HOST_IP=${HOST_IP}
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
     depends_on:
       - db
     volumes:
@@ -89,4 +90,4 @@ volumes:
 
 networks:
   app_network:
-    driver: bridge 
+    driver: bridge

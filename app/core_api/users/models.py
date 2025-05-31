@@ -39,13 +39,10 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractUser):
-    # Remove the inherited username field
     username = None
 
-    # Use email as the unique identifier for authentication
     email = models.EmailField('email address', unique=True)
 
-    # Additional profile fields
     full_name = models.CharField(max_length=255)
     gender = models.CharField(
         max_length=10,
@@ -57,17 +54,23 @@ class CustomUser(AbstractUser):
         max_length=20, unique=False, null=True, blank=True)
     date_joined = models.DateField('joined date', null=True, blank=True)
 
-    # Address fields
     street = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=100, blank=True)
     postcode = models.CharField(max_length=20, blank=True)
     country = models.CharField(max_length=100, blank=True)
 
-    # Use email as the username field
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []  # email & password are required by default
+    assigned_doctor = models.ForeignKey(
+        'institutions.Doctor',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='patients',
+        verbose_name='Assigned Doctor'
+    )
 
-    # Use custom manager
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
     objects = CustomUserManager()
 
     def __str__(self):

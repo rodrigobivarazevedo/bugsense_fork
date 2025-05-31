@@ -19,10 +19,23 @@ show_help() {
   echo "  ./start_app.sh            # Start services without building"
 }
 
+generate_secret_key() {
+  python3 -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+}
+
 export HOST_IP=$(ifconfig en0 \
   | awk '/inet / && !/127/ {print $2; exit}')
 
-echo "HOST_IP=$HOST_IP" > .env
+if [ -f .env ]; then
+  if ! grep -q "DJANGO_SECRET_KEY" .env; then
+    echo "Adding DJANGO_SECRET_KEY to existing .env file..."
+    echo "DJANGO_SECRET_KEY=$(generate_secret_key)" >> .env
+  fi
+else
+  echo "Creating new .env file..."
+  echo "HOST_IP=$HOST_IP" > .env
+  echo "DJANGO_SECRET_KEY=$(generate_secret_key)" >> .env
+fi
 
 if [ "$1" = "--help" ]; then
   show_help
