@@ -21,6 +21,22 @@ class LoginView(TokenObtainPairView):
 
     serializer_class = CustomTokenObtainPairSerializer
 
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception:
+            raise
+
+        user = getattr(serializer, 'user', None)
+        if user is not None and getattr(user, 'is_doctor', False):
+            return Response(
+                {'detail': 'Invalid credentials.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
 
 class CurrentUserView(RetrieveUpdateDestroyAPIView):
     """
@@ -33,7 +49,6 @@ class CurrentUserView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-        # simply return the User instance for the current token
         return self.request.user
 
     def update(self, request, *args, **kwargs):

@@ -5,10 +5,8 @@ from .models import CustomUser
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    # Use email for ordering instead of username
     ordering = ('email',)
 
-    # Remove username field references, use email
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal Info', {'fields': (
@@ -28,7 +26,17 @@ class CustomUserAdmin(UserAdmin):
         }),
     )
 
-    list_display = ('email', 'full_name', 'is_active', 'is_staff')
+    def assigned_doctor_id(self, obj):
+        if obj.assigned_doctor:
+            return obj.assigned_doctor.doctor_id
+        return "-"
+    assigned_doctor_id.short_description = "Assigned Doctor ID"
+
+    list_display = ('email', 'full_name', 'is_active',
+                    'is_staff', 'assigned_doctor_id')
     search_fields = ('email', 'full_name', 'phone_number')
     list_filter = ('is_staff', 'is_active', 'gender', 'country')
-    # Remove username from UserAdmin defaults entirely
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.filter(is_doctor=False)
