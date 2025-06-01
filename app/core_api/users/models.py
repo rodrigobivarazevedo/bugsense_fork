@@ -59,6 +59,7 @@ class CustomUser(AbstractUser):
     postcode = models.CharField(max_length=20, blank=True)
     country = models.CharField(max_length=100, blank=True)
 
+    is_doctor = models.BooleanField(default=False)
     assigned_doctor = models.ForeignKey(
         'institutions.Doctor',
         on_delete=models.SET_NULL,
