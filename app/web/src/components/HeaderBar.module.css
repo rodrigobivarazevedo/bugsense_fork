@@ -31,7 +31,7 @@
 
 .navLink:hover {
   color: #2e2747;
-  font-weight: normal;
+  font-weight: bold;
 }
 
 .navLink.active {
