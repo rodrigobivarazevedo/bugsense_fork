@@ -16,6 +16,8 @@ import Results from "./views/Results";
 import More from "./views/More";
 import Notifications from "./views/Notifications";
 import Login from "./views/Login";
+import Discover from "./views/Discover";
+import BacteriaRouter from "./views/BacteriaRouter";
 
 const AppRoutes = () => {
   const location = useLocation();
@@ -34,6 +36,8 @@ const AppRoutes = () => {
             <Route path="/results" element={<Results />} />
             <Route path="/more" element={<More />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/discover" element={<Discover />} />
+            <Route path="/bacteria/:id" element={<BacteriaRouter />} />
             <Route path="*" element={<div>Page not found</div>} />
           </Routes>
         </Root>

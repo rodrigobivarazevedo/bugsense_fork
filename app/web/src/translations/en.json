@@ -12,5 +12,18 @@
     "home": "Home",
     "scan": "Scan",
     "results": "Results",
-    "more": "More"
+    "more": "More",
+    "view_my_qr_code": "View my QR code",
+    "joined": "Joined",
+    "account_details": "Account Details",
+    "name": "Name",
+    "gender": "Gender",
+    "dob": "Date of Birth",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "not_specified": "Not Specified",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save"
 }
