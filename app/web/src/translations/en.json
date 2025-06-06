@@ -19,11 +19,19 @@
     "name": "Name",
     "gender": "Gender",
     "dob": "Date of Birth",
-    "email": "Email",
+    "email": "Email Address",
     "phone": "Phone",
     "address": "Address",
     "not_specified": "Not Specified",
     "edit": "Edit",
     "delete": "Delete",
-    "save": "Save"
+    "save": "Save",
+    "language": "Language",
+    "device_permissions": "Device Permissions",
+    "email_us": "Email Us",
+    "call_us": "Call Us",
+    "language_selection": "Language Selection",
+    "more_info_and_support": "More Info and Support",
+    "app_settings": "App Settings",
+    "visit_our_website": "Visit Our Website"
 }
