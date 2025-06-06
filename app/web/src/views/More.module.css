@@ -1,0 +1,63 @@
+.container {
+  flex: 1;
+  background-color: #fff;
+  padding: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.sectionDivider {
+  height: 1px;
+  background-color: #ece6ff;
+  margin: 1rem 0;
+}
+
+.sectionHeader {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2e2747;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.optionButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.optionButton:hover {
+  background-color: rgba(236, 230, 255, 0.1);
+}
+
+.optionIconTextWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.optionText {
+  font-size: 16px;
+  color: #2e2747;
+}
+
+.optionArrow {
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  color: #2e2747;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -6,5 +6,14 @@
     "select_language": "Sprache auswählen",
     "hello": "Hallo",
     "account": "Konto",
-    "home": "Startseite"
+    "home": "Startseite",
+    "name": "Name",
+    "gender": "Geschlecht",
+    "dob": "Geburtsdatum",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "address": "Adresse",
+    "edit": "Bearbeiten",
+    "save": "Speichern",
+    "cancel": "Abbrechen"
 }
