@@ -9,7 +9,7 @@ router = APIRouter(prefix="/upload", tags=["Uploads"])
 
 UPLOAD_DIR = "storage/uploads"  # Directory to store uploaded images
 
-# uploads/{user_id}/{YYYY-MM-DD}/{timestamp}.jpg
+# uploads/{user_id}/{YYYY-MM-DD}/time{timestamp}.jpg
 @router.post(
     "/{user_id}",
     summary="Process and save an image",

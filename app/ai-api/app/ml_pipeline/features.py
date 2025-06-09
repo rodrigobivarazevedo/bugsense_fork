@@ -8,6 +8,30 @@ import numpy as np
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+
+import os
+from datetime import datetime
+
+def get_sorted_images_by_timestamp(folder_path: str) -> list:
+    """
+    Loads and returns all image filenames in the folder,
+    sorted by timestamp embedded in the filename: HH-MM-SS-ffffff.png
+    """
+    img_names = [img for img in os.listdir(folder_path) if img.endswith(".png")]
+
+    def extract_timestamp(filename):
+        # Remove extension, assume filename is like HH-MM-SS-ffffff
+        base = os.path.splitext(filename)[0]
+        try:
+            # Parse to datetime for robust sorting
+            return datetime.strptime(base, "%H-%M-%S-%f")
+        except ValueError:
+            return datetime.min  # Put malformed filenames at the beginning
+
+    img_names.sort(key=extract_timestamp)
+    return img_names
+
+
 # Center crop to make sure dark artifacts are removed
 # Resize for computational efficiency (can be adjusted)
  # Convert to tensor for cuda
@@ -18,8 +42,10 @@ transform = transforms.Compose([
         ])
 
 def load_image_series_from_folder(folder_path: str,  min_hours: int = 6) -> torch.Tensor:
-    img_names = [img for img in os.listdir(folder_path) if img.endswith(".png")]
-    img_names.sort(key=lambda x: float(re.search(r'time([0-9\.]+)[._]', x).group(1)))
+    #img_names = [img for img in os.listdir(folder_path) if img.endswith(".png")]
+    #img_names.sort(key=lambda x: float(re.search(r'time([0-9\.]+)[._]', x).group(1)))
+    
+    img_names = get_sorted_images_by_timestamp(folder_path)
 
     print(f"Found {len(img_names)} images in {folder_path}.")
     

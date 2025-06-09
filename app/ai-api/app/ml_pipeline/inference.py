@@ -9,6 +9,8 @@
 import torch
 from collections import Counter
 from ml_models.model_registry.CNN_LSTM import CNNLSTMModel
+import os
+from pathlib import Path
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -22,13 +24,75 @@ def load_ensemble_models(mode, num_folds=5, model_class=None, num_classes=5):
     fold_models = []
     map_location = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
+    #base_dir = Path(__file__).resolve()
+    #base_dir = Path(__file__).resolve()#.parent#.parent  # go up one level to "app/"
+    #model_dir = base_dir / "ml_models" / "species_models"
+    
     for fold in range(1, num_folds + 1):
+        
+        #model_path = model_dir / f"{mode}_fold{fold}.pth"
+        model_path =  f"/app/ml_models/species_models/{mode}_fold{fold}.pth"
+        #print(f"Loading model from: {model_path}")
+        
+        #if not model_path.exists():
+        #    raise FileNotFoundError(f"Model checkpoint not found: {model_path}")
+        
         model = model_class(cnn_feature_size=64, hidden_size=128, num_classes=num_classes).to(map_location)
-        model.load_state_dict(torch.load(f"saved_models/{mode}_fold{fold}.pth",  weights_only=True, map_location=map_location), strict=True)
-        #  model.load_state_dict(torch.load(f"{mode}_vae_fold{fold}_half.pth", weights_only=True))
+        model.load_state_dict(torch.load(model_path, weights_only=True, map_location=map_location), strict=True)
         model.eval()
         fold_models.append(model)
     return fold_models
+
+
+import torch.nn.functional as F
+import numpy as np
+
+def majority_vote_with_confidence(fold_models, images):
+    """
+    Perform majority voting and compute average confidence.
+    
+    Returns:
+        voted_preds: List[int] - the final predicted class per sample
+        confidences: List[float] - the confidence (probability) of that prediction
+    """
+    fold_predictions = []
+    fold_confidences = []
+
+    for model in fold_models:
+        outputs = model(images)  # shape: (batch_size, num_classes)
+        probs = F.softmax(outputs, dim=1)  # get probability distribution
+
+        # Predictions and confidences
+        confs, preds = torch.max(probs, 1)  # max confidence and corresponding class
+
+        fold_predictions.append([int(p) for p in preds.cpu().numpy()])
+        fold_confidences.append(confs.detach().cpu().numpy())  # still float32
+
+    batch_size = images.size(0)
+    voted_preds = []
+    avg_confidences = []
+
+    for j in range(batch_size):
+        # gather predictions for this sample from all folds
+        sample_preds = [fold_predictions[f][j] for f in range(len(fold_models))]
+
+        # majority vote
+        most_common = Counter(sample_preds).most_common(1)[0][0]
+        voted_preds.append(int(most_common))
+
+        # confidence = average of the confidence scores for the predicted class
+        confidences_for_most_common = [
+            fold_confidences[f][j]
+            for f in range(len(fold_models))
+            if fold_predictions[f][j] == most_common
+        ]
+
+        # mean confidence for the winning class
+        mean_conf = float(np.mean(confidences_for_most_common))
+        avg_confidences.append(mean_conf)
+
+    return voted_preds, avg_confidences
+
 
 def majority_vote(fold_models, images):
     """
@@ -38,19 +102,17 @@ def majority_vote(fold_models, images):
     for model in fold_models:
         outputs = model(images)
         _, predicted = torch.max(outputs, 1)
-        
-        # Convert predictions to integers and append to fold_predictions
-        #predicted = predicted.cpu().numpy()
-        #predicted = predicted.astype(int)  # Ensure predictions are integers
-        
-        fold_predictions.append(predicted.cpu().numpy().astype(int))
+        # Convert to list of native Python ints
+        native_int_preds = [int(p) for p in predicted.cpu().numpy()]
+        fold_predictions.append(native_int_preds)
 
     batch_size = images.size(0)
     voted_preds = []
     for j in range(batch_size):
         sample_preds = [fold_predictions[f][j] for f in range(len(fold_models))]
         most_common = Counter(sample_preds).most_common(1)[0][0]
-        voted_preds.append(most_common)
+        
+        voted_preds.append(int(most_common))
     return voted_preds
 
     
@@ -69,6 +131,10 @@ def predict(images: torch.Tensor, use_two_stage: bool = True):
     # Load First-tier models
     first_models = load_ensemble_models(mode='first_classification', num_folds=5, model_class=CNNLSTMModel, num_classes=5)
     first_preds = majority_vote(first_models, images)
+    
+    first_preds_conf = majority_vote_with_confidence(first_models, images)
+    print("First-tier predictions:", first_preds)
+    print("First-tier confidence:", first_preds_conf)
     
     # convert 
 
