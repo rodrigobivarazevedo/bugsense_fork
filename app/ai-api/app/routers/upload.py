@@ -5,20 +5,19 @@ import os
 import shutil
 
 
-router = APIRouter(prefix="/upload", tags=["Uploads"])
+router = APIRouter(prefix="/uploads", tags=["Uploads"])
 
 UPLOAD_DIR = "storage/uploads"  # Directory to store uploaded images
 
 # uploads/{user_id}/{YYYY-MM-DD}/time{timestamp}.jpg
 @router.post(
-    "/{user_id}",
+    "/",
     summary="Process and save an image",
     status_code=status.HTTP_201_CREATED,
 )
 async def upload_image(
-    user_id: str,
+    user_id: str = Query(...),
     image: UploadFile = File(...),
-    #user_id: str = Form(...)
 ):
     '''
     Accepts an image and a user_id.
@@ -60,13 +59,15 @@ async def upload_image(
         )
 
 
-@router.get("/images/")
+@router.get("/", summary="Get images for a user on a specific date")
 def get_images(user_id: str = Query(...), date: str = Query(...)):
     """
     Returns a list of image file paths for a given user_id and date (YYYY-MM-DD)
     """
     folder_path = os.path.join(UPLOAD_DIR, user_id, date)
-
+    
+    folder_path =f"{UPLOAD_DIR}/{user_id}/{date}/"
+        
     if not os.path.exists(folder_path):
         return JSONResponse(
             status_code=404,

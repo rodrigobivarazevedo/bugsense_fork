@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Query
 from app.db.database import get_async_users_db
 from app.core.security import get_current_active_user
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,13 +13,13 @@ router = APIRouter(prefix="/prediction", tags=["Prediction"])
 UPLOAD_DIR = "storage/uploads"  # Directory to store uploaded images
 
 @router.get(
-    "/{user_id}",
+    "/",
     summary="Retrieve user's prediction history",
     status_code=status.HTTP_200_OK,
 )
 async def get_prediction(
-    user_id: str,
     request: Request,
+    user_id: str = Query(...),
     db: AsyncSession = Depends(get_async_users_db), 
     
 ):
@@ -29,7 +29,32 @@ async def get_prediction(
         folder_path =f"{UPLOAD_DIR}/{user_id}/{current_date}/"
         
         image_series = load_image_series_from_folder(folder_path)
+        
+        if not image_series:
+            response = {
+                "message": "Not enouogh images to make a prediction.",
+                "user_id": user_id,
+                "date": current_date
+            }
+
+            return JSONResponse(content=response,
+                        media_type="application/json", 
+                        headers={"Content-Type": "application/json; charset=utf-8"}
+                        )
+
         window_input_tensor = prepare_input_tensor(image_series)
+        
+        if not window_input_tensor:
+            response = {
+                "message": "Not enouogh images to make a prediction.",
+                "user_id": user_id,
+                "date": current_date
+            }
+
+            return JSONResponse(content=response,
+                        media_type="application/json", 
+                        headers={"Content-Type": "application/json; charset=utf-8"}
+                        )
 
         result = predict(window_input_tensor, use_two_stage=True)
         
