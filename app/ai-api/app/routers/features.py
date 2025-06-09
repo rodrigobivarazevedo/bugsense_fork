@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi.responses import JSONResponse
 from app.db.orm_models import Prediction
-from app.db.schemas import PredictionHistorySchema
 
 router = APIRouter(prefix="/features", tags=["Features"])
 

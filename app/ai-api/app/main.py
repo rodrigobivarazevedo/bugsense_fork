@@ -51,7 +51,7 @@ app = FastAPI(
 
 #==================================== Middleware ========================================================
 
-app.middleware("http")(middleware_monitoring)
+#app.middleware("http")(middleware_monitoring)
 
 #==================================== Database dependencies ========================================================
 

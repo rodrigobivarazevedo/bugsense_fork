@@ -1,20 +1,21 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from app.db.database import get_async_users_db
-from app.core.security import get_current_active_user, get_api_key
+from app.core.security import get_current_active_user
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
+from datetime import datetime
 from fastapi.responses import JSONResponse
-from app.db.orm_models import Prediction
-from app.db.schemas import PredictionHistorySchema
+from app.ml_pipeline.inference import predict
+from app.ml_pipeline.features import load_image_series_from_folder, prepare_input_tensor
 
-router = APIRouter(prefix="/predictions", tags=["Prediction"])
+
+router = APIRouter(prefix="/prediction", tags=["Prediction"])
 
 @router.get(
     "/",
     summary="Retrieve user's prediction history",
     status_code=status.HTTP_200_OK,
 )
-async def get_predictions(
+async def get_prediction(
     request: Request,
     db: AsyncSession = Depends(get_async_users_db), 
 ):
@@ -26,26 +27,29 @@ async def get_predictions(
     user_id = user.uid
     
     try:
+        
+        current_date = datetime.now().strftime("%Y-%m-%d")
        
-        # get the last prediction
-        result = await db.execute(
-            select(Prediction)
-            .filter( Prediction.userId == user_id)
-            .order_by( Prediction.date.desc())
-            .limit(1)
-        )
-        predictions = result.scalars().all()
-                
-        if not predictions:
-            return JSONResponse(
-                content=[],
-                media_type="application/json",
-                headers={"Content-Type": "application/json; charset=utf-8"}
-            )
-            
-        validated_predictions = [PredictionHistorySchema(**prediction.__dict__).model_dump(mode="json") for prediction in predictions]
-                
-        return JSONResponse(content=validated_predictions,
+        folder_path =f"uploads/{user_id}/{current_date}/"
+        
+        image_series = load_image_series_from_folder(folder_path)
+        window_input_tensor = prepare_input_tensor(image_series)
+
+        result = predict(window_input_tensor, use_two_stage=True)
+
+        print("First-tier predictions:", result["first_tier_preds"])
+        print("First-tier labels:", result["first_tier_labels"])
+        print("Second-tier predictions:", result["second_tier_preds"])
+        print("Final predictions:", result["final_preds"])
+        
+        response = {
+            "first_tier_preds": result["first_tier_preds"],
+            "first_tier_labels": result["first_tier_labels"],
+            "second_tier_preds": result["second_tier_preds"],
+            "final_preds": result["final_preds"]
+        }
+        
+        return JSONResponse(content=response,
                         media_type="application/json", 
                         headers={"Content-Type": "application/json; charset=utf-8"}
                         )

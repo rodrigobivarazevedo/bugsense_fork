@@ -7,17 +7,18 @@ import shutil
 
 router = APIRouter(prefix="/upload", tags=["Uploads"])
 
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = "storage/uploads"  # Directory to store uploaded images
 
 # uploads/{user_id}/{YYYY-MM-DD}/{timestamp}.jpg
 @router.post(
-    "/",
+    "/{user_id}",
     summary="Process and save an image",
     status_code=status.HTTP_201_CREATED,
 )
 async def upload_image(
+    user_id: str,
     image: UploadFile = File(...),
-    user_id: str = Form(...)
+    #user_id: str = Form(...)
 ):
     '''
     Accepts an image and a user_id.
@@ -31,7 +32,7 @@ async def upload_image(
         current_date = datetime.now().strftime("%Y-%m-%d")
         timestamp = datetime.now().strftime("%H-%M-%S-%f")
 
-        # Create directory path: uploads/{user_id}/{YYYY-MM-DD}/
+        # Create directory path: uploads/{user_id}/{YYYY-MM-DD}/{timestamp}
         user_folder = os.path.join(UPLOAD_DIR, user_id, current_date)
         os.makedirs(user_folder, exist_ok=True)
 
@@ -43,7 +44,7 @@ async def upload_image(
         # Save image
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(image.file, buffer)
-
+            
         return JSONResponse(
             status_code=200,
             content={
@@ -87,3 +88,6 @@ def get_images(user_id: str = Query(...), date: str = Query(...)):
             "images": image_files
         }
     )
+    
+    
+    
