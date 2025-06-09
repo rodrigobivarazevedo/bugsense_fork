@@ -128,21 +128,52 @@ def predict(images: torch.Tensor, use_two_stage: bool = True):
     Returns:
         dict: Dictionary containing predictions from the first tier, and optionally from the second tier.
     """
+    final_label_map = {
+        0: 'Sterile',
+        1: 'Efaecalis',
+        2: 'Kpneumoniae',
+        3: 'Ssaprophyticus',
+        4: 'Ehormaechei',
+        5: 'Paeruginosa',
+        6: 'Pmirabilis',
+        7: 'Saureus',
+        8: 'Ecoli'
+    }
+    
+    first_label_map = {
+        0: 'Sterile',
+        1: 'Efaecalis/Kpneumoniae',
+        2: 'Ssaprophyticus/Ehormaechei',
+        3: 'Paeruginosa/Pmirabilis/Saureus',
+        4: 'Ecoli'
+    }
+    
     # Load First-tier models
     first_models = load_ensemble_models(mode='first_classification', num_folds=5, model_class=CNNLSTMModel, num_classes=5)
-    first_preds = majority_vote(first_models, images)
+    #first_preds = majority_vote(first_models, images)
     
-    first_preds_conf = majority_vote_with_confidence(first_models, images)
+    first_preds, first_preds_conf = majority_vote_with_confidence(first_models, images)
     print("First-tier predictions:", first_preds)
     print("First-tier confidence:", first_preds_conf)
+    print("Positive label confidence:", first_preds_conf[0])
     
-    # convert 
+    # check if the first tier confidence is too low
+    if first_preds_conf and first_preds_conf[0] < 0.6:
+        print("First-tier confidence too low, returning only first-tier predictions.")
+        return {
+                "first_tier_preds": first_preds,
+                "second_tier_preds":  None,
+                "first_tier_labels": [first_label_map[pred] for pred in first_preds],
+                "final_preds": None 
+            }
 
     if not use_two_stage:
         return {
-            "first_tier_preds": first_preds,
-            "second_tier_preds": None
-        }
+                "first_tier_preds": first_preds,
+                "second_tier_preds":  None,
+                "first_tier_labels": [first_label_map[pred] for pred in first_preds],
+                "final_preds": None 
+            }
 
     # Load Second-tier models
     ef_kp_models = load_ensemble_models('ef_kp', num_folds=5, model_class=CNNLSTMModel, num_classes=2)
@@ -169,26 +200,6 @@ def predict(images: torch.Tensor, use_two_stage: bool = True):
 
         second_preds.append(second)
         
-    final_label_map = {
-        0: 'Sterile',
-        1: 'Efaecalis',
-        2: 'Kpneumoniae',
-        3: 'Ssaprophyticus',
-        4: 'Ehormaechei',
-        5: 'Paeruginosa',
-        6: 'Pmirabilis',
-        7: 'Saureus',
-        8: 'Ecoli'
-    }
-    
-    first_label_map = {
-        0: 'Sterile',
-        1: 'Efaecalis/Kpneumoniae',
-        2: 'Ssaprophyticus/Ehormaechei',
-        3: 'Paeruginosa/Pmirabilis/Saureus',
-        4: 'Ecoli'
-    }
-    
     return {
         "first_tier_preds": first_preds,
         "second_tier_preds": second_preds,

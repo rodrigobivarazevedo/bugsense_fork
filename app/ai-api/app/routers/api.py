@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from app.routers import (
-    features, prediction, upload
+     prediction, upload
 )
 from app.core.security import get_api_key
 
@@ -11,7 +11,5 @@ api_router = APIRouter(
     #dependencies=[Depends(get_api_key)],
 )
 
-
-api_router.include_router(features.router)
 api_router.include_router(prediction.router)
 api_router.include_router(upload.router)

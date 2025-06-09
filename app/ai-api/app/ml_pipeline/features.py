@@ -2,15 +2,12 @@ from torchvision import transforms
 from PIL import Image
 import os
 import torch
-import re
 from torchvision.transforms import InterpolationMode
 import numpy as np
+from datetime import datetime
+from skimage.color import rgb2lab
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-
-import os
-from datetime import datetime
 
 def get_sorted_images_by_timestamp(folder_path: str) -> list:
     """
@@ -42,9 +39,6 @@ transform = transforms.Compose([
         ])
 
 def load_image_series_from_folder(folder_path: str,  min_hours: int = 6) -> torch.Tensor:
-    #img_names = [img for img in os.listdir(folder_path) if img.endswith(".png")]
-    #img_names.sort(key=lambda x: float(re.search(r'time([0-9\.]+)[._]', x).group(1)))
-    
     img_names = get_sorted_images_by_timestamp(folder_path)
 
     print(f"Found {len(img_names)} images in {folder_path}.")
@@ -64,9 +58,6 @@ def load_image_series_from_folder(folder_path: str,  min_hours: int = 6) -> torc
     images = torch.stack(images)
     return images
 
-
-
-from skimage.color import rgb2lab
 
 def find_stopping_point(image_tensor, threshold, mode = "sliding_window", use_roi_size=10, use_stride_size=5, use_prev_image=None):
     for index in range(len(image_tensor)):
