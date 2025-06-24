@@ -10,7 +10,6 @@ def get_user_prediction(user_id):
     print("Response:", response.json())
 
 if __name__ == "__main__":
-    user_id = "user123456"
     user_id = "user123"
     get_user_prediction(user_id)
     

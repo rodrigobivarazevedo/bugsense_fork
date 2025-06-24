@@ -30,7 +30,7 @@ async def get_prediction(
         
         image_series = load_image_series_from_folder(folder_path)
         
-        if not image_series:
+        if image_series is None:
             response = {
                 "message": "Not enouogh images to make a prediction.",
                 "user_id": user_id,
@@ -44,7 +44,7 @@ async def get_prediction(
 
         window_input_tensor = prepare_input_tensor(image_series)
         
-        if not window_input_tensor:
+        if window_input_tensor is None:
             response = {
                 "message": "Not enouogh images to make a prediction.",
                 "user_id": user_id,
