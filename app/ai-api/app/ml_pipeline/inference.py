@@ -1,15 +1,8 @@
-######################################################
-# This is the inference method for the moodels. We 
-# load the models and have a two tier classification. 
-# First a rough classification is done into the main 
-# color groups and then a second classification is done
-# for the subgroups. The results are saved in a confusion
-# matrix and the accuracy is printed.
-######################################################
 import torch
 from collections import Counter
 from ml_models.model_registry.CNN_LSTM import CNNLSTMModel
-import os
+import torch.nn.functional as F
+import numpy as np
 from pathlib import Path
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -24,28 +17,25 @@ def load_ensemble_models(mode, num_folds=5, model_class=None, num_classes=5):
     fold_models = []
     map_location = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    #base_dir = Path(__file__).resolve()
-    #base_dir = Path(__file__).resolve()#.parent#.parent  # go up one level to "app/"
-    #model_dir = base_dir / "ml_models" / "species_models"
-    
+    ######################################################
+    # This is the inference method for the moodels. We 
+    # load the models and have a two tier classification. 
+    # First a rough classification is done into the main 
+    # color groups and then a second classification is done
+    # for the subgroups. The results are saved in a confusion
+    # matrix and the accuracy is printed.
+    ######################################################
+      
     for fold in range(1, num_folds + 1):
         
-        #model_path = model_dir / f"{mode}_fold{fold}.pth"
         model_path =  f"/app/ml_models/species_models/{mode}_fold{fold}.pth"
-        #print(f"Loading model from: {model_path}")
-        
-        #if not model_path.exists():
-        #    raise FileNotFoundError(f"Model checkpoint not found: {model_path}")
-        
         model = model_class(cnn_feature_size=64, hidden_size=128, num_classes=num_classes).to(map_location)
         model.load_state_dict(torch.load(model_path, weights_only=True, map_location=map_location), strict=True)
         model.eval()
         fold_models.append(model)
+        
     return fold_models
 
-
-import torch.nn.functional as F
-import numpy as np
 
 def majority_vote_with_confidence(fold_models, images):
     """
@@ -150,16 +140,10 @@ def predict(images: torch.Tensor, use_two_stage: bool = True):
     
     # Load First-tier models
     first_models = load_ensemble_models(mode='first_classification', num_folds=5, model_class=CNNLSTMModel, num_classes=5)
-    #first_preds = majority_vote(first_models, images)
-    
     first_preds, first_preds_conf = majority_vote_with_confidence(first_models, images)
-    print("First-tier predictions:", first_preds)
-    print("First-tier confidence:", first_preds_conf)
-    print("Positive label confidence:", first_preds_conf[0])
-    
+   
     # check if the first tier confidence is too low
     if first_preds_conf and first_preds_conf[0] < 0.6:
-        print("First-tier confidence too low, returning only first-tier predictions.")
         return {
                 "first_tier_preds": first_preds,
                 "second_tier_preds":  None,
