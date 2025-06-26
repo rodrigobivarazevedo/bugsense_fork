@@ -76,3 +76,78 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+class QRCode(models.Model):
+    """
+    QR Code model linked to a user
+    """
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='qr_codes',
+        verbose_name='User'
+    )
+    qr_data = models.TextField(
+        verbose_name='QR Code Data',
+        help_text='The string data contained in the scanned QR code'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'QR Code'
+        verbose_name_plural = 'QR Codes'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"QR Code for {self.user.email}"
+
+
+class Results(models.Model):
+    """
+    Results model for QR code analysis
+    """
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='results',
+        verbose_name='User'
+    )
+    qr_code = models.ForeignKey(
+        QRCode,
+        on_delete=models.CASCADE,
+        related_name='results',
+        verbose_name='QR Code'
+    )
+    infection_detected = models.BooleanField(
+        verbose_name='Infection Detected',
+        help_text='Whether an infection is present (True) or not (False)'
+    )
+    species = models.CharField(
+        max_length=255,
+        verbose_name='Species',
+        help_text='The species of bacteria or pathogen detected',
+        blank=True
+    )
+    concentration = models.CharField(
+        max_length=100,
+        verbose_name='Concentration',
+        help_text='The concentration level of the detected pathogen',
+        blank=True
+    )
+    antibiotic = models.CharField(
+        max_length=255,
+        verbose_name='Antibiotic',
+        help_text='Recommended antibiotic treatment',
+        blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Result'
+        verbose_name_plural = 'Results'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        infection_status = "Infected" if self.infection_detected else "No Infection"
+        return f"Result for {self.user.email} - {infection_status} ({self.created_at.strftime('%Y-%m-%d %H:%M')})"
