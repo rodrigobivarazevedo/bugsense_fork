@@ -44,8 +44,10 @@ The application can be started using the `start_app.sh` script with different op
 
 Once started, you can access the application through:
 
-- Web App: http://${HOST_IP}:3000
-- Mobile App: exp://${HOST_IP}:8081
+- **Web App**: http://{HOST_IP}:3000
+- **Mobile App**: exp://{HOST_IP}:8081
+- **API Documentation (Swagger UI)**: http://{HOST_IP}:8000/api/docs/
+- **API Documentation (ReDoc)**: http://{HOST_IP}:8000/api/redoc/
 
 Note: Your host IP will be displayed in the logs when the application starts.
 
@@ -55,6 +57,16 @@ For first-time users, you can log in with these sample credentials:
 
 - Email: test@example.com
 - Password: Password123!
+
+### API Documentation
+
+The application includes comprehensive API documentation powered by drf-spectacular:
+
+- **Swagger UI**: Interactive documentation with try-it-out functionality
+- **ReDoc**: Clean, responsive documentation interface
+- **Raw Schema**: OpenAPI JSON schema for integration with other tools
+
+All API endpoints are documented with examples, request/response schemas, and authentication requirements.
 
 ### Troubleshooting
 
