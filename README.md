@@ -64,7 +64,6 @@ The application includes comprehensive API documentation powered by drf-spectacu
 
 - **Swagger UI**: Interactive documentation with try-it-out functionality
 - **ReDoc**: Clean, responsive documentation interface
-- **Raw Schema**: OpenAPI JSON schema for integration with other tools
 
 All API endpoints are documented with examples, request/response schemas, and authentication requirements.
 
