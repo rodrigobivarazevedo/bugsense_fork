@@ -1,16 +1,19 @@
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from .serializers import (
     CustomTokenObtainPairSerializer,
     UserSerializer,
     LogoutSerializer,
     RegisterSerializer,
+    QRCodeSerializer,
+    QRCodeCreateSerializer,
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+from .models import QRCode
 
 
 class LoginView(TokenObtainPairView):
@@ -79,3 +82,56 @@ class RegisterView(CreateAPIView):
     POST /api/register/ with user data
     """
     serializer_class = RegisterSerializer
+
+
+class QRCodeCreateView(CreateAPIView):
+    """
+    POST /api/qr-codes/ with { user_id, qr_data }
+    Creates a new QR code entry for the specified user
+    """
+    serializer_class = QRCodeCreateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        qr_code = serializer.save()
+
+        # Return the created QR code with full details
+        response_serializer = QRCodeSerializer(qr_code)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+
+class QRCodeListView(ListAPIView):
+    """
+    GET /api/qr-codes/ - List all QR codes for the authenticated user
+    GET /api/qr-codes/?user_id=X - List QR codes for a specific user (admin only)
+    """
+    serializer_class = QRCodeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user_id = self.request.query_params.get('user_id')
+
+        # If user_id is provided and user is staff, return QR codes for that user
+        if user_id and self.request.user.is_staff:
+            return QRCode.objects.filter(user_id=user_id)
+
+        # Otherwise, return QR codes for the authenticated user
+        return QRCode.objects.filter(user=self.request.user)
+
+
+class QRCodeDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    GET /api/qr-codes/{id}/ - Get specific QR code details
+    PUT /api/qr-codes/{id}/ - Update QR code
+    DELETE /api/qr-codes/{id}/ - Delete QR code
+    """
+    serializer_class = QRCodeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Staff can access any QR code, regular users only their own
+        if self.request.user.is_staff:
+            return QRCode.objects.all()
+        return QRCode.objects.filter(user=self.request.user)

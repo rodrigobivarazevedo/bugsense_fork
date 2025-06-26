@@ -76,3 +76,28 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+class QRCode(models.Model):
+    """
+    QR Code model linked to a user
+    """
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='qr_codes',
+        verbose_name='User'
+    )
+    qr_data = models.TextField(
+        verbose_name='QR Code Data',
+        help_text='The string data contained in the scanned QR code'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'QR Code'
+        verbose_name_plural = 'QR Codes'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"QR Code for {self.user.email}"

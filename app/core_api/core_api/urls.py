@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from users.views import LoginView, CurrentUserView, LogoutView, RegisterView
+from users.views import LoginView, CurrentUserView, LogoutView, RegisterView, QRCodeCreateView, QRCodeListView, QRCodeDetailView
 from institutions.views import DoctorLoginView, DoctorRegistrationView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -34,5 +34,9 @@ urlpatterns = [
     path('api/users/me/', CurrentUserView.as_view(), name='current-user'),
     path('api/logout/', LogoutView.as_view(), name='logout'),
     path('api/register/', RegisterView.as_view(), name='register'),
+    path('api/qr-codes/', QRCodeCreateView.as_view(), name='qr-code-create'),
+    path('api/qr-codes/list/', QRCodeListView.as_view(), name='qr-code-list'),
+    path('api/qr-codes/<int:pk>/',
+         QRCodeDetailView.as_view(), name='qr-code-detail'),
     path('api/', include('institutions.urls')),
 ]

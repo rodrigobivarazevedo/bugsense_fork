@@ -1,6 +1,6 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, QRCode
 from django.utils import timezone
 
 
@@ -73,3 +73,34 @@ class RegisterSerializer(serializers.ModelSerializer):
             date_joined=timezone.now().date()
         )
         return user
+
+
+class QRCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QRCode
+        fields = [
+            'id',
+            'user',
+            'qr_data',
+            'created_at',
+            'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class QRCodeCreateSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = QRCode
+        fields = ['user_id', 'qr_data']
+
+    def create(self, validated_data):
+        user_id = validated_data.pop('user_id')
+        try:
+            user = CustomUser.objects.get(id=user_id)
+        except CustomUser.DoesNotExist:
+            raise serializers.ValidationError(
+                {'user_id': 'User with this ID does not exist.'})
+
+        return QRCode.objects.create(user=user, **validated_data)
