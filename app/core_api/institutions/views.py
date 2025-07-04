@@ -2,11 +2,11 @@ from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, BasePermission
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
-from rest_framework.permissions import BasePermission
+from rest_framework.generics import ListAPIView
 from .models import Institution, Doctor
 from .serializers import (
     InstitutionSerializer,
@@ -14,6 +14,8 @@ from .serializers import (
     DoctorLoginSerializer,
     DoctorRegistrationSerializer
 )
+from users.serializers import UserSerializer
+from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter
 
 
 class IsDoctor(BasePermission):
@@ -33,6 +35,34 @@ class InstitutionViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     http_method_names = ['get', 'post']
 
+    @extend_schema(
+        tags=['institutions'],
+        summary="List Institutions",
+        description="Retrieve a list of all institutions. This endpoint is publicly accessible.",
+        responses={200: InstitutionSerializer(many=True)}
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['institutions'],
+        summary="Get Institution Details",
+        description="Retrieve details of a specific institution by ID.",
+        responses={200: InstitutionSerializer}
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['institutions'],
+        summary="Create Institution",
+        description="Create a new institution with the provided information.",
+        request=InstitutionSerializer,
+        responses={201: InstitutionSerializer}
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
 
 class DoctorViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -44,6 +74,33 @@ class DoctorViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Doctor.objects.filter(is_active=True)
     serializer_class = DoctorSerializer
     permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=['doctors'],
+        summary="List Doctors",
+        description="Retrieve a list of all active doctors. Can be filtered by institution_id query parameter.",
+        parameters=[
+            OpenApiParameter(
+                name='institution_id',
+                type=int,
+                location=OpenApiParameter.QUERY,
+                description='Filter doctors by institution ID',
+                required=False
+            )
+        ],
+        responses={200: DoctorSerializer(many=True)}
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['doctors'],
+        summary="Get Doctor Details",
+        description="Retrieve details of a specific doctor by doctor_id.",
+        responses={200: DoctorSerializer}
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
 
     def get_queryset(self):
         institution_id = self.request.query_params.get('institution_id')
@@ -59,6 +116,44 @@ class DoctorRegistrationView(APIView):
     """
     permission_classes = [AllowAny]
 
+    @extend_schema(
+        tags=['authentication'],
+        summary="Doctor Registration",
+        description="Register a new doctor with their information and institution. Returns JWT tokens and doctor information upon successful registration.",
+        request=DoctorRegistrationSerializer,
+        responses={
+            200: {
+                'type': 'object',
+                'properties': {
+                    'access': {'type': 'string', 'description': 'JWT access token'},
+                    'refresh': {'type': 'string', 'description': 'JWT refresh token'},
+                    'doctor': {'type': 'object', 'description': 'Doctor information'}
+                }
+            },
+            400: {
+                'type': 'object',
+                'properties': {
+                    'email': {'type': 'array', 'items': {'type': 'string'}},
+                    'password': {'type': 'array', 'items': {'type': 'string'}},
+                    'full_name': {'type': 'array', 'items': {'type': 'string'}},
+                    'institution': {'type': 'array', 'items': {'type': 'string'}}
+                }
+            }
+        },
+        examples=[
+            OpenApiExample(
+                'Doctor Registration',
+                value={
+                    'email': 'doctor@hospital.com',
+                    'password': 'securepassword123',
+                    'full_name': 'Dr. John Smith',
+                    'phone_number': '+1234567890',
+                    'institution': 1
+                },
+                description='Example of doctor registration with all required fields'
+            )
+        ]
+    )
     def post(self, request):
         serializer = DoctorRegistrationSerializer(data=request.data)
         if serializer.is_valid():
@@ -88,6 +183,39 @@ class DoctorLoginView(APIView):
     """
     permission_classes = [AllowAny]
 
+    @extend_schema(
+        tags=['authentication'],
+        summary="Doctor Login",
+        description="Authenticate a doctor using their doctor ID and password. Returns JWT tokens and doctor information.",
+        request=DoctorLoginSerializer,
+        responses={
+            200: {
+                'type': 'object',
+                'properties': {
+                    'access': {'type': 'string', 'description': 'JWT access token'},
+                    'refresh': {'type': 'string', 'description': 'JWT refresh token'},
+                    'doctor': {'type': 'object', 'description': 'Doctor information'}
+                }
+            },
+            400: {
+                'type': 'object',
+                'properties': {
+                    'doctor_id': {'type': 'array', 'items': {'type': 'string'}},
+                    'password': {'type': 'array', 'items': {'type': 'string'}}
+                }
+            }
+        },
+        examples=[
+            OpenApiExample(
+                'Successful Login',
+                value={
+                    'doctor_id': 'DOC0001',
+                    'password': 'securepassword123'
+                },
+                description='Example of successful doctor login'
+            )
+        ]
+    )
     def post(self, request):
         serializer = DoctorLoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -108,3 +236,56 @@ class DoctorLoginView(APIView):
             })
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class IsDoctorPermission(BasePermission):
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated and getattr(request.user, 'is_doctor', False)
+
+
+class DoctorPatientsListView(ListAPIView):
+    """
+    GET /api/doctor/patients/ - List all users (patients) assigned to the authenticated doctor.
+
+    This endpoint returns all users (patients) whose `assigned_doctor` is the currently authenticated doctor. The doctor must be authenticated and have `is_doctor=True`.
+
+    **Authentication:** Bearer JWT token (doctor)
+    **Response:** List of user objects (id, email, full_name, etc.)
+    """
+    serializer_class = UserSerializer
+    permission_classes = [IsDoctorPermission]
+
+    @extend_schema(
+        tags=["doctor"],
+        summary="List Patients Linked to Doctor",
+        description="Returns all users (patients) whose assigned_doctor is the currently authenticated doctor. Only accessible to authenticated doctors.",
+        responses={
+            200: UserSerializer(many=True)
+        },
+        examples=[
+            OpenApiExample(
+                'Successful Response',
+                value=[
+                    {
+                        "id": 19,
+                        "email": "patient.test@example.com",
+                        "full_name": "Test Patient",
+                        "gender": "",
+                        "dob": None,
+                        "phone_number": None,
+                        "street": "",
+                        "city": "",
+                        "postcode": "",
+                        "country": "",
+                        "date_joined": "2025-07-04"
+                    }
+                ],
+                description="Example response with one patient linked to the doctor."
+            )
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return self.serializer_class.Meta.model.objects.filter(assigned_doctor=self.request.user)

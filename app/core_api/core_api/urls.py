@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from users.views import LoginView, CurrentUserView, LogoutView, RegisterView, QRCodeCreateView, QRCodeListView, QRCodeDetailView, ResultsCreateView, ResultsListView, ResultsDetailView
-from institutions.views import DoctorLoginView, DoctorRegistrationView
+from institutions.views import DoctorLoginView, DoctorRegistrationView, DoctorPatientsListView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -43,6 +43,8 @@ urlpatterns = [
     path('api/results/list/', ResultsListView.as_view(), name='results-list'),
     path('api/results/<int:pk>/', ResultsDetailView.as_view(), name='results-detail'),
     path('api/', include('institutions.urls')),
+    path('api/doctor/patients/', DoctorPatientsListView.as_view(),
+         name='doctor-patients'),
 
     # API Documentation
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
