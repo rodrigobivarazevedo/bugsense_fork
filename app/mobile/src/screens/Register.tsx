@@ -224,6 +224,15 @@ const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
                     </S.Link>
                 </TouchableOpacity>
             </S.LinkContainer>
+
+            <S.LinkContainer>
+                <S.LinkText>{t('Are you medical personnel?')}</S.LinkText>
+                <TouchableOpacity onPress={() => navigation.navigate('DoctorLogin')}>
+                    <S.Link>
+                        {t('Login as Doctor')}
+                    </S.Link>
+                </TouchableOpacity>
+            </S.LinkContainer>
         </S.Container>
     );
 };

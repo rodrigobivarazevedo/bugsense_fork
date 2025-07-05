@@ -68,7 +68,8 @@ export const Account: React.FC = () => {
 
     const handleEdit = (field: string) => {
         setEditingField(field);
-        setTempValue(user?.[field as keyof typeof user] || '');
+        const fieldValue = user?.[field as keyof typeof user];
+        setTempValue(typeof fieldValue === 'string' ? fieldValue : '');
         if (field === 'address') {
             setSearchQuery('');
             setAddressSuggestions([]);
@@ -360,8 +361,6 @@ export const Account: React.FC = () => {
         return <S.ItemValue>{value}</S.ItemValue>;
     };
 
-
-
     // state for current user profile
     const [user, setUser] = useState<null | {
         full_name: string;
@@ -374,12 +373,24 @@ export const Account: React.FC = () => {
         city: string;
         postcode: string;
         country: string;
+        is_doctor?: boolean;
+        institution_name?: string;
+        doctor_id?: string;
     }>(null);
+
+    const [userType, setUserType] = useState<string>('patient');
 
     useEffect(() => {
         Api.get('users/me/')
             .then(res => setUser(res.data))
             .catch(err => console.error('Could not load profile', err));
+
+        // Get user type from AsyncStorage
+        AsyncStorage.getItem('userType').then(type => {
+            if (type && typeof type === 'string') {
+                setUserType(type);
+            }
+        });
     }, []);
 
     // Fetch when screen is focused
@@ -399,9 +410,15 @@ export const Account: React.FC = () => {
                 try {
                     const res = await Api.get('users/me/');
                     if (isActive) setUser(res.data);
+
+                    // Get user type from AsyncStorage
+                    const type = await AsyncStorage.getItem('userType');
+                    if (type && typeof type === 'string' && isActive) {
+                        setUserType(type);
+                    }
                 } catch (err: any) {
                     if (err.response?.status === 401) {
-                        await AsyncStorage.multiRemove(['accessToken', 'refreshToken', 'user']);
+                        await AsyncStorage.multiRemove(['accessToken', 'refreshToken', 'user', 'userType']);
                         (navigation as any).reset({
                             index: 0,
                             routes: [{ name: 'Login' }],
@@ -422,7 +439,7 @@ export const Account: React.FC = () => {
     const handleSignOut = async () => {
         const refresh = await AsyncStorage.getItem('refreshToken');
         if (refresh) await Api.post('logout/', { refresh });
-        await AsyncStorage.multiRemove(['accessToken', 'refreshToken', 'user']);
+        await AsyncStorage.multiRemove(['accessToken', 'refreshToken', 'user', 'userType']);
         Api.defaults.headers.Authorization = '';
 
         (navigation as any).reset({
@@ -443,7 +460,7 @@ export const Account: React.FC = () => {
                     onPress: async () => {
                         try {
                             await Api.delete('users/me/');
-                            await AsyncStorage.multiRemove(['accessToken', 'refreshToken', 'user']);
+                            await AsyncStorage.multiRemove(['accessToken', 'refreshToken', 'user', 'userType']);
                             (navigation as any).reset({
                                 index: 0,
                                 routes: [{ name: 'Login' }],
@@ -484,20 +501,47 @@ export const Account: React.FC = () => {
                     <S.ProfileInfo>
                         <S.UserName>{user?.full_name}</S.UserName>
                         <S.DateJoined>{t('Joined')} {user?.date_joined}</S.DateJoined>
-                        <S.QRButton>
-                            <RenderIcon
-                                family="materialCommunity"
-                                icon="qrcode"
-                                fontSize={rem(1.5)}
-                                color="primary"
-                            />
-                            <S.QRButtonText>{t('View my QR code')}</S.QRButtonText>
-                        </S.QRButton>
+
+                        {/* Show user type indicator */}
+                        <S.UserTypeIndicator>
+                            <S.UserTypeText>
+                                {userType === 'doctor' ? t('Medical Personnel') : t('Patient')}
+                            </S.UserTypeText>
+                        </S.UserTypeIndicator>
+
+                        {/* Show doctor-specific information */}
+                        {userType === 'doctor' && user?.institution_name && (
+                            <S.InstitutionInfo>
+                                <S.InstitutionLabel>{t('Institution')}</S.InstitutionLabel>
+                                <S.InstitutionName>{user.institution_name}</S.InstitutionName>
+                            </S.InstitutionInfo>
+                        )}
+
+                        {userType === 'doctor' && user?.doctor_id && (
+                            <S.DoctorIdInfo>
+                                <S.DoctorIdLabel>{t('Doctor ID')}</S.DoctorIdLabel>
+                                <S.DoctorIdValue>{user.doctor_id}</S.DoctorIdValue>
+                            </S.DoctorIdInfo>
+                        )}
+
+                        {/* Only show QR code for patients */}
+                        {userType === 'patient' && (
+                            <S.QRButton>
+                                <RenderIcon
+                                    family="materialCommunity"
+                                    icon="qrcode"
+                                    fontSize={rem(1.5)}
+                                    color="primary"
+                                />
+                                <S.QRButtonText>{t('View my QR code')}</S.QRButtonText>
+                            </S.QRButton>
+                        )}
                     </S.ProfileInfo>
                 </S.ProfileCardContent>
             </S.ProfileCard>
 
             <S.SectionTitle>{t('Account Details')}</S.SectionTitle>
+
             <S.LightCard>
                 <S.ItemRow>
                     <S.ItemTextCol>
@@ -508,27 +552,34 @@ export const Account: React.FC = () => {
                         <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
                     </S.EditIconBtnLight>
                 </S.ItemRow>
-                <S.ItemRow>
-                    <S.ItemTextCol>
-                        <S.ItemLabel>{t('Gender')}</S.ItemLabel>
-                        {renderEditableField('gender', user?.gender)}
-                    </S.ItemTextCol>
-                    <S.EditIconBtnLight onPress={() => handleEdit('gender')}>
-                        <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
-                    </S.EditIconBtnLight>
-                </S.ItemRow>
-                <S.ItemRow>
-                    <S.ItemTextCol>
-                        <S.ItemLabel>{t('Date of birth')}</S.ItemLabel>
-                        {renderEditableField('dob', user?.dob)}
-                    </S.ItemTextCol>
-                    <S.EditIconBtnLight onPress={() => handleEdit('dob')}>
-                        <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
-                    </S.EditIconBtnLight>
-                </S.ItemRow>
+
+                {/* Only show gender and DOB for patients */}
+                {userType === 'patient' && (
+                    <>
+                        <S.ItemRow>
+                            <S.ItemTextCol>
+                                <S.ItemLabel>{t('Gender')}</S.ItemLabel>
+                                {renderEditableField('gender', user?.gender)}
+                            </S.ItemTextCol>
+                            <S.EditIconBtnLight onPress={() => handleEdit('gender')}>
+                                <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                            </S.EditIconBtnLight>
+                        </S.ItemRow>
+                        <S.ItemRow>
+                            <S.ItemTextCol>
+                                <S.ItemLabel>{t('Date of birth')}</S.ItemLabel>
+                                {renderEditableField('dob', user?.dob)}
+                            </S.ItemTextCol>
+                            <S.EditIconBtnLight onPress={() => handleEdit('dob')}>
+                                <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                            </S.EditIconBtnLight>
+                        </S.ItemRow>
+                    </>
+                )}
             </S.LightCard>
 
             <S.SectionTitle>{t('Contact Data')}</S.SectionTitle>
+
             <S.LightCard>
                 <S.ItemRow>
                     <S.ItemTextCol>

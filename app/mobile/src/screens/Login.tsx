@@ -31,6 +31,7 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
             await AsyncStorage.setItem('accessToken', access);
             await AsyncStorage.setItem('refreshToken', refresh);
             await AsyncStorage.setItem('user', JSON.stringify(user));
+            await AsyncStorage.setItem('userType', 'patient');
 
             console.log('Login attempted with:', { username });
             navigation.navigate('Home');
@@ -110,6 +111,15 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
                 <TouchableOpacity onPress={() => navigation.navigate('Register')}>
                     <S.Link>
                         {t('Register')}
+                    </S.Link>
+                </TouchableOpacity>
+            </S.LinkContainer>
+
+            <S.LinkContainer>
+                <S.LinkText>{t('Are you medical personnel?')}</S.LinkText>
+                <TouchableOpacity onPress={() => navigation.navigate('DoctorLogin')}>
+                    <S.Link>
+                        {t('Login as Doctor')}
                     </S.Link>
                 </TouchableOpacity>
             </S.LinkContainer>
