@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import RenderLottie from "../components/RenderLottie";
 import styles from "./Account.module.css";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 import EditIcon from "@mui/icons-material/Edit";
@@ -123,14 +122,6 @@ const Account = () => {
   return (
     <div className={styles.container}>
       <div className={styles.profileCard}>
-        <div className={styles.logoOverlay}>
-          <RenderLottie
-            name="homeHello"
-            startFrame={0}
-            endFrame={150}
-            loop={true}
-          />
-        </div>
         <div className={styles.profileContent}>
           <div className={styles.avatar}>👤</div>
           <div className={styles.userInfo}>
