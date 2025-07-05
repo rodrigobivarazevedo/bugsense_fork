@@ -356,4 +356,39 @@ export const DoctorIdValue = styled.Text`
   color: ${themeColors.white};
   font-weight: 600;
   font-size: ${rem(0.875)}px;
+`;
+
+export const AddressActionContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: ${rem(1)}px;
+  gap: ${rem(1)}px;
+`;
+
+export const AddressCancelButton = styled.TouchableOpacity`
+  flex: 1;
+  background-color: ${themeColors.themeGray};
+  border-radius: ${rem(0.5)}px;
+  padding: ${rem(1)}px;
+  align-items: center;
+`;
+
+export const AddressCancelButtonText = styled.Text`
+  ${themeTypography.p};
+  color: ${themeColors.white};
+  font-weight: 600;
+`;
+
+export const AddressSaveButton = styled.TouchableOpacity`
+  flex: 1;
+  background-color: ${themeColors.primary};
+  border-radius: ${rem(0.5)}px;
+  padding: ${rem(1)}px;
+  align-items: center;
+`;
+
+export const AddressSaveButtonText = styled.Text`
+  ${themeTypography.p};
+  color: ${themeColors.white};
+  font-weight: 600;
 `; 

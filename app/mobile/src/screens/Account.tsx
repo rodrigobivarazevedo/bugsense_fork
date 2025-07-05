@@ -1,50 +1,17 @@
-import { FC, useState, useEffect, useCallback } from 'react';
+import { FC, useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as S from './Account.styles';
 import RenderIcon from '../components/RenderIcon';
 import Logo from '../components/Logo';
 import { rem } from '../utils/Responsive';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Platform, TextInput, Modal, TouchableOpacity, ActivityIndicator, ScrollView, Alert } from 'react-native';
+import { Platform, TextInput, Modal, TouchableOpacity, Alert } from 'react-native';
 import { themeColors } from '../theme/GlobalTheme';
 import ConfirmationModal from '../components/modal/ConfirmationModal';
 import GenericDateTimePicker from '../components/GenericDateTimePicker';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-
-interface AddressSuggestion {
-    display_name: string;
-    lat: string;
-    lon: string;
-}
-
-const searchAddresses = async (query: string): Promise<AddressSuggestion[]> => {
-    try {
-        const response = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`,
-            {
-                headers: {
-                    'User-Agent': 'BugSense-App/1.0'
-                }
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch addresses');
-        }
-
-        const data = await response.json();
-        return data.map((item: any) => ({
-            display_name: item.display_name,
-            lat: item.lat,
-            lon: item.lon
-        }));
-    } catch (error) {
-        console.error('Error searching addresses:', error);
-        return [];
-    }
-};
 
 export const Account: FC = () => {
     const { t } = useTranslation();
@@ -53,28 +20,36 @@ export const Account: FC = () => {
     // State for editable fields
     const [editingField, setEditingField] = useState<string | null>(null);
     const [tempValue, setTempValue] = useState<string>('');
+    const [pendingValue, setPendingValue] = useState<string>('');
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
-    // Address search states
-    const [addressSuggestions, setAddressSuggestions] = useState<AddressSuggestion[]>([]);
-    const [isSearching, setIsSearching] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
-    const [showAddressModal, setShowAddressModal] = useState(false);
-    const [pendingValue, setPendingValue] = useState<string>('');
+    // Address editing states
+    const [addressFields, setAddressFields] = useState({
+        street: '',
+        city: '',
+        postcode: '',
+        country: ''
+    });
+    const [originalAddressFields, setOriginalAddressFields] = useState({
+        street: '',
+        city: '',
+        postcode: '',
+        country: ''
+    });
     const [showDatePicker, setShowDatePicker] = useState(false);
 
     const navigation = useNavigation();
+
+    // Refs for address TextInput fields
+    const streetInputRef = useRef<TextInput>(null);
+    const cityInputRef = useRef<TextInput>(null);
+    const postcodeInputRef = useRef<TextInput>(null);
+    const countryInputRef = useRef<TextInput>(null);
 
     const handleEdit = (field: string) => {
         setEditingField(field);
         const fieldValue = user?.[field as keyof typeof user];
         setTempValue(typeof fieldValue === 'string' ? fieldValue : '');
-        if (field === 'address') {
-            setSearchQuery('');
-            setAddressSuggestions([]);
-            setShowAddressModal(true);
-        }
         if (field === 'dob') {
             setShowDatePicker(true);
         }
@@ -92,8 +67,6 @@ export const Account: FC = () => {
                 });
                 setUser(response.data);
                 setEditingField(null);
-                setAddressSuggestions([]);
-                setShowAddressModal(false);
             } catch (error) {
                 console.error('Error updating field:', error);
                 Alert.alert(t('Error'), t('Failed to update field. Please try again.'));
@@ -121,8 +94,6 @@ export const Account: FC = () => {
 
     const handleCancel = () => {
         setEditingField(null);
-        setAddressSuggestions([]);
-        setShowAddressModal(false);
         setShowConfirmationModal(false);
         setPendingValue('');
     };
@@ -146,61 +117,6 @@ export const Account: FC = () => {
             }
         }
         setEditingField(null);
-    };
-
-    const handleAddressSearch = (query: string) => {
-        setSearchQuery(query);
-        setTempValue(query);
-
-        if (query.length < 3) {
-            setAddressSuggestions([]);
-            return;
-        }
-
-        // Clear previous timeout
-        if (searchTimeout) {
-            clearTimeout(searchTimeout);
-        }
-
-        // Set new timeout for debouncing
-        const timeout = setTimeout(async () => {
-            setIsSearching(true);
-            try {
-                const results = await searchAddresses(query);
-                setAddressSuggestions(results);
-            } catch (error) {
-                console.error('Error searching addresses:', error);
-            } finally {
-                setIsSearching(false);
-            }
-        }, 500); // 500ms debounce
-
-        setSearchTimeout(timeout);
-    };
-
-    const handleAddressSelect = async (address: AddressSuggestion) => {
-        setTempValue(address.display_name);
-        const [street, ...rest] = address.display_name.split(',');
-        const [postcode, city] = rest[0].trim().split(' ');
-        const country = rest[rest.length - 1].trim();
-
-        if (user) {
-            try {
-                const response = await Api.put('users/me/', {
-                    street: street.trim(),
-                    postcode,
-                    city,
-                    country
-                });
-                setUser(response.data);
-            } catch (error) {
-                console.error('Error updating address:', error);
-                Alert.alert(t('Error'), t('Failed to update address. Please try again.'));
-            }
-        }
-        setEditingField(null);
-        setAddressSuggestions([]);
-        setShowAddressModal(false);
     };
 
     const handleDateChange = async (date: Date) => {
@@ -235,14 +151,53 @@ export const Account: FC = () => {
         }
     };
 
-    // Cleanup timeout on unmount
-    useEffect(() => {
-        return () => {
-            if (searchTimeout) {
-                clearTimeout(searchTimeout);
+    // Address field handlers
+    const handleAddressFieldChange = (field: string, value: string) => {
+        setAddressFields(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    };
+
+    const handleAddressSave = async () => {
+        // Blur all address input fields
+        streetInputRef.current?.blur();
+        cityInputRef.current?.blur();
+        postcodeInputRef.current?.blur();
+        countryInputRef.current?.blur();
+
+        if (user) {
+            try {
+                const response = await Api.put('users/me/', addressFields);
+                setUser(response.data);
+                setOriginalAddressFields(addressFields);
+                Alert.alert(t('Success'), t('Address updated successfully'));
+            } catch (error) {
+                console.error('Error updating address:', error);
+                Alert.alert(t('Error'), t('Failed to update address. Please try again.'));
             }
-        };
-    }, [searchTimeout]);
+        }
+    };
+
+    const handleAddressCancel = () => {
+        // Blur all address input fields
+        streetInputRef.current?.blur();
+        cityInputRef.current?.blur();
+        postcodeInputRef.current?.blur();
+        countryInputRef.current?.blur();
+
+        setAddressFields(originalAddressFields);
+    };
+
+    // Check if address fields have changed
+    const hasAddressChanges = () => {
+        return (
+            addressFields.street !== originalAddressFields.street ||
+            addressFields.city !== originalAddressFields.city ||
+            addressFields.postcode !== originalAddressFields.postcode ||
+            addressFields.country !== originalAddressFields.country
+        );
+    };
 
     const renderEditableField = (field: string, value: string) => {
         if (userType === 'doctor') {
@@ -277,54 +232,6 @@ export const Account: FC = () => {
                                     </S.ModalOption>
                                 </TouchableOpacity>
                             </S.ModalContent>
-                        </S.ModalOverlay>
-                    </Modal>
-                );
-            }
-            if (field === 'address') {
-                return (
-                    <Modal
-                        visible={showAddressModal}
-                        transparent
-                        animationType="fade"
-                        onRequestClose={handleCancel}
-                    >
-                        <S.ModalOverlay onPress={handleCancel}>
-                            <S.SuggestionsModalContent onStartShouldSetResponder={() => true}>
-                                <TextInput
-                                    value={tempValue}
-                                    onChangeText={handleAddressSearch}
-                                    onSubmitEditing={handleSave}
-                                    autoFocus
-                                    style={{
-                                        color: themeColors.primary,
-                                        fontSize: 16,
-                                        fontWeight: '600',
-                                        padding: 0,
-                                        marginBottom: rem(0.5),
-                                        backgroundColor: '#F5F5F5',
-                                        borderRadius: 8,
-                                        paddingHorizontal: 12,
-                                    }}
-                                />
-                                {isSearching && (
-                                    <S.LoadingContainer>
-                                        <ActivityIndicator color={themeColors.primary} />
-                                    </S.LoadingContainer>
-                                )}
-                                <ScrollView style={{ maxHeight: 200, marginTop: 8 }}>
-                                    {addressSuggestions.map((suggestion, index) => (
-                                        <TouchableOpacity
-                                            key={`${suggestion.lat}-${suggestion.lon}`}
-                                            onPress={() => handleAddressSelect(suggestion)}
-                                        >
-                                            <S.SuggestionItem>
-                                                <S.SuggestionText>{suggestion.display_name}</S.SuggestionText>
-                                            </S.SuggestionItem>
-                                        </TouchableOpacity>
-                                    ))}
-                                </ScrollView>
-                            </S.SuggestionsModalContent>
                         </S.ModalOverlay>
                     </Modal>
                 );
@@ -386,7 +293,22 @@ export const Account: FC = () => {
 
     useEffect(() => {
         Api.get('users/me/')
-            .then(res => setUser(res.data))
+            .then(res => {
+                setUser(res.data);
+                // Initialize address fields
+                setAddressFields({
+                    street: res.data.street || '',
+                    city: res.data.city || '',
+                    postcode: res.data.postcode || '',
+                    country: res.data.country || ''
+                });
+                setOriginalAddressFields({
+                    street: res.data.street || '',
+                    city: res.data.city || '',
+                    postcode: res.data.postcode || '',
+                    country: res.data.country || ''
+                });
+            })
             .catch(err => console.error('Could not load profile', err));
 
         // Get user type from AsyncStorage
@@ -413,7 +335,22 @@ export const Account: FC = () => {
                 }
                 try {
                     const res = await Api.get('users/me/');
-                    if (isActive) setUser(res.data);
+                    if (isActive) {
+                        setUser(res.data);
+                        // Update address fields
+                        setAddressFields({
+                            street: res.data.street || '',
+                            city: res.data.city || '',
+                            postcode: res.data.postcode || '',
+                            country: res.data.country || ''
+                        });
+                        setOriginalAddressFields({
+                            street: res.data.street || '',
+                            city: res.data.city || '',
+                            postcode: res.data.postcode || '',
+                            country: res.data.country || ''
+                        });
+                    }
 
                     // Get user type from AsyncStorage
                     const type = await AsyncStorage.getItem('userType');
@@ -605,18 +542,97 @@ export const Account: FC = () => {
                         </S.EditIconBtnLight>
                     )}
                 </S.ItemRow>
-                {userType === 'patient' && (
-                    <S.ItemRow>
-                        <S.ItemTextCol>
-                            <S.ItemLabel>{t('Address')}</S.ItemLabel>
-                            {renderEditableField('street', user?.street + '\n' + user?.postcode + ' ' + user?.city + '\n' + user?.country)}
-                        </S.ItemTextCol>
-                        <S.EditIconBtnLight onPress={() => handleEdit('street')}>
-                            <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
-                        </S.EditIconBtnLight>
-                    </S.ItemRow>
-                )}
             </S.LightCard>
+
+            {userType === 'patient' && (
+                <>
+                    <S.SectionTitle>{t('Address')}</S.SectionTitle>
+                    <S.LightCard>
+                        <S.ItemRow>
+                            <S.ItemTextCol>
+                                <S.ItemLabel>{t('Street')}</S.ItemLabel>
+                                <TextInput
+                                    value={addressFields.street}
+                                    onChangeText={(value) => handleAddressFieldChange('street', value)}
+                                    placeholder={t('Enter street address')}
+                                    style={{
+                                        color: themeColors.primary,
+                                        fontSize: 16,
+                                        fontWeight: '600',
+                                        padding: 0,
+                                        marginBottom: rem(0.5),
+                                    }}
+                                    ref={streetInputRef}
+                                />
+                            </S.ItemTextCol>
+                        </S.ItemRow>
+                        <S.ItemRow>
+                            <S.ItemTextCol>
+                                <S.ItemLabel>{t('City')}</S.ItemLabel>
+                                <TextInput
+                                    value={addressFields.city}
+                                    onChangeText={(value) => handleAddressFieldChange('city', value)}
+                                    placeholder={t('Enter city')}
+                                    style={{
+                                        color: themeColors.primary,
+                                        fontSize: 16,
+                                        fontWeight: '600',
+                                        padding: 0,
+                                        marginBottom: rem(0.5),
+                                    }}
+                                    ref={cityInputRef}
+                                />
+                            </S.ItemTextCol>
+                        </S.ItemRow>
+                        <S.ItemRow>
+                            <S.ItemTextCol>
+                                <S.ItemLabel>{t('Postcode')}</S.ItemLabel>
+                                <TextInput
+                                    value={addressFields.postcode}
+                                    onChangeText={(value) => handleAddressFieldChange('postcode', value)}
+                                    placeholder={t('Enter postcode')}
+                                    style={{
+                                        color: themeColors.primary,
+                                        fontSize: 16,
+                                        fontWeight: '600',
+                                        padding: 0,
+                                        marginBottom: rem(0.5),
+                                    }}
+                                    ref={postcodeInputRef}
+                                />
+                            </S.ItemTextCol>
+                        </S.ItemRow>
+                        <S.ItemRow>
+                            <S.ItemTextCol>
+                                <S.ItemLabel>{t('Country')}</S.ItemLabel>
+                                <TextInput
+                                    value={addressFields.country}
+                                    onChangeText={(value) => handleAddressFieldChange('country', value)}
+                                    placeholder={t('Enter country')}
+                                    style={{
+                                        color: themeColors.primary,
+                                        fontSize: 16,
+                                        fontWeight: '600',
+                                        padding: 0,
+                                        marginBottom: rem(0.5),
+                                    }}
+                                    ref={countryInputRef}
+                                />
+                            </S.ItemTextCol>
+                        </S.ItemRow>
+                        {hasAddressChanges() && (
+                            <S.AddressActionContainer>
+                                <S.AddressCancelButton onPress={handleAddressCancel}>
+                                    <S.AddressCancelButtonText>{t('Cancel')}</S.AddressCancelButtonText>
+                                </S.AddressCancelButton>
+                                <S.AddressSaveButton onPress={handleAddressSave}>
+                                    <S.AddressSaveButtonText>{t('Save Changes')}</S.AddressSaveButtonText>
+                                </S.AddressSaveButton>
+                            </S.AddressActionContainer>
+                        )}
+                    </S.LightCard>
+                </>
+            )}
 
             {userType === 'patient' && (
                 <S.DeleteButton onPress={handleDelete}>
