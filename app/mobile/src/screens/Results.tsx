@@ -32,6 +32,11 @@ function groupByDate(results: any[]) {
     return Object.entries(groups).map(([date, data]) => ({ date, data }));
 }
 
+function getRandomStatus() {
+    // REVIEW: To be replaced after update in backend
+    return Math.random() < 0.5 ? 'In Progress' : 'Complete';
+}
+
 export const Results: FC = () => {
     const navigation: any = useNavigation();
     const [results, setResults] = useState<any[]>([]);
@@ -59,13 +64,16 @@ export const Results: FC = () => {
                     },
                 });
                 // REVIEW: Add mock fields for now
-                const withMockFields = response.data.map((item: any) => ({
-                    ...item,
-                    status: 'open', // REVIEW: mock status
-                    patient_name: 'John Doe', // REVIEW: mock patient name
-                    patient_id: 'P123', // REVIEW: mock patient id
-                    patient_dob: '1990-05-10', // REVIEW: mock patient dob
-                }));
+                const withMockFields = response.data.map((item: any) => {
+                    const status = getRandomStatus(); // REVIEW: random status for visualization
+                    return {
+                        ...item,
+                        status,
+                        patient_name: 'John Doe', // REVIEW: mock patient name
+                        patient_id: 'P123', // REVIEW: mock patient id
+                        patient_dob: '1990-05-10', // REVIEW: mock patient dob
+                    };
+                });
                 setResults(withMockFields);
             } catch (err: any) {
                 setError('Failed to load results.');
@@ -131,7 +139,17 @@ export const Results: FC = () => {
                 renderItem={({ item }) => (
                     <View style={styles.listItem}>
                         <Text style={styles.listItemTime}>{formatTime(item.created_at)}</Text>
-                        <Text style={styles.listItemStatus}>Status: {item.status}</Text>
+                        <View style={styles.listItemStatusContainer}>
+                            <View
+                                style={[
+                                    styles.statusIndicator,
+                                    item.status === 'In Progress'
+                                        ? styles.statusIndicatorInProgress
+                                        : styles.statusIndicatorComplete,
+                                ]}
+                            />
+                            <Text style={styles.listItemStatus}>{item.status}</Text>
+                        </View>
                         {userType === 'doctor' && (
                             <View style={styles.listItemPatient}>
                                 <Text style={styles.listItemLabel}>Patient Name:</Text>

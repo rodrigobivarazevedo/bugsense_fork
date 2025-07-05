@@ -58,6 +58,23 @@ export const styles = StyleSheet.create({
         borderBottomColor: themeColors.primary,
         marginBottom: rem(0.5),
     },
+    listItemStatusContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: rem(0.25),
+    },
+    statusIndicator: {
+        width: rem(0.5),
+        height: rem(0.5),
+        borderRadius: rem(0.25),
+        marginRight: rem(0.5),
+    },
+    statusIndicatorInProgress: {
+        backgroundColor: '#FFD600',
+    },
+    statusIndicatorComplete: {
+        backgroundColor: '#4CAF50',
+    },
     listItem: {
         backgroundColor: '#f7f7f7',
         borderRadius: rem(0.5),
@@ -72,8 +89,7 @@ export const styles = StyleSheet.create({
     },
     listItemStatus: {
         fontSize: rem(0.95),
-        color: themeColors.secondary,
-        fontWeight: 'bold',
+        color: themeColors.primary,
     },
     listItemPatient: {
         marginTop: rem(0.5),
