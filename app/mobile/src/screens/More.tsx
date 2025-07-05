@@ -1,10 +1,11 @@
-import { FC, Fragment } from 'react';
+import { FC, Fragment, useEffect, useState } from 'react';
 import { Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import RenderIcon from '../components/RenderIcon';
 import companyInfo from '../utils/companyInfo.json';
 import * as S from './More.styles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const options = [
     {
@@ -52,6 +53,45 @@ const options = [
 export const More: FC = () => {
     const navigation = useNavigation();
     const { t } = useTranslation();
+    const [userType, setUserType] = useState<string>('patient');
+
+    useEffect(() => {
+        AsyncStorage.getItem('userType').then(type => {
+            if (type && typeof type === 'string') {
+                setUserType(type);
+            }
+        });
+    }, []);
+
+    if (userType === 'doctor') {
+        return (
+            <S.Container>
+                <S.SectionHeader>{t('app_settings')}</S.SectionHeader>
+                {options[0].content.map((opt) => (
+                    <S.OptionButton key={opt.label} onPress={() => opt.onPress(navigation)}>
+                        <S.OptionIconTextWrapper>
+                            <RenderIcon family={opt.iconFamily as any} icon={opt.icon} fontSize={22} color="primary" />
+                            <S.OptionText>{t(opt.label)}</S.OptionText>
+                        </S.OptionIconTextWrapper>
+                        <S.OptionArrow>
+                            <RenderIcon family="materialIcons" icon="chevron-right" fontSize={28} color="primary" />
+                        </S.OptionArrow>
+                    </S.OptionButton>
+                ))}
+                <S.SectionDivider />
+                <S.SectionHeader>{t('more_info_and_support')}</S.SectionHeader>
+                <S.OptionButton onPress={() => Linking.openURL(`mailto:${companyInfo.email}`)}>
+                    <S.OptionIconTextWrapper>
+                        <RenderIcon family="materialIcons" icon="admin-panel-settings" fontSize={22} color="primary" />
+                        <S.OptionText>{t('Contact Admin')}</S.OptionText>
+                    </S.OptionIconTextWrapper>
+                    <S.OptionArrow>
+                        <RenderIcon family="feather" icon="external-link" fontSize={22} color="primary" />
+                    </S.OptionArrow>
+                </S.OptionButton>
+            </S.Container>
+        );
+    }
 
     return (
         <S.Container>
