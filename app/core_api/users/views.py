@@ -225,6 +225,7 @@ class ResultsCreateView(CreateAPIView):
                 'Infection Detected',
                 value={
                     'qr_data': 'https://example.com/sample-qr-data',
+                    'status': 'ready',
                     'infection_detected': True,
                     'species': 'Escherichia coli',
                     'concentration': 'High',
@@ -236,12 +237,25 @@ class ResultsCreateView(CreateAPIView):
                 'No Infection',
                 value={
                     'qr_data': 'https://example.com/sample-qr-data',
+                    'status': 'ready',
                     'infection_detected': False,
                     'species': '',
                     'concentration': '',
                     'antibiotic': ''
                 },
                 description='Example of creating a result for no infection detected'
+            ),
+            OpenApiExample(
+                'Preliminary Assessment',
+                value={
+                    'qr_data': 'https://example.com/sample-qr-data',
+                    'status': 'preliminary_assessment',
+                    'infection_detected': True,
+                    'species': 'Salmonella',
+                    'concentration': 'Medium',
+                    'antibiotic': 'Amoxicillin'
+                },
+                description='Example of creating a preliminary assessment result'
             )
         ]
     )

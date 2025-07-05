@@ -56,8 +56,8 @@ class CustomUserAdmin(UserAdmin):
 @admin.register(QRCode)
 class QRCodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'user_id_display', 'user_email',
-                    'qr_data_preview', 'created_at')
-    list_filter = ('created_at',)
+                    'qr_data_preview', 'created_at', 'closed_at')
+    list_filter = ('created_at', 'closed_at')
     search_fields = ('user__email', 'user__full_name', 'qr_data')
     readonly_fields = ('created_at',)
     ordering = ('-created_at',)
@@ -67,7 +67,7 @@ class QRCodeAdmin(admin.ModelAdmin):
             'fields': ('user', 'qr_data')
         }),
         ('Timestamps', {
-            'fields': ('created_at',),
+            'fields': ('created_at', 'closed_at'),
             'classes': ('collapse',)
         }),
     )
@@ -92,9 +92,9 @@ class QRCodeAdmin(admin.ModelAdmin):
 
 @admin.register(Results)
 class ResultsAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user_id_display', 'user_email', 'infection_status',
+    list_display = ('id', 'user_id_display', 'user_email', 'status', 'infection_status',
                     'species_preview', 'antibiotic_preview', 'created_at')
-    list_filter = ('infection_detected', 'created_at')
+    list_filter = ('status', 'infection_detected', 'created_at')
     search_fields = ('user__email', 'user__full_name', 'species', 'antibiotic')
     readonly_fields = ('created_at',)
     ordering = ('-created_at',)
@@ -104,7 +104,7 @@ class ResultsAdmin(admin.ModelAdmin):
             'fields': ('user', 'qr_code')
         }),
         ('Analysis Results', {
-            'fields': ('infection_detected', 'species', 'concentration', 'antibiotic')
+            'fields': ('status', 'infection_detected', 'species', 'concentration', 'antibiotic')
         }),
         ('Timestamps', {
             'fields': ('created_at',),

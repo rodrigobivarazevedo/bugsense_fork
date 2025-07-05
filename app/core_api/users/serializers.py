@@ -82,7 +82,8 @@ class QRCodeSerializer(serializers.ModelSerializer):
             'id',
             'user',
             'qr_data',
-            'created_at'
+            'created_at',
+            'closed_at'
         ]
         read_only_fields = ['id', 'created_at']
 
@@ -115,6 +116,7 @@ class ResultsSerializer(serializers.ModelSerializer):
             'user',
             'qr_code',
             'qr_data',
+            'status',
             'infection_detected',
             'species',
             'concentration',
@@ -132,6 +134,7 @@ class ResultsCreateSerializer(serializers.ModelSerializer):
         model = Results
         fields = [
             'qr_data',
+            'status',
             'infection_detected',
             'species',
             'concentration',
