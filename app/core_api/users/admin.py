@@ -13,6 +13,9 @@ class CustomUserAdmin(UserAdmin):
             'full_name', 'gender', 'dob', 'phone_number',
             'street', 'city', 'postcode', 'country'
         )}),
+        ('Doctor Assignment', {'fields': (
+            'assigned_doctor',
+        )}),
         ('Permissions', {'fields': (
             'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'
         )}),
@@ -32,10 +35,18 @@ class CustomUserAdmin(UserAdmin):
         return "-"
     assigned_doctor_id.short_description = "Assigned Doctor ID"
 
+    def assigned_doctor_name(self, obj):
+        if obj.assigned_doctor:
+            return obj.assigned_doctor.full_name
+        return "-"
+    assigned_doctor_name.short_description = "Assigned Doctor Name"
+
     list_display = ('id', 'email', 'full_name', 'is_active',
-                    'is_staff', 'assigned_doctor_id')
-    search_fields = ('id', 'email', 'full_name', 'phone_number')
-    list_filter = ('is_staff', 'is_active', 'gender', 'country')
+                    'is_staff', 'assigned_doctor_name', 'assigned_doctor_id')
+    search_fields = ('id', 'email', 'full_name', 'phone_number',
+                     'assigned_doctor__full_name', 'assigned_doctor__doctor_id')
+    list_filter = ('is_staff', 'is_active', 'gender',
+                   'country', 'assigned_doctor')
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
