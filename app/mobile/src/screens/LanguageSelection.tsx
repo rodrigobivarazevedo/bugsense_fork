@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import i18n from '../translations/i18n';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ const languages = [
     { code: 'de', name: 'Deutsch' },
 ];
 
-export const LanguageSelection: React.FC = () => {
+export const LanguageSelection: FC = () => {
     const { t } = useTranslation();
     const currentLanguage = i18n.language;
 

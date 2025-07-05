@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { FC, useState } from 'react';
 import { Alert, TouchableOpacity } from 'react-native';
 import Logo from '../components/Logo';
 import RenderIcon from '../components/RenderIcon';
@@ -13,7 +13,7 @@ type LoginScreenProps = {
     navigation: NativeStackNavigationProp<any>;
 };
 
-const UserLogin: React.FC<LoginScreenProps> = ({ navigation }) => {
+const UserLogin: FC<LoginScreenProps> = ({ navigation }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);

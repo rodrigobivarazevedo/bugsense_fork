@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as S from './Home.styles';
 import RenderLottie from '../components/RenderLottie';
@@ -22,7 +22,7 @@ const GRID_ITEMS: GridItem[] = [
   { key: 'contactUs', label: 'Contact Us', family: 'materialCommunity', icon: 'email-send-outline' },
 ];
 
-export const Home: React.FC<any> = ({ navigation }) => {
+export const Home: FC<any> = ({ navigation }) => {
   const { t } = useTranslation();
   const [userName, setUserName] = useState<string>('');
   const [userType, setUserType] = useState<string>('patient');

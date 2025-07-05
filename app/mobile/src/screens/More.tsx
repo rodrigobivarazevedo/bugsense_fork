@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, Fragment } from 'react';
 import { Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -49,14 +49,14 @@ const options = [
     },
 ];
 
-export const More: React.FC = () => {
+export const More: FC = () => {
     const navigation = useNavigation();
     const { t } = useTranslation();
 
     return (
         <S.Container>
             {options.map((option, idx) => (
-                <React.Fragment key={option.section}>
+                <Fragment key={option.section}>
                     {idx !== 0 && <S.SectionDivider />}
                     <S.SectionHeader>{t(option.section)}</S.SectionHeader>
                     {option.content.map((opt) => (
@@ -74,7 +74,7 @@ export const More: React.FC = () => {
                             </S.OptionArrow>
                         </S.OptionButton>
                     ))}
-                </React.Fragment>
+                </Fragment>
             ))}
         </S.Container>
     );

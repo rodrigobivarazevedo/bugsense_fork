@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
 import * as S from './BottomBar.styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,7 +19,7 @@ const DOCTOR_TABS = [
     { key: 'more', label: 'More', family: 'feather', icon: 'more-horizontal' },
 ];
 
-const BottomBar: React.FC = () => {
+const BottomBar: FC = () => {
     const insets = useSafeAreaInsets();
     const [activeTab, setActiveTab] = useState<string>('home');
     const [userType, setUserType] = useState<string>('patient');

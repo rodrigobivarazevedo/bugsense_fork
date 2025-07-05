@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { FC, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as S from './Account.styles';
 import RenderIcon from '../components/RenderIcon';
@@ -46,7 +46,7 @@ const searchAddresses = async (query: string): Promise<AddressSuggestion[]> => {
     }
 };
 
-export const Account: React.FC = () => {
+export const Account: FC = () => {
     const { t } = useTranslation();
     const insets = useSafeAreaInsets();
 
@@ -399,7 +399,7 @@ export const Account: React.FC = () => {
 
     // Fetch when screen is focused
     useFocusEffect(
-        React.useCallback(() => {
+        useCallback(() => {
             let isActive = true;
 
             (async () => {

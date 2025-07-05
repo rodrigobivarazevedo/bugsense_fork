@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import LottieView from "lottie-react-native";
 
 interface RenderLottieProps {

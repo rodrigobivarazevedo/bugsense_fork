@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import * as S from './Discover.styles';
@@ -55,7 +55,7 @@ const bacteriaList = [
     },
 ];
 
-export const Discover: React.FC<any> = ({ navigation }) => {
+export const Discover: FC<any> = ({ navigation }) => {
     const { t } = useTranslation();
     const insets = useSafeAreaInsets();
 

@@ -1,7 +1,7 @@
-import React from 'react';
+import { FC } from 'react';
 import GenericCamera from '../components/GenericCamera';
 
-export const Scan: React.FC = () => {
+export const Scan: FC = () => {
     return (
         <GenericCamera
             allowFlashToggle

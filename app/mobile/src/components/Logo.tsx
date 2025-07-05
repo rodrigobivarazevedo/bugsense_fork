@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import Svg, { SvgProps, G, Path } from 'react-native-svg';
 
 export interface LogoProps extends SvgProps {
@@ -6,7 +6,7 @@ export interface LogoProps extends SvgProps {
   height?: number | string;
 }
 
-const Logo: React.FC<LogoProps> = ({
+const Logo: FC<LogoProps> = ({
   width = 200,
   height = 33,
   ...props

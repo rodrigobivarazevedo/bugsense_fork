@@ -1,12 +1,11 @@
-import React from 'react';
+import { ReactNode, createElement } from 'react';
 import { render } from '@testing-library/react-native';
 import Logo from './Logo';
 
 jest.mock('react-native-svg', () => {
-    const React = require('react');
-    const MockSvg = ({ children, ...props }: { children?: React.ReactNode;[key: string]: any }) => React.createElement('Svg', props, children);
-    const MockG = ({ children, ...props }: { children?: React.ReactNode;[key: string]: any }) => React.createElement('G', props, children);
-    const MockPath = ({ children, ...props }: { children?: React.ReactNode;[key: string]: any }) => React.createElement('Path', props, children);
+    const MockSvg = ({ children, ...props }: { children?: ReactNode;[key: string]: any }) => createElement('Svg', props, children);
+    const MockG = ({ children, ...props }: { children?: ReactNode;[key: string]: any }) => createElement('G', props, children);
+    const MockPath = ({ children, ...props }: { children?: ReactNode;[key: string]: any }) => createElement('Path', props, children);
     return {
         __esModule: true,
         default: MockSvg,

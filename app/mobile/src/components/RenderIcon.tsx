@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import { themeColors } from '../theme/GlobalTheme';
 import {
     AntDesign,
@@ -46,7 +46,7 @@ interface RenderIconProps {
     color: keyof typeof themeColors | string;
 }
 
-const RenderIcon: React.FC<RenderIconProps> = ({
+const RenderIcon: FC<RenderIconProps> = ({
     family,
     icon,
     fontSize,

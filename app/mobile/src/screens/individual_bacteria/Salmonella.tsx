@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import BacteriaPage from '../BacteriaPage';
 
 const salmonellaData = {
@@ -44,7 +44,7 @@ const salmonellaData = {
     treatment: 'Most cases of Salmonella infection resolve on their own within 4-7 days. Treatment focuses on preventing dehydration by drinking plenty of fluids. In severe cases, antibiotics may be prescribed. Hospitalization may be necessary for severe cases or for people at high risk of complications.'
 };
 
-const Salmonella: React.FC = () => {
+const Salmonella: FC = () => {
     return <BacteriaPage bacteria={salmonellaData} />;
 };
 

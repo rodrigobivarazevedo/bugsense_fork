@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { Alert, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import Logo from '../components/Logo';
 import RenderIcon from '../components/RenderIcon';
@@ -20,7 +20,7 @@ interface Institution {
     phone: string;
 }
 
-const DoctorLogin: React.FC<DoctorLoginScreenProps> = ({ navigation }) => {
+const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
     const [institutions, setInstitutions] = useState<Institution[]>([]);
     const [selectedInstitution, setSelectedInstitution] = useState<Institution | null>(null);
     const [doctorId, setDoctorId] = useState('');

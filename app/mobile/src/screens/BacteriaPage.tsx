@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
@@ -25,7 +25,7 @@ interface BacteriaPageProps {
     bacteria: BacteriaInfo;
 }
 
-export const BacteriaPage: React.FC<BacteriaPageProps> = ({ bacteria }) => {
+export const BacteriaPage: FC<BacteriaPageProps> = ({ bacteria }) => {
     const { t } = useTranslation();
     const insets = useSafeAreaInsets();
 

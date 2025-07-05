@@ -1,8 +1,8 @@
-import React from 'react';
+import { FC } from 'react';
 import * as S from './Home.styles';
 import { RenderLottie } from '../components/RenderLottie';
 
-export const Results: React.FC = () => {
+export const Results: FC = () => {
 
     return (
         <S.Root>
