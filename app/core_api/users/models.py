@@ -93,6 +93,12 @@ class QRCode(models.Model):
         help_text='The string data contained in the scanned QR code'
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    closed_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name='Closed At',
+        help_text='Timestamp when the QR code analysis was closed'
+    )
 
     class Meta:
         verbose_name = 'QR Code'
@@ -107,6 +113,13 @@ class Results(models.Model):
     """
     Results model for QR code analysis
     """
+    STATUS_CHOICES = [
+        ('ongoing', 'Ongoing'),
+        ('preliminary_assessment', 'Preliminary Assessment'),
+        ('ready', 'Ready'),
+        ('closed', 'Closed'),
+    ]
+
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
@@ -119,9 +132,18 @@ class Results(models.Model):
         related_name='results',
         verbose_name='QR Code'
     )
+    status = models.CharField(
+        max_length=25,
+        choices=STATUS_CHOICES,
+        default='ongoing',
+        verbose_name='Status',
+        help_text='Current status of the result analysis'
+    )
     infection_detected = models.BooleanField(
         verbose_name='Infection Detected',
-        help_text='Whether an infection is present (True) or not (False)'
+        help_text='Whether an infection is present (True) or not (False)',
+        null=True,
+        blank=True
     )
     species = models.CharField(
         max_length=255,
