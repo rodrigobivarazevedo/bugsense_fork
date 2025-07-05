@@ -37,6 +37,12 @@ export const styles = StyleSheet.create({
         borderTopColor: '#e0e0e0',
         borderTopWidth: 1,
     },
+    buttonColumn: {
+        flexDirection: 'column',
+        width: '100%',
+        borderTopColor: '#e0e0e0',
+        borderTopWidth: 1,
+    },
     cancelButton: {
         borderRightWidth: 0.5,
         borderRightColor: '#e0e0e0',
@@ -50,6 +56,13 @@ export const styles = StyleSheet.create({
         padding: rem(1),
         width: '50%',
         alignItems: 'center',
+    },
+    selectionButton: {
+        padding: rem(1.25),
+        width: '100%',
+        alignItems: 'center',
+        borderBottomWidth: 0.5,
+        borderBottomColor: '#e0e0e0',
     },
     buttonText: {
         color: themeColors.primary,
