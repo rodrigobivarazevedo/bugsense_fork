@@ -1,13 +1,13 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import inspect
-from app.routers.api import api_router
 from app.db.orm_models import Base
 from app.db.database import get_db
 from app.core.security import get_api_key
 from fastapi import FastAPI, Depends
 from app.core.async_middleware import redis_client, middleware_monitoring, logger
+from app.routers.api import api_router
 
 #==================================== Lifespan events ========================================================
 
@@ -40,19 +40,18 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="App service", 
-    description="API for coreway app", 
+    title="ML BugSense API",
+    description="API for ML BugSense", 
     version="1", 
-     docs_url=None,         # disables /docs
+    docs_url=None,         # disables /docs
     redoc_url=None,        # disables /redoc
     openapi_url=None,       # disables /openapi.json
     lifespan=lifespan,
-    dependencies=[Depends(get_api_key)]  # 🔐 Global API Key Protection
     )
 
 #==================================== Middleware ========================================================
 
-app.middleware("http")(middleware_monitoring)
+#app.middleware("http")(middleware_monitoring)
 
 #==================================== Database dependencies ========================================================
 
@@ -61,7 +60,6 @@ origins = [
     "http://localhost:8080",
     "http://localhost:3000",
     "http://localhost:8081",
-    "https://api-coreway.com",
 ]
 
 # CORS middleware configuration
@@ -104,11 +102,11 @@ def create_tables(db_name: str, base):
 
         
         
-@app.get("/health", dependencies=[Depends(get_api_key)])
+@app.get("/health")
 async def health_check():
     return {"status": "ok"}
 
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    uvicorn.run(app, host="0.0.0.0", port=5001)

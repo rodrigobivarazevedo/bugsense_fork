@@ -31,7 +31,7 @@ elif environment == "staging":
     REDIS_DB = int(os.getenv("REDIS_DB", "1"))
     REDIS_MAX_CONNECTIONS = int(os.getenv("REDIS_MAX_CONNECTIONS", "50"))
 else:
-    REDIS_HOST = os.getenv("LOCAL_REDIS_HOST", "redis-service")
+    REDIS_HOST = os.getenv("LOCAL_REDIS_HOST", "ml-redis-service")
     REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
     REDIS_DB = int(os.getenv("REDIS_DB", "0"))
     REDIS_MAX_CONNECTIONS = int(os.getenv("REDIS_MAX_CONNECTIONS", "20"))
@@ -68,7 +68,6 @@ async def middleware_monitoring(request: Request, call_next):
     # ------------------------------------------------------------------
     #          1) IDENTIFY CLIENT IP (X-Forwarded-For or request.client)
     # ------------------------------------------------------------------
-     
     request_api_key = request.headers.get("X-API-Key")
     ip = request.headers.get("X-Forwarded-For")
     if not ip:
@@ -150,7 +149,6 @@ async def middleware_monitoring(request: Request, call_next):
         logger.error("[DOWNSTREAM ERROR]", exc_info=downstream)
         return HTTPException(status_code=500, detail="Internal Server Error")
 
-   
     # ------------------------------------------------------------------
     #     3) DDoS detection: DDoS CHECK, & FAILED AUTHENTICATION CHECK
     # ------------------------------------------------------------------
