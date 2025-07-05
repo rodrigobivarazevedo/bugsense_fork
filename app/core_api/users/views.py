@@ -217,6 +217,7 @@ class ResultsCreateView(CreateAPIView):
     - When updating an existing result with any field, status automatically changes to 'preliminary_assessment'
     - When updating infection_detected to False, status automatically changes to 'ready'
     - When infection_detected is True and all required fields (species, concentration) are filled, status changes to 'ready'
+    - When retrieving a result with status 'ready' via GET request, status automatically changes to 'closed'
 
     Field Clearing:
     - When infection_detected is set to False, species, concentration, and antibiotic fields are automatically cleared
@@ -231,7 +232,7 @@ class ResultsCreateView(CreateAPIView):
     @extend_schema(
         tags=['results'],
         summary="Create or Update Analysis Result",
-        description="Create a new analysis result or update an existing one by providing the QR code string and any analysis data. The system will automatically find the user linked to the QR code. If a result already exists for this QR code, it will be updated with the new data. All fields except qr_data are optional. Note: Results are automatically created with status 'ongoing' when QR codes are created via /api/qr-codes/. When updating existing results, the status automatically changes to 'preliminary_assessment' for any field update, or 'ready' if infection_detected is set to False. When infection_detected is set to False, the species, concentration, and antibiotic fields are automatically cleared. When infection_detected is True and both species and concentration are filled, the status automatically changes to 'ready' (antibiotic is optional).",
+        description="Create a new analysis result or update an existing one by providing the QR code string and any analysis data. The system will automatically find the user linked to the QR code. If a result already exists for this QR code, it will be updated with the new data. All fields except qr_data are optional. Note: Results are automatically created with status 'ongoing' when QR codes are created via /api/qr-codes/. When updating existing results, the status automatically changes to 'preliminary_assessment' for any field update, or 'ready' if infection_detected is set to False. When infection_detected is set to False, the species, concentration, and antibiotic fields are automatically cleared. When infection_detected is True and both species and concentration are filled, the status automatically changes to 'ready' (antibiotic is optional). When retrieving a result with status 'ready' via GET request, the status automatically changes to 'closed'.",
         request=ResultsCreateSerializer,
         responses={
             201: ResultsSerializer,
@@ -315,6 +316,7 @@ class ResultsListView(ListAPIView):
 
     - Regular users see only their own results.
     - Staff (doctors) can use the user_id query parameter to view any patient's results.
+    - Note: When retrieving individual results via GET /api/results/{id}/, results with status 'ready' automatically change to 'closed'.
     """
     serializer_class = ResultsSerializer
     permission_classes = [IsAuthenticated]
@@ -322,7 +324,7 @@ class ResultsListView(ListAPIView):
     @extend_schema(
         tags=['results'],
         summary="List Analysis Results (Doctor/Patient) — /api/results/list/?user_id={patient_id}",
-        description="Retrieve a list of analysis results.\n\n- Regular users see only their own results.\n- Staff (doctors) can use the user_id query parameter to view any patient's results.",
+        description="Retrieve a list of analysis results.\n\n- Regular users see only their own results.\n- Staff (doctors) can use the user_id query parameter to view any patient's results.\n- Note: When retrieving individual results via GET /api/results/{id}/, results with status 'ready' automatically change to 'closed'.",
         parameters=[
             OpenApiParameter(
                 name='user_id',
@@ -360,10 +362,18 @@ class ResultsDetailView(RetrieveUpdateDestroyAPIView):
     @extend_schema(
         tags=['results'],
         summary="Get Result Details",
-        description="Retrieve details of a specific analysis result. Users can only access their own results unless they are staff.",
+        description="Retrieve details of a specific analysis result. Users can only access their own results unless they are staff. If the result status is 'ready', it will automatically be changed to 'closed' when retrieved.",
         responses={200: ResultsSerializer}
     )
     def get(self, request, *args, **kwargs):
+        # Get the result first
+        result = self.get_object()
+
+        # If status is 'ready', change it to 'closed'
+        if result.status == 'ready':
+            result.status = 'closed'
+            result.save()
+
         return super().get(request, *args, **kwargs)
 
     @extend_schema(
