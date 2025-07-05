@@ -10,7 +10,7 @@ import styled from 'styled-components/native';
 import HeaderBar from './components/HeaderBar';
 import BottomBar from './components/BottomBar';
 
-import UserLogin from './screens/Login';
+import UserLogin from './screens/UserLogin';
 import Register from './screens/Register';
 import ForgotPassword from './screens/ForgotPassword';
 import DoctorLogin from './screens/DoctorLogin';
