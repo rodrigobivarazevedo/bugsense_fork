@@ -12,18 +12,22 @@ import * as S from './GenericCamera.styles';
 
 interface GenericCameraProps {
   onPictureTaken: (photo: string) => void;
+  onQRCodeScanned?: (qrData: string) => void;
   allowFlashToggle?: boolean;
   allowFlipCamera?: boolean;
   imageQuality?: number;
   showImagePreview?: boolean;
+  scanMode?: 'photo' | 'qr-code';
 }
 
 export const GenericCamera: FC<GenericCameraProps> = ({
   onPictureTaken,
+  onQRCodeScanned,
   allowFlashToggle = false,
   allowFlipCamera = false,
   imageQuality = 0.8,
   showImagePreview = true,
+  scanMode = 'photo',
 }) => {
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>('back');
@@ -75,6 +79,12 @@ export const GenericCamera: FC<GenericCameraProps> = ({
     }
   };
 
+  const handleQRCodeScanned = ({ data }: { data: string }) => {
+    if (onQRCodeScanned) {
+      onQRCodeScanned(data);
+    }
+  };
+
   const handleImagePreviewReject = () => {
     setPreviewUri(null);
   };
@@ -112,6 +122,63 @@ export const GenericCamera: FC<GenericCameraProps> = ({
             />
           </S.ControlButton>
         </S.ImagePreviewControlsContainer>
+      </S.Root>
+    );
+  }
+
+  if (scanMode === 'qr-code') {
+    return (
+      <S.Root>
+        <S.StyledCamera
+          ref={cameraRef}
+          facing={facing}
+          flashMode={flash as FlashMode}
+          enableTorch={flash === 'on'}
+          barcodeScannerSettings={{
+            barcodeTypes: ['qr'],
+          }}
+          onBarcodeScanned={handleQRCodeScanned}
+        >
+          <S.TopControlsContainer>
+            {allowFlipCamera && (
+              <S.ControlButton
+                onPress={() => setFacing(facing === 'back' ? 'front' : 'back')}
+              >
+                <RenderIcon
+                  family='materialIcons'
+                  icon={Platform.OS === 'android' ? 'flip-camera-android' : 'flip-camera-ios'}
+                  fontSize={24}
+                  color={themeColors.white}
+                />
+              </S.ControlButton>
+            )}
+            {allowFlashToggle && facing === 'back' && (
+              <S.ControlButton onPress={toggleFlash}>
+                {flash === 'on' ? (
+                  <RenderIcon
+                    family='materialIcons'
+                    icon="flash-on"
+                    fontSize={24}
+                    color={themeColors.white}
+                  />
+                ) : (
+                  <RenderIcon
+                    family='materialIcons'
+                    icon="flash-off"
+                    fontSize={24}
+                    color={themeColors.white}
+                  />
+                )}
+              </S.ControlButton>
+            )}
+          </S.TopControlsContainer>
+          <S.QRCodeOverlay>
+            <S.QRCodeFrame />
+            <S.QRCodeInstructions>
+              <S.QRCodeInstructionsText>Position QR code within the frame</S.QRCodeInstructionsText>
+            </S.QRCodeInstructions>
+          </S.QRCodeOverlay>
+        </S.StyledCamera>
       </S.Root>
     );
   }

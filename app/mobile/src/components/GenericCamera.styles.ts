@@ -39,6 +39,11 @@ export const Button = styled(TouchableOpacity)`
   border-radius: ${rem(0.5)}px;
 `;
 
+export const ButtonText = styled.Text`
+  color: ${themeColors.primary};
+  font-weight: bold;
+`;
+
 export const BottomControlsContainer = styled.View`
   position: absolute;
   bottom: ${rem(1.5)}px;
@@ -46,13 +51,16 @@ export const BottomControlsContainer = styled.View`
   flex-direction: row;
   padding-horizontal: ${rem(2)}px;
   align-items: center;
+  justify-content: space-between;
 `;
 
-export const TakePictureContainer = styled(BottomControlsContainer)`
-  justify-content: center;
-`;
-
-export const ImagePreviewControlsContainer = styled(BottomControlsContainer)`
+export const ImagePreviewControlsContainer = styled.View`
+  position: absolute;
+  bottom: ${rem(2)}px;
+  width: 100%;
+  flex-direction: row;
+  padding-horizontal: ${rem(2)}px;
+  align-items: center;
   justify-content: space-between;
 `;
 
@@ -78,7 +86,44 @@ export const SnapButtonInner = styled.View`
   background-color: ${themeColors.white};
 `;
 
-export const ButtonText = styled.Text`
-  font-size: ${rem(0.875)}px;
-  color: ${themeColors.black};
+export const TakePictureContainer = styled.View`
+  position: absolute;
+  bottom: ${rem(2)}px;
+  width: 100%;
+  align-items: center;
+`;
+
+export const QRCodeOverlay = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const QRCodeFrame = styled.View`
+  width: ${rem(15)}px;
+  height: ${rem(15)}px;
+  border: ${rem(0.25)}px solid ${themeColors.white};
+  border-radius: ${rem(1)}px;
+  background-color: transparent;
+`;
+
+export const QRCodeInstructions = styled.View`
+  position: absolute;
+  bottom: ${rem(4)}px;
+  left: ${rem(2)}px;
+  right: ${rem(2)}px;
+  align-items: center;
+`;
+
+export const QRCodeInstructionsText = styled.Text`
+  color: ${themeColors.white};
+  font-size: ${rem(1)}px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: ${rem(0.5)}px ${rem(1)}px;
+  border-radius: ${rem(0.25)}px;
 `;
