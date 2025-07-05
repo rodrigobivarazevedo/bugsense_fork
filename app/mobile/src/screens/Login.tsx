@@ -13,7 +13,7 @@ type LoginScreenProps = {
     navigation: NativeStackNavigationProp<any>;
 };
 
-const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
+const UserLogin: React.FC<LoginScreenProps> = ({ navigation }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -127,4 +127,4 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
     );
 };
 
-export default Login;
+export default UserLogin;

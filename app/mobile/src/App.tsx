@@ -10,7 +10,7 @@ import styled from 'styled-components/native';
 import HeaderBar from './components/HeaderBar';
 import BottomBar from './components/BottomBar';
 
-import Login from './screens/Login';
+import UserLogin from './screens/Login';
 import Register from './screens/Register';
 import ForgotPassword from './screens/ForgotPassword';
 import DoctorLogin from './screens/DoctorLogin';
@@ -24,7 +24,7 @@ import Discover from './screens/Discover';
 import BacteriaRouter from './screens/BacteriaRouter';
 
 const routes = [
-  { name: 'Login', component: Login, wrapped: false },
+  { name: 'Login', component: UserLogin, wrapped: false },
   { name: 'Register', component: Register, wrapped: false },
   { name: 'ForgotPassword', component: ForgotPassword, wrapped: false },
   { name: 'DoctorLogin', component: DoctorLogin, wrapped: false },
