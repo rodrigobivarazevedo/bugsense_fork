@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import BacteriaPage from '../BacteriaPage';
 
 const escherichiaColiData = {
@@ -44,7 +44,7 @@ const escherichiaColiData = {
     treatment: 'Most E. coli infections resolve on their own within 5-7 days. Treatment focuses on managing symptoms and preventing dehydration. Antibiotics are generally not recommended as they may increase the risk of complications. In severe cases, hospitalization may be required for intravenous fluids and supportive care.'
 };
 
-const EscherichiaColi: React.FC = () => {
+const EscherichiaColi: FC = () => {
     return <BacteriaPage bacteria={escherichiaColiData} />;
 };
 

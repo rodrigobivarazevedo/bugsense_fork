@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, useEffect } from 'react';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import EscherichiaColi from './individual_bacteria/EscherichiaColi';
 import Salmonella from './individual_bacteria/Salmonella';
@@ -20,12 +20,12 @@ const bacteriaPages = {
     // 'streptococcus-pneumoniae': StreptococcusPneumoniae,
 };
 
-export const BacteriaRouter: React.FC = () => {
+export const BacteriaRouter: FC = () => {
     const route = useRoute();
     const navigation = useNavigation();
     const { id } = route.params as { id: string };
 
-    React.useEffect(() => {
+    useEffect(() => {
         const bacteriaName = id.split('-').map(word =>
             word.charAt(0).toUpperCase() + word.slice(1)
         ).join(' ');

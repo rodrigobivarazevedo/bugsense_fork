@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 import Logo from './Logo';
 import * as S from './HeaderBar.styles'
@@ -8,7 +8,7 @@ import { rem } from '../utils/Responsive';
 
 const MAIN_TABS = ['Home', 'Scan', 'Results', 'More'];
 
-const HeaderBar: React.FC<any> = ({ navigation, route, options }) => {
+const HeaderBar: FC<any> = ({ navigation, route, options }) => {
     const insets = useSafeAreaInsets();
     const isMainTab = MAIN_TABS.includes(route.name);
 

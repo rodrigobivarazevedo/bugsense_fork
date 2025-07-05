@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { FC, useState } from 'react';
 import { Alert, TouchableOpacity } from 'react-native';
 import Logo from '../components/Logo';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ type RegisterScreenProps = {
     navigation: NativeStackNavigationProp<any>;
 };
 
-const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
+const Register: FC<RegisterScreenProps> = ({ navigation }) => {
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -221,6 +221,15 @@ const Register: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                     <S.Link>
                         {t('Login')}
+                    </S.Link>
+                </TouchableOpacity>
+            </S.LinkContainer>
+
+            <S.LinkContainer>
+                <S.LinkText>{t('Are you medical personnel?')}</S.LinkText>
+                <TouchableOpacity onPress={() => navigation.navigate('DoctorLogin')}>
+                    <S.Link>
+                        {t('Login as Doctor')}
                     </S.Link>
                 </TouchableOpacity>
             </S.LinkContainer>

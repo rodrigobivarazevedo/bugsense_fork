@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { FC, useState } from 'react';
 import { Alert, TouchableOpacity } from 'react-native';
 import Logo from '../components/Logo';
 import RenderIcon from '../components/RenderIcon';
@@ -13,7 +13,7 @@ type LoginScreenProps = {
     navigation: NativeStackNavigationProp<any>;
 };
 
-const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
+const UserLogin: FC<LoginScreenProps> = ({ navigation }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -31,6 +31,7 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
             await AsyncStorage.setItem('accessToken', access);
             await AsyncStorage.setItem('refreshToken', refresh);
             await AsyncStorage.setItem('user', JSON.stringify(user));
+            await AsyncStorage.setItem('userType', 'patient');
 
             console.log('Login attempted with:', { username });
             navigation.navigate('Home');
@@ -113,8 +114,17 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
                     </S.Link>
                 </TouchableOpacity>
             </S.LinkContainer>
+
+            <S.LinkContainer>
+                <S.LinkText>{t('Are you medical personnel?')}</S.LinkText>
+                <TouchableOpacity onPress={() => navigation.navigate('DoctorLogin')}>
+                    <S.Link>
+                        {t('Login as Doctor')}
+                    </S.Link>
+                </TouchableOpacity>
+            </S.LinkContainer>
         </S.Container>
     );
 };
 
-export default Login;
+export default UserLogin;

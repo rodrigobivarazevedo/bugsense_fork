@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { FC, useState } from 'react';
 import { Alert, TouchableOpacity } from 'react-native';
 import Logo from '../components/Logo';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ type ForgotPasswordScreenProps = {
     navigation: NativeStackNavigationProp<any>;
 };
 
-const ForgotPassword: React.FC<ForgotPasswordScreenProps> = ({ navigation }) => {
+const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState('');
     const { t } = useTranslation();

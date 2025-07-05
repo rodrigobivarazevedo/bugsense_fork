@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import './translations/i18n';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './translations/i18n';
@@ -10,9 +10,10 @@ import styled from 'styled-components/native';
 import HeaderBar from './components/HeaderBar';
 import BottomBar from './components/BottomBar';
 
-import Login from './screens/Login';
+import UserLogin from './screens/UserLogin';
 import Register from './screens/Register';
 import ForgotPassword from './screens/ForgotPassword';
+import DoctorLogin from './screens/DoctorLogin';
 import Home from './screens/Home';
 import Scan from './screens/Scan';
 import Results from './screens/Results';
@@ -21,19 +22,24 @@ import Account from './screens/Account';
 import LanguageSelection from './screens/LanguageSelection';
 import Discover from './screens/Discover';
 import BacteriaRouter from './screens/BacteriaRouter';
+import Patients from './screens/Patients';
+import TimeFormatSelection from './screens/TimeFormatSelection';
 
 const routes = [
-  { name: 'Login', component: Login, wrapped: false },
+  { name: 'Login', component: UserLogin, wrapped: false },
   { name: 'Register', component: Register, wrapped: false },
   { name: 'ForgotPassword', component: ForgotPassword, wrapped: false },
+  { name: 'DoctorLogin', component: DoctorLogin, wrapped: false },
   { name: 'Home', component: Home, wrapped: true, showBottomBar: true },
   { name: 'Scan', component: Scan, wrapped: true, showBottomBar: true },
   { name: 'Results', component: Results, wrapped: true, showBottomBar: true },
   { name: 'More', component: More, wrapped: true, showBottomBar: true },
   { name: 'Account', component: Account, wrapped: true, showBottomBar: true },
   { name: 'LanguageSelection', alias: 'language', component: LanguageSelection, wrapped: true, showBottomBar: false },
+  { name: 'TimeFormatSelection', component: TimeFormatSelection, wrapped: true, showBottomBar: false },
   { name: 'Discover', component: Discover, wrapped: true, showBottomBar: false },
   { name: 'BacteriaRouter', alias: 'discover_bacteria', component: BacteriaRouter, wrapped: true, showBottomBar: false },
+  { name: 'Patients', component: Patients, wrapped: true, showBottomBar: true },
 ];
 
 export default function App() {

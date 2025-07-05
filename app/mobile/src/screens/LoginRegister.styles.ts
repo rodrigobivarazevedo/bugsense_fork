@@ -101,3 +101,32 @@ export const ErrorText = styled.Text`
     font-size: ${rem(0.75)}px;
     font-family: 'System';
 `;
+
+export const DropdownContainer = styled.View`
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: ${rem(0.0625)}px solid ${themeColors.primary};
+    border-radius: ${rem(0.25)}px;
+    max-height: ${rem(12.5)}px;
+    z-index: 1000;
+    elevation: 5;
+    shadow-color: #000;
+    shadow-offset: 0px 2px;
+    shadow-opacity: 0.25;
+    shadow-radius: 3.84px;
+`;
+
+export const DropdownItem = styled.View`
+    padding: ${rem(0.75)}px ${rem(1)}px;
+    border-bottom-width: ${rem(0.0625)}px;
+    border-bottom-color: #e0e0e0;
+`;
+
+export const DropdownText = styled.Text`
+    color: ${themeColors.primary};
+    font-size: ${rem(0.875)}px;
+    font-family: 'System';
+`;

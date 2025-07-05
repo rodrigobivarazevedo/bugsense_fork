@@ -1,21 +1,183 @@
-import React from 'react';
-import * as S from './Home.styles';
-import { RenderLottie } from '../components/RenderLottie';
+import { FC, useEffect, useState } from 'react';
+import {
+    View,
+    Text,
+    SectionList,
+    ActivityIndicator,
+    TouchableOpacity,
+} from 'react-native';
+import { styles } from './Results.styles';
+import Api from '../api/Client';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
+import RenderIcon from '../components/RenderIcon';
 
-export const Results: React.FC = () => {
+function formatDate(dateStr: string) {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString(undefined, { month: 'long', day: '2-digit' });
+}
+
+function formatTime(dateStr: string, timeFormat: '12' | '24') {
+    const date = new Date(dateStr);
+    return date.toLocaleTimeString(undefined, {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: timeFormat === '12',
+    });
+}
+
+function groupByDate(results: any[]) {
+    const groups: { [date: string]: any[] } = {};
+    results.forEach(item => {
+        const date = item.created_at.split('T')[0];
+        if (!groups[date]) groups[date] = [];
+        groups[date].push(item);
+    });
+    return Object.entries(groups).map(([date, data]) => ({ date, data }));
+}
+
+function getRandomStatus() {
+    // REVIEW: To be replaced after update in backend
+    return Math.random() < 0.5 ? 'In Progress' : 'Complete';
+}
+
+export const Results: FC = () => {
+    const navigation: any = useNavigation();
+    const isFocused = useIsFocused();
+    const [results, setResults] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [userType, setUserType] = useState<string>('patient');
+    const [timeFormat, setTimeFormat] = useState<'12' | '24'>('12');
+
+    useEffect(() => {
+        AsyncStorage.getItem('userType').then(type => {
+            if (type && typeof type === 'string') {
+                setUserType(type);
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        AsyncStorage.getItem('timeFormat').then(format => {
+            if (format === '24' || format === '12') {
+                setTimeFormat(format);
+            }
+        });
+    }, [isFocused]);
+
+    useEffect(() => {
+        const fetchResults = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const token = await AsyncStorage.getItem('token');
+                const response = await Api.get('qr-codes/list/', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                // REVIEW: Add mock fields for now
+                const withMockFields = response.data.map((item: any) => {
+                    const status = getRandomStatus(); // REVIEW: random status for visualization
+                    return {
+                        ...item,
+                        status,
+                        patient_name: 'John Doe', // REVIEW: mock patient name
+                        patient_id: 'P123', // REVIEW: mock patient id
+                        patient_dob: '1990-05-10', // REVIEW: mock patient dob
+                    };
+                });
+                setResults(withMockFields);
+            } catch (err: any) {
+                setError('Failed to load results.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchResults();
+    }, []);
+
+    const grouped = groupByDate(results);
+
+    if (loading) {
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator size="large" color="#888" />
+            </View>
+        );
+    }
+    if (error) {
+        return (
+            <View style={styles.container}>
+                <Text>{error}</Text>
+            </View>
+        );
+    }
 
     return (
-        <S.Root>
-            <S.Title>
-                Results Page
-            </S.Title>
-            <S.Lottie>
-                <RenderLottie
-                    name="bouncingTestTubes"
-                    loop={true}
-                />
-            </S.Lottie>
-        </S.Root>
+        <View style={styles.container}>
+            <View style={styles.addButtonContainer}>
+                <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={() => navigation.navigate('Scan')}
+                    activeOpacity={0.8}
+                >
+                    <View style={styles.addButtonIcon}>
+                        <RenderIcon
+                            family="materialIcons"
+                            icon="add"
+                            fontSize={styles.addButtonIcon.fontSize}
+                            color={styles.addButtonIcon.color}
+                        />
+                    </View>
+                    <Text style={styles.addButtonText}>Add new</Text>
+                </TouchableOpacity>
+            </View>
+            <SectionList
+                contentContainerStyle={styles.contentContainer}
+                stickySectionHeadersEnabled={true}
+                showsVerticalScrollIndicator={true}
+                sections={grouped.map(section => ({
+                    title: formatDate(section.date),
+                    data: section.data,
+                }))}
+                keyExtractor={item => item.id.toString()}
+                renderSectionHeader={({ section: { title } }) => (
+                    <View style={styles.sectionHeaderSticky}>
+                        <Text style={styles.sectionHeader}>
+                            {title}
+                        </Text>
+                    </View>
+                )}
+                renderItem={({ item }) => (
+                    <View style={styles.listItem}>
+                        <Text style={styles.listItemTime}>{formatTime(item.created_at, timeFormat)}</Text>
+                        <View style={styles.listItemStatusContainer}>
+                            <View
+                                style={[
+                                    styles.statusIndicator,
+                                    item.status === 'In Progress'
+                                        ? styles.statusIndicatorInProgress
+                                        : styles.statusIndicatorComplete,
+                                ]}
+                            />
+                            <Text style={styles.listItemStatus}>{item.status}</Text>
+                        </View>
+                        {userType === 'doctor' && (
+                            <View style={styles.listItemPatient}>
+                                <Text style={styles.listItemLabel}>Patient Name:</Text>
+                                <Text style={styles.listItemValue}>{item.patient_name}</Text>
+                                <Text style={styles.listItemLabel}>ID:</Text>
+                                <Text style={styles.listItemValue}>{item.patient_id}</Text>
+                                <Text style={styles.listItemLabel}>DOB:</Text>
+                                <Text style={styles.listItemValue}>{item.patient_dob}</Text>
+                            </View>
+                        )}
+                    </View>
+                )}
+            />
+        </View>
     );
 };
 

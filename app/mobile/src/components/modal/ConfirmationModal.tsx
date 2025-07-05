@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import { Modal, View, Text, TouchableOpacity } from 'react-native';
 import { t } from 'i18next';
 import { styles } from './Modal.styles';
@@ -13,7 +13,7 @@ interface ConfirmationModalProps {
     cancelText?: string;
 }
 
-const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+const ConfirmationModal: FC<ConfirmationModalProps> = ({
     isOpen,
     onClose,
     onConfirm,

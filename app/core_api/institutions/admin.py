@@ -17,6 +17,7 @@ class DoctorAdmin(UserAdmin):
     search_fields = ('full_name', 'email', 'doctor_id')
     list_filter = ('is_active', 'institution')
     raw_id_fields = ('institution',)
+    ordering = ('-created_at',)
 
     fieldsets = (
         (None, {
