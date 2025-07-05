@@ -5,6 +5,7 @@ import RenderLottie from '../components/RenderLottie';
 import RenderIcon from '../components/RenderIcon';
 import { rem } from '../utils/Responsive';
 import Api from '../api/Client';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type GridItem = {
   key: string;
@@ -24,16 +25,30 @@ const GRID_ITEMS: GridItem[] = [
 export const Home: React.FC<any> = ({ navigation }) => {
   const { t } = useTranslation();
   const [userName, setUserName] = useState<string>('');
+  const [userType, setUserType] = useState<string>('patient');
 
   useEffect(() => {
     Api.get('users/me/')
       .then(res => setUserName(res.data.full_name))
       .catch(err => console.error('Could not load profile', err));
+
+    AsyncStorage.getItem('userType').then(type => {
+      if (type && typeof type === 'string') {
+        setUserType(type);
+      }
+    });
   }, []);
 
   const handlePress = (route?: string) => {
     if (route) navigation.navigate(route);
   };
+
+  const filteredGridItems = GRID_ITEMS.filter(item => {
+    if (userType === 'doctor') {
+      return item.key !== 'contactUs' && item.key !== 'news';
+    }
+    return true;
+  });
 
   return (
     <S.Root>
@@ -48,7 +63,7 @@ export const Home: React.FC<any> = ({ navigation }) => {
       </S.Header>
 
       <S.Grid>
-        {GRID_ITEMS.map(item => (
+        {filteredGridItems.map(item => (
           <S.Box
             key={item.key}
             onPress={() => handlePress(item.route)}
