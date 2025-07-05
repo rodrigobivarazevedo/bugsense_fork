@@ -603,6 +603,7 @@ export const Account: FC = () => {
                             </S.ItemTextCol>
                         </S.ItemRow>
                         <S.ItemRow>
+                            {/* TODO: Add country picker */}
                             <S.ItemTextCol>
                                 <S.ItemLabel>{t('Country')}</S.ItemLabel>
                                 <TextInput
