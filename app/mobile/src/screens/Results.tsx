@@ -1,21 +1,119 @@
-import { FC } from 'react';
-import * as S from './Home.styles';
-import { RenderLottie } from '../components/RenderLottie';
+import { FC, useEffect, useState } from 'react';
+import { View, Text, SectionList, ActivityIndicator } from 'react-native';
+import { styles } from './Results.styles';
+import Api from '../api/Client';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+function formatDate(dateStr: string) {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString(undefined, { month: 'long', day: '2-digit' });
+}
+
+function formatTime(dateStr: string) {
+    const date = new Date(dateStr);
+    return date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+}
+
+function groupByDate(results: any[]) {
+    const groups: { [date: string]: any[] } = {};
+    results.forEach(item => {
+        const date = item.created_at.split('T')[0];
+        if (!groups[date]) groups[date] = [];
+        groups[date].push(item);
+    });
+    return Object.entries(groups).map(([date, data]) => ({ date, data }));
+}
 
 export const Results: FC = () => {
+    const [results, setResults] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [userType, setUserType] = useState<string>('patient');
+
+    useEffect(() => {
+        AsyncStorage.getItem('userType').then(type => {
+            if (type && typeof type === 'string') {
+                setUserType(type);
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        const fetchResults = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const token = await AsyncStorage.getItem('token');
+                const response = await Api.get('qr-codes/list/', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                // REVIEW: Add mock fields for now
+                const withMockFields = response.data.map((item: any) => ({
+                    ...item,
+                    status: 'open', // REVIEW: mock status
+                    patient_name: 'John Doe', // REVIEW: mock patient name
+                    patient_id: 'P123', // REVIEW: mock patient id
+                    patient_dob: '1990-05-10', // REVIEW: mock patient dob
+                }));
+                setResults(withMockFields);
+            } catch (err: any) {
+                setError('Failed to load results.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchResults();
+    }, []);
+
+    const grouped = groupByDate(results);
+
+    if (loading) {
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator size="large" color="#888" />
+            </View>
+        );
+    }
+    if (error) {
+        return (
+            <View style={styles.container}>
+                <Text>{error}</Text>
+            </View>
+        );
+    }
 
     return (
-        <S.Root>
-            <S.Title>
-                Results Page
-            </S.Title>
-            <S.Lottie>
-                <RenderLottie
-                    name="bouncingTestTubes"
-                    loop={true}
-                />
-            </S.Lottie>
-        </S.Root>
+        <View style={styles.container}>
+            <SectionList
+                sections={grouped.map(section => ({
+                    title: formatDate(section.date),
+                    data: section.data,
+                }))}
+                keyExtractor={item => item.id.toString()}
+                renderSectionHeader={({ section: { title } }) => (
+                    <Text style={styles.sectionHeader}>{title}</Text>
+                )}
+                renderItem={({ item }) => (
+                    <View style={styles.listItem}>
+                        <Text style={styles.listItemTime}>{formatTime(item.created_at)}</Text>
+                        <Text style={styles.listItemStatus}>Status: {item.status}</Text>
+                        {userType === 'doctor' && (
+                            <View style={styles.listItemPatient}>
+                                <Text style={styles.listItemLabel}>Patient Name:</Text>
+                                <Text style={styles.listItemValue}>{item.patient_name}</Text>
+                                <Text style={styles.listItemLabel}>ID:</Text>
+                                <Text style={styles.listItemValue}>{item.patient_id}</Text>
+                                <Text style={styles.listItemLabel}>DOB:</Text>
+                                <Text style={styles.listItemValue}>{item.patient_dob}</Text>
+                            </View>
+                        )}
+                    </View>
+                )}
+                stickySectionHeadersEnabled={false}
+            />
+        </View>
     );
 };
 
