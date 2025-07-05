@@ -30,28 +30,69 @@ const HeaderBar: React.FC<any> = () => {
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const closeMenu = () => setMenuOpen(false);
 
-  const navLinks = (
+  const centerNavLinks = (
     <>
-      <NavLink to="/home" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ""}`} onClick={closeMenu}>
+      <NavLink
+        to="/home"
+        className={({ isActive }) =>
+          `${styles.navLink} ${isActive ? styles.active : ""}`
+        }
+        onClick={closeMenu}
+      >
         <HomeIcon />
         {t("home")}
       </NavLink>
-      <NavLink to="/upload" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ""}`} onClick={closeMenu}>
+      <NavLink
+        to="/upload"
+        className={({ isActive }) =>
+          `${styles.navLink} ${isActive ? styles.active : ""}`
+        }
+        onClick={closeMenu}
+      >
         <UploadIcon />
         {t("upload")}
       </NavLink>
-      <NavLink to="/results" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ""}`} onClick={closeMenu}>
+      <NavLink
+        to="/results"
+        className={({ isActive }) =>
+          `${styles.navLink} ${isActive ? styles.active : ""}`
+        }
+        onClick={closeMenu}
+      >
         <ResultsIcon />
         {t("results")}
       </NavLink>
-      <NavLink to="/more" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ""}`} onClick={closeMenu}>
+      <NavLink
+        to="/more"
+        className={({ isActive }) =>
+          `${styles.navLink} ${isActive ? styles.active : ""}`
+        }
+        onClick={closeMenu}
+      >
         <MoreIcon />
         {t("more")}
       </NavLink>
-      <NavLink to="/notifications" className={({ isActive }) => `${styles.iconLink} ${isActive ? styles.active : ""}`} onClick={closeMenu}>
+    </>
+  );
+
+  const iconLinks = (
+    <>
+      <NavLink
+        to="/notifications"
+        className={({ isActive }) =>
+          `${styles.iconLink} ${isActive ? styles.active : ""}`
+        }
+        onClick={closeMenu}
+      >
         <NotificationsIcon fontSize="large" className={styles.icon} />
       </NavLink>
-      <NavLink to="/account" className={({ isActive }) => `${styles.iconLink} ${isActive ? styles.active : ""}`} onClick={closeMenu}>
+      <NavLink
+        to="/account"
+        className={({ isActive }) =>
+          `${styles.iconLink} ${isActive ? styles.active : ""}`
+        }
+        onClick={closeMenu}
+      >
         <AccountCircleIcon fontSize="large" className={styles.icon} />
       </NavLink>
     </>
@@ -70,19 +111,28 @@ const HeaderBar: React.FC<any> = () => {
         </NavLink>
         {!isTablet && (
           <>
-            <div className={styles.navItem}>{navLinks}</div>
+            <div className={styles.centerNav}>{centerNavLinks}</div>
+            <div className={styles.iconContainer}>{iconLinks}</div>
           </>
         )}
       </nav>
 
       {isTablet && (
         <>
-          <div className={`${styles.overlay} ${menuOpen ? styles.show : ""}`} onClick={closeMenu}></div>
-          <div className={`${styles.collapseMenu} ${menuOpen ? styles.open : ""}`}>
-            {navLinks}
+          <div
+            className={`${styles.overlay} ${menuOpen ? styles.show : ""}`}
+            onClick={closeMenu}
+          ></div>
+          <div
+            className={`${styles.collapseMenu} ${menuOpen ? styles.open : ""}`}
+          >
+            {centerNavLinks}
           </div>
         </>
       )}
+
+      {/* ✅ Always visible on tablets */}
+      {isTablet && <div className={styles.floatingIcons}>{iconLinks}</div>}
     </>
   );
 };

@@ -1,6 +1,5 @@
 import React, { useState, FC } from "react";
 import { useTranslation } from "react-i18next";
-import RenderLottie from "../components/RenderLottie";
 import styles from "./Home.module.css";
 import { useNavigate } from "react-router-dom";
 
@@ -38,14 +37,6 @@ const Home: FC = () => {
     <div className={styles.root}>
       <div className={styles.header}>
         <div className={styles.headerContent}>
-          <div className={styles.lottie}>
-            <RenderLottie
-              name="homeHello"
-              startFrame={0}
-              endFrame={150}
-              loop={true}
-            />
-          </div>
           <div className={styles.headerText}>
             <p className={styles.greeting}>{t("hello")}</p>
             <h1 className={styles.userName}>{userName}</h1>
