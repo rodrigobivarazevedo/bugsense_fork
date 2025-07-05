@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
+from django.contrib.auth.hashers import make_password, check_password
 
 
 class CustomUserManager(BaseUserManager):
@@ -59,6 +60,44 @@ class CustomUser(AbstractUser):
     postcode = models.CharField(max_length=20, blank=True)
     country = models.CharField(max_length=100, blank=True)
 
+    # Security Questions
+    security_question_1 = models.CharField(
+        max_length=255,
+        verbose_name='Security Question 1',
+        help_text='First security question for account recovery',
+        blank=True
+    )
+    security_answer_1 = models.CharField(
+        max_length=255,
+        verbose_name='Security Answer 1',
+        help_text='Answer to the first security question',
+        blank=True
+    )
+    security_question_2 = models.CharField(
+        max_length=255,
+        verbose_name='Security Question 2',
+        help_text='Second security question for account recovery',
+        blank=True
+    )
+    security_answer_2 = models.CharField(
+        max_length=255,
+        verbose_name='Security Answer 2',
+        help_text='Answer to the second security question',
+        blank=True
+    )
+    security_question_3 = models.CharField(
+        max_length=255,
+        verbose_name='Security Question 3',
+        help_text='Third security question for account recovery',
+        blank=True
+    )
+    security_answer_3 = models.CharField(
+        max_length=255,
+        verbose_name='Security Answer 3',
+        help_text='Answer to the third security question',
+        blank=True
+    )
+
     is_doctor = models.BooleanField(default=False)
     assigned_doctor = models.ForeignKey(
         'institutions.Doctor',
@@ -69,10 +108,48 @@ class CustomUser(AbstractUser):
         verbose_name='Assigned Doctor'
     )
 
+    # Password Reset Token
+    password_reset_token = models.CharField(
+        max_length=255,
+        verbose_name='Password Reset Token',
+        help_text='One-time token for password reset',
+        blank=True,
+        null=True
+    )
+    password_reset_token_created = models.DateTimeField(
+        verbose_name='Password Reset Token Created',
+        help_text='When the password reset token was created',
+        null=True,
+        blank=True
+    )
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
+
+    def _hash_security_answers(self):
+        """Hash security answers before saving"""
+        if self.security_answer_1 and not self.security_answer_1.startswith('pbkdf2_sha256$'):
+            self.security_answer_1 = make_password(self.security_answer_1)
+        if self.security_answer_2 and not self.security_answer_2.startswith('pbkdf2_sha256$'):
+            self.security_answer_2 = make_password(self.security_answer_2)
+        if self.security_answer_3 and not self.security_answer_3.startswith('pbkdf2_sha256$'):
+            self.security_answer_3 = make_password(self.security_answer_3)
+
+    def save(self, *args, **kwargs):
+        self._hash_security_answers()
+        super().save(*args, **kwargs)
+
+    def check_security_answer(self, answer_number, answer):
+        """Check if a security answer is correct"""
+        if answer_number == 1:
+            return check_password(answer, self.security_answer_1)
+        elif answer_number == 2:
+            return check_password(answer, self.security_answer_2)
+        elif answer_number == 3:
+            return check_password(answer, self.security_answer_3)
+        return False
 
     def __str__(self):
         return self.email

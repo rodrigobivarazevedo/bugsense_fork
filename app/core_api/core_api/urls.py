@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from users.views import LoginView, CurrentUserView, LogoutView, RegisterView, QRCodeCreateView, QRCodeListView, QRCodeDetailView, ResultsCreateView, ResultsListView, ResultsDetailView
+from users.views import LoginView, CurrentUserView, LogoutView, RegisterView, QRCodeCreateView, QRCodeListView, QRCodeDetailView, ResultsCreateView, ResultsListView, ResultsDetailView, PasswordRecoveryQuestionsView, PasswordRecoveryValidateView, PasswordRecoveryResetView
 from institutions.views import DoctorLoginView, DoctorRegistrationView, DoctorPatientsListView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -42,6 +42,12 @@ urlpatterns = [
     path('api/results/', ResultsCreateView.as_view(), name='results-create'),
     path('api/results/list/', ResultsListView.as_view(), name='results-list'),
     path('api/results/<int:pk>/', ResultsDetailView.as_view(), name='results-detail'),
+    path('api/password-recovery/questions/',
+         PasswordRecoveryQuestionsView.as_view(), name='password-recovery-questions'),
+    path('api/password-recovery/validate/',
+         PasswordRecoveryValidateView.as_view(), name='password-recovery-validate'),
+    path('api/password-recovery/reset/',
+         PasswordRecoveryResetView.as_view(), name='password-recovery-reset'),
     path('api/', include('institutions.urls')),
     path('api/doctor/patients/', DoctorPatientsListView.as_view(),
          name='doctor-patients'),
