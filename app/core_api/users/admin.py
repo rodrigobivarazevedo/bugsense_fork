@@ -56,8 +56,8 @@ class CustomUserAdmin(UserAdmin):
 @admin.register(QRCode)
 class QRCodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'user_id_display', 'user_email',
-                    'qr_data_preview', 'created_at', 'closed_at')
-    list_filter = ('created_at', 'closed_at')
+                    'qr_data_preview', 'result_status', 'created_at', 'closed_at')
+    list_filter = ('created_at', 'closed_at', 'results__status')
     search_fields = ('user__email', 'user__full_name', 'qr_data')
     readonly_fields = ('created_at',)
     ordering = ('-created_at',)
@@ -65,6 +65,10 @@ class QRCodeAdmin(admin.ModelAdmin):
     fieldsets = (
         ('QR Code Information', {
             'fields': ('user', 'qr_data')
+        }),
+        ('Associated Result', {
+            'fields': ('result_status',),
+            'classes': ('collapse',)
         }),
         ('Timestamps', {
             'fields': ('created_at', 'closed_at'),
@@ -88,6 +92,15 @@ class QRCodeAdmin(admin.ModelAdmin):
             return f"{obj.qr_data[:50]}..."
         return obj.qr_data
     qr_data_preview.short_description = 'QR Data Preview'
+
+    def result_status(self, obj):
+        """Show the status of the associated result"""
+        result = obj.results.first()
+        if result:
+            return result.get_status_display()
+        return "No Result"
+    result_status.short_description = 'Result Status'
+    result_status.admin_order_field = 'results__status'
 
 
 @admin.register(Results)
@@ -123,6 +136,8 @@ class ResultsAdmin(admin.ModelAdmin):
     user_id_display.admin_order_field = 'user__id'
 
     def infection_status(self, obj):
+        if obj.infection_detected is None:
+            return "Not Tested"
         return "Infected" if obj.infection_detected else "No Infection"
     infection_status.short_description = 'Infection Status'
     infection_status.admin_order_field = 'infection_detected'

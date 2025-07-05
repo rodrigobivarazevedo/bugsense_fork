@@ -141,7 +141,9 @@ class Results(models.Model):
     )
     infection_detected = models.BooleanField(
         verbose_name='Infection Detected',
-        help_text='Whether an infection is present (True) or not (False)'
+        help_text='Whether an infection is present (True) or not (False)',
+        null=True,
+        blank=True
     )
     species = models.CharField(
         max_length=255,

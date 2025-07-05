@@ -90,7 +90,7 @@ class RegisterView(CreateAPIView):
 class QRCodeCreateView(CreateAPIView):
     """
     POST /api/qr-codes/ with { user_id, qr_data }
-    Creates a new QR code entry for the specified user
+    Creates a new QR code entry for the specified user and automatically creates an empty result with status 'ongoing'
     """
     serializer_class = QRCodeCreateSerializer
     permission_classes = [IsAuthenticated]
@@ -98,7 +98,7 @@ class QRCodeCreateView(CreateAPIView):
     @extend_schema(
         tags=['qr-codes'],
         summary="Create QR Code",
-        description="Create a new QR code entry for a user. The QR code data is stored as a string and linked to the specified user ID.",
+        description="Create a new QR code entry for a user. The QR code data is stored as a string and linked to the specified user ID. An empty result with status 'ongoing' is automatically created for this QR code.",
         request=QRCodeCreateSerializer,
         responses={201: QRCodeSerializer},
         examples=[
@@ -108,7 +108,7 @@ class QRCodeCreateView(CreateAPIView):
                     'user_id': 8,
                     'qr_data': 'https://example.com/sample-qr-data'
                 },
-                description='Example of creating a QR code for user ID 8'
+                description='Example of creating a QR code for user ID 8. This will also create an empty result with status "ongoing".'
             )
         ]
     )
@@ -208,54 +208,78 @@ class QRCodeDetailView(RetrieveUpdateDestroyAPIView):
 
 class ResultsCreateView(CreateAPIView):
     """
-    POST /api/results/ with { qr_data, infection_detected, species, concentration, antibiotic }
-    Creates a new result entry by finding the user linked to the QR code string
+    POST /api/results/ with { qr_data, status?, infection_detected?, species?, concentration?, antibiotic? }
+    Creates a new result entry or updates existing one by finding the user linked to the QR code string.
+    All fields except qr_data are optional. If a result already exists for the QR code, it will be updated.
+    Note: Results are automatically created with status 'ongoing' when QR codes are created via /api/qr-codes/.
+
+    Automatic Status Updates:
+    - When updating an existing result with any field, status automatically changes to 'preliminary_assessment'
+    - When updating infection_detected to False, status automatically changes to 'ready'
+    - When infection_detected is True and all required fields (species, concentration) are filled, status changes to 'ready'
+
+    Field Clearing:
+    - When infection_detected is set to False, species, concentration, and antibiotic fields are automatically cleared
+
+    Required Fields for Ready Status:
+    - When infection_detected is True, both species and concentration must be filled to set status to 'ready'
+    - Antibiotic field is optional and does not affect the ready status
     """
     serializer_class = ResultsCreateSerializer
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
         tags=['results'],
-        summary="Create Analysis Result",
-        description="Create a new analysis result by providing the QR code string and analysis data. The system will automatically find the user linked to the QR code.",
+        summary="Create or Update Analysis Result",
+        description="Create a new analysis result or update an existing one by providing the QR code string and any analysis data. The system will automatically find the user linked to the QR code. If a result already exists for this QR code, it will be updated with the new data. All fields except qr_data are optional. Note: Results are automatically created with status 'ongoing' when QR codes are created via /api/qr-codes/. When updating existing results, the status automatically changes to 'preliminary_assessment' for any field update, or 'ready' if infection_detected is set to False. When infection_detected is set to False, the species, concentration, and antibiotic fields are automatically cleared. When infection_detected is True and both species and concentration are filled, the status automatically changes to 'ready' (antibiotic is optional).",
         request=ResultsCreateSerializer,
-        responses={201: ResultsSerializer},
+        responses={
+            201: ResultsSerializer,
+            200: ResultsSerializer
+        },
         examples=[
             OpenApiExample(
-                'Infection Detected',
+                'Create New Result',
                 value={
                     'qr_data': 'https://example.com/sample-qr-data',
-                    'status': 'ready',
-                    'infection_detected': True,
-                    'species': 'Escherichia coli',
-                    'concentration': 'High',
-                    'antibiotic': 'Ciprofloxacin'
+                    'status': 'ongoing'
                 },
-                description='Example of creating a result for detected infection'
+                description='Example of creating a new result with minimal data'
             ),
             OpenApiExample(
-                'No Infection',
+                'Update with Species (Status → preliminary_assessment)',
                 value={
                     'qr_data': 'https://example.com/sample-qr-data',
-                    'status': 'ready',
-                    'infection_detected': False,
-                    'species': '',
-                    'concentration': '',
-                    'antibiotic': ''
+                    'species': 'Escherichia coli'
                 },
-                description='Example of creating a result for no infection detected'
+                description='Example of updating with species - status automatically changes to preliminary_assessment'
             ),
             OpenApiExample(
-                'Preliminary Assessment',
+                'Update with Infection Detected (Status → preliminary_assessment)',
                 value={
                     'qr_data': 'https://example.com/sample-qr-data',
-                    'status': 'preliminary_assessment',
                     'infection_detected': True,
-                    'species': 'Salmonella',
-                    'concentration': 'Medium',
-                    'antibiotic': 'Amoxicillin'
+                    'species': 'Salmonella'
                 },
-                description='Example of creating a preliminary assessment result'
+                description='Example of updating with infection detected - status automatically changes to preliminary_assessment'
+            ),
+            OpenApiExample(
+                'Complete Required Fields (Status → ready)',
+                value={
+                    'qr_data': 'https://example.com/sample-qr-data',
+                    'infection_detected': True,
+                    'species': 'E. coli',
+                    'concentration': 'High'
+                },
+                description='Example of completing required fields - status automatically changes to ready (antibiotic optional)'
+            ),
+            OpenApiExample(
+                'Update with No Infection (Status → ready, Fields Cleared)',
+                value={
+                    'qr_data': 'https://example.com/sample-qr-data',
+                    'infection_detected': False
+                },
+                description='Example of updating with no infection detected - status automatically changes to ready and species/concentration/antibiotic fields are cleared'
             )
         ]
     )
@@ -265,11 +289,23 @@ class ResultsCreateView(CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        # Check if a result already exists for this QR code
+        qr_data = request.data.get('qr_data')
+        try:
+            qr_code = QRCode.objects.get(qr_data=qr_data)
+            existing_result = Results.objects.filter(qr_code=qr_code).first()
+        except QRCode.DoesNotExist:
+            existing_result = None
+
         result = serializer.save()
 
-        # Return the created result with full details
+        # Return the created/updated result with full details
         response_serializer = ResultsSerializer(result)
-        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+        # Return 200 for updates, 201 for new creations
+        status_code = status.HTTP_200_OK if existing_result else status.HTTP_201_CREATED
+        return Response(response_serializer.data, status=status_code)
 
 
 class ResultsListView(ListAPIView):

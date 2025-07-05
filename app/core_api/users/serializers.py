@@ -76,6 +76,11 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class QRCodeSerializer(serializers.ModelSerializer):
+    result_status = serializers.CharField(
+        source='results.first.status', read_only=True)
+    result_id = serializers.IntegerField(
+        source='results.first.id', read_only=True)
+
     class Meta:
         model = QRCode
         fields = [
@@ -83,9 +88,11 @@ class QRCodeSerializer(serializers.ModelSerializer):
             'user',
             'qr_data',
             'created_at',
-            'closed_at'
+            'closed_at',
+            'result_status',
+            'result_id'
         ]
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'created_at', 'result_status', 'result_id']
 
 
 class QRCodeCreateSerializer(serializers.ModelSerializer):
@@ -103,7 +110,17 @@ class QRCodeCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {'user_id': 'User with this ID does not exist.'})
 
-        return QRCode.objects.create(user=user, **validated_data)
+        # Create the QR code
+        qr_code = QRCode.objects.create(user=user, **validated_data)
+
+        # Automatically create an empty result with status 'ongoing'
+        Results.objects.create(
+            user=user,
+            qr_code=qr_code,
+            status='ongoing'
+        )
+
+        return qr_code
 
 
 class ResultsSerializer(serializers.ModelSerializer):
@@ -140,6 +157,13 @@ class ResultsCreateSerializer(serializers.ModelSerializer):
             'concentration',
             'antibiotic'
         ]
+        extra_kwargs = {
+            'status': {'required': False},
+            'infection_detected': {'required': False},
+            'species': {'required': False},
+            'concentration': {'required': False},
+            'antibiotic': {'required': False},
+        }
 
     def create(self, validated_data):
         qr_data = validated_data.pop('qr_data')
@@ -155,9 +179,58 @@ class ResultsCreateSerializer(serializers.ModelSerializer):
         # Get the user from the QR code
         user = qr_code.user
 
-        # Create the result with the found user and QR code
-        return Results.objects.create(
-            user=user,
-            qr_code=qr_code,
-            **validated_data
-        )
+        # Check if a result already exists for this QR code
+        existing_result = Results.objects.filter(qr_code=qr_code).first()
+
+        if existing_result:
+            # Update the existing result with new data
+            for field, value in validated_data.items():
+                if value is not None:  # Only update if value is provided
+                    setattr(existing_result, field, value)
+
+            # Auto-update status based on what was updated
+            if validated_data:  # If any fields were updated
+                if 'infection_detected' in validated_data and validated_data['infection_detected'] is False:
+                    # If infection_detected was set to False, change status to 'ready' and clear other fields
+                    existing_result.status = 'ready'
+                    existing_result.species = ''
+                    existing_result.concentration = ''
+                    existing_result.antibiotic = ''
+                elif 'infection_detected' in validated_data and validated_data['infection_detected'] is True:
+                    # If infection_detected was set to True, check if all required fields are filled
+                    if existing_result.species and existing_result.concentration:
+                        existing_result.status = 'ready'
+                    else:
+                        existing_result.status = 'preliminary_assessment'
+                else:
+                    # For other updates, check if infection is true and all required fields are filled
+                    if existing_result.infection_detected and existing_result.species and existing_result.concentration:
+                        existing_result.status = 'ready'
+                    else:
+                        existing_result.status = 'preliminary_assessment'
+
+            existing_result.save()
+            return existing_result
+        else:
+            # Create a new result with the found user and QR code
+            # Set default status if not provided
+            if 'status' not in validated_data:
+                validated_data['status'] = 'ongoing'
+
+            # If infection_detected is False in new creation, clear other fields
+            if 'infection_detected' in validated_data and validated_data['infection_detected'] is False:
+                validated_data['species'] = ''
+                validated_data['concentration'] = ''
+                validated_data['antibiotic'] = ''
+
+            # If infection_detected is True and all required fields are provided, set status to ready
+            if ('infection_detected' in validated_data and validated_data['infection_detected'] is True and
+                'species' in validated_data and validated_data['species'] and
+                    'concentration' in validated_data and validated_data['concentration']):
+                validated_data['status'] = 'ready'
+
+            return Results.objects.create(
+                user=user,
+                qr_code=qr_code,
+                **validated_data
+            )
