@@ -66,10 +66,6 @@ class QRCodeAdmin(admin.ModelAdmin):
         ('QR Code Information', {
             'fields': ('user', 'qr_data')
         }),
-        ('Associated Result', {
-            'fields': ('result_status',),
-            'classes': ('collapse',)
-        }),
         ('Timestamps', {
             'fields': ('created_at', 'closed_at'),
             'classes': ('collapse',)

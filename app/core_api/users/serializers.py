@@ -196,16 +196,28 @@ class ResultsCreateSerializer(serializers.ModelSerializer):
                     existing_result.species = ''
                     existing_result.concentration = ''
                     existing_result.antibiotic = ''
+                    # Set QR code closed_at when result becomes ready
+                    if not qr_code.closed_at:
+                        qr_code.closed_at = timezone.now()
+                        qr_code.save()
                 elif 'infection_detected' in validated_data and validated_data['infection_detected'] is True:
                     # If infection_detected was set to True, check if all required fields are filled
                     if existing_result.species and existing_result.concentration:
                         existing_result.status = 'ready'
+                        # Set QR code closed_at when result becomes ready
+                        if not qr_code.closed_at:
+                            qr_code.closed_at = timezone.now()
+                            qr_code.save()
                     else:
                         existing_result.status = 'preliminary_assessment'
                 else:
                     # For other updates, check if infection is true and all required fields are filled
                     if existing_result.infection_detected and existing_result.species and existing_result.concentration:
                         existing_result.status = 'ready'
+                        # Set QR code closed_at when result becomes ready
+                        if not qr_code.closed_at:
+                            qr_code.closed_at = timezone.now()
+                            qr_code.save()
                     else:
                         existing_result.status = 'preliminary_assessment'
 
@@ -228,6 +240,10 @@ class ResultsCreateSerializer(serializers.ModelSerializer):
                 'species' in validated_data and validated_data['species'] and
                     'concentration' in validated_data and validated_data['concentration']):
                 validated_data['status'] = 'ready'
+                # Set QR code closed_at when result becomes ready
+                if not qr_code.closed_at:
+                    qr_code.closed_at = timezone.now()
+                    qr_code.save()
 
             return Results.objects.create(
                 user=user,

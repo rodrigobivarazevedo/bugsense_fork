@@ -17,6 +17,7 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from .models import QRCode, Results
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from institutions.models import Doctor
 
 
 class LoginView(TokenObtainPairView):
@@ -316,6 +317,7 @@ class ResultsListView(ListAPIView):
 
     - Regular users see only their own results.
     - Staff (doctors) can use the user_id query parameter to view any patient's results.
+    - Use pending=true to filter results that need attention (status 'ready' or 'preliminary_assessment').
     - Note: When retrieving individual results via GET /api/results/{id}/, results with status 'ready' automatically change to 'closed'.
     """
     serializer_class = ResultsSerializer
@@ -324,7 +326,7 @@ class ResultsListView(ListAPIView):
     @extend_schema(
         tags=['results'],
         summary="List Analysis Results (Doctor/Patient) — /api/results/list/?user_id={patient_id}",
-        description="Retrieve a list of analysis results.\n\n- Regular users see only their own results.\n- Staff (doctors) can use the user_id query parameter to view any patient's results.\n- Note: When retrieving individual results via GET /api/results/{id}/, results with status 'ready' automatically change to 'closed'.",
+        description="Retrieve a list of analysis results.\n\n- Regular users see only their own results.\n- Staff (doctors) can use the user_id query parameter to view any patient's results.\n- Use pending=true to filter results that need attention (status 'ready' or 'preliminary_assessment').\n- Note: When retrieving individual results via GET /api/results/{id}/, results with status 'ready' automatically change to 'closed'.",
         parameters=[
             OpenApiParameter(
                 name='user_id',
@@ -332,22 +334,148 @@ class ResultsListView(ListAPIView):
                 location=OpenApiParameter.QUERY,
                 description='(Doctor only) Filter results by patient user ID',
                 required=False
+            ),
+            OpenApiParameter(
+                name='pending',
+                type=bool,
+                location=OpenApiParameter.QUERY,
+                description='Filter to show only results with status "ready" or "preliminary_assessment" (results that need attention)',
+                required=False
+            ),
+            OpenApiParameter(
+                name='qr_data',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                description='Filter results by QR code data string',
+                required=False
             )
         ],
-        responses={200: ResultsSerializer(many=True)}
+        responses={200: ResultsSerializer(many=True)},
+        examples=[
+            OpenApiExample(
+                'List All Results (Doctor)',
+                value=[
+                    {
+                        "user_id": 38,
+                        "qr_data": "QR_TEST_DATA_001",
+                        "status": "closed"
+                    },
+                    {
+                        "user_id": 38,
+                        "qr_data": "test-test-test",
+                        "status": "preliminary_assessment"
+                    }
+                ],
+                description='Doctor view showing all results for assigned patients (summary format)'
+            ),
+            OpenApiExample(
+                'List Pending Results Only',
+                value=[
+                    {
+                        "user_id": 38,
+                        "qr_data": "test-test-test",
+                        "status": "preliminary_assessment"
+                    }
+                ],
+                description='Filtered view showing only results that need attention (pending=true)'
+            ),
+            OpenApiExample(
+                'Patient Results (Full Details)',
+                value=[
+                    {
+                        "id": 23,
+                        "user": 38,
+                        "qr_code": 22,
+                        "qr_data": "QR_TEST_DATA_001",
+                        "status": "closed",
+                        "infection_detected": True,
+                        "species": "E. coli",
+                        "concentration": "10^6 CFU/ml",
+                        "antibiotic": "",
+                        "created_at": "2025-07-05T15:02:35.347783Z"
+                    }
+                ],
+                description='Full result details when using qr_data or user_id filters'
+            )
+        ]
     )
     def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+        # If doctor and no qr_data/user_id, return summary for all patients
+        qr_data = request.query_params.get('qr_data')
+        user_id = request.query_params.get('user_id')
+        pending = request.query_params.get('pending', '').lower() == 'true'
+
+        if not qr_data and not user_id and hasattr(request.user, 'is_doctor') and request.user.is_doctor:
+            # Get all patients assigned to this doctor
+            patients = Doctor.objects.get(id=request.user.id).patients.all()
+            # Get all QR codes for these patients
+            qr_codes = QRCode.objects.filter(user__in=patients)
+            # Get all results for these QR codes
+            results = Results.objects.filter(qr_code__in=qr_codes)
+            # Filter by pending status if requested
+            if pending:
+                results = results.filter(
+                    status__in=['ready', 'preliminary_assessment'])
+            # Return only user_id, qr_data, and result status
+            data = [
+                {
+                    'user_id': r.user.id,
+                    'qr_data': r.qr_code.qr_data,
+                    'status': r.status
+                }
+                for r in results
+            ]
+            return Response(data, status=200)
+        # Otherwise, default behavior
+        response = super().get(request, *args, **kwargs)
+
+        # If status is 'ready', change it to 'closed' for all results in the response
+        if response.status_code == 200 and response.data:
+            for result_data in response.data:
+                if result_data.get('status') == 'ready':
+                    result_id = result_data.get('id')
+                    try:
+                        result = Results.objects.get(id=result_id)
+                        result.status = 'closed'
+                        result.save()
+                        result_data['status'] = 'closed'
+                    except Results.DoesNotExist:
+                        pass
+
+        return response
 
     def get_queryset(self):
+        qr_data = self.request.query_params.get('qr_data')
+        pending = self.request.query_params.get(
+            'pending', '').lower() == 'true'
+
+        if qr_data:
+            try:
+                qr_code = QRCode.objects.get(qr_data=qr_data)
+                queryset = Results.objects.filter(qr_code=qr_code)
+                if pending:
+                    queryset = queryset.filter(
+                        status__in=['ready', 'preliminary_assessment'])
+                return queryset
+            except QRCode.DoesNotExist:
+                return Results.objects.none()
+
         user_id = self.request.query_params.get('user_id')
 
         # If user_id is provided and user is staff, return results for that user
         if user_id and self.request.user.is_staff:
-            return Results.objects.filter(user_id=user_id)
+            queryset = Results.objects.filter(user_id=user_id)
+            if pending:
+                queryset = queryset.filter(
+                    status__in=['ready', 'preliminary_assessment'])
+            return queryset
 
         # Otherwise, return results for the authenticated user
-        return Results.objects.filter(user=self.request.user)
+        queryset = Results.objects.filter(user=self.request.user)
+        if pending:
+            queryset = queryset.filter(
+                status__in=['ready', 'preliminary_assessment'])
+        return queryset
 
 
 class ResultsDetailView(RetrieveUpdateDestroyAPIView):
