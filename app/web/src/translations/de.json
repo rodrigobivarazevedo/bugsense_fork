@@ -15,5 +15,16 @@
     "address": "Adresse",
     "edit": "Bearbeiten",
     "save": "Speichern",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "Username or Email": "Benutzername oder E-Mail",
+    "Enter your password": "Geben Sie Ihr Passwort ein",
+    "Password forgotten?": "Passwort vergessen?",
+    "Login": "Anmelden",
+    "Logging in...": "Anmeldung läuft...",
+    "Please enter both username and password": "Bitte geben Sie sowohl Benutzername als auch Passwort ein",
+    "Invalid username or password": "Ungültiger Benutzername oder Passwort",
+    "Invalid login credentials": "Ungültige Anmeldedaten",
+    "Server error. Please try again later.": "Serverfehler. Bitte versuchen Sie es später erneut.",
+    "Network error. Please check your connection.": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.",
+    "Login failed. Please try again.": "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut."
 }

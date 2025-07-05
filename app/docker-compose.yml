@@ -1,6 +1,6 @@
 services:
   backend:
-    build: 
+    build:
       context: ./core_api
       dockerfile: Dockerfile
     ports:
@@ -28,13 +28,13 @@ services:
       context: ./web
       dockerfile: Dockerfile
       args:
-        - API_URL=http://${HOST_IP}:8000/api/
+        - REACT_APP_API_URL=http://${HOST_IP}:8000/api/
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
       - HOST_IP=${HOST_IP}
-      - API_URL=http://${HOST_IP}:8000/api/
+      - REACT_APP_API_URL=http://${HOST_IP}:8000/api/
     volumes:
       - ./web:/app
       - /app/node_modules
