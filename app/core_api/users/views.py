@@ -21,6 +21,10 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExampl
 from institutions.models import Doctor
 from django.conf import settings
 import os
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils import timezone
+from datetime import timedelta
+import secrets
 
 
 class LoginView(TokenObtainPairView):
@@ -50,13 +54,41 @@ class LoginView(TokenObtainPairView):
 
 class CurrentUserView(RetrieveUpdateDestroyAPIView):
     """
-    GET  /api/users/me/       → returns the logged-in user's profile
+    GET  /api/users/me/       → returns the logged-in user's profile including security questions
     PUT  /api/users/me/       → update profile (partial updates allowed)
     DELETE /api/users/me/    → delete account
     """
 
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=['users'],
+        summary="Get Current User Profile",
+        description="Retrieve the current authenticated user's profile information including security questions and answers.",
+        responses={200: UserSerializer}
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['users'],
+        summary="Update Current User Profile",
+        description="Update the current authenticated user's profile information. Partial updates are allowed.",
+        request=UserSerializer,
+        responses={200: UserSerializer}
+    )
+    def put(self, request, *args, **kwargs):
+        return super().put(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['users'],
+        summary="Delete Current User Account",
+        description="Delete the current authenticated user's account.",
+        responses={204: None}
+    )
+    def delete(self, request, *args, **kwargs):
+        return super().delete(request, *args, **kwargs)
 
     def get_object(self):
         return self.request.user
@@ -86,9 +118,48 @@ class LogoutView(APIView):
 
 class RegisterView(CreateAPIView):
     """
-    POST /api/register/ with user data
+    POST /api/register/ with user data including required security questions
     """
     serializer_class = RegisterSerializer
+
+    @extend_schema(
+        tags=['authentication'],
+        summary="User Registration",
+        description="Register a new user account. All security questions and answers are required for account security.",
+        request=RegisterSerializer,
+        responses={
+            201: {
+                "type": "object",
+                "properties": {
+                    "id": {"type": "integer"},
+                    "email": {"type": "string"},
+                    "full_name": {"type": "string"},
+                    "security_question_1": {"type": "string"},
+                    "security_question_2": {"type": "string"},
+                    "security_question_3": {"type": "string"},
+                }
+            }
+        },
+        examples=[
+            OpenApiExample(
+                'User Registration with Security Questions',
+                value={
+                    'email': 'newuser@example.com',
+                    'full_name': 'John Doe',
+                    'password': 'securepassword123',
+                    'security_question_1': 'What was your first pet name?',
+                    'security_answer_1': 'Fluffy',
+                    'security_question_2': 'In which city were you born?',
+                    'security_answer_2': 'New York',
+                    'security_question_3': 'What is your mothers maiden name?',
+                    'security_answer_3': 'Smith'
+                },
+                description='Example of user registration with all required security questions and answers'
+            )
+        ]
+    )
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
 
 class QRCodeCreateView(CreateAPIView):
@@ -539,7 +610,7 @@ class ResultsDetailView(RetrieveUpdateDestroyAPIView):
         # Get the result first
         result = self.get_object()
 
-        # If status is 'ready', change it to 'closed'
+        # If status is 'ready', automatically change to 'closed'
         if result.status == 'ready':
             result.status = 'closed'
             result.save()
@@ -570,3 +641,276 @@ class ResultsDetailView(RetrieveUpdateDestroyAPIView):
         if self.request.user.is_staff:
             return Results.objects.all()
         return Results.objects.filter(user=self.request.user)
+
+
+class PasswordRecoveryQuestionsView(APIView):
+    """
+    POST /api/password-recovery/questions/
+    Input: { "email": "user@example.com" }
+    Output: { "questions": [ ... ] }
+    """
+
+    @extend_schema(
+        tags=['authentication'],
+        summary="Get Security Questions for Password Recovery",
+        description="Retrieve the security questions for a user by their email address. This is the first step in the password recovery process.",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "User's email address"
+                    }
+                },
+                "required": ["email"]
+            }
+        },
+        responses={
+            200: {
+                "type": "object",
+                "properties": {
+                    "questions": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Array of 3 security questions"
+                    }
+                }
+            },
+            400: {"type": "object", "properties": {"detail": {"type": "string"}}},
+            404: {"type": "object", "properties": {"detail": {"type": "string"}}}
+        },
+        examples=[
+            OpenApiExample(
+                'Get Security Questions',
+                value={
+                    'email': 'user@example.com'
+                },
+                description='Request to get security questions for password recovery'
+            ),
+            OpenApiExample(
+                'Security Questions Response',
+                value={
+                    'questions': [
+                        'What is your mother\'s maiden name?',
+                        'What was your first pet\'s name?',
+                        'What city were you born in?'
+                    ]
+                },
+                description='Response with user\'s security questions'
+            )
+        ]
+    )
+    def post(self, request):
+        email = request.data.get('email', '').strip().lower()
+        if not email:
+            return Response({"detail": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
+        from .models import CustomUser
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        questions = [
+            user.security_question_1 or "",
+            user.security_question_2 or "",
+            user.security_question_3 or ""
+        ]
+        return Response({"questions": questions})
+
+
+class PasswordRecoveryValidateView(APIView):
+    """
+    POST /api/password-recovery/validate/
+    Input: { "email": "user@example.com", "question_number": 1, "answer": "..." }
+    Output: { "token": "..." } if correct, or error if not
+    """
+
+    @extend_schema(
+        tags=['authentication'],
+        summary="Validate Security Answer and Get Recovery Token",
+        description="Validate a user's answer to one of their security questions. If correct, returns a one-time recovery token that can be used to reset the password. The token expires after 15 minutes and can only be used once.",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "User's email address"
+                    },
+                    "question_number": {
+                        "type": "integer",
+                        "enum": [1, 2, 3],
+                        "description": "Which security question to answer (1, 2, or 3)"
+                    },
+                    "answer": {
+                        "type": "string",
+                        "description": "User's answer to the security question"
+                    }
+                },
+                "required": ["email", "question_number", "answer"]
+            }
+        },
+        responses={
+            200: {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "description": "One-time recovery token (valid for 15 minutes)"
+                    }
+                }
+            },
+            400: {"type": "object", "properties": {"detail": {"type": "string"}}},
+            404: {"type": "object", "properties": {"detail": {"type": "string"}}}
+        },
+        examples=[
+            OpenApiExample(
+                'Validate Security Answer',
+                value={
+                    'email': 'user@example.com',
+                    'question_number': 1,
+                    'answer': 'Smith'
+                },
+                description='Request to validate security answer and get recovery token'
+            ),
+            OpenApiExample(
+                'Recovery Token Response',
+                value={
+                    'token': 'ag7VNxQ1zmu8WJofu24-Uz7Vsw8FfJwI-VXjLWbAGvc'
+                },
+                description='Response with one-time recovery token'
+            )
+        ]
+    )
+    def post(self, request):
+        email = request.data.get('email', '').strip().lower()
+        question_number = request.data.get('question_number')
+        answer = request.data.get('answer', '').strip()
+
+        # Validate inputs
+        if not email:
+            return Response({"detail": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
+        if not question_number or question_number not in [1, 2, 3]:
+            return Response({"detail": "Question number must be 1, 2, or 3."}, status=status.HTTP_400_BAD_REQUEST)
+        if not answer:
+            return Response({"detail": "Answer is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Find user
+        from .models import CustomUser
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the answer is correct
+        if not user.check_security_answer(question_number, answer):
+            return Response({"detail": "Incorrect answer."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Generate a secure one-time token
+        token = secrets.token_urlsafe(32)
+
+        # Store token in user model (we'll add a field for this)
+        user.password_reset_token = token
+        user.password_reset_token_created = timezone.now()
+        user.save()
+
+        return Response({"token": token})
+
+
+class PasswordRecoveryResetView(APIView):
+    """
+    POST /api/password-recovery/reset/
+    Input: { "email": "...", "token": "...", "new_password": "..." }
+    Output: success or error
+    """
+
+    @extend_schema(
+        tags=['authentication'],
+        summary="Reset Password Using Recovery Token",
+        description="Reset a user's password using the one-time recovery token obtained from validating a security answer. The token must be valid and not expired (15-minute expiry). After successful password reset, the token is invalidated.",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "User's email address"
+                    },
+                    "token": {
+                        "type": "string",
+                        "description": "One-time recovery token obtained from validate endpoint"
+                    },
+                    "new_password": {
+                        "type": "string",
+                        "minLength": 8,
+                        "description": "New password (minimum 8 characters)"
+                    }
+                },
+                "required": ["email", "token", "new_password"]
+            }
+        },
+        responses={
+            200: {
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "type": "string",
+                        "description": "Success message"
+                    }
+                }
+            },
+            400: {"type": "object", "properties": {"detail": {"type": "string"}}},
+            404: {"type": "object", "properties": {"detail": {"type": "string"}}}
+        },
+        examples=[
+            OpenApiExample(
+                'Reset Password',
+                value={
+                    'email': 'user@example.com',
+                    'token': 'ag7VNxQ1zmu8WJofu24-Uz7Vsw8FfJwI-VXjLWbAGvc',
+                    'new_password': 'newsecurepassword123'
+                },
+                description='Request to reset password using recovery token'
+            ),
+            OpenApiExample(
+                'Password Reset Success',
+                value={
+                    'detail': 'Password reset successful.'
+                },
+                description='Response confirming successful password reset'
+            )
+        ]
+    )
+    def post(self, request):
+        email = request.data.get('email', '').strip().lower()
+        token = request.data.get('token', '').strip()
+        new_password = request.data.get('new_password', '').strip()
+
+        if not email or not token or not new_password:
+            return Response({"detail": "Email, token, and new_password are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        from .models import CustomUser
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check token validity (15 min expiry)
+        if not user.password_reset_token or user.password_reset_token != token:
+            return Response({"detail": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+        if not user.password_reset_token_created:
+            return Response({"detail": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+        from django.utils import timezone
+        from datetime import timedelta
+        if timezone.now() - user.password_reset_token_created > timedelta(minutes=15):
+            return Response({"detail": "Token expired."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Set new password
+        user.set_password(new_password)
+        user.password_reset_token = None
+        user.password_reset_token_created = None
+        user.save()
+        return Response({"detail": "Password reset successful."})

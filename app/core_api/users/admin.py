@@ -13,6 +13,11 @@ class CustomUserAdmin(UserAdmin):
             'full_name', 'gender', 'dob', 'phone_number',
             'street', 'city', 'postcode', 'country'
         )}),
+        ('Security Questions', {'fields': (
+            'security_question_1', 'security_answer_1',
+            'security_question_2', 'security_answer_2',
+            'security_question_3', 'security_answer_3'
+        ), 'classes': ('collapse',)}),
         ('Doctor Assignment', {'fields': (
             'assigned_doctor',
         )}),

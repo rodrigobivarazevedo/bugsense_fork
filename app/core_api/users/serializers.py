@@ -19,6 +19,9 @@ class UserSerializer(serializers.ModelSerializer):
             "postcode",
             "country",
             "date_joined",
+            "security_question_1",
+            "security_question_2",
+            "security_question_3",
         ]
         read_only_fields = ["id"]
         extra_kwargs = {
@@ -31,7 +34,30 @@ class UserSerializer(serializers.ModelSerializer):
             "city": {"required": False},
             "postcode": {"required": False},
             "country": {"required": False},
+            "security_question_1": {"required": False},
+            "security_question_2": {"required": False},
+            "security_question_3": {"required": False},
         }
+
+    def update(self, instance, validated_data):
+        # Handle security answers separately to ensure they get hashed
+        security_answers = {}
+        for i in range(1, 4):
+            answer_field = f"security_answer_{i}"
+            if answer_field in validated_data:
+                security_answers[answer_field] = validated_data.pop(
+                    answer_field)
+
+        # Update the instance with non-security fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        # Set security answers (will be hashed by the model's save method)
+        for field, value in security_answers.items():
+            setattr(instance, field, value)
+
+        instance.save()
+        return instance
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -63,7 +89,21 @@ class RegisterSerializer(serializers.ModelSerializer):
             "email",
             "full_name",
             "password",
+            "security_question_1",
+            "security_answer_1",
+            "security_question_2",
+            "security_answer_2",
+            "security_question_3",
+            "security_answer_3",
         ]
+        extra_kwargs = {
+            "security_question_1": {"required": True},
+            "security_answer_1": {"required": True},
+            "security_question_2": {"required": True},
+            "security_answer_2": {"required": True},
+            "security_question_3": {"required": True},
+            "security_answer_3": {"required": True},
+        }
 
     def create(self, validated_data):
         user = CustomUser.objects.create_user(
@@ -72,6 +112,15 @@ class RegisterSerializer(serializers.ModelSerializer):
             full_name=validated_data["full_name"],
             date_joined=timezone.now().date()
         )
+
+        # Set security questions and answers (will be hashed by the model's save method)
+        for i in range(1, 4):
+            question_field = f"security_question_{i}"
+            answer_field = f"security_answer_{i}"
+            setattr(user, question_field, validated_data[question_field])
+            setattr(user, answer_field, validated_data[answer_field])
+
+        user.save()
         return user
 
 
