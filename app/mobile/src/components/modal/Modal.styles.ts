@@ -25,10 +25,24 @@ export const styles = StyleSheet.create({
         textAlign: 'center',
         color: themeColors.primary,
     },
+    messageContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: rem(0.5),
+    },
+    messageSubtitle: {
+        fontSize: rem(1),
+        color: '#444',
+        marginBottom: rem(0.5),
+    },
+    bullet: {
+        fontSize: rem(1),
+        color: themeColors.primary,
+        alignSelf: 'flex-start',
+    },
     message: {
         fontSize: rem(1),
         color: '#444',
-        textAlign: 'center',
     },
     buttonRow: {
         flexDirection: 'row',

@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { themeColors } from "../theme/GlobalTheme";
 
 export const styles = StyleSheet.create({
     container: {
@@ -29,13 +30,13 @@ export const styles = StyleSheet.create({
         borderColor: 'transparent',
     },
     selectedCard: {
-        borderColor: '#6c63ff',
-        backgroundColor: '#e6e6ff',
+        backgroundColor: themeColors.accent,
     },
     optionTitle: {
         fontSize: 18,
         fontWeight: '600',
         marginBottom: 8,
+        textAlign: 'center',
     },
     optionDesc: {
         fontSize: 14,
@@ -43,18 +44,18 @@ export const styles = StyleSheet.create({
         textAlign: 'center',
     },
     launchButton: {
-        backgroundColor: '#6c63ff',
+        backgroundColor: themeColors.primary,
         paddingVertical: 16,
         borderRadius: 8,
         alignItems: 'center',
         marginTop: 8,
     },
     launchButtonText: {
-        color: '#fff',
+        color: themeColors.white,
         fontSize: 16,
         fontWeight: 'bold',
     },
     disabledButton: {
-        backgroundColor: '#ccc',
+        backgroundColor: themeColors.themeGray,
     },
 });
