@@ -1,6 +1,7 @@
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView, ListAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, BasePermission
+from rest_framework.authentication import TokenAuthentication
 from .serializers import (
     CustomTokenObtainPairSerializer,
     UserSerializer,
@@ -18,6 +19,8 @@ from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from .models import QRCode, Results
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from institutions.models import Doctor
+from django.conf import settings
+import os
 
 
 class LoginView(TokenObtainPairView):
@@ -207,12 +210,41 @@ class QRCodeDetailView(RetrieveUpdateDestroyAPIView):
         return QRCode.objects.filter(user=self.request.user)
 
 
+class MLModelPermission(BasePermission):
+    """
+    Custom permission that allows either:
+    1. Authenticated users (JWT tokens)
+    2. ML model with valid API key
+    """
+
+    def has_permission(self, request, view):
+        # Check if user is authenticated (JWT token)
+        if request.user and request.user.is_authenticated:
+            return True
+
+        # Check for ML model API key
+        api_key = request.headers.get('X-ML-API-Key')
+        if api_key and api_key == os.getenv('ML_API_KEY', 'your-secure-ml-api-key'):
+            return True
+
+        return False
+
+    def has_object_permission(self, request, view, obj):
+        # For object-level permissions, only allow authenticated users
+        # ML model can only create/update, not access specific objects
+        return request.user and request.user.is_authenticated
+
+
 class ResultsCreateView(CreateAPIView):
     """
     POST /api/results/ with { qr_data, status?, infection_detected?, species?, concentration?, antibiotic? }
     Creates a new result entry or updates existing one by finding the user linked to the QR code string.
     All fields except qr_data are optional. If a result already exists for the QR code, it will be updated.
     Note: Results are automatically created with status 'ongoing' when QR codes are created via /api/qr-codes/.
+
+    Authentication:
+    - JWT token (for doctors/patients)
+    - X-ML-API-Key header (for ML model)
 
     Automatic Status Updates:
     - When updating an existing result with any field, status automatically changes to 'preliminary_assessment'
@@ -228,12 +260,12 @@ class ResultsCreateView(CreateAPIView):
     - Antibiotic field is optional and does not affect the ready status
     """
     serializer_class = ResultsCreateSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [MLModelPermission]
 
     @extend_schema(
         tags=['results'],
         summary="Create or Update Analysis Result",
-        description="Create a new analysis result or update an existing one by providing the QR code string and any analysis data. The system will automatically find the user linked to the QR code. If a result already exists for this QR code, it will be updated with the new data. All fields except qr_data are optional. Note: Results are automatically created with status 'ongoing' when QR codes are created via /api/qr-codes/. When updating existing results, the status automatically changes to 'preliminary_assessment' for any field update, or 'ready' if infection_detected is set to False. When infection_detected is set to False, the species, concentration, and antibiotic fields are automatically cleared. When infection_detected is True and both species and concentration are filled, the status automatically changes to 'ready' (antibiotic is optional). When retrieving a result with status 'ready' via GET request, the status automatically changes to 'closed'.",
+        description="Create a new analysis result or update an existing one by providing the QR code string and any analysis data. The system will automatically find the user linked to the QR code. If a result already exists for this QR code, it will be updated with the new data. All fields except qr_data are optional.\n\nAuthentication:\n- JWT token (for doctors/patients)\n- X-ML-API-Key header (for ML model)\n\nNote: Results are automatically created with status 'ongoing' when QR codes are created via /api/qr-codes/. When updating existing results, the status automatically changes to 'preliminary_assessment' for any field update, or 'ready' if infection_detected is set to False. When infection_detected is set to False, the species, concentration, and antibiotic fields are automatically cleared. When infection_detected is True and both species and concentration are filled, the status automatically changes to 'ready' (antibiotic is optional). When retrieving a result with status 'ready' via GET request, the status automatically changes to 'closed'.",
         request=ResultsCreateSerializer,
         responses={
             201: ResultsSerializer,
@@ -247,6 +279,16 @@ class ResultsCreateView(CreateAPIView):
                     'status': 'ongoing'
                 },
                 description='Example of creating a new result with minimal data'
+            ),
+            OpenApiExample(
+                'ML Model Update',
+                value={
+                    'qr_data': 'https://example.com/sample-qr-data',
+                    'infection_detected': True,
+                    'species': 'E. coli',
+                    'concentration': '10^6 CFU/ml'
+                },
+                description='Example of ML model updating results with analysis data'
             ),
             OpenApiExample(
                 'Update with Species (Status → preliminary_assessment)',
