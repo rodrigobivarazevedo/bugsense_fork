@@ -1,8 +1,16 @@
 import { FC, useEffect, useState } from 'react';
-import { View, Text, SectionList, ActivityIndicator } from 'react-native';
+import {
+    View,
+    Text,
+    SectionList,
+    ActivityIndicator,
+    TouchableOpacity,
+} from 'react-native';
 import { styles } from './Results.styles';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import RenderIcon from '../components/RenderIcon';
 
 function formatDate(dateStr: string) {
     const date = new Date(dateStr);
@@ -25,6 +33,7 @@ function groupByDate(results: any[]) {
 }
 
 export const Results: FC = () => {
+    const navigation: any = useNavigation();
     const [results, setResults] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -86,14 +95,38 @@ export const Results: FC = () => {
 
     return (
         <View style={styles.container}>
+            <View style={styles.addButtonContainer}>
+                <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={() => navigation.navigate('Scan')}
+                    activeOpacity={0.8}
+                >
+                    <View style={styles.addButtonIcon}>
+                        <RenderIcon
+                            family="materialIcons"
+                            icon="add"
+                            fontSize={styles.addButtonIcon.fontSize}
+                            color={styles.addButtonIcon.color}
+                        />
+                    </View>
+                    <Text style={styles.addButtonText}>Add new</Text>
+                </TouchableOpacity>
+            </View>
             <SectionList
+                contentContainerStyle={styles.contentContainer}
+                stickySectionHeadersEnabled={true}
+                showsVerticalScrollIndicator={true}
                 sections={grouped.map(section => ({
                     title: formatDate(section.date),
                     data: section.data,
                 }))}
                 keyExtractor={item => item.id.toString()}
                 renderSectionHeader={({ section: { title } }) => (
-                    <Text style={styles.sectionHeader}>{title}</Text>
+                    <View style={styles.sectionHeaderSticky}>
+                        <Text style={styles.sectionHeader}>
+                            {title}
+                        </Text>
+                    </View>
                 )}
                 renderItem={({ item }) => (
                     <View style={styles.listItem}>
@@ -111,7 +144,6 @@ export const Results: FC = () => {
                         )}
                     </View>
                 )}
-                stickySectionHeadersEnabled={false}
             />
         </View>
     );
