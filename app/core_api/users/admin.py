@@ -56,8 +56,8 @@ class CustomUserAdmin(UserAdmin):
 @admin.register(QRCode)
 class QRCodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'user_id_display', 'user_email',
-                    'qr_data_preview', 'created_at')
-    list_filter = ('created_at',)
+                    'qr_data_preview', 'result_status', 'created_at', 'closed_at')
+    list_filter = ('created_at', 'closed_at', 'results__status')
     search_fields = ('user__email', 'user__full_name', 'qr_data')
     readonly_fields = ('created_at',)
     ordering = ('-created_at',)
@@ -67,7 +67,7 @@ class QRCodeAdmin(admin.ModelAdmin):
             'fields': ('user', 'qr_data')
         }),
         ('Timestamps', {
-            'fields': ('created_at',),
+            'fields': ('created_at', 'closed_at'),
             'classes': ('collapse',)
         }),
     )
@@ -89,12 +89,21 @@ class QRCodeAdmin(admin.ModelAdmin):
         return obj.qr_data
     qr_data_preview.short_description = 'QR Data Preview'
 
+    def result_status(self, obj):
+        """Show the status of the associated result"""
+        result = obj.results.first()
+        if result:
+            return result.get_status_display()
+        return "No Result"
+    result_status.short_description = 'Result Status'
+    result_status.admin_order_field = 'results__status'
+
 
 @admin.register(Results)
 class ResultsAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user_id_display', 'user_email', 'infection_status',
+    list_display = ('id', 'user_id_display', 'user_email', 'status', 'infection_status',
                     'species_preview', 'antibiotic_preview', 'created_at')
-    list_filter = ('infection_detected', 'created_at')
+    list_filter = ('status', 'infection_detected', 'created_at')
     search_fields = ('user__email', 'user__full_name', 'species', 'antibiotic')
     readonly_fields = ('created_at',)
     ordering = ('-created_at',)
@@ -104,7 +113,7 @@ class ResultsAdmin(admin.ModelAdmin):
             'fields': ('user', 'qr_code')
         }),
         ('Analysis Results', {
-            'fields': ('infection_detected', 'species', 'concentration', 'antibiotic')
+            'fields': ('status', 'infection_detected', 'species', 'concentration', 'antibiotic')
         }),
         ('Timestamps', {
             'fields': ('created_at',),
@@ -123,6 +132,8 @@ class ResultsAdmin(admin.ModelAdmin):
     user_id_display.admin_order_field = 'user__id'
 
     def infection_status(self, obj):
+        if obj.infection_detected is None:
+            return "Not Tested"
         return "Infected" if obj.infection_detected else "No Infection"
     infection_status.short_description = 'Infection Status'
     infection_status.admin_order_field = 'infection_detected'

@@ -31,10 +31,15 @@ if [ -f .env ]; then
     echo "Adding DJANGO_SECRET_KEY to existing .env file..."
     echo "DJANGO_SECRET_KEY=$(generate_secret_key)" >> .env
   fi
+  if ! grep -q "ML_API_KEY" .env; then
+    echo "Adding ML_API_KEY to existing .env file..."
+    echo "ML_API_KEY=$(generate_secret_key)" >> .env
+  fi
 else
   echo "Creating new .env file..."
   echo "HOST_IP=$HOST_IP" > .env
   echo "DJANGO_SECRET_KEY=$(generate_secret_key)" >> .env
+  echo "ML_API_KEY=$(generate_secret_key)" >> .env
 fi
 
 if [ "$1" = "--help" ]; then

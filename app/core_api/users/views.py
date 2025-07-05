@@ -1,6 +1,7 @@
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView, ListAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, BasePermission
+from rest_framework.authentication import TokenAuthentication
 from .serializers import (
     CustomTokenObtainPairSerializer,
     UserSerializer,
@@ -17,6 +18,9 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from .models import QRCode, Results
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from institutions.models import Doctor
+from django.conf import settings
+import os
 
 
 class LoginView(TokenObtainPairView):
@@ -90,7 +94,7 @@ class RegisterView(CreateAPIView):
 class QRCodeCreateView(CreateAPIView):
     """
     POST /api/qr-codes/ with { user_id, qr_data }
-    Creates a new QR code entry for the specified user
+    Creates a new QR code entry for the specified user and automatically creates an empty result with status 'ongoing'
     """
     serializer_class = QRCodeCreateSerializer
     permission_classes = [IsAuthenticated]
@@ -98,7 +102,7 @@ class QRCodeCreateView(CreateAPIView):
     @extend_schema(
         tags=['qr-codes'],
         summary="Create QR Code",
-        description="Create a new QR code entry for a user. The QR code data is stored as a string and linked to the specified user ID.",
+        description="Create a new QR code entry for a user. The QR code data is stored as a string and linked to the specified user ID. An empty result with status 'ongoing' is automatically created for this QR code.",
         request=QRCodeCreateSerializer,
         responses={201: QRCodeSerializer},
         examples=[
@@ -108,7 +112,7 @@ class QRCodeCreateView(CreateAPIView):
                     'user_id': 8,
                     'qr_data': 'https://example.com/sample-qr-data'
                 },
-                description='Example of creating a QR code for user ID 8'
+                description='Example of creating a QR code for user ID 8. This will also create an empty result with status "ongoing".'
             )
         ]
     )
@@ -206,42 +210,120 @@ class QRCodeDetailView(RetrieveUpdateDestroyAPIView):
         return QRCode.objects.filter(user=self.request.user)
 
 
+class MLModelPermission(BasePermission):
+    """
+    Custom permission that allows either:
+    1. Authenticated users (JWT tokens)
+    2. ML model with valid API key
+    """
+
+    def has_permission(self, request, view):
+        # Check if user is authenticated (JWT token)
+        if request.user and request.user.is_authenticated:
+            return True
+
+        # Check for ML model API key
+        api_key = request.headers.get('X-ML-API-Key')
+        if api_key and api_key == os.getenv('ML_API_KEY', 'your-secure-ml-api-key'):
+            return True
+
+        return False
+
+    def has_object_permission(self, request, view, obj):
+        # For object-level permissions, only allow authenticated users
+        # ML model can only create/update, not access specific objects
+        return request.user and request.user.is_authenticated
+
+
 class ResultsCreateView(CreateAPIView):
     """
-    POST /api/results/ with { qr_data, infection_detected, species, concentration, antibiotic }
-    Creates a new result entry by finding the user linked to the QR code string
+    POST /api/results/ with { qr_data, status?, infection_detected?, species?, concentration?, antibiotic? }
+    Creates a new result entry or updates existing one by finding the user linked to the QR code string.
+    All fields except qr_data are optional. If a result already exists for the QR code, it will be updated.
+    Note: Results are automatically created with status 'ongoing' when QR codes are created via /api/qr-codes/.
+
+    Authentication:
+    - JWT token (for doctors/patients)
+    - X-ML-API-Key header (for ML model)
+
+    Automatic Status Updates:
+    - When updating an existing result with any field, status automatically changes to 'preliminary_assessment'
+    - When updating infection_detected to False, status automatically changes to 'ready'
+    - When infection_detected is True and all required fields (species, concentration) are filled, status changes to 'ready'
+    - When retrieving a result with status 'ready' via GET request, status automatically changes to 'closed'
+
+    Field Clearing:
+    - When infection_detected is set to False, species, concentration, and antibiotic fields are automatically cleared
+
+    Required Fields for Ready Status:
+    - When infection_detected is True, both species and concentration must be filled to set status to 'ready'
+    - Antibiotic field is optional and does not affect the ready status
     """
     serializer_class = ResultsCreateSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [MLModelPermission]
 
     @extend_schema(
         tags=['results'],
-        summary="Create Analysis Result",
-        description="Create a new analysis result by providing the QR code string and analysis data. The system will automatically find the user linked to the QR code.",
+        summary="Create or Update Analysis Result",
+        description="Create a new analysis result or update an existing one by providing the QR code string and any analysis data. The system will automatically find the user linked to the QR code. If a result already exists for this QR code, it will be updated with the new data. All fields except qr_data are optional.\n\nAuthentication:\n- JWT token (for doctors/patients)\n- X-ML-API-Key header (for ML model)\n\nNote: Results are automatically created with status 'ongoing' when QR codes are created via /api/qr-codes/. When updating existing results, the status automatically changes to 'preliminary_assessment' for any field update, or 'ready' if infection_detected is set to False. When infection_detected is set to False, the species, concentration, and antibiotic fields are automatically cleared. When infection_detected is True and both species and concentration are filled, the status automatically changes to 'ready' (antibiotic is optional). When retrieving a result with status 'ready' via GET request, the status automatically changes to 'closed'.",
         request=ResultsCreateSerializer,
-        responses={201: ResultsSerializer},
+        responses={
+            201: ResultsSerializer,
+            200: ResultsSerializer
+        },
         examples=[
             OpenApiExample(
-                'Infection Detected',
+                'Create New Result',
+                value={
+                    'qr_data': 'https://example.com/sample-qr-data',
+                    'status': 'ongoing'
+                },
+                description='Example of creating a new result with minimal data'
+            ),
+            OpenApiExample(
+                'ML Model Update',
                 value={
                     'qr_data': 'https://example.com/sample-qr-data',
                     'infection_detected': True,
-                    'species': 'Escherichia coli',
-                    'concentration': 'High',
-                    'antibiotic': 'Ciprofloxacin'
+                    'species': 'E. coli',
+                    'concentration': '10^6 CFU/ml'
                 },
-                description='Example of creating a result for detected infection'
+                description='Example of ML model updating results with analysis data'
             ),
             OpenApiExample(
-                'No Infection',
+                'Update with Species (Status → preliminary_assessment)',
                 value={
                     'qr_data': 'https://example.com/sample-qr-data',
-                    'infection_detected': False,
-                    'species': '',
-                    'concentration': '',
-                    'antibiotic': ''
+                    'species': 'Escherichia coli'
                 },
-                description='Example of creating a result for no infection detected'
+                description='Example of updating with species - status automatically changes to preliminary_assessment'
+            ),
+            OpenApiExample(
+                'Update with Infection Detected (Status → preliminary_assessment)',
+                value={
+                    'qr_data': 'https://example.com/sample-qr-data',
+                    'infection_detected': True,
+                    'species': 'Salmonella'
+                },
+                description='Example of updating with infection detected - status automatically changes to preliminary_assessment'
+            ),
+            OpenApiExample(
+                'Complete Required Fields (Status → ready)',
+                value={
+                    'qr_data': 'https://example.com/sample-qr-data',
+                    'infection_detected': True,
+                    'species': 'E. coli',
+                    'concentration': 'High'
+                },
+                description='Example of completing required fields - status automatically changes to ready (antibiotic optional)'
+            ),
+            OpenApiExample(
+                'Update with No Infection (Status → ready, Fields Cleared)',
+                value={
+                    'qr_data': 'https://example.com/sample-qr-data',
+                    'infection_detected': False
+                },
+                description='Example of updating with no infection detected - status automatically changes to ready and species/concentration/antibiotic fields are cleared'
             )
         ]
     )
@@ -251,11 +333,23 @@ class ResultsCreateView(CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        # Check if a result already exists for this QR code
+        qr_data = request.data.get('qr_data')
+        try:
+            qr_code = QRCode.objects.get(qr_data=qr_data)
+            existing_result = Results.objects.filter(qr_code=qr_code).first()
+        except QRCode.DoesNotExist:
+            existing_result = None
+
         result = serializer.save()
 
-        # Return the created result with full details
+        # Return the created/updated result with full details
         response_serializer = ResultsSerializer(result)
-        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+        # Return 200 for updates, 201 for new creations
+        status_code = status.HTTP_200_OK if existing_result else status.HTTP_201_CREATED
+        return Response(response_serializer.data, status=status_code)
 
 
 class ResultsListView(ListAPIView):
@@ -265,6 +359,8 @@ class ResultsListView(ListAPIView):
 
     - Regular users see only their own results.
     - Staff (doctors) can use the user_id query parameter to view any patient's results.
+    - Use pending=true to filter results that need attention (status 'ready' or 'preliminary_assessment').
+    - Note: When retrieving individual results via GET /api/results/{id}/, results with status 'ready' automatically change to 'closed'.
     """
     serializer_class = ResultsSerializer
     permission_classes = [IsAuthenticated]
@@ -272,7 +368,7 @@ class ResultsListView(ListAPIView):
     @extend_schema(
         tags=['results'],
         summary="List Analysis Results (Doctor/Patient) — /api/results/list/?user_id={patient_id}",
-        description="Retrieve a list of analysis results.\n\n- Regular users see only their own results.\n- Staff (doctors) can use the user_id query parameter to view any patient's results.",
+        description="Retrieve a list of analysis results.\n\n- Regular users see only their own results.\n- Staff (doctors) can use the user_id query parameter to view any patient's results.\n- Use pending=true to filter results that need attention (status 'ready' or 'preliminary_assessment').\n- Note: When retrieving individual results via GET /api/results/{id}/, results with status 'ready' automatically change to 'closed'.",
         parameters=[
             OpenApiParameter(
                 name='user_id',
@@ -280,22 +376,148 @@ class ResultsListView(ListAPIView):
                 location=OpenApiParameter.QUERY,
                 description='(Doctor only) Filter results by patient user ID',
                 required=False
+            ),
+            OpenApiParameter(
+                name='pending',
+                type=bool,
+                location=OpenApiParameter.QUERY,
+                description='Filter to show only results with status "ready" or "preliminary_assessment" (results that need attention)',
+                required=False
+            ),
+            OpenApiParameter(
+                name='qr_data',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                description='Filter results by QR code data string',
+                required=False
             )
         ],
-        responses={200: ResultsSerializer(many=True)}
+        responses={200: ResultsSerializer(many=True)},
+        examples=[
+            OpenApiExample(
+                'List All Results (Doctor)',
+                value=[
+                    {
+                        "user_id": 38,
+                        "qr_data": "QR_TEST_DATA_001",
+                        "status": "closed"
+                    },
+                    {
+                        "user_id": 38,
+                        "qr_data": "test-test-test",
+                        "status": "preliminary_assessment"
+                    }
+                ],
+                description='Doctor view showing all results for assigned patients (summary format)'
+            ),
+            OpenApiExample(
+                'List Pending Results Only',
+                value=[
+                    {
+                        "user_id": 38,
+                        "qr_data": "test-test-test",
+                        "status": "preliminary_assessment"
+                    }
+                ],
+                description='Filtered view showing only results that need attention (pending=true)'
+            ),
+            OpenApiExample(
+                'Patient Results (Full Details)',
+                value=[
+                    {
+                        "id": 23,
+                        "user": 38,
+                        "qr_code": 22,
+                        "qr_data": "QR_TEST_DATA_001",
+                        "status": "closed",
+                        "infection_detected": True,
+                        "species": "E. coli",
+                        "concentration": "10^6 CFU/ml",
+                        "antibiotic": "",
+                        "created_at": "2025-07-05T15:02:35.347783Z"
+                    }
+                ],
+                description='Full result details when using qr_data or user_id filters'
+            )
+        ]
     )
     def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+        # If doctor and no qr_data/user_id, return summary for all patients
+        qr_data = request.query_params.get('qr_data')
+        user_id = request.query_params.get('user_id')
+        pending = request.query_params.get('pending', '').lower() == 'true'
+
+        if not qr_data and not user_id and hasattr(request.user, 'is_doctor') and request.user.is_doctor:
+            # Get all patients assigned to this doctor
+            patients = Doctor.objects.get(id=request.user.id).patients.all()
+            # Get all QR codes for these patients
+            qr_codes = QRCode.objects.filter(user__in=patients)
+            # Get all results for these QR codes
+            results = Results.objects.filter(qr_code__in=qr_codes)
+            # Filter by pending status if requested
+            if pending:
+                results = results.filter(
+                    status__in=['ready', 'preliminary_assessment'])
+            # Return only user_id, qr_data, and result status
+            data = [
+                {
+                    'user_id': r.user.id,
+                    'qr_data': r.qr_code.qr_data,
+                    'status': r.status
+                }
+                for r in results
+            ]
+            return Response(data, status=200)
+        # Otherwise, default behavior
+        response = super().get(request, *args, **kwargs)
+
+        # If status is 'ready', change it to 'closed' for all results in the response
+        if response.status_code == 200 and response.data:
+            for result_data in response.data:
+                if result_data.get('status') == 'ready':
+                    result_id = result_data.get('id')
+                    try:
+                        result = Results.objects.get(id=result_id)
+                        result.status = 'closed'
+                        result.save()
+                        result_data['status'] = 'closed'
+                    except Results.DoesNotExist:
+                        pass
+
+        return response
 
     def get_queryset(self):
+        qr_data = self.request.query_params.get('qr_data')
+        pending = self.request.query_params.get(
+            'pending', '').lower() == 'true'
+
+        if qr_data:
+            try:
+                qr_code = QRCode.objects.get(qr_data=qr_data)
+                queryset = Results.objects.filter(qr_code=qr_code)
+                if pending:
+                    queryset = queryset.filter(
+                        status__in=['ready', 'preliminary_assessment'])
+                return queryset
+            except QRCode.DoesNotExist:
+                return Results.objects.none()
+
         user_id = self.request.query_params.get('user_id')
 
         # If user_id is provided and user is staff, return results for that user
         if user_id and self.request.user.is_staff:
-            return Results.objects.filter(user_id=user_id)
+            queryset = Results.objects.filter(user_id=user_id)
+            if pending:
+                queryset = queryset.filter(
+                    status__in=['ready', 'preliminary_assessment'])
+            return queryset
 
         # Otherwise, return results for the authenticated user
-        return Results.objects.filter(user=self.request.user)
+        queryset = Results.objects.filter(user=self.request.user)
+        if pending:
+            queryset = queryset.filter(
+                status__in=['ready', 'preliminary_assessment'])
+        return queryset
 
 
 class ResultsDetailView(RetrieveUpdateDestroyAPIView):
@@ -310,10 +532,18 @@ class ResultsDetailView(RetrieveUpdateDestroyAPIView):
     @extend_schema(
         tags=['results'],
         summary="Get Result Details",
-        description="Retrieve details of a specific analysis result. Users can only access their own results unless they are staff.",
+        description="Retrieve details of a specific analysis result. Users can only access their own results unless they are staff. If the result status is 'ready', it will automatically be changed to 'closed' when retrieved.",
         responses={200: ResultsSerializer}
     )
     def get(self, request, *args, **kwargs):
+        # Get the result first
+        result = self.get_object()
+
+        # If status is 'ready', change it to 'closed'
+        if result.status == 'ready':
+            result.status = 'closed'
+            result.save()
+
         return super().get(request, *args, **kwargs)
 
     @extend_schema(

@@ -12,6 +12,7 @@ services:
       - ALLOWED_HOSTS=*
       - HOST_IP=${HOST_IP}
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - ML_API_KEY=${ML_API_KEY}
     depends_on:
       - db
     volumes:
