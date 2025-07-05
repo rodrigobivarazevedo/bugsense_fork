@@ -75,5 +75,6 @@
     "Select Gender": "Geschlecht auswählen",
     "time_format": "Zeitformat",
     "12_hour_format": "12-Stunden",
-    "24_hour_format": "24-Stunden"
+    "24_hour_format": "24-Stunden",
+    "select_time_format": "Zeitformat auswählen"
 }
