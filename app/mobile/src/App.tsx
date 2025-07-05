@@ -23,6 +23,7 @@ import LanguageSelection from './screens/LanguageSelection';
 import Discover from './screens/Discover';
 import BacteriaRouter from './screens/BacteriaRouter';
 import Patients from './screens/Patients';
+import TimeFormatSelection from './screens/TimeFormatSelection';
 
 const routes = [
   { name: 'Login', component: UserLogin, wrapped: false },
@@ -35,6 +36,7 @@ const routes = [
   { name: 'More', component: More, wrapped: true, showBottomBar: true },
   { name: 'Account', component: Account, wrapped: true, showBottomBar: true },
   { name: 'LanguageSelection', alias: 'language', component: LanguageSelection, wrapped: true, showBottomBar: false },
+  { name: 'TimeFormatSelection', component: TimeFormatSelection, wrapped: true, showBottomBar: false },
   { name: 'Discover', component: Discover, wrapped: true, showBottomBar: false },
   { name: 'BacteriaRouter', alias: 'discover_bacteria', component: BacteriaRouter, wrapped: true, showBottomBar: false },
   { name: 'Patients', component: Patients, wrapped: true, showBottomBar: true },

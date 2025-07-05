@@ -9,7 +9,7 @@ import {
 import { styles } from './Results.styles';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import RenderIcon from '../components/RenderIcon';
 
 function formatDate(dateStr: string) {
@@ -17,9 +17,13 @@ function formatDate(dateStr: string) {
     return date.toLocaleDateString(undefined, { month: 'long', day: '2-digit' });
 }
 
-function formatTime(dateStr: string) {
+function formatTime(dateStr: string, timeFormat: '12' | '24') {
     const date = new Date(dateStr);
-    return date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString(undefined, {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: timeFormat === '12',
+    });
 }
 
 function groupByDate(results: any[]) {
@@ -39,10 +43,12 @@ function getRandomStatus() {
 
 export const Results: FC = () => {
     const navigation: any = useNavigation();
+    const isFocused = useIsFocused();
     const [results, setResults] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [userType, setUserType] = useState<string>('patient');
+    const [timeFormat, setTimeFormat] = useState<'12' | '24'>('12');
 
     useEffect(() => {
         AsyncStorage.getItem('userType').then(type => {
@@ -51,6 +57,14 @@ export const Results: FC = () => {
             }
         });
     }, []);
+
+    useEffect(() => {
+        AsyncStorage.getItem('timeFormat').then(format => {
+            if (format === '24' || format === '12') {
+                setTimeFormat(format);
+            }
+        });
+    }, [isFocused]);
 
     useEffect(() => {
         const fetchResults = async () => {
@@ -138,7 +152,7 @@ export const Results: FC = () => {
                 )}
                 renderItem={({ item }) => (
                     <View style={styles.listItem}>
-                        <Text style={styles.listItemTime}>{formatTime(item.created_at)}</Text>
+                        <Text style={styles.listItemTime}>{formatTime(item.created_at, timeFormat)}</Text>
                         <View style={styles.listItemStatusContainer}>
                             <View
                                 style={[

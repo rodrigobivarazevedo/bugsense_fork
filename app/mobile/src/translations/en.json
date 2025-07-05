@@ -75,5 +75,8 @@
     "Failed to update address. Please try again.": "Failed to update address. Please try again.",
     "Failed to update date of birth. Please try again.": "Failed to update date of birth. Please try again.",
     "Failed to update phone number. Please try again.": "Failed to update phone number. Please try again.",
-    "Select Gender": "Select Gender"
+    "Select Gender": "Select Gender",
+    "time_format": "Time format",
+    "12_hour_format": "12-hour",
+    "24_hour_format": "24-hour"
 }

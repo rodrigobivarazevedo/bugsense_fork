@@ -72,5 +72,8 @@
     "Failed to update address. Please try again.": "Adresse konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
     "Failed to update date of birth. Please try again.": "Geburtsdatum konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
     "Failed to update phone number. Please try again.": "Telefonnummer konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
-    "Select Gender": "Geschlecht auswählen"
+    "Select Gender": "Geschlecht auswählen",
+    "time_format": "Zeitformat",
+    "12_hour_format": "12-Stunden",
+    "24_hour_format": "24-Stunden"
 }
