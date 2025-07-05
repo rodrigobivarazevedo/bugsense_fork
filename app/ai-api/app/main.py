@@ -43,9 +43,9 @@ app = FastAPI(
     title="ML BugSense API",
     description="API for ML BugSense", 
     version="1", 
-    docs_url=None,         # disables /docs
-    redoc_url=None,        # disables /redoc
-    openapi_url=None,       # disables /openapi.json
+    #docs_url=None,         # disables /docs
+    #redoc_url=None,        # disables /redoc
+    #openapi_url=None,       # disables /openapi.json
     lifespan=lifespan,
     )
 
