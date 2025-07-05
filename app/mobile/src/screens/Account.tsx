@@ -245,6 +245,10 @@ export const Account: React.FC = () => {
     }, [searchTimeout]);
 
     const renderEditableField = (field: string, value: string) => {
+        if (userType === 'doctor') {
+            return <S.ItemValue>{value}</S.ItemValue>;
+        }
+
         if (editingField === field) {
             if (field === 'gender') {
                 return (
@@ -502,14 +506,12 @@ export const Account: React.FC = () => {
                         <S.UserName>{user?.full_name}</S.UserName>
                         <S.DateJoined>{t('Joined')} {user?.date_joined}</S.DateJoined>
 
-                        {/* Show user type indicator */}
                         <S.UserTypeIndicator>
                             <S.UserTypeText>
                                 {userType === 'doctor' ? t('Medical Personnel') : t('Patient')}
                             </S.UserTypeText>
                         </S.UserTypeIndicator>
 
-                        {/* Show doctor-specific information */}
                         {userType === 'doctor' && user?.institution_name && (
                             <S.InstitutionInfo>
                                 <S.InstitutionLabel>{t('Institution')}</S.InstitutionLabel>
@@ -524,7 +526,6 @@ export const Account: React.FC = () => {
                             </S.DoctorIdInfo>
                         )}
 
-                        {/* Only show QR code for patients */}
                         {userType === 'patient' && (
                             <S.QRButton>
                                 <RenderIcon
@@ -548,12 +549,13 @@ export const Account: React.FC = () => {
                         <S.ItemLabel>{t('Name')}</S.ItemLabel>
                         {renderEditableField('full_name', user?.full_name)}
                     </S.ItemTextCol>
-                    <S.EditIconBtnLight onPress={() => handleEdit('full_name')}>
-                        <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
-                    </S.EditIconBtnLight>
+                    {userType === 'patient' && (
+                        <S.EditIconBtnLight onPress={() => handleEdit('full_name')}>
+                            <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                        </S.EditIconBtnLight>
+                    )}
                 </S.ItemRow>
 
-                {/* Only show gender and DOB for patients */}
                 {userType === 'patient' && (
                     <>
                         <S.ItemRow>
@@ -586,33 +588,41 @@ export const Account: React.FC = () => {
                         <S.ItemLabel>{t('Email address')}</S.ItemLabel>
                         {renderEditableField('email', user?.email)}
                     </S.ItemTextCol>
-                    <S.EditIconBtnLight onPress={() => handleEdit('email')}>
-                        <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
-                    </S.EditIconBtnLight>
+                    {userType === 'patient' && (
+                        <S.EditIconBtnLight onPress={() => handleEdit('email')}>
+                            <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                        </S.EditIconBtnLight>
+                    )}
                 </S.ItemRow>
                 <S.ItemRow>
                     <S.ItemTextCol>
                         <S.ItemLabel>{t('Phone number')}</S.ItemLabel>
                         {renderEditableField('phone_number', user?.phone_number)}
                     </S.ItemTextCol>
-                    <S.EditIconBtnLight onPress={() => handleEdit('phone_number')}>
-                        <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
-                    </S.EditIconBtnLight>
+                    {userType === 'patient' && (
+                        <S.EditIconBtnLight onPress={() => handleEdit('phone_number')}>
+                            <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                        </S.EditIconBtnLight>
+                    )}
                 </S.ItemRow>
-                <S.ItemRow>
-                    <S.ItemTextCol>
-                        <S.ItemLabel>{t('Address')}</S.ItemLabel>
-                        {renderEditableField('street', user?.street + '\n' + user?.postcode + ' ' + user?.city + '\n' + user?.country)}
-                    </S.ItemTextCol>
-                    <S.EditIconBtnLight onPress={() => handleEdit('street')}>
-                        <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
-                    </S.EditIconBtnLight>
-                </S.ItemRow>
+                {userType === 'patient' && (
+                    <S.ItemRow>
+                        <S.ItemTextCol>
+                            <S.ItemLabel>{t('Address')}</S.ItemLabel>
+                            {renderEditableField('street', user?.street + '\n' + user?.postcode + ' ' + user?.city + '\n' + user?.country)}
+                        </S.ItemTextCol>
+                        <S.EditIconBtnLight onPress={() => handleEdit('street')}>
+                            <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                        </S.EditIconBtnLight>
+                    </S.ItemRow>
+                )}
             </S.LightCard>
 
-            <S.DeleteButton onPress={handleDelete}>
-                <S.DeleteButtonText>{t('Delete My Account')}</S.DeleteButtonText>
-            </S.DeleteButton>
+            {userType === 'patient' && (
+                <S.DeleteButton onPress={handleDelete}>
+                    <S.DeleteButtonText>{t('Delete My Account')}</S.DeleteButtonText>
+                </S.DeleteButton>
+            )}
 
             <S.ActionButton>
                 <S.ActionButtonText>{t('Change password')}</S.ActionButtonText>
