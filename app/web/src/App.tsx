@@ -11,7 +11,7 @@ import Home from "./views/Home";
 import Account from "./views/Account";
 import HeaderBar from "./components/HeaderBar";
 import Root from "./root/Root";
-import Scan from "./views/Scan";
+import Scan from "./views/Upload";
 import Results from "./views/Results";
 import More from "./views/More";
 import Notifications from "./views/Notifications";
@@ -32,7 +32,7 @@ const AppRoutes = () => {
           <Routes>
             <Route path="/home" element={<Home />} />
             <Route path="/account" element={<Account />} />
-            <Route path="/scan" element={<Scan />} />
+            <Route path="/upload" element={<Scan />} />
             <Route path="/results" element={<Results />} />
             <Route path="/more" element={<More />} />
             <Route path="/notifications" element={<Notifications />} />
