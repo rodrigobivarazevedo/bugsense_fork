@@ -21,6 +21,7 @@ import Discover from "./views/Discover";
 import BacteriaRouter from "./views/BacteriaRouter";
 import Register from "./views/Register";
 import DoctorLogin from "./views/DoctorLogin";
+import LanguageSelection from "./views/LanguageSelection";
 
 const isAuthenticated = () => !!localStorage.getItem("accessToken");
 
@@ -59,6 +60,7 @@ const AppRoutes = () => {
             <Route path="/upload" element={<Scan />} />
             <Route path="/results" element={<Results />} />
             <Route path="/more" element={<More />} />
+            <Route path="/language-selection" element={<LanguageSelection />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/discover" element={<Discover />} />
             <Route path="/bacteria/:id" element={<BacteriaRouter />} />
