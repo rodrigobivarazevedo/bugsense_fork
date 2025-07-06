@@ -79,5 +79,6 @@
     "time_format": "Time format",
     "12_hour_format": "12-hour",
     "24_hour_format": "24-hour",
-    "select_time_format": "Select time format"
+    "select_time_format": "Select time format",
+    "test_details_and_result": "Test Details and Result"
 }

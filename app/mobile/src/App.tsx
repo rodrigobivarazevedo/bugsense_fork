@@ -24,6 +24,7 @@ import Discover from './screens/Discover';
 import BacteriaRouter from './screens/BacteriaRouter';
 import Patients from './screens/Patients';
 import TimeFormatSelection from './screens/TimeFormatSelection';
+import ViewTest from './screens/ViewTest';
 
 const routes = [
   { name: 'Login', component: UserLogin, wrapped: false },
@@ -40,6 +41,7 @@ const routes = [
   { name: 'Discover', component: Discover, wrapped: true, showBottomBar: false },
   { name: 'BacteriaRouter', alias: 'discover_bacteria', component: BacteriaRouter, wrapped: true, showBottomBar: false },
   { name: 'Patients', component: Patients, wrapped: true, showBottomBar: true },
+  { name: 'ViewTest', alias: 'test_details_and_result', component: ViewTest, wrapped: true, showBottomBar: false },
 ];
 
 export default function App() {
