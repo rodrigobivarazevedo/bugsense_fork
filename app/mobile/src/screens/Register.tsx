@@ -1,5 +1,12 @@
 import { FC, useState } from 'react';
-import { Alert, TouchableOpacity } from 'react-native';
+import {
+    Alert,
+    TouchableOpacity,
+    ScrollView,
+    KeyboardAvoidingView,
+    Platform,
+    SafeAreaView
+} from 'react-native';
 import Logo from '../components/Logo';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -13,7 +20,13 @@ type RegisterScreenProps = {
     navigation: NativeStackNavigationProp<any>;
 };
 
+interface SecurityQuestion {
+    question: string;
+    answer: string;
+}
+
 const Register: FC<RegisterScreenProps> = ({ navigation }) => {
+    const [currentStep, setCurrentStep] = useState(1);
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -21,9 +34,20 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
     const [passwordError, setPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const [emailError, setEmailError] = useState('');
+    const [securityQuestions, setSecurityQuestions] = useState<SecurityQuestion[]>([]);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number | null>(null);
     const { t } = useTranslation();
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+
+    const availableQuestions = [
+        t("What was your first pet's name?"),
+        t("In which city were you born?"),
+        t("What is your mother's maiden name?"),
+        t("What was the name of your first school?"),
+        t("What is your favorite childhood memory?")
+    ];
 
     const handleEmailChange = (text: string) => {
         setEmail(text);
@@ -69,25 +93,85 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
         }
     };
 
-    // TODO: Review this with backend
-    const handleRegister = async () => {
-        if (password !== confirmPassword) {
-            Alert.alert(t('Error'), t('Passwords do not match'));
-            return;
-        }
+    const isStep1Valid = (
+        fullName &&
+        email &&
+        password &&
+        confirmPassword &&
+        password === confirmPassword &&
+        !passwordError &&
+        !confirmPasswordError &&
+        !emailError
+    );
 
-        const passwordValidationError = validatePassword(password);
-        if (passwordValidationError) {
-            Alert.alert(t('Invalid Password'), passwordValidationError);
+    const isStep2Valid = securityQuestions.length === 3 &&
+        securityQuestions.every(q => q.question && q.answer.trim());
+
+    const handleNext = () => {
+        if (isStep1Valid) {
+            setCurrentStep(2);
+        }
+    };
+
+    const handleBack = () => {
+        setCurrentStep(1);
+    };
+
+    const addSecurityQuestion = () => {
+        if (securityQuestions.length < 3) {
+            setSecurityQuestions([...securityQuestions, { question: '', answer: '' }]);
+        }
+    };
+
+    const removeSecurityQuestion = (index: number) => {
+        setSecurityQuestions(securityQuestions.filter((_, i) => i !== index));
+    };
+
+    const updateSecurityQuestion = (index: number, question: string) => {
+        const updated = [...securityQuestions];
+        updated[index] = { ...updated[index], question };
+        setSecurityQuestions(updated);
+    };
+
+    const updateSecurityAnswer = (index: number, answer: string) => {
+        const updated = [...securityQuestions];
+        updated[index] = { ...updated[index], answer };
+        setSecurityQuestions(updated);
+    };
+
+    const handleQuestionSelect = (question: string, index: number) => {
+        updateSecurityQuestion(index, question);
+        setShowDropdown(false);
+        setSelectedQuestionIndex(null);
+    };
+
+    const getAvailableQuestionsForIndex = (index: number) => {
+        const usedQuestions = securityQuestions
+            .map((q, i) => i !== index ? q.question : '')
+            .filter(q => q);
+        return availableQuestions.filter(q => !usedQuestions.includes(q));
+    };
+
+    const handleRegister = async () => {
+        if (!isStep2Valid) {
+            Alert.alert(t('Error'), t('Please answer all security questions'));
             return;
         }
 
         try {
-            const response = await Api.post('register/', {
-                full_name: fullName,
+            const payload = {
                 email,
+                full_name: fullName,
                 password,
-            });
+                security_question_1: securityQuestions[0].question,
+                security_answer_1: securityQuestions[0].answer,
+                security_question_2: securityQuestions[1].question,
+                security_answer_2: securityQuestions[1].answer,
+                security_question_3: securityQuestions[2].question,
+                security_answer_3: securityQuestions[2].answer,
+            };
+
+            const response = await Api.post('register/', payload);
 
             if (response.data) {
                 Alert.alert(
@@ -111,22 +195,10 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
         }
     };
 
-    const isFormValid = (
-        fullName &&
-        email &&
-        password &&
-        confirmPassword &&
-        password === confirmPassword &&
-        !passwordError &&
-        !confirmPasswordError &&
-        !emailError
-    );
-
-    return (
-        <S.Container>
-            <S.LogoContainer>
-                <Logo />
-            </S.LogoContainer>
+    const renderStep1 = () => (
+        <>
+            <S.StepText>{t('Step 1 of 2')}</S.StepText>
+            <S.StepTitle>{t('Personal Information')}</S.StepTitle>
 
             <S.InputContainer>
                 <S.InputWrapper>
@@ -151,11 +223,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                         keyboardType="email-address"
                     />
                 </S.InputWrapper>
-                {emailError ? (
-                    <S.ErrorText>
-                        {emailError}
-                    </S.ErrorText>
-                ) : null}
+                {emailError ? <S.ErrorText>{emailError}</S.ErrorText> : null}
             </S.InputContainer>
 
             <S.InputContainer>
@@ -178,11 +246,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                         </TouchableOpacity>
                     </S.IconContainer>
                 </S.InputWrapper>
-                {passwordError ? (
-                    <S.ErrorText>
-                        {passwordError}
-                    </S.ErrorText>
-                ) : null}
+                {passwordError ? <S.ErrorText>{passwordError}</S.ErrorText> : null}
             </S.InputContainer>
 
             <S.InputContainer>
@@ -205,35 +269,145 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                         </TouchableOpacity>
                     </S.IconContainer>
                 </S.InputWrapper>
-                {confirmPasswordError ? (
-                    <S.ErrorText>
-                        {confirmPasswordError}
-                    </S.ErrorText>
-                ) : null}
+                {confirmPasswordError ? <S.ErrorText>{confirmPasswordError}</S.ErrorText> : null}
             </S.InputContainer>
+        </>
+    );
 
-            <S.ActionButton onPress={handleRegister} disabled={!isFormValid}>
-                <S.ActionButtonText>{t('Register')}</S.ActionButtonText>
-            </S.ActionButton>
+    const renderStep2 = () => (
+        <>
+            <S.StepText>{t('Step 2 of 2')}</S.StepText>
+            <S.StepTitle>{t('Security Questions')}</S.StepTitle>
 
-            <S.LinkContainer>
-                <S.LinkText>{t('Already have an account?')}</S.LinkText>
-                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                    <S.Link>
-                        {t('Login')}
-                    </S.Link>
-                </TouchableOpacity>
-            </S.LinkContainer>
+            {securityQuestions.map((question, index) => (
+                <S.SecurityQuestionContainer key={index}>
+                    <S.SecurityQuestionHeader>
+                        <S.SecurityQuestionNumber>
+                            {t('Question')} {index + 1}
+                        </S.SecurityQuestionNumber>
+                        <S.RemoveButton onPress={() => removeSecurityQuestion(index)}>
+                            <S.RemoveButtonText>{t('Remove')}</S.RemoveButtonText>
+                        </S.RemoveButton>
+                    </S.SecurityQuestionHeader>
 
-            <S.LinkContainer>
-                <S.LinkText>{t('Are you medical personnel?')}</S.LinkText>
-                <TouchableOpacity onPress={() => navigation.navigate('DoctorLogin')}>
-                    <S.Link>
-                        {t('Login as Doctor')}
-                    </S.Link>
-                </TouchableOpacity>
-            </S.LinkContainer>
-        </S.Container>
+                    <S.InputContainer>
+                        <S.DropdownButton
+                            onPress={() => {
+                                setSelectedQuestionIndex(index);
+                                setShowDropdown(!showDropdown);
+                            }}
+                        >
+                            <S.DropdownButtonText>
+                                {question.question || t('Select Security Question')}
+                            </S.DropdownButtonText>
+                            <S.DropdownArrow>▼</S.DropdownArrow>
+                        </S.DropdownButton>
+                        {showDropdown && selectedQuestionIndex === index && (
+                            <S.DropdownContainer>
+                                {getAvailableQuestionsForIndex(index).map((q, qIndex) => (
+                                    <TouchableOpacity
+                                        key={qIndex}
+                                        onPress={() => handleQuestionSelect(q, index)}
+                                    >
+                                        <S.DropdownItem>
+                                            <S.DropdownText>{q}</S.DropdownText>
+                                        </S.DropdownItem>
+                                    </TouchableOpacity>
+                                ))}
+                            </S.DropdownContainer>
+                        )}
+                    </S.InputContainer>
+
+                    <S.InputContainer>
+                        <S.InputWrapper>
+                            <S.StyledInput
+                                placeholder={t('Your Answer')}
+                                placeholderTextColor={themeColors.primary}
+                                value={question.answer}
+                                onChangeText={(text: string) => updateSecurityAnswer(index, text)}
+                                autoCapitalize="words"
+                            />
+                        </S.InputWrapper>
+                    </S.InputContainer>
+                </S.SecurityQuestionContainer>
+            ))}
+
+            {securityQuestions.length < 3 && (
+                <S.AddQuestionButton onPress={addSecurityQuestion}>
+                    <S.AddQuestionText>{t('Add Security Question')}</S.AddQuestionText>
+                </S.AddQuestionButton>
+            )}
+        </>
+    );
+
+    return (
+        <SafeAreaView style={{ flex: 1, backgroundColor: themeColors.secondary }}>
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+            >
+                <ScrollView
+                    contentContainerStyle={{
+                        flexGrow: 1,
+                        paddingHorizontal: 16,
+                        paddingTop: 16,
+                        paddingBottom: 32,
+                        backgroundColor: themeColors.secondary
+                    }}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <S.LogoContainer>
+                        <Logo />
+                    </S.LogoContainer>
+
+                    <S.StepIndicatorContainer>
+                        <S.StepIndicator active={currentStep === 1} completed={currentStep > 1} />
+                        <S.StepIndicator active={currentStep === 2} completed={false} />
+                    </S.StepIndicatorContainer>
+
+                    {currentStep === 1 ? renderStep1() : renderStep2()}
+
+                    {currentStep === 1 && (
+                        <>
+                            <S.LinkContainer>
+                                <S.LinkText>{t('Already have an account?')}</S.LinkText>
+                                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                                    <S.Link>{t('Login')}</S.Link>
+                                </TouchableOpacity>
+                            </S.LinkContainer>
+
+                            <S.LinkContainer>
+                                <S.LinkText>{t('Are you medical personnel?')}</S.LinkText>
+                                <TouchableOpacity onPress={() => navigation.navigate('DoctorLogin')}>
+                                    <S.Link>{t('Login as Doctor')}</S.Link>
+                                </TouchableOpacity>
+                            </S.LinkContainer>
+                        </>
+                    )}
+
+                    {/* action buttons moved into scrollable area */}
+                    {currentStep === 1 ? (
+                        <S.ActionButton onPress={handleNext} disabled={!isStep1Valid}>
+                            <S.ActionButtonText>{t('Next')}</S.ActionButtonText>
+                        </S.ActionButton>
+                    ) : (
+                        <S.ButtonRow>
+                            <S.SecondaryButton onPress={handleBack}>
+                                <S.SecondaryButtonText>{t('Back')}</S.SecondaryButtonText>
+                            </S.SecondaryButton>
+                            <S.ActionButton
+                                onPress={handleRegister}
+                                disabled={!isStep2Valid}
+                                style={{ flex: 1, width: undefined }}
+                            >
+                                <S.ActionButtonText>{t('Register')}</S.ActionButtonText>
+                            </S.ActionButton>
+                        </S.ButtonRow>
+                    )}
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 };
 
