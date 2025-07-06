@@ -2,8 +2,7 @@
   flex: 1;
   background-color: #fff;
   padding: 1rem;
-  max-width: 800px;
-  margin: 0 auto;
+  overflow-y: auto;
 }
 
 .sectionDivider {
@@ -15,7 +14,7 @@
 .sectionHeader {
   font-size: 15px;
   font-weight: 600;
-  color: #2e2747;
+  color: #757575;
   margin-bottom: 0.5rem;
   margin-top: 0.5rem;
 }
@@ -25,16 +24,21 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 0;
+  padding: 0.5rem 0;
   width: 100%;
   background: none;
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.15s;
+  border-radius: 0.5rem;
 }
 
 .optionButton:hover {
-  background-color: rgba(236, 230, 255, 0.1);
+  background-color: #f6f3ff;
+}
+
+.optionButton:active {
+  background-color: #ece6ff;
 }
 
 .optionIconTextWrapper {
@@ -49,7 +53,14 @@
   color: #2e2747;
 }
 
+.optionExtra {
+  font-size: 14px;
+  color: #757575;
+  margin-left: 0.5rem;
+}
+
 .optionArrow {
+  margin-left: 0.5rem;
   display: flex;
   align-items: center;
 }
@@ -60,4 +71,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.adminOption {
+  color: #e53935;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 0.5rem;
+  }
+  .optionButton {
+    padding: 0.5rem 0.25rem;
+  }
+  .sectionHeader {
+    font-size: 14px;
+  }
+  .optionText {
+    font-size: 15px;
+  }
 }

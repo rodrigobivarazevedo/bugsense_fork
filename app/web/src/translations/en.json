@@ -44,5 +44,9 @@
     "Invalid login credentials": "Invalid login credentials",
     "Server error. Please try again later.": "Server error. Please try again later.",
     "Network error. Please check your connection.": "Network error. Please check your connection.",
-    "Login failed. Please try again.": "Login failed. Please try again."
+    "Login failed. Please try again.": "Login failed. Please try again.",
+    "back": "Back",
+    "time_format": "Time Format",
+    "12_hour_format": "12-hour format",
+    "24_hour_format": "24-hour format"
 }
