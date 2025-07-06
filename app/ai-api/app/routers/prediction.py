@@ -4,38 +4,39 @@ from datetime import datetime
 from fastapi.responses import JSONResponse
 from app.ml_pipeline.inference import predict
 from app.ml_pipeline.features import load_image_series_from_folder, prepare_input_tensor
-
+from app.core.config import secrets_manager
 
 router = APIRouter(prefix="/prediction", tags=["Prediction"])
 
 @router.get(
-    "/species",
+    "/species/",
     summary="Retrieve user's prediction history",
     status_code=status.HTTP_200_OK,
 )
 async def get_species_prediction(
     request: Request,
-    user_id: str = Query(...),
+    qr_data: str = Query(...),
     storage: str = Query("local", enum=["local", "gcs"])
-    
 ):
-    #token = get_current_user(request)
+    #token = await get_current_user(request)
         
     try:
         current_date = datetime.now().strftime("%Y-%m-%d")
         
         if storage == "local":
-            folder_path =f"storage/uploads/{user_id}/{current_date}/"
+            folder_path =f"storage/uploads/{qr_data}/{current_date}/"
+            image_series = load_image_series_from_folder(folder_path, cloud=False)
             
         elif storage == "gcs":
-            folder_path =f"storage/uploads/{user_id}/{current_date}/"
+            bucket_name = secrets_manager.security_secrets.get("GCS_BUCKET_NAME")
+            folder_path =f"gs://{bucket_name}/uploads/{qr_data}/{current_date}/"
             
-        image_series = load_image_series_from_folder(folder_path)
+            image_series = load_image_series_from_folder(folder_path, cloud=True)
         
         if image_series is None:
             response = {
-                "message": "Not enouogh images to make a prediction.",
-                "user_id": user_id,
+                "message": "Not enough images to make a prediction.",
+                "qr_data": qr_data,
                 "date": current_date
             }
 
@@ -49,7 +50,7 @@ async def get_species_prediction(
         if window_input_tensor is None:
             response = {
                 "message": "Not enouogh images to make a prediction.",
-                "user_id": user_id,
+                "qr_data": qr_data,
                 "date": current_date
             }
 
@@ -85,20 +86,28 @@ async def get_species_prediction(
 )
 async def get_concentration_prediction(
     request: Request,
-    user_id: str = Query(...),
+    qr_data: str = Query(...),
+    storage: str = Query("local", enum=["local", "gcs"])
     
 ):
+    
+    token = get_current_user(request)
+    
     try:
         current_date = datetime.now().strftime("%Y-%m-%d")
         
-        folder_path =f"{UPLOAD_DIR}/{user_id}/{current_date}/"
-        
+        if storage == "local":
+            folder_path =f"storage/uploads/{qr_data}/{current_date}/"
+            
+        elif storage == "gcs":
+            folder_path =f"storage/uploads/{qr_data}/{current_date}/"
+              
         image_series = load_image_series_from_folder(folder_path)
         
         if image_series is None:
             response = {
                 "message": "Not enouogh images to make a prediction.",
-                "user_id": user_id,
+                "qr_data": qr_data,
                 "date": current_date
             }
 
@@ -112,7 +121,7 @@ async def get_concentration_prediction(
         if image_input_tensor is None:
             response = {
                 "message": "Not enouogh images to make a prediction.",
-                "user_id": user_id,
+                "qr_data": qr_data,
                 "date": current_date
             }
 

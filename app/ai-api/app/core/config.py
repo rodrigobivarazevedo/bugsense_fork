@@ -53,7 +53,6 @@ class SecretsManager:
         return secrets
 
 
-
 secrets_manager = SecretsManager()
 
 print(secrets_manager.security_secrets)

@@ -1,8 +1,8 @@
 import requests
 
-def get_user_prediction(user_id):
+def get_user_prediction(qr_data):
     
-    API_URL = f"http://0.0.0.0:5001/ml_api/prediction/?user_id={user_id}"
+    API_URL = f"http://0.0.0.0:5001/ml_api/prediction/species/?qr_data={qr_data}&storage=gcs"
  
     response = requests.get(API_URL)
 
@@ -10,7 +10,7 @@ def get_user_prediction(user_id):
     print("Response:", response.json())
 
 if __name__ == "__main__":
-    user_id = "user123"
-    get_user_prediction(user_id)
+    qr_data = "user123456"
+    get_user_prediction(qr_data)
     
     

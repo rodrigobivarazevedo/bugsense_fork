@@ -5,7 +5,15 @@ from google.cloud import storage
 from google.oauth2 import service_account
 import shutil
 from fastapi import UploadFile
+from app.core.config import secrets_manager
+import re
 
+def extract_timestamp(filename: str) -> datetime:
+    base = os.path.splitext(filename)[0]
+    try:
+        return datetime.strptime(base, "%H-%M-%S-%f")
+    except ValueError:
+        return datetime.min  # Push malformed to start
 
 def get_storage_client(credentials_json: Union[str, dict, None]):
     """
@@ -18,58 +26,58 @@ def get_storage_client(credentials_json: Union[str, dict, None]):
         return storage.Client.from_service_account_json(credentials_json)
     else:
         return storage.Client()
-
-
-def list_images_from_gcs(user_id: str, date: str, bucket_name: str, credentials_json: Union[str, dict, None] = None):
-    """
-    Lists public URLs of images for a user and date in the GCS bucket.
-    """
-    storage_client = get_storage_client(credentials_json)
-    bucket = storage_client.bucket(bucket_name)
-    prefix = f"uploads/{user_id}/{date}/"
-    blobs = bucket.list_blobs(prefix=prefix)
     
-    urls = []
-    for blob in blobs:
-        blob.make_public()
-        urls.append(blob.public_url)
+# GET images
+def list_images_gcs(bucket_name: str, prefix: str) -> list:
+    client = get_storage_client(secrets_manager.security_secrets.get("GOOGLE_CREDENTIALS"))
+    bucket = client.bucket(bucket_name)
+    blobs = list(bucket.list_blobs(prefix=prefix))
+
+    image_blobs = [blob for blob in blobs if blob.name.endswith(".png")]
+    image_blobs.sort(key=lambda b: extract_timestamp(os.path.basename(b.name)))
     
-    return urls
+    # image_blobs = [blob for blob in blobs if blob.name.endswith(".png")]
+    #     image_blobs.sort(
+    #         key=lambda x: float(re.search(r'time([0-9\.]+)[._]', x).group(1))
+    #     )
+    return image_blobs
 
 
+# Upload
 def upload_image_to_gcs(
     file_obj,
     filename: str,
-    user_id: str,
-    bucket_name: str,
-    credentials_json: Union[str, dict, None] = None
+    qr_data: str,
+    #bucket_name: str,
+    #credentials_json: Union[str, dict, None] = None
 ) -> str:
     """
-    Uploads an image file to Google Cloud Storage and returns the public URL.
+    Uploads an image file to Google Cloud Storage without making it public.
+    Returns the internal GCS path (not accessible to users).
     """
-    storage_client = get_storage_client(credentials_json)
-    bucket = storage_client.bucket(bucket_name)
+    storage_client = get_storage_client(secrets_manager.security_secrets.get("GOOGLE_CREDENTIALS"))
+    bucket = storage_client.bucket(secrets_manager.security_secrets.get("GCS_BUCKET_NAME"))
 
     current_date = datetime.now().strftime("%Y-%m-%d")
     timestamp = datetime.now().strftime("%H-%M-%S-%f")
     file_ext = os.path.splitext(filename)[1]
-    blob_name = f"uploads/{user_id}/{current_date}/{timestamp}{file_ext}"
+    blob_name = f"uploads/{qr_data}/{current_date}/{timestamp}{file_ext}"
 
     blob = bucket.blob(blob_name)
     blob.upload_from_file(file_obj, content_type="image/jpeg")
-    blob.make_public()
 
-    return blob.public_url
+    # Do NOT make public, do NOT return URL
+    return blob_name  # internal path, useful for later access
 
 
-def save_file_locally(image: UploadFile, user_id: str, base_dir: str = "storage/uploads") -> str:
+def save_file_locally(image: UploadFile, qr_data: str, base_dir: str = "storage/uploads") -> str:
     """
     Saves the uploaded file locally under base_dir/user_id/YYYY-MM-DD/timestamp.ext.
     Returns the full file path.
     """
     current_date = datetime.now().strftime("%Y-%m-%d")
     timestamp = datetime.now().strftime("%H-%M-%S-%f")
-    user_folder = os.path.join(base_dir, user_id, current_date)
+    user_folder = os.path.join(base_dir, qr_data, current_date)
     os.makedirs(user_folder, exist_ok=True)
     file_ext = os.path.splitext(image.filename)[1]
     file_name = f"{timestamp}{file_ext}"
@@ -79,3 +87,5 @@ def save_file_locally(image: UploadFile, user_id: str, base_dir: str = "storage/
         shutil.copyfileobj(image.file, buffer)
     
     return file_path
+
+
