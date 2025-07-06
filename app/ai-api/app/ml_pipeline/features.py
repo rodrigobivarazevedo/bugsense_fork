@@ -1,13 +1,11 @@
 import os
 from io import BytesIO
 from datetime import datetime
-
 import torch
 from PIL import Image
 from torchvision import transforms
 from torchvision.transforms import InterpolationMode
 from google.cloud import storage
-
 from app.utils.stopping_point import find_stopping_point
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -90,23 +88,38 @@ def load_image_series_from_folder(folder_path: str, min_hours: int = 6) -> torch
     return torch.stack(images)
 
 
-def prepare_input_tensor(images: torch.Tensor) -> torch.Tensor:
-    stopping_point = find_stopping_point(images, threshold=23, mode="sliding_window")
+def prepare_input_tensor(images: torch.Tensor, method="sliding_window") -> torch.Tensor:
+    """
+    Prepares the input tensor for prediction.
 
-    # Force override for testing
-    stopping_point = len(images) - 1
+    Args:
+        images (torch.Tensor): A tensor of shape (T, C, H, W)
+        method (str): Either 'sliding_window' or 'image'
+
+    Returns:
+        torch.Tensor or None: A tensor of shape (1, 5, C, H, W) for 'sliding_window',
+                              or (1, C, H, W) for 'image', or None if not enough data.
+    """
+    stopping_point = find_stopping_point(images, threshold=23, mode="sliding_window")
 
     if stopping_point < 5:
         print("No stopping point for prediction yet")
         return None
 
-    start = max(stopping_point - 5, 0)
-    end = stopping_point
+    if method == "sliding_window":
+        start = max(stopping_point - 5, 0)
+        end = stopping_point
+        window = images[start:end]
 
-    window = images[start:end]
+        print(f"Window shape: {window.shape}, Start index: {start}, End index: {end}")
+        if window.shape[0] != 5:
+            raise ValueError(f"Window must have 5 frames, got {window.shape[0]}.")
 
-    print(f"Window shape: {window.shape}, Start index: {start}, End index: {end}")
-    if window.shape[0] != 5:
-        raise ValueError(f"Window must have 5 frames, got {window.shape[0]}.")
+        return window.unsqueeze(0).to(device)  # (1, 5, C, H, W)
 
-    return window.unsqueeze(0).to(device)  # Shape: (1, 5, C, H, W)
+    elif method == "image":
+        image = images[stopping_point]  # (C, H, W)
+        return image.unsqueeze(0).to(device)  # (1, C, H, W)
+
+    else:
+        raise ValueError(f"Unknown method: {method}")

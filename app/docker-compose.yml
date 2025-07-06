@@ -85,6 +85,18 @@ services:
       - "5432:5432"
     networks:
       - app_network
+    
+  ml_service:
+    build: ./ai-api
+    restart: always
+    command: uvicorn app.main:app --host 0.0.0.0 --port 5001 --reload
+    volumes:
+      - ./ai-api:/app
+      - ./dump:/app/dump 
+    ports:
+      - "5001:5001"
+    networks:
+      - app_network
 
 volumes:
   postgres_data:
