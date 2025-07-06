@@ -2,11 +2,19 @@ import os
 import base64
 import json
 from typing import Dict, Optional
+from dotenv import load_dotenv
 
+# ==================================== Configuration ========================================================
+
+env_path = os.path.join(os.path.dirname(__file__), '../../.env')
+if not os.path.exists(env_path):
+        raise FileNotFoundError(f".env file not found at {env_path}")
+load_dotenv(dotenv_path=env_path)  # Load variables from .env file
 
 class SecretsManager:
     def __init__(self, alembic: bool = False):
-        self.env = os.getenv("ENVIRONMENT", "local").lower()
+         
+        self.env = os.getenv("ENVIRONMENT").lower()
         self.alembic = alembic
 
         if self.env in "cloud":
@@ -22,7 +30,8 @@ class SecretsManager:
         keys = [
             "GOOGLE_CREDENTIALS",
             "ML_API_KEY",
-            "DJANGO_SECRET_KEY"
+            "DJANGO_SECRET_KEY",
+            "GCS_BUCKET_NAME"
         ]
 
         print(f"Loading security secrets for {self.env} environment")
@@ -42,7 +51,6 @@ class SecretsManager:
             secrets[key] = value
 
         return secrets
-
 
 
 secrets_manager = SecretsManager()
