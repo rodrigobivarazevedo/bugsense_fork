@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { FC, useState } from 'react';
 import { Platform, Modal } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +14,7 @@ interface GenericDateTimePickerProps {
     onCancel?: () => void;
 }
 
-const GenericDateTimePicker: React.FC<GenericDateTimePickerProps> = ({
+const GenericDateTimePicker: FC<GenericDateTimePickerProps> = ({
     value,
     visible,
     mode,

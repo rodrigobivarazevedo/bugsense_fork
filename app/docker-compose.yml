@@ -1,6 +1,6 @@
 services:
   backend:
-    build: 
+    build:
       context: ./core_api
       dockerfile: Dockerfile
     ports:
@@ -11,6 +11,8 @@ services:
       - DATABASE_URL=postgres://bugsenseadmin:bugsenseadmin@db:5432/bugsense
       - ALLOWED_HOSTS=*
       - HOST_IP=${HOST_IP}
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - ML_API_KEY=${ML_API_KEY}
     depends_on:
       - db
     volumes:
@@ -26,13 +28,13 @@ services:
       context: ./web
       dockerfile: Dockerfile
       args:
-        - API_URL=http://${HOST_IP}:8000/api/
+        - REACT_APP_API_URL=http://${HOST_IP}:8000/api/
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
       - HOST_IP=${HOST_IP}
-      - API_URL=http://${HOST_IP}:8000/api/
+      - REACT_APP_API_URL=http://${HOST_IP}:8000/api/
     volumes:
       - ./web:/app
       - /app/node_modules
@@ -101,4 +103,4 @@ volumes:
 
 networks:
   app_network:
-    driver: bridge 
+    driver: bridge

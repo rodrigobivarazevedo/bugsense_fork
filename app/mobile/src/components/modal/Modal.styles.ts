@@ -25,14 +25,34 @@ export const styles = StyleSheet.create({
         textAlign: 'center',
         color: themeColors.primary,
     },
+    messageContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: rem(0.5),
+    },
+    messageSubtitle: {
+        fontSize: rem(1),
+        color: '#444',
+        marginBottom: rem(0.5),
+    },
+    bullet: {
+        fontSize: rem(1),
+        color: themeColors.primary,
+        alignSelf: 'flex-start',
+    },
     message: {
         fontSize: rem(1),
         color: '#444',
-        textAlign: 'center',
     },
     buttonRow: {
         flexDirection: 'row',
         justifyContent: 'center',
+        width: '100%',
+        borderTopColor: '#e0e0e0',
+        borderTopWidth: 1,
+    },
+    buttonColumn: {
+        flexDirection: 'column',
         width: '100%',
         borderTopColor: '#e0e0e0',
         borderTopWidth: 1,
@@ -50,6 +70,13 @@ export const styles = StyleSheet.create({
         padding: rem(1),
         width: '50%',
         alignItems: 'center',
+    },
+    selectionButton: {
+        padding: rem(1.25),
+        width: '100%',
+        alignItems: 'center',
+        borderBottomWidth: 0.5,
+        borderBottomColor: '#e0e0e0',
     },
     buttonText: {
         color: themeColors.primary,

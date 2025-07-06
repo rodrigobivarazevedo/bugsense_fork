@@ -1,9 +1,82 @@
-.mainContainer {
-  background-color: var(--white);
+.root {
+  min-height: 100vh;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.25rem;
+}
+
+.header {
+  position: relative;
+  width: 100%;
+  padding: 2rem;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.headerContent {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1.25rem;
-  min-height: 100vh;
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0.25rem;
+  padding: 0;
+}
+
+.greeting {
+  font-size: 1.5rem;
+  color: #2e2747;
+  margin: 0;
+  padding: 0;
+}
+
+.userName {
+  font-size: 2rem;
+  color: #2e2747;
+  margin: 0;
+}
+
+.grid {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.box {
+  width: 40rem;
+  height: 10rem;
+  aspect-ratio: 1;
+  background-color: #e2f6eb;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.15);
+  margin-top: 1rem;
+}
+
+.boxIcon {
+  margin-bottom: 0.5rem;
+}
+
+.boxLabel {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #2e2747;
+  text-align: center;
 }

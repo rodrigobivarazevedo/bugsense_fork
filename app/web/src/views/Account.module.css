@@ -1,0 +1,182 @@
+.container {
+  padding: 2rem;
+  background-color: #fff;
+  max-width: 800px;
+  margin: auto;
+}
+
+.profileCard {
+  background-color: #2e2747;
+  border-radius: 1rem;
+  padding: 2rem;
+  position: relative;
+  color: white;
+  margin-bottom: 2rem;
+}
+
+.profileContent {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #ece6ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin-right: 1rem;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.userName {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.dateJoined {
+  color: #dcd6f7;
+  margin-top: 0.25rem;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #2e2747;
+}
+
+.card {
+  background-color: #f9f9f9;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.formGroup {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.formGroup:last-child {
+  border-bottom: none;
+}
+
+.formGroup label {
+  min-width: 120px;
+  color: #2e2747;
+  font-size: 0.95rem;
+}
+
+.fieldContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.fieldValue {
+  flex: 1;
+  color: #2e2747;
+  font-size: 0.95rem;
+}
+
+.input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 2px solid #ece6ff;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  color: #2e2747;
+  transition: all 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: #000000;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.iconButton:hover {
+  background-color: rgba(108, 99, 255, 0.1);
+}
+
+.editActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.actionBtn {
+  background-color: #ece6ff;
+  color: #2e2747;
+  padding: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.actionBtn:hover {
+  background-color: #dcd6f7;
+}
+
+.deleteBtn {
+  background-color: #e53935;
+  color: white;
+  padding: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.deleteBtn:hover {
+  background-color: #c62828;
+}
+
+.qrButton {
+  background-color: #ece6ff;
+  color: #2e2747;
+  padding: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.qrButton:hover {
+  background-color: #dcd6f7;
+}

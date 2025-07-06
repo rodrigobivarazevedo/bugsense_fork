@@ -1,0 +1,131 @@
+.root {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 2rem;
+}
+
+.header {
+  background-color: white;
+  padding: 2rem;
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bacteriaImage {
+  width: 100%;
+  max-width: 400px;
+  height: 200px;
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+  object-fit: cover;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.scientificName {
+  font-size: 1.2rem;
+  color: #666;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.content {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.section {
+  background-color: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.sectionTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.description {
+  font-size: 1rem;
+  color: #444;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.infoGrid {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.infoItem {
+  background-color: #f0f0f0;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  flex: 1;
+  min-width: 45%;
+}
+
+.infoLabel {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.infoValue {
+  font-size: 1.1rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.symptomsList,
+.preventionList {
+  margin-top: 0.5rem;
+}
+
+.symptomItem,
+.preventionItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.bulletPoint {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background-color: #666;
+  margin-right: 12px;
+}
+
+.symptomText,
+.preventionText {
+  font-size: 1rem;
+  color: #444;
+  flex: 1;
+}
+
+.preventionIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background-color: #e8f5e9;
+  margin-right: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

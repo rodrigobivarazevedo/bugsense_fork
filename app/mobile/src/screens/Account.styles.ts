@@ -305,4 +305,90 @@ export const SuggestionsModalContent = styled.View`
   shadow-offset: 0px 2px;
   shadow-opacity: 0.15;
   shadow-radius: 8px;
+`;
+
+export const UserTypeIndicator = styled.View`
+  background-color: ${themeColors.secondary};
+  border-radius: ${rem(0.5)}px;
+  padding: ${rem(0.25)}px ${rem(0.75)}px;
+  align-self: flex-start;
+  margin-bottom: ${rem(0.5)}px;
+`;
+
+export const UserTypeText = styled.Text`
+  ${themeTypography.p};
+  color: ${themeColors.primary};
+  font-weight: 600;
+  font-size: ${rem(0.75)}px;
+`;
+
+export const InstitutionInfo = styled.View`
+  margin-bottom: ${rem(0.5)}px;
+`;
+
+export const InstitutionLabel = styled.Text`
+  ${themeTypography.p};
+  color: ${themeColors.secondary};
+  font-size: ${rem(0.75)}px;
+  margin-bottom: ${rem(0.25)}px;
+`;
+
+export const InstitutionName = styled.Text`
+  ${themeTypography.p};
+  color: ${themeColors.white};
+  font-weight: 600;
+  font-size: ${rem(0.875)}px;
+`;
+
+export const DoctorIdInfo = styled.View`
+  margin-bottom: ${rem(0.5)}px;
+`;
+
+export const DoctorIdLabel = styled.Text`
+  ${themeTypography.p};
+  color: ${themeColors.secondary};
+  font-size: ${rem(0.75)}px;
+  margin-bottom: ${rem(0.25)}px;
+`;
+
+export const DoctorIdValue = styled.Text`
+  ${themeTypography.p};
+  color: ${themeColors.white};
+  font-weight: 600;
+  font-size: ${rem(0.875)}px;
+`;
+
+export const AddressActionContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: ${rem(1)}px;
+  gap: ${rem(1)}px;
+`;
+
+export const AddressCancelButton = styled.TouchableOpacity`
+  flex: 1;
+  background-color: ${themeColors.themeGray};
+  border-radius: ${rem(0.5)}px;
+  padding: ${rem(1)}px;
+  align-items: center;
+`;
+
+export const AddressCancelButtonText = styled.Text`
+  ${themeTypography.p};
+  color: ${themeColors.white};
+  font-weight: 600;
+`;
+
+export const AddressSaveButton = styled.TouchableOpacity`
+  flex: 1;
+  background-color: ${themeColors.primary};
+  border-radius: ${rem(0.5)}px;
+  padding: ${rem(1)}px;
+  align-items: center;
+`;
+
+export const AddressSaveButtonText = styled.Text`
+  ${themeTypography.p};
+  color: ${themeColors.white};
+  font-weight: 600;
 `; 

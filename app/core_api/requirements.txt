@@ -9,3 +9,4 @@ whitenoise>=6.6.0  # For serving static files
 pillow>=10.0.0  # For image processing
 django-filter>=23.5  # For filtering in DRF
 requests>=2.31.0  # For HTTP requests
+drf-spectacular>=0.27.0  # For API documentation
