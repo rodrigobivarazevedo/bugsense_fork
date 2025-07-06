@@ -1,7 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request, Query
-from app.db.database import get_async_users_db
-from app.core.security import get_current_active_user
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, HTTPException, status, Request, Query
+from app.core.security import get_current_user
 from datetime import datetime
 from fastapi.responses import JSONResponse
 from app.ml_pipeline.inference import predict
@@ -9,8 +7,6 @@ from app.ml_pipeline.features import load_image_series_from_folder, prepare_inpu
 
 
 router = APIRouter(prefix="/prediction", tags=["Prediction"])
-
-UPLOAD_DIR = "storage/uploads"  # Directory to store uploaded images
 
 @router.get(
     "/species",
@@ -20,14 +16,20 @@ UPLOAD_DIR = "storage/uploads"  # Directory to store uploaded images
 async def get_species_prediction(
     request: Request,
     user_id: str = Query(...),
-    db: AsyncSession = Depends(get_async_users_db), 
+    storage: str = Query("local", enum=["local", "gcs"])
     
 ):
+    #token = get_current_user(request)
+        
     try:
         current_date = datetime.now().strftime("%Y-%m-%d")
         
-        folder_path =f"{UPLOAD_DIR}/{user_id}/{current_date}/"
-        
+        if storage == "local":
+            folder_path =f"storage/uploads/{user_id}/{current_date}/"
+            
+        elif storage == "gcs":
+            folder_path =f"storage/uploads/{user_id}/{current_date}/"
+            
         image_series = load_image_series_from_folder(folder_path)
         
         if image_series is None:
@@ -72,7 +74,7 @@ async def get_species_prediction(
         
     except Exception as e:
        print(f"error {e}")
-       await db.rollback()
+       #await db.rollback()
        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
     
 
@@ -84,7 +86,6 @@ async def get_species_prediction(
 async def get_concentration_prediction(
     request: Request,
     user_id: str = Query(...),
-    db: AsyncSession = Depends(get_async_users_db), 
     
 ):
     try:
@@ -133,6 +134,5 @@ async def get_concentration_prediction(
         
     except Exception as e:
        print(f"error {e}")
-       await db.rollback()
        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
     

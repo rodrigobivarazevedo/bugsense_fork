@@ -1,13 +1,11 @@
 import os
 from io import BytesIO
 from datetime import datetime
-
 import torch
 from PIL import Image
 from torchvision import transforms
 from torchvision.transforms import InterpolationMode
 from google.cloud import storage
-
 from app.utils.stopping_point import find_stopping_point
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

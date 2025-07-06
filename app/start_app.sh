@@ -19,10 +19,51 @@ show_help() {
   echo "  ./start_app.sh            # Start services without building"
 }
 
+generate_secret_key() {
+  python3 -c "import secrets; print(secrets.token_urlsafe(50))"
+}
+
 export HOST_IP=$(ifconfig en0 \
   | awk '/inet / && !/127/ {print $2; exit}')
 
-echo "HOST_IP=$HOST_IP" > .env
+
+# Generate new keys
+ML_API_KEY=$(generate_secret_key)
+DJANGO_SECRET_KEY=$(generate_secret_key)
+
+# ai-api
+
+if grep -q '^DJANGO_SECRET_KEY=' .env; then
+    sed -i '' "s/^DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}/" ./ai-api/.env  # macOS version
+else
+    echo "DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}" >> ./ai-api/.env
+fi
+
+if grep -q '^ML_API_KEY=' ./ai-api/.env; then
+    sed -i '' "s/^ML_API_KEY=.*/ML_API_KEY=${ML_API_KEY}/" ./ai-api/.env  # macOS version
+else
+    echo "ML_API_KEY=${ML_API_KEY}" >> ./ai-api/.env
+fi
+
+
+# core-api
+
+if [ -f .env ]; then
+  if ! grep -q "DJANGO_SECRET_KEY" .env; then
+    echo "Adding DJANGO_SECRET_KEY to existing .env file..."
+    echo "DJANGO_SECRET_KEY=${ML_API_KEY}" >> .env
+  fi
+  if ! grep -q "ML_API_KEY" .env; then
+    echo "Adding ML_API_KEY to existing .env file..."
+    echo "ML_API_KEY=${DJANGO_API_KEY}" >> .env
+  fi
+else
+  echo "Creating new .env file..."
+  echo "HOST_IP=$HOST_IP" > .env
+  echo "DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}" >> .env
+  echo "ML_API_KEY=${ML_API_KEY}" >> .env
+fi
+
 
 if [ "$1" = "--help" ]; then
   show_help
@@ -31,32 +72,32 @@ elif [ "$1" = "--build" ]; then
   echo "✨✨✨ Mobile App visible on exp://$HOST_IP:8081 ✨✨✨"
   echo "✨✨✨ Web App visible on http://$HOST_IP:3000 ✨✨✨"
   echo "✨✨✨ Local Web App visible on http://localhost:3000 ✨✨✨"
-  docker-compose up --build
+  docker compose up --build
 elif [ "$1" = "--load-data" ]; then
   echo "✨✨✨ Mobile App visible on exp://$HOST_IP:8081 ✨✨✨"
   echo "✨✨✨ Web App visible on http://$HOST_IP:3000 ✨✨✨"
   echo "✨✨✨ Local Web App visible on http://localhost:3000 ✨✨✨"
-  docker-compose up -d
+  docker compose up -d
   
   echo "Waiting for database to be ready..."
   sleep 10
   
   echo "Loading initial data..."
-  docker-compose exec db psql -U bugsenseadmin -d bugsense -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+  docker compose exec db psql -U bugsenseadmin -d bugsense -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
   
   echo "Copying SQL file to container..."
-  docker cp ./setup/database_backup.sql $(docker-compose ps -q db):/tmp/database_backup.sql
+  docker cp ./setup/database_backup.sql $(docker compose ps -q db):/tmp/database_backup.sql
   
   echo "Loading SQL file..."
-  docker-compose exec db psql -U bugsenseadmin -d bugsense -f /tmp/database_backup.sql
+  docker compose exec db psql -U bugsenseadmin -d bugsense -f /tmp/database_backup.sql
   
   echo "Running database migrations..."
-  docker-compose exec backend python manage.py migrate
+  docker compose exec backend python manage.py migrate
   
-  docker-compose logs -f
+  docker compose logs -f
 else
   echo "✨✨✨ Mobile App visible on exp://$HOST_IP:8081 ✨✨✨"
   echo "✨✨✨ Web App visible on http://$HOST_IP:3000 ✨✨✨"
   echo "✨✨✨ Local Web App visible on http://localhost:3000 ✨✨✨"
-  docker-compose up
+  docker compose up
 fi

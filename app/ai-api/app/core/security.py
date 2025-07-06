@@ -2,24 +2,29 @@ from typing import Annotated
 import jwt
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Security, HTTPException, status, Depends
 from fastapi.security.api_key import APIKeyHeader
 from app.core.config import secrets_manager
+from pydantic import BaseModel
+import secrets
 
 # ==================================== Configuration ========================================================
 
-SECRET_KEY = secrets_manager.security_secrets.get("SECRET_KEY")
-ALLOWED_USERS = secrets_manager.security_secrets.get("ALLOWED_USERS")
-ALLOWED_USERS_PASS = secrets_manager.security_secrets.get("ALLOWED_USERS_PASS")
-ALGORITHM = secrets_manager.security_secrets.get("ENCRYPTION_ALGORITHM")
-API_KEY = secrets_manager.security_secrets.get("API_KEY")
+SECRET_KEY = secrets_manager.security_secrets.get("DJANGO_SECRET_KEY")
+API_KEY = secrets_manager.security_secrets.get("ML_API_KEY")
+GOOGLE_CREDENTIALS = secrets_manager.security_secrets.get("GOOGLE_CREDENTIALS")
+ALGORITHM = secrets_manager.security_secrets.get("ALGORITHM")
 
 # ==================================== API Token ========================================================
 
+class TokenData(BaseModel):
+    uid: str
+    scope: str
+    username: str
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: AsyncSession, admin: bool = False):
+async def verify_jwt_token(token: Annotated[str, Depends(oauth2_scheme)], admin: bool = False):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
     )
@@ -45,52 +50,46 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: As
     return TokenData(uid=uid, scope=scope)
 
 
-async def get_current_active_user_header(request: Request, db: AsyncSession, admin: bool = False): 
+async def get_current_user(request: Request, admin: bool = False, auth_headers: bool = True): 
     """
-    Extracts a token from the x-access-token header" and verifies it.
+    Extracts and verifies a JWT token from the request headers.
 
-    :param request: FastAPI request object
-    :param token_type: 'access_token' or 'refresh_token' (for error messages)
-    :return: Extracted token as a string
+    Supported formats:
+      - Authorization: Bearer <access_token>
+      - X-access-token: <access_token> (used if auth_headers is False)
+
+    Args:
+        request (Request): FastAPI request object
+        db: Database session or dependency
+        admin (bool): If True, verifies user is admin
+        auth_headers (bool): Whether to use standard 'Authorization' header or custom header
+
+    Returns:
+        dict: Token payload (e.g., user info)
+
+    Raises:
+        HTTPException: 401 if token is missing or invalid
     """
-    access_token = request.headers.get("X-access-token")
     
-    if not access_token:
-        raise HTTPException(
-            status_code=401,
-        )
+    if auth_headers:
+        auth_header = request.headers.get("Authorization")
         
-    token_data = await get_current_user(access_token, db, admin)
+        if not auth_header or not auth_header.startswith("Bearer "):
+            raise HTTPException(
+                status_code=401,
+            )
         
-    return token_data
-
-
-async def get_current_active_user(request: Request, db: AsyncSession, admin: bool = False): 
-    """
-    Extracts a token from the Authorization header in the format:
-        Authorization: Bearer <token>
-
-    :param request: FastAPI request object
-    :param token_type: 'access_token' or 'refresh_token' (for error messages)
-    :return: Extracted token as a string
-    """
-    auth_header = request.headers.get("Authorization")
-    
-    if not auth_header or not auth_header.startswith("Bearer "):
-        raise HTTPException(
-            status_code=401,
-        )
-    
-    access_token = auth_header.split("Bearer ")[1]
-    
-    token_data = await get_current_user(access_token, db, admin)
+        access_token = auth_header.split("Bearer ")[1]
+        
+    else:
+        access_token = request.headers.get("X-access-token")
+        
+    token_data = await verify_jwt_token(access_token, admin)
         
     return token_data
         
         
 # ==================================== API Key Security ========================================================
-
-import secrets
 
 api_key_header = APIKeyHeader(name="x-api-key", auto_error=False)
 

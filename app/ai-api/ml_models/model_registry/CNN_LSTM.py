@@ -7,7 +7,6 @@ import torch.nn as nn
 # and an LSTM for sequence classification.
 ################################################
 
-
 class CNNExtractor(nn.Module):
     def __init__(self):
         super(CNNExtractor, self).__init__()
