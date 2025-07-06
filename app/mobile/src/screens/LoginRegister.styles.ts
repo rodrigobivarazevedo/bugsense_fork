@@ -1,14 +1,13 @@
-import styled from 'styled-components/native';
+import { Platform } from 'react-native';
+import {
+    SafeAreaView as RNSafeAreaView
+} from 'react-native-safe-area-context';
+import styled, { css } from 'styled-components/native';
 import { themeColors } from '../theme/GlobalTheme';
 import { rem } from '../utils/Responsive';
 
 type ButtonProps = {
     disabled?: boolean;
-};
-
-type StepIndicatorProps = {
-    active?: boolean;
-    completed?: boolean;
 };
 
 export const Container = styled.View`
@@ -18,29 +17,38 @@ export const Container = styled.View`
     justify-content: center;
 `;
 
-export const LogoContainer = styled.View`
-    align-items: center;
-    margin-bottom: ${rem(3.75)}px;
-`;
-
-export const StepIndicatorContainer = styled.View`
-    flex-direction: row;
+export const SafeAreaView = styled(RNSafeAreaView).attrs({
+    edges: ['top', 'bottom'],
+})`
+    flex: 1;
+    background-color: ${themeColors.secondary};
     justify-content: center;
-    align-items: center;
-    margin-bottom: ${rem(2.5)}px;
-    gap: ${rem(0.5)}px;
 `;
 
-export const StepIndicator = styled.View<StepIndicatorProps>`
-    width: ${rem(0.5)}px;
-    height: ${rem(0.5)}px;
-    border-radius: ${rem(1)}px;
-    background-color: ${(props: StepIndicatorProps) =>
-        props.completed ? themeColors.primary :
-            props.active ? themeColors.primary : themeColors.white};
-    opacity: ${(props: StepIndicatorProps) =>
-        props.completed ? 1 :
-            props.active ? 1 : 0.5};
+export const ScrollView = styled.ScrollView.attrs(() => ({
+    contentContainerStyle: {
+        flexGrow: 1,
+        paddingHorizontal: rem(1),
+        paddingTop: rem(1),
+        paddingBottom: rem(2),
+    },
+}))`
+    background-color: ${themeColors.secondary};
+`;
+
+const logoContainerBaseStyles = css`
+  align-items: center;
+  margin-top: ${Platform.OS === 'android' ? rem(1.25) : 0}px;
+`;
+
+export const LogoContainer = styled.View`
+  ${logoContainerBaseStyles}
+  margin-bottom: ${rem(3.75)}px;
+`;
+
+export const LogoRegisterPageContainer = styled.View`
+  ${logoContainerBaseStyles}
+  margin-bottom: ${rem(1.5)}px;
 `;
 
 export const StepText = styled.Text`
@@ -89,15 +97,24 @@ export const IconContainer = styled.View`
     margin-right: ${rem(0.625)}px;
 `;
 
-export const ActionButton = styled.TouchableOpacity<ButtonProps>`
-    width: 100%;
+const actionButtonBaseStyles = css<ButtonProps>`
     padding: ${rem(1)}px;
     background-color: ${themeColors.primary};
     border-radius: ${rem(0.5)}px;
-    margin-top: ${rem(1.25)}px;
     opacity: ${(props: ButtonProps) => (props.disabled ? 0.5 : 1)};
     align-items: center;
     justify-content: center;
+`;
+
+export const ActionButton = styled.TouchableOpacity`
+    ${actionButtonBaseStyles}
+    width: 100%;
+    margin-top: ${rem(1.25)}px;
+`;
+
+export const ActionButtonRegister = styled.TouchableOpacity`
+    ${actionButtonBaseStyles}
+    width: 49%;
 `;
 
 export const ActionButtonText = styled.Text`
@@ -111,10 +128,12 @@ export const ActionButtonText = styled.Text`
 export const ButtonRow = styled.View`
     flex-direction: row;
     margin-top: ${rem(1.25)}px;
+    justify-content: space-between;
+    gap: 2%;
 `;
 
 export const SecondaryButton = styled.TouchableOpacity`
-    flex: 1;
+    width: 49%;
     padding: ${rem(1)}px;
     background-color: transparent;
     border: ${rem(0.0625)}px solid ${themeColors.primary};

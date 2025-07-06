@@ -1,11 +1,10 @@
 import { FC, useState } from 'react';
 import {
+    StatusBar,
+    Platform,
     Alert,
     TouchableOpacity,
-    ScrollView,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView
+    KeyboardAvoidingView
 } from 'react-native';
 import Logo from '../components/Logo';
 import { useTranslation } from 'react-i18next';
@@ -341,30 +340,16 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
     );
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: themeColors.secondary }}>
+        <S.SafeAreaView>
+            <StatusBar backgroundColor={themeColors.secondary} barStyle="dark-content" />
             <KeyboardAvoidingView
-                style={{ flex: 1 }}
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
             >
-                <ScrollView
-                    contentContainerStyle={{
-                        flexGrow: 1,
-                        paddingHorizontal: 16,
-                        paddingTop: 16,
-                        paddingBottom: 32,
-                        backgroundColor: themeColors.secondary
-                    }}
-                    keyboardShouldPersistTaps="handled"
-                >
-                    <S.LogoContainer>
+                <S.ScrollView keyboardShouldPersistTaps="handled">
+                    <S.LogoRegisterPageContainer>
                         <Logo />
-                    </S.LogoContainer>
-
-                    <S.StepIndicatorContainer>
-                        <S.StepIndicator active={currentStep === 1} completed={currentStep > 1} />
-                        <S.StepIndicator active={currentStep === 2} completed={false} />
-                    </S.StepIndicatorContainer>
+                    </S.LogoRegisterPageContainer>
 
                     {currentStep === 1 ? renderStep1() : renderStep2()}
 
@@ -386,28 +371,26 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                         </>
                     )}
 
-                    {/* action buttons moved into scrollable area */}
                     {currentStep === 1 ? (
                         <S.ActionButton onPress={handleNext} disabled={!isStep1Valid}>
                             <S.ActionButtonText>{t('Next')}</S.ActionButtonText>
                         </S.ActionButton>
                     ) : (
                         <S.ButtonRow>
-                            <S.SecondaryButton onPress={handleBack}>
-                                <S.SecondaryButtonText>{t('Back')}</S.SecondaryButtonText>
-                            </S.SecondaryButton>
-                            <S.ActionButton
-                                onPress={handleRegister}
-                                disabled={!isStep2Valid}
-                                style={{ flex: 1, width: undefined }}
-                            >
-                                <S.ActionButtonText>{t('Register')}</S.ActionButtonText>
-                            </S.ActionButton>
+                                <S.SecondaryButton onPress={handleBack}>
+                                    <S.SecondaryButtonText>{t('Back')}</S.SecondaryButtonText>
+                                </S.SecondaryButton>
+                                <S.ActionButtonRegister
+                                    onPress={handleRegister}
+                                    disabled={!isStep2Valid}
+                                >
+                                    <S.ActionButtonText>{t('Register')}</S.ActionButtonText>
+                                </S.ActionButtonRegister>
                         </S.ButtonRow>
                     )}
-                </ScrollView>
+                </S.ScrollView>
             </KeyboardAvoidingView>
-        </SafeAreaView>
+        </S.SafeAreaView>
     );
 };
 
