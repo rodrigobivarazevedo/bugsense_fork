@@ -52,20 +52,20 @@ const ViewTest: FC = () => {
             <Text style={styles.title}>Test Details</Text>
             <View style={styles.section}>
                 <Text style={styles.label}>Time:</Text>
-                <Text style={styles.value}>{test?.created_at ? formatDateTime(test.created_at) : '-'}</Text>
+                <Text style={styles.value}>{result?.created_at ? formatDateTime(result.created_at) : '-'}</Text>
                 <Text style={styles.label}>Status:</Text>
-                <Text style={styles.value}>{test?.status || '-'}</Text>
+                <Text style={styles.value}>{result?.status || '-'}</Text>
                 <Text style={styles.label}>QR Data:</Text>
-                <Text style={styles.value}>{test?.qr_data || '-'}</Text>
+                <Text style={styles.value}>{result?.qr_data || '-'}</Text>
             </View>
 
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Upload Image</Text>
                 <Text style={styles.placeholder}>[Upload field coming soon]</Text>
-                {/* @ts-ignore */}
                 <TouchableOpacity
                     style={styles.uploadButton}
-                    onPress={() => navigation.navigate('Scan', { testId: test?.id })}
+                    // @ts-ignore
+                    onPress={() => navigation.navigate('Scan', { testId: result?.id })}
                     activeOpacity={0.8}
                 >
                     <Text style={styles.uploadButtonText}>Upload/Scan Image for this Test</Text>
@@ -83,7 +83,6 @@ const ViewTest: FC = () => {
                         <Text style={styles.resultLabel}>Species: <Text style={styles.resultValue}>{result.species || '-'}</Text></Text>
                         <Text style={styles.resultLabel}>Concentration: <Text style={styles.resultValue}>{result.concentration || '-'}</Text></Text>
                         <Text style={styles.resultLabel}>Infection Detected: <Text style={styles.resultValue}>{result.infection_detected ? 'Yes' : 'No'}</Text></Text>
-                        <Text style={styles.resultLabel}>Antibiotic: <Text style={styles.resultValue}>{result.antibiotic || '-'}</Text></Text>
                         <Text style={styles.resultLabel}>Status: <Text style={styles.resultValue}>{result.status || '-'}</Text></Text>
                         <Text style={styles.resultLabel}>Created At: <Text style={styles.resultValue}>{result.created_at ? formatDateTime(result.created_at) : '-'}</Text></Text>
                     </View>
