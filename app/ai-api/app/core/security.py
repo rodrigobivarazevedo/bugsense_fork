@@ -5,7 +5,6 @@ from fastapi.security import OAuth2PasswordBearer
 from fastapi import Security, HTTPException, status, Depends
 from fastapi.security.api_key import APIKeyHeader
 from app.core.config import secrets_manager
-from pydantic import BaseModel
 import secrets
 
 # ==================================== Configuration ========================================================
@@ -21,18 +20,20 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 async def verify_jwt_token(token: Annotated[str, Depends(oauth2_scheme)]):
     # 1) Decode JWT, check signature, expiry, etc.
+    #print(f"[DEBUG] Verifying JWT token: {token}")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        
+        #print(f"[DEBUG] Decoded JWT payload: {payload}")
     except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401)
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401)
-          
-    return True
+        #print("[DEBUG] JWT token expired.")
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError as e:
+        #print(f"[DEBUG] Invalid JWT token: {e}")
+        raise HTTPException(status_code=401, detail="Invalid token")
+    return payload
 
 
-async def get_current_user(request: Request, admin: bool = False, auth_headers: bool = True): 
+async def get_current_user(request: Request, auth_headers: bool = True): 
     """
     Extracts and verifies a JWT token from the request headers.
 
@@ -55,19 +56,21 @@ async def get_current_user(request: Request, admin: bool = False, auth_headers: 
     
     if auth_headers:
         auth_header = request.headers.get("Authorization")
-        
+        #print(f"[DEBUG] Authorization header: {auth_header}")
         if not auth_header or not auth_header.startswith("Bearer "):
+            #print("[DEBUG] Missing or malformed Authorization header.")
             raise HTTPException(
                 status_code=401,
+                detail="Missing or malformed Authorization header."
             )
-        
         access_token = auth_header.split("Bearer ")[1]
-        
+        #print(f"[DEBUG] Extracted access token: {access_token}")
     else:
         access_token = request.headers.get("X-access-token")
-        
-    token_data = await verify_jwt_token(access_token, admin)
-        
+        #print(f"[DEBUG] X-access-token header: {access_token}")
+    
+    token_data = await verify_jwt_token(access_token)
+    #print(f"[DEBUG] Token data returned from verify_jwt_token: {token_data}")
     return token_data
         
         

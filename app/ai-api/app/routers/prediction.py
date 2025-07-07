@@ -20,6 +20,8 @@ async def get_species_prediction(
     date: Optional[str] = Query(None, description="Format: YYYY-MM-DD"), 
     storage: Optional[str] = Query("local", enum=["local", "gcs"])
 ):
+    
+    print("Request headers:", request.headers)
     token = await get_current_user(request)
         
     try:

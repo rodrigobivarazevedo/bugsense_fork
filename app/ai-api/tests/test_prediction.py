@@ -2,12 +2,18 @@ import requests
 
 BASE_URL = "http://0.0.0.0:5001/ml_api/prediction"
 
+JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTE5MDYyODR9.yehMu5KF3ocClcZ-cAOZ88xFJXgVgMnJvNqUvNU2ZWI"  # Replace with your actual JWT token or generate it
+
+HEADERS = {
+    "Authorization": f"Bearer {JWT_TOKEN}"
+}
+
 def get_user_prediction_species(qr_data, date=None):
     params = {"qr_data": qr_data, "storage": "gcs"}
     if date:
         params["date"] = date
 
-    response = requests.get(f"{BASE_URL}/species/", params=params)
+    response = requests.get(f"{BASE_URL}/species/", params=params, headers=HEADERS)
     print(f"Species prediction for {qr_data} (date={date}):")
     print("Status Code:", response.status_code)
     try:
@@ -24,7 +30,7 @@ def get_user_prediction_concentration(qr_data, date=None):
     if date:
         params["date"] = date
 
-    response = requests.get(f"{BASE_URL}/concentration/", params=params)
+    response = requests.get(f"{BASE_URL}/concentration/", params=params, headers=HEADERS)
     print(f"Concentration prediction for {qr_data} (date={date}):")
     print("Status Code:", response.status_code)
     try:
