@@ -118,7 +118,7 @@ def majority_vote(fold_models, images):
     return voted_preds
 
     
-def predict(images: torch.Tensor, use_two_stage: bool = True, task="species"):
+def predict(images: torch.Tensor, task="species", use_two_stage: bool = True):
     """
     Predicts using either only the first-tier or both tiers of the classification model.
     
@@ -206,18 +206,42 @@ def predict(images: torch.Tensor, use_two_stage: bool = True, task="species"):
         
     elif task == "concentration":
         
+        concentration_map = {
+            1: "high",
+            0: "low"
+        }
+        
+        # If a batch of images is passed, select the last one
+        if images.dim() == 4:  # Shape: [N, C, H, W]
+            image = images[-1]  # Last image in the sequence
+        elif images.dim() == 3:  # Shape: [C, H, W]
+            image = images
+        else:
+            raise ValueError("Expected image tensor with shape [C, H, W] or [N, C, H, W].")
+
+
         model = load_concentration_model(num_classes=2)
+
+        img = image.unsqueeze(0).to(device)  # Add batch dimension
+
+        output = model(img)  # Raw logits
+
+        probs = torch.softmax(output, dim=1)
+        confidence, predicted = torch.max(probs, 1)
+
+        #native_int_preds = int(predicted.cpu().detach().numpy()) 
+        #confidence_score = float(confidence.cpu().detach().numpy())
         
-        img = images.unsqueeze(0).to(device)
+        native_int_preds = predicted.cpu().item() 
+        confidence_score = confidence.cpu().item()
         
-        output = model(img)
-        #pred = output.argmax(dim=1)
-        _, predicted = torch.max(output, 1)
-        
-        # Convert to native Python ints
-        native_int_preds = int(predicted.cpu().numpy()) 
-        
-        return native_int_preds
+        print(native_int_preds)
+        print("type", type(native_int_preds))
+
+        return {
+            "concentration": concentration_map.get(native_int_preds),
+            "confidence": confidence_score
+        }
 
 
         
