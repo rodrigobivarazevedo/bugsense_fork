@@ -20,7 +20,7 @@ async def get_species_prediction(
     date: Optional[str] = Query(None, description="Format: YYYY-MM-DD"), 
     storage: Optional[str] = Query("local", enum=["local", "gcs"])
 ):
-    #token = await get_current_user(request)
+    token = await get_current_user(request)
         
     try:
         
@@ -105,13 +105,13 @@ async def get_species_prediction(
     summary="Retrieve user's prediction history",
     status_code=status.HTTP_200_OK,
 )
-async def get_species_prediction(
+async def get_concentration_prediction(
     request: Request,
     qr_data: str = Query(...),
     date: Optional[str] = Query(None, description="Format: YYYY-MM-DD"), 
     storage: Optional[str] = Query("local", enum=["local", "gcs"])
 ):
-    #token = await get_current_user(request)
+    token = await get_current_user(request)
         
     try:
         

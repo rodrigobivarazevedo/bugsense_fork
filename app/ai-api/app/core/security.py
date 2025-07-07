@@ -17,37 +17,19 @@ ALGORITHM = secrets_manager.security_secrets.get("ALGORITHM")
 
 # ==================================== API Token ========================================================
 
-class TokenData(BaseModel):
-    uid: str
-    scope: str
-    username: str
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-async def verify_jwt_token(token: Annotated[str, Depends(oauth2_scheme)], admin: bool = False):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-    )
-    
+async def verify_jwt_token(token: Annotated[str, Depends(oauth2_scheme)]):
     # 1) Decode JWT, check signature, expiry, etc.
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        uid: str = payload.get("sub")
-        scope: str = payload.get("scope")
         
-        if admin:
-            if not uid or scope != "admin":
-                raise credentials_exception
-        else:
-            if not uid or scope not in ("access", "admin"):
-                raise credentials_exception
-
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401)
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401)
           
-    return TokenData(uid=uid, scope=scope)
+    return True
 
 
 async def get_current_user(request: Request, admin: bool = False, auth_headers: bool = True): 
@@ -103,4 +85,6 @@ async def get_api_key(api_key_header: str = Security(api_key_header)):
     
     return api_key_header
     
+
+
 
