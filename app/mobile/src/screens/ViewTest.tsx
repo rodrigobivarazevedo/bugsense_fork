@@ -13,6 +13,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { styles } from './ViewTest.styles';
+import RenderIcon from '../components/RenderIcon';
+import { themeColors } from '../theme/GlobalTheme';
 
 const formatDateTime = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -95,42 +97,65 @@ const ViewTest: FC = () => {
         }
     };
 
+    const goToScan = () => {
+        // @ts-ignore
+        navigation.navigate('Scan', { testId: test?.id });
+    };
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>Test Details</Text>
             <View style={styles.section}>
-                <Text style={styles.label}>Time:</Text>
+                <Text style={styles.label}>Test Started At:</Text>
                 <Text style={styles.value}>{result?.created_at ? formatDateTime(result.created_at) : '-'}</Text>
-                <Text style={styles.label}>Status:</Text>
+                <Text style={styles.label}>Test Status:</Text>
                 <Text style={styles.value}>{result?.status || '-'}</Text>
-                <Text style={styles.label}>QR Data:</Text>
+                <Text style={styles.label}>Test QR Data:</Text>
                 <Text style={styles.value}>{result?.qr_data || '-'}</Text>
             </View>
 
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Upload Image</Text>
-                <TouchableOpacity
-                    style={styles.uploadButton}
-                    onPress={pickImage}
-                    activeOpacity={0.8}
-                >
-                    <Text style={styles.uploadButtonText}>Pick Image from Gallery</Text>
-                </TouchableOpacity>
+                <View style={styles.imageButtonsWrapper}>
+                    <TouchableOpacity
+                        style={styles.uploadButton}
+                        onPress={pickImage}
+                        activeOpacity={0.85}
+                    >
+                        <RenderIcon
+                            family="materialIcons"
+                            icon="photo-library"
+                            fontSize={20}
+                            color={themeColors.white}
+                        />
+                        <Text style={styles.uploadButtonText}>
+                            Pick from Gallery
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.scanButton}
+                        onPress={goToScan}
+                        activeOpacity={0.85}
+                    >
+                        <RenderIcon
+                            family="entypo"
+                            icon="camera"
+                            fontSize={20}
+                            color={themeColors.primary}
+                        />
+                        <Text style={styles.scanButtonText}>
+                            Launch Scanner
+                        </Text>
+                    </TouchableOpacity>
+                </View>
                 {image && (
                     <>
-                        <Image
-                            source={{ uri: image }}
-                            style={styles.image}
-                            resizeMode="cover"
-                        />
+                        <Image source={{ uri: image }} style={styles.image} resizeMode="cover" />
                         <TouchableOpacity
-                            style={styles.uploadButton}
+                            style={[styles.uploadButton, uploading && { backgroundColor: themeColors.themeGray }]}
                             onPress={uploadImage}
                             disabled={uploading}
                         >
-                            <Text style={styles.uploadButtonText}>
-                                {uploading ? 'Uploading...' : 'Upload Image'}
-                            </Text>
+                            <Text style={styles.uploadButtonText}>{uploading ? 'Uploading...' : 'Upload Image'}</Text>
                         </TouchableOpacity>
                     </>
                 )}
@@ -139,16 +164,15 @@ const ViewTest: FC = () => {
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Test Results</Text>
                 {loading ? (
-                    <ActivityIndicator size="small" color="#888" />
+                    <ActivityIndicator size="small" color={themeColors.primary} />
                 ) : error ? (
                     <Text style={styles.error}>{error}</Text>
                 ) : result ? (
                     <View style={styles.resultBox}>
-                        <Text style={styles.resultLabel}>Species: <Text style={styles.resultValue}>{result.species || '-'}</Text></Text>
-                        <Text style={styles.resultLabel}>Concentration: <Text style={styles.resultValue}>{result.concentration || '-'}</Text></Text>
                         <Text style={styles.resultLabel}>Infection Detected: <Text style={styles.resultValue}>{result.infection_detected ? 'Yes' : 'No'}</Text></Text>
-                        <Text style={styles.resultLabel}>Status: <Text style={styles.resultValue}>{result.status || '-'}</Text></Text>
-                        <Text style={styles.resultLabel}>Created At: <Text style={styles.resultValue}>{result.created_at ? formatDateTime(result.created_at) : '-'}</Text></Text>
+                        <Text style={styles.resultLabel}>Species: <Text style={styles.resultValue}>{result.species || '-'}</Text></Text>
+                        <Text style={styles.resultLabel}>Concentration: <Text style={styles.resultValue}>{result.concentration || '-'} CFU/mL</Text></Text>
+                        <Text style={styles.resultLabel}>Test Completed At: <Text style={styles.resultValue}>{test.closed_at ? formatDateTime(test.closed_at) : '-'}</Text></Text>
                     </View>
                 ) : (
                     <Text style={styles.placeholder}>No results available for this test yet.</Text>
