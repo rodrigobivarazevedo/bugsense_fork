@@ -41,6 +41,12 @@ if __name__ == "__main__":
     get_user_prediction_concentration(qr_data, date)
     
     
+    # test for date that doenst exist/no data
+    date = "2025-06-06"
+    get_user_prediction_species(qr_data, date)
+    get_user_prediction_concentration(qr_data, date)
+    
+    
     
     
     
