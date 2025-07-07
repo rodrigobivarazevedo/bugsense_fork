@@ -127,4 +127,28 @@ export const styles = StyleSheet.create({
         color: themeColors.text,
         fontSize: rem(0.9375),
     },
+    qrRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: rem(0.25),
+        marginBottom: rem(0.5),
+        backgroundColor: themeColors.secondary,
+        borderRadius: rem(0.375),
+        paddingHorizontal: rem(0.5),
+        paddingVertical: rem(0.25),
+    },
+    qrValue: {
+        flex: 1,
+        color: themeColors.text,
+        fontSize: rem(1),
+        fontWeight: '500',
+        marginRight: rem(0.5),
+    },
+    copyButton: {
+        padding: rem(0.25),
+        borderRadius: rem(0.5),
+        backgroundColor: 'transparent',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 });

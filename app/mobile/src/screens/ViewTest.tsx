@@ -15,10 +15,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { styles } from './ViewTest.styles';
 import RenderIcon from '../components/RenderIcon';
 import { themeColors } from '../theme/GlobalTheme';
+import * as Clipboard from 'expo-clipboard';
 
-const formatDateTime = (dateStr: string) => {
+const formatDateGerman = (dateStr: string) => {
+    if (!dateStr) return '-';
     const date = new Date(dateStr);
-    return date.toLocaleString();
+    return date.toLocaleDateString('de-DE', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
 };
 
 const ViewTest: FC = () => {
@@ -31,6 +39,7 @@ const ViewTest: FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
     const [image, setImage] = useState<string | null>(null);
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         const fetchResult = async () => {
@@ -102,15 +111,37 @@ const ViewTest: FC = () => {
         navigation.navigate('Scan', { testId: test?.id });
     };
 
+    const handleCopyQrData = async () => {
+        await Clipboard.setStringAsync(test?.qr_data || '');
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1200);
+    };
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.section}>
                 <Text style={styles.label}>Test Started At:</Text>
-                <Text style={styles.value}>{result?.created_at ? formatDateTime(result.created_at) : '-'}</Text>
+                <Text style={styles.value}>{formatDateGerman(result?.created_at)}</Text>
                 <Text style={styles.label}>Test Status:</Text>
                 <Text style={styles.value}>{result?.status || '-'}</Text>
                 <Text style={styles.label}>Test QR Data:</Text>
-                <Text style={styles.value}>{result?.qr_data || '-'}</Text>
+                <View style={styles.qrRow}>
+                    <Text
+                        style={styles.qrValue}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                    >
+                        {result?.qr_data || '-'}
+                    </Text>
+                    <TouchableOpacity style={styles.copyButton} onPress={handleCopyQrData}>
+                        <RenderIcon
+                            family="materialIcons"
+                            icon={copied ? 'check' : 'content-copy'}
+                            fontSize={18}
+                            color={themeColors.primary}
+                        />
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <View style={styles.section}>
@@ -172,7 +203,7 @@ const ViewTest: FC = () => {
                         <Text style={styles.resultLabel}>Infection Detected: <Text style={styles.resultValue}>{result.infection_detected ? 'Yes' : 'No'}</Text></Text>
                         <Text style={styles.resultLabel}>Species: <Text style={styles.resultValue}>{result.species || '-'}</Text></Text>
                         <Text style={styles.resultLabel}>Concentration: <Text style={styles.resultValue}>{result.concentration || '-'} CFU/mL</Text></Text>
-                        <Text style={styles.resultLabel}>Test Completed At: <Text style={styles.resultValue}>{test.closed_at ? formatDateTime(test.closed_at) : '-'}</Text></Text>
+                        <Text style={styles.resultLabel}>Test Completed At: <Text style={styles.resultValue}>{test.closed_at ? formatDateGerman(test.closed_at) : '-'}</Text></Text>
                     </View>
                 ) : (
                     <Text style={styles.placeholder}>No results available for this test yet.</Text>
