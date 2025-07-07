@@ -22,7 +22,6 @@ def send_image(image_path, qr_data):
         print("Response content:", response.content)
         
         
-        
 def load_images(dir_path):
     img_names = [
         img_name for img_name in os.listdir(dir_path) if img_name.endswith('.png')
@@ -39,11 +38,88 @@ def load_images(dir_path):
     
 
 if __name__ == "__main__":
-    
-    dir_path = "test_data/K.P_L_0050_top/"
-    qr_data = "user1234567"
+         
+    dir_path = "test_data/Ste_L_0036_top/"
+    qr_data = "user1"
     
     images = load_images(dir_path)
     
     for image_path in images:
         send_image(image_path, qr_data)
+        
+        
+    dir_path = "test_data/S.S_L_0023_top/"
+    qr_data = "user2"
+    
+    images = load_images(dir_path)
+    
+    for image_path in images:
+        send_image(image_path, qr_data)
+        
+    
+    dir_path = "test_data/S.A_L_0026_top/"
+    qr_data = "user3"
+    
+    images = load_images(dir_path)
+    
+    for image_path in images:
+        send_image(image_path, qr_data)
+        
+        
+    dir_path = "test_data/P.M_L_0052_top/"
+    qr_data = "user4"
+    
+    images = load_images(dir_path)
+    
+    for image_path in images:
+        send_image(image_path, qr_data)
+        
+    
+    dir_path = "test_data/P.A_L_0018_top/"
+    qr_data = "user5"
+    
+    images = load_images(dir_path)
+    
+    for image_path in images:
+        send_image(image_path, qr_data)
+        
+        
+    dir_path = "test_data/K.P_L_0050_top/"
+    qr_data = "user6"
+    
+    images = load_images(dir_path)
+    
+    for image_path in images:
+        send_image(image_path, qr_data)
+        
+        
+    dir_path = "test_data/E.H_L_0059_top/"
+    qr_data = "user7"
+    
+    images = load_images(dir_path)
+    
+    for image_path in images:
+        send_image(image_path, qr_data)
+        
+        
+    dir_path = "test_data/E.F_L_0035_top/"
+    qr_data = "user8"
+    
+    images = load_images(dir_path)
+    
+    for image_path in images:
+        send_image(image_path, qr_data)
+        
+        
+    dir_path = "test_data/E.C_L_0039_top/"
+    qr_data = "user9"
+    
+    images = load_images(dir_path)
+    
+    for image_path in images:
+        send_image(image_path, qr_data)
+        
+
+        
+        
+  
