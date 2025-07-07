@@ -1,53 +1,84 @@
 import requests
 
+BASE_URL = "http://0.0.0.0:5001/ml_api/prediction"
+
 def get_user_prediction_species(qr_data, date=None):
-    
-    if date is None:
-    
-        API_URL = f"http://0.0.0.0:5001/ml_api/prediction/species/?qr_data={qr_data}&storage=gcs"
-    
-    else:
-        API_URL = f"http://0.0.0.0:5001/ml_api/prediction/species/?qr_data={qr_data}&date={date}&storage=gcs"
- 
-    response = requests.get(API_URL)
+    params = {"qr_data": qr_data, "storage": "gcs"}
+    if date:
+        params["date"] = date
 
+    response = requests.get(f"{BASE_URL}/species/", params=params)
+    print(f"Species prediction for {qr_data} (date={date}):")
     print("Status Code:", response.status_code)
-    print("Response:", response.json())
+    try:
+        print("Response:", response.json())
+    except Exception:
+        print("Response content:", response.content)
+    print()
     
+    return response
+
+
 def get_user_prediction_concentration(qr_data, date=None):
-    
-    if date is None:
-    
-        API_URL = f"http://0.0.0.0:5001/ml_api/prediction/concentration/?qr_data={qr_data}&storage=gcs"
-        
-    else:
-        API_URL = f"http://0.0.0.0:5001/ml_api/prediction/concentration/?qr_data={qr_data}&date={date}&storage=gcs"
- 
-    response = requests.get(API_URL)
+    params = {"qr_data": qr_data, "storage": "gcs"}
+    if date:
+        params["date"] = date
 
+    response = requests.get(f"{BASE_URL}/concentration/", params=params)
+    print(f"Concentration prediction for {qr_data} (date={date}):")
     print("Status Code:", response.status_code)
-    print("Response:", response.json())
+    try:
+        print("Response:", response.json())
+    except Exception:
+        print("Response content:", response.content)
+    print()
+    
+    return response
+
 
 if __name__ == "__main__":
-    #qr_data = "user123456"
-    qr_data = "user1234567"
+    data_users = [
+    ("test_data/Ste_L_0036_top/", "user1", "Sterile", "low"),          # Sterile, low concentration
+    ("test_data/S.S_L_0023_top/", "user2", "Ssaprophyticus", "low"),  # Ssaprophyticus, low concentration
+    ("test_data/S.A_L_0026_top/", "user3", "Saureus", "high"),        # Saureus, high concentration
+    ("test_data/P.M_L_0052_top/", "user4", "Pmirabilis", "high"),     # Pmirabilis, high concentration
+    ("test_data/P.A_L_0018_top/", "user5", "Paeruginosa", "low"),     # Paeruginosa, low concentration
+    ("test_data/K.P_L_0050_top/", "user6", "Kpneumoniae", "high"),    # Kpneumoniae, high concentration
+    ("test_data/E.H_L_0059_top/", "user7", "Ehormaechei", "high"),    # Ehormaechei, high concentration 
+    ("test_data/E.F_L_0035_top/", "user8", "Efaecalis", "high"),      # Efaecalis, high concentration
+    ("test_data/E.C_L_0039_top/", "user9", "Ecoli", "high"),          # Ecoli, high concentration
+    ]
+
+    correct_species = 0
+    correct_concentration = 0
     
-    # test for current date when there is available data
-    get_user_prediction_species(qr_data)
-    get_user_prediction_concentration(qr_data)
-    
-    # test for specific date
-    date = "2025-07-06"
-    get_user_prediction_species(qr_data, date)
-    get_user_prediction_concentration(qr_data, date)
-    
-    
-    # test for date that doenst exist/no data
-    date = "2025-06-06"
-    get_user_prediction_species(qr_data, date)
-    get_user_prediction_concentration(qr_data, date)
-    
-    
-    
-    
-    
+    # Test current/latest predictions without date for all users
+    for dir_path, user, species, concentration in data_users:
+        response_species = get_user_prediction_species(user)
+        response_concentration = get_user_prediction_concentration(user)
+        
+        # formats:  # {'confidence': 1.0, 'concentration': 'high'}
+        # {'first_tier_preds': 4, 'first_tier_labels': 'Ecoli', 'second_tier_preds': 8, 'final_preds': 'Ecoli'}
+        
+        if response_species.json()['final_preds'] == species:
+            correct_species += 1
+            
+        if response_concentration.json()['concentration'] == concentration:
+            correct_concentration += 1
+            
+            
+    print("correct species", correct_species)
+    print("correct concentration", correct_concentration)
+            
+
+    # # Test predictions for a specific date with data
+    # test_date = "2025-07-06"
+    # for dir_path, qr_data, user, _, _ in data_users:
+    #     get_user_prediction_species(user, test_date)
+    #     get_user_prediction_concentration(user, test_date)
+
+    # # Test predictions for a date without data
+    # no_data_date = "2025-06-06"
+    # for dir_path, qr_data, user, _, _ in data_users:
+    #     get_user_prediction_species(user, no_data_date)
+    #     get_user_prediction_concentration(user, no_data_date)
