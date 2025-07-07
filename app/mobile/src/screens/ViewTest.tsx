@@ -4,8 +4,11 @@ import {
     Text,
     TouchableOpacity,
     ActivityIndicator,
-    ScrollView
+    ScrollView,
+    Image,
+    Alert,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,6 +27,8 @@ const ViewTest: FC = () => {
     const [result, setResult] = useState<any>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const [image, setImage] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchResult = async () => {
@@ -47,6 +52,49 @@ const ViewTest: FC = () => {
         fetchResult();
     }, [test?.qr_data]);
 
+    const pickImage = async () => {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!permissionResult.granted) {
+            Alert.alert('Permission required', 'Permission to access media library is required!');
+            return;
+        }
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 0.8,
+        });
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+            setImage(result.assets[0].uri);
+        }
+    };
+
+    const uploadImage = async () => {
+        if (!image) return;
+        setUploading(true);
+        try {
+            const token = await AsyncStorage.getItem('token');
+            const formData = new FormData();
+            formData.append('image', {
+                uri: image,
+                name: 'test_image.jpg',
+                type: 'image/jpeg',
+            } as any);
+            formData.append('test_id', test?.id);
+            await Api.post('upload/image/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            Alert.alert('Success', 'Image uploaded successfully!');
+            setImage(null);
+        } catch (err) {
+            Alert.alert('Upload failed', 'Could not upload image.');
+        } finally {
+            setUploading(false);
+        }
+    };
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Test Details</Text>
@@ -61,15 +109,31 @@ const ViewTest: FC = () => {
 
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Upload Image</Text>
-                <Text style={styles.placeholder}>[Upload field coming soon]</Text>
                 <TouchableOpacity
                     style={styles.uploadButton}
-                    // @ts-ignore
-                    onPress={() => navigation.navigate('Scan', { testId: result?.id })}
+                    onPress={pickImage}
                     activeOpacity={0.8}
                 >
-                    <Text style={styles.uploadButtonText}>Upload/Scan Image for this Test</Text>
+                    <Text style={styles.uploadButtonText}>Pick Image from Gallery</Text>
                 </TouchableOpacity>
+                {image && (
+                    <>
+                        <Image
+                            source={{ uri: image }}
+                            style={styles.image}
+                            resizeMode="cover"
+                        />
+                        <TouchableOpacity
+                            style={styles.uploadButton}
+                            onPress={uploadImage}
+                            disabled={uploading}
+                        >
+                            <Text style={styles.uploadButtonText}>
+                                {uploading ? 'Uploading...' : 'Upload Image'}
+                            </Text>
+                        </TouchableOpacity>
+                    </>
+                )}
             </View>
 
             <View style={styles.section}>

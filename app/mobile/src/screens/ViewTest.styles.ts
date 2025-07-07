@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { themeColors } from '../theme/GlobalTheme';
 
 export const styles = StyleSheet.create({
     container: {
@@ -38,12 +39,18 @@ export const styles = StyleSheet.create({
         color: '#aaa',
         marginBottom: 8
     },
+    image: {
+        width: '100%',
+        height: 200,
+        marginTop: 10,
+        borderRadius: 8
+    },
     uploadButton: {
-        backgroundColor: '#1976d2',
+        backgroundColor: themeColors.primary,
         padding: 12,
         borderRadius: 6,
         alignItems: 'center',
-        marginTop: 8
+        marginTop: 10
     },
     uploadButtonText: {
         color: '#fff',
