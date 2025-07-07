@@ -151,30 +151,32 @@ export const Results: FC = () => {
                     </View>
                 )}
                 renderItem={({ item }) => (
-                    <View style={styles.listItem}>
-                        <Text style={styles.listItemTime}>{formatTime(item.created_at, timeFormat)}</Text>
-                        <View style={styles.listItemStatusContainer}>
-                            <View
-                                style={[
-                                    styles.statusIndicator,
-                                    item.status === 'In Progress'
-                                        ? styles.statusIndicatorInProgress
-                                        : styles.statusIndicatorComplete,
-                                ]}
-                            />
-                            <Text style={styles.listItemStatus}>{item.status}</Text>
-                        </View>
-                        {userType === 'doctor' && (
-                            <View style={styles.listItemPatient}>
-                                <Text style={styles.listItemLabel}>Patient Name:</Text>
-                                <Text style={styles.listItemValue}>{item.patient_name}</Text>
-                                <Text style={styles.listItemLabel}>ID:</Text>
-                                <Text style={styles.listItemValue}>{item.patient_id}</Text>
-                                <Text style={styles.listItemLabel}>DOB:</Text>
-                                <Text style={styles.listItemValue}>{item.patient_dob}</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('ViewTest', { test: item })} activeOpacity={0.7}>
+                        <View style={styles.listItem}>
+                            <Text style={styles.listItemTime}>{formatTime(item.created_at, timeFormat)}</Text>
+                            <View style={styles.listItemStatusContainer}>
+                                <View
+                                    style={[
+                                        styles.statusIndicator,
+                                        item.status === 'In Progress'
+                                            ? styles.statusIndicatorInProgress
+                                            : styles.statusIndicatorComplete,
+                                    ]}
+                                />
+                                <Text style={styles.listItemStatus}>{item.status}</Text>
                             </View>
-                        )}
-                    </View>
+                            {userType === 'doctor' && (
+                                <View style={styles.listItemPatient}>
+                                    <Text style={styles.listItemLabel}>Patient Name:</Text>
+                                    <Text style={styles.listItemValue}>{item.patient_name}</Text>
+                                    <Text style={styles.listItemLabel}>ID:</Text>
+                                    <Text style={styles.listItemValue}>{item.patient_id}</Text>
+                                    <Text style={styles.listItemLabel}>DOB:</Text>
+                                    <Text style={styles.listItemValue}>{item.patient_dob}</Text>
+                                </View>
+                            )}
+                        </View>
+                    </TouchableOpacity>
                 )}
             />
         </View>

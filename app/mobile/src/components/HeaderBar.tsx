@@ -6,7 +6,7 @@ import RenderIcon from './RenderIcon';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { rem } from '../utils/Responsive';
 
-const MAIN_TABS = ['Home', 'Scan', 'Results', 'More'];
+const MAIN_TABS = ['Home', 'Scan', 'Results', 'Patients', 'More'];
 
 const HeaderBar: FC<any> = ({ navigation, route, options }) => {
     const insets = useSafeAreaInsets();
