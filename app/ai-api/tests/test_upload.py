@@ -1,18 +1,20 @@
+import os
+import re
 import requests
 
-# Correct FastAPI server URL for the upload endpoint with user_id as a path parameter
-API_URL = "http://0.0.0.0:5001/ml_api/upload/{user_id}?storage=local"
+# Endpoint format
+API_URL = "http://0.0.0.0:5001/ml_api/upload/?qr_data={qr_data}&storage=gcs"
 
-# Replace with the path to an image on your local system
-dir_path = "../data/test_data/E.C_L_0001_bottom/"
-user_id = "user123"
+dir_path = "../data/test_data/E.C_L_0014_top/"
+qr_data = "user123456"
 
-def send_image(image_path, user_id):
+def send_image(image_path, qr_data):
     with open(image_path, "rb") as image_file:
         files = {
-            "image": (image_path, image_file, "image/png"),
+            "image": (os.path.basename(image_path), image_file, "image/png"),
         }
-        response = requests.post(API_URL.format(user_id=user_id), files=files)
+        response = requests.post(API_URL.format(qr_data=qr_data), files=files)
+
     print(f"Sent {image_path}")
     print("Status Code:", response.status_code)
     try:
@@ -21,13 +23,15 @@ def send_image(image_path, user_id):
         print("Response content:", response.content)
 
 if __name__ == "__main__":
-    import os
-    # get all the images in the folder
-    images = [os.path.join(dir_path, f) for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))]
-    print(f"Found {len(images)} images in {dir_path}.")
-        
+    img_names = [
+        img_name for img_name in os.listdir(dir_path) if img_name.endswith('.png')
+    ]
+    img_names.sort(
+        key=lambda x: float(re.search(r'time([0-9\.]+)[._]', x).group(1))
+    )
+
+    images = [os.path.join(dir_path, f) for f in img_names]
+    print(f"Found {len(images)} images in {dir_path}, sorted by time.")
+
     for image_path in images:
-        # send each image to the API
-        send_image(image_path, user_id)
-    
-    
+        send_image(image_path, qr_data)

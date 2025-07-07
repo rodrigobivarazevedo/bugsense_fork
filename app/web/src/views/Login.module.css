@@ -1,94 +1,127 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #ECE6FF;
-    padding: 1.25rem;
-    min-height: 100vh;
-  }
-  
-  .logoContainer {
-    margin-bottom: 3.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .form {
-    width: 100%;
-    max-width: 25rem;
-  }
-  
-  .inputContainer {
-    width: 100%;
-    margin-bottom: 1.25rem;
-  }
-  
-  .inputWrapper {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #2E2747;
-    padding-right: 0.5rem;
-  }
-  
-  .styledInput {
-    flex: 1;
-    padding: 1rem;
-    color: #2E2747;
-    font-size: 1rem;
-    font-family: "System", sans-serif;
-    background-color: transparent;
-    border: none;
-    outline: none;
-  }
-  
-  .iconContainer {
-    padding: 0.625rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .loginButton {
-    width: 100%;
-    padding: 1rem;
-    background-color: #2E2747;
-    border-radius: 0.5rem;
-    margin-top: 1.25rem;
-    color: white;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.3s ease;
-    opacity: 1;
-    border: none;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #ece6ff;
+  padding: 1.25rem;
+  min-height: 100vh;
+}
 
-  .loginButton:hover {
-    background-color: #2E2747;
-  }
-  
-  .disabled {
-    opacity: 0.5;
-  }
-  
-  .loginButtonText {
-    text-align: center;
-  }
-  
-  .forgotPasswordButton {
-    margin-top: 1rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-align: left;
-    padding: 0;
-  }
-  
-  .forgotPasswordText {
-    color: #2E2747;
-    font-size: 0.875rem;
-    font-family: "System", sans-serif;
-  }
-  
+.logoContainer {
+  margin-bottom: 3.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form {
+  width: 100%;
+  max-width: 25rem;
+}
+
+.inputContainer {
+  width: 100%;
+  margin-bottom: 1.25rem;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #2e2747;
+  padding-right: 0.5rem;
+}
+
+.styledInput {
+  flex: 1;
+  padding: 1rem;
+  color: #2e2747;
+  font-size: 1rem;
+  font-family: "System", sans-serif;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+.iconContainer {
+  padding: 0.625rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loginButton {
+  width: 100%;
+  padding: 1rem;
+  background-color: #2e2747;
+  border-radius: 0.5rem;
+  margin-top: 1.25rem;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  opacity: 1;
+  border: none;
+}
+
+.loginButton:hover {
+  background-color: #2e2747;
+}
+
+.disabled {
+  opacity: 0.5;
+}
+
+.loginButtonText {
+  text-align: center;
+}
+
+.forgotPasswordButton {
+  margin-top: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+}
+
+.forgotPasswordText {
+  color: #2e2747;
+  font-size: 0.875rem;
+  font-family: "System", sans-serif;
+}
+
+.errorMessage {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+  font-size: 0.875rem;
+  text-align: center;
+  border: 1px solid #ffcdd2;
+}
+
+.linkContainer {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.linkText {
+  font-size: 0.875rem;
+  color: #2e2747;
+}
+
+.linkButton {
+  background: none;
+  border: none;
+  color: #2e2747;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: 0;
+}
