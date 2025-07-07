@@ -29,7 +29,8 @@ def get_user_prediction_concentration(qr_data, date=None):
     print("Response:", response.json())
 
 if __name__ == "__main__":
-    qr_data = "user123456"
+    #qr_data = "user123456"
+    qr_data = "user1234567"
     
     # test for current date when there is available data
     get_user_prediction_species(qr_data)
