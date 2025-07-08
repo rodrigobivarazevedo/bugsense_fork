@@ -59,7 +59,8 @@ async def get_species_prediction(
             response = {
                 "message": "Not enough images to make a prediction.",
                 "qr_data": qr_data,
-                "date": input_date
+                "date": input_date,
+                "species": None
             }
 
             return JSONResponse(content=response,
@@ -71,9 +72,10 @@ async def get_species_prediction(
         
         if window_input_tensor is None:
             response = {
-                "message": "Not enouogh images to make a prediction.",
+                "message": "Not enough images to make a prediction.",
                 "qr_data": qr_data,
-                "date": input_date
+                "date": input_date,
+                "species": None
             }
 
             return JSONResponse(content=response,
@@ -83,11 +85,16 @@ async def get_species_prediction(
 
         result = predict(window_input_tensor, task="species", use_two_stage=True)
         
+        species = result.get("final_preds")
+        
         response = {
-            "first_tier_preds": result["first_tier_preds"],
-            "first_tier_labels": result["first_tier_labels"],
-            "second_tier_preds": result["second_tier_preds"],
-            "final_preds": result["final_preds"]
+            "first_tier_preds": result.get("first_tier_preds"),
+            "first_tier_labels": result.get("first_tier_labels"),
+            "second_tier_preds": result.get("second_tier_preds"),
+            "message": "Prediction successful",
+            "qr_data": qr_data,
+            "date": input_date,
+            "species": species if species else None
         }
         
         return JSONResponse(content=response,
@@ -100,8 +107,7 @@ async def get_species_prediction(
        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
    
    
-   
-   
+
 @router.get(
     "/concentration/",
     summary="Retrieve user's prediction history",
@@ -150,7 +156,9 @@ async def get_concentration_prediction(
             response = {
                 "message": "Not enough images to make a prediction.",
                 "qr_data": qr_data,
-                "date": input_date
+                "date": input_date,
+                "confidence": None,
+                "concentration": None,
             }
 
             return JSONResponse(content=response,
@@ -162,9 +170,11 @@ async def get_concentration_prediction(
         
         if image_input_tensor is None:
             response = {
-                "message": "Not enouogh images to make a prediction.",
+                "message": "Not enough images to make a prediction.",
                 "qr_data": qr_data,
-                "date": input_date
+                "date": input_date,
+                "confidence": None,
+                "concentration": None,
             }
 
             return JSONResponse(content=response,
@@ -174,9 +184,15 @@ async def get_concentration_prediction(
 
         result = predict(image_input_tensor, task="concentration")
         
+        confidence = result.get("confidence")
+        concentration = result.get("concentration")
+
         response = {
-            "confidence": result.get("confidence"),
-            "concentration": result.get("concentration"),
+            "message": "Prediction successful",
+            "qr_data": qr_data,
+            "date": input_date,
+            "confidence": confidence,
+            "concentration": concentration if concentration else None,
         }
         
         return JSONResponse(content=response,

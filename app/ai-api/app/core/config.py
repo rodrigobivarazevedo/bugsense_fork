@@ -32,7 +32,8 @@ class SecretsManager:
             "ML_API_KEY",
             "DJANGO_SECRET_KEY",
             "GCS_BUCKET_NAME",
-            "ALGORITHM"
+            "ALGORITHM",
+            "HOST_IP"
         ]
 
         print(f"Loading security secrets for {self.env} environment")
