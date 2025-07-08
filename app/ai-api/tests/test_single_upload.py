@@ -4,7 +4,7 @@ import requests
 
 # inside ai-api folder run python -m app.utils.create_token and make sure to have a venv running with jwt package
 
-JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTE5OTAwNjN9.utSk3So8IpSmOGi2FuN9WvU2wvX_vsojDHC6zfePHTg"  # Replace with your actual JWT token or generate it
+JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTE5OTE3NDl9.brsTzkfXbtTu5DKgp7GRcF8oig_W6CTET49Wyt3R01Q"  # Replace with your actual JWT token or generate it
 
 HEADERS = {
     "Authorization": f"Bearer {JWT_TOKEN}"
@@ -60,8 +60,8 @@ def load_images(dir_path):
 if __name__ == "__main__":
 
     data_users = [
-        ("test_data/Ste_L_0036_top/", "user1"), # sterile, low concentration
-        # ("test_data/S.S_L_0023_top/", "user2"), # S.Saprophyticus, low concentration
+        #("test_data/Ste_L_0036_top/", "user1"), # sterile, low concentration
+        ("test_data/S.S_L_0023_top/", "user2"), # S.Saprophyticus, low concentration
         # ("test_data/S.A_L_0026_top/", "user3"), # S.Aureus, high concentration
         # ("test_data/P.M_L_0052_top/", "user4"), # P.Mirabilis, high concentration
         # ("test_data/P.A_L_0018_top/", "user5"), # P.Aeruginosa, low concentration
@@ -78,8 +78,8 @@ if __name__ == "__main__":
         for image_path in images:
             count += 1
             
-            if count > 40:
-                break
+            # if count > 40:
+            #     break
             
             response = send_image(image_path, qr_data)
             

@@ -3,7 +3,6 @@ from fastapi.responses import JSONResponse
 from app.core.security import get_current_user
 from app.core.config import secrets_manager
 from app.utils.upload import save_file_locally, upload_image_to_gcs
-import asyncio
 from typing import Optional
 from fastapi import Request, HTTPException  # ← Needed
 
@@ -124,13 +123,15 @@ async def send_results(
                 "concentration_prediction": concentration_response.json()
             }
             concentration = predictions["concentration_prediction"].get('concentration')
-            species = predictions["species_prediction"].get('final_preds')
+            species = predictions["species_prediction"].get('species')
             
             if concentration is None or species is None:
                 print("no results")
                 return 
             
             print("prediction ready")
+            print("species", species)
+            print("concentration", concentration)
             
         except httpx.RequestError as e:
             raise HTTPException(status_code=500, detail=f"HTTPX request error: {str(e)}")
