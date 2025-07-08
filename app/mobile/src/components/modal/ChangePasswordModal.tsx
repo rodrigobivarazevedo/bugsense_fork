@@ -49,7 +49,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ visible, onCl
 
     const handleNewPasswordChange = (text: string) => {
         setNewPassword(text);
-        setPasswordError(validatePassword(text, userEmail, userFullName));
+        setPasswordError(validatePassword(t, text, userEmail, userFullName));
         if (confirmPassword && text !== confirmPassword) {
             setConfirmError(t('Passwords do not match'));
         } else {

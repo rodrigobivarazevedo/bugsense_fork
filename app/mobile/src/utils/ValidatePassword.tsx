@@ -1,9 +1,10 @@
-import { t } from 'i18next';
+import { TFunction } from 'i18next';
 
 export const validatePassword = (
+    t: TFunction,
     pass: string,
-    email: string,
-    fullName: string
+    email?: string,
+    fullName?: string
 ): string => {
     if (pass.length < 8) {
         return t('Password must be at least 8 characters long');

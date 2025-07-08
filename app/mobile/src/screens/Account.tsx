@@ -14,6 +14,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { formatDate } from '../utils/DateTimeFormatter';
 import ChangePasswordModal from '../components/modal/ChangePasswordModal';
+import {
+    securityQuestions,
+    SecurityQuestionsData,
+    validateSecurityQuestions,
+    getAvailableQuestionsForIndex as getAvailableQuestionsUtil,
+    hasSecurityQuestionsChanges as hasSecurityQuestionsChangesUtil
+} from '../utils/SecurityQuestions';
 
 export const Account: FC = () => {
     const { t } = useTranslation();
@@ -42,7 +49,7 @@ export const Account: FC = () => {
     const [showDatePicker, setShowDatePicker] = useState(false);
 
     // Security questions editing states
-    const [securityQuestions, setSecurityQuestions] = useState({
+    const [securityQuestionsData, setSecurityQuestionsData] = useState<SecurityQuestionsData>({
         security_question_1: '',
         security_answer_1: '',
         security_question_2: '',
@@ -50,7 +57,7 @@ export const Account: FC = () => {
         security_question_3: '',
         security_answer_3: ''
     });
-    const [originalSecurityQuestions, setOriginalSecurityQuestions] = useState({
+    const [originalSecurityQuestions, setOriginalSecurityQuestions] = useState<SecurityQuestionsData>({
         security_question_1: '',
         security_answer_1: '',
         security_question_2: '',
@@ -75,18 +82,7 @@ export const Account: FC = () => {
     const securityAnswer2Ref = useRef<TextInput>(null);
     const securityAnswer3Ref = useRef<TextInput>(null);
 
-    const availableQuestions = [
-        t("What was your first pet's name?"),
-        t("In which city were you born?"),
-        t("What is your mother's maiden name?"),
-        t("What was the name of your first school?"),
-        t("What is your favorite childhood memory?"),
-        t("What is your favorite color?"),
-        t("What is your hometown?"),
-        t("What was your first car?"),
-        t("What is your favorite food?"),
-        t("What is your dream job?")
-    ];
+    const availableQuestions = securityQuestions(t);
 
     const handleEdit = (field: string) => {
         setEditingField(field);
@@ -228,10 +224,10 @@ export const Account: FC = () => {
 
     // Security questions handlers
     const handleSecurityQuestionChange = (questionNumber: number, field: 'question' | 'answer', value: string) => {
-        const questionKey = `security_question_${questionNumber}` as keyof typeof securityQuestions;
-        const answerKey = `security_answer_${questionNumber}` as keyof typeof securityQuestions;
+        const questionKey = `security_question_${questionNumber}` as keyof typeof securityQuestionsData;
+        const answerKey = `security_answer_${questionNumber}` as keyof typeof securityQuestionsData;
 
-        setSecurityQuestions(prev => ({
+        setSecurityQuestionsData(prev => ({
             ...prev,
             [field === 'question' ? questionKey : answerKey]: value
         }));
@@ -244,13 +240,7 @@ export const Account: FC = () => {
     };
 
     const getAvailableQuestionsForIndex = (questionNumber: number) => {
-        const usedQuestions = [
-            securityQuestions.security_question_1,
-            securityQuestions.security_question_2,
-            securityQuestions.security_question_3
-        ].filter((q, index) => index !== questionNumber - 1 && q);
-
-        return availableQuestions.filter(q => !usedQuestions.includes(q));
+        return getAvailableQuestionsUtil(securityQuestionsData, questionNumber, availableQuestions);
     };
 
     const handleSecurityQuestionsSave = async () => {
@@ -261,9 +251,9 @@ export const Account: FC = () => {
 
         if (user) {
             try {
-                const response = await Api.put('users/me/', securityQuestions);
+                const response = await Api.put('users/me/', securityQuestionsData);
                 setUser(response.data);
-                setOriginalSecurityQuestions(securityQuestions);
+                setOriginalSecurityQuestions(securityQuestionsData);
                 Alert.alert(t('Success'), t('Security questions updated successfully'));
             } catch (error) {
                 console.error('Error updating security questions:', error);
@@ -278,31 +268,17 @@ export const Account: FC = () => {
         securityAnswer2Ref.current?.blur();
         securityAnswer3Ref.current?.blur();
 
-        setSecurityQuestions(originalSecurityQuestions);
+        setSecurityQuestionsData(originalSecurityQuestions);
     };
 
     // Check if security questions have changed
     const hasSecurityQuestionsChanges = () => {
-        return (
-            securityQuestions.security_question_1 !== originalSecurityQuestions.security_question_1 ||
-            securityQuestions.security_answer_1 !== originalSecurityQuestions.security_answer_1 ||
-            securityQuestions.security_question_2 !== originalSecurityQuestions.security_question_2 ||
-            securityQuestions.security_answer_2 !== originalSecurityQuestions.security_answer_2 ||
-            securityQuestions.security_question_3 !== originalSecurityQuestions.security_question_3 ||
-            securityQuestions.security_answer_3 !== originalSecurityQuestions.security_answer_3
-        );
+        return hasSecurityQuestionsChangesUtil(securityQuestionsData, originalSecurityQuestions);
     };
 
     // Only enable save if all 3 questions and answers are filled
     const areAllSecurityQuestionsFilled = () => {
-        return (
-            !!securityQuestions.security_question_1 &&
-            !!securityQuestions.security_answer_1 &&
-            !!securityQuestions.security_question_2 &&
-            !!securityQuestions.security_answer_2 &&
-            !!securityQuestions.security_question_3 &&
-            !!securityQuestions.security_answer_3
-        );
+        return validateSecurityQuestions(securityQuestionsData);
     };
 
     const renderEditableField = (field: string, value: string) => {
@@ -418,7 +394,7 @@ export const Account: FC = () => {
                     country: res.data.country || ''
                 });
                 // Initialize security questions fields
-                setSecurityQuestions({
+                setSecurityQuestionsData({
                     security_question_1: res.data.security_question_1 || '',
                     security_answer_1: '',
                     security_question_2: res.data.security_question_2 || '',
@@ -477,7 +453,7 @@ export const Account: FC = () => {
                             country: res.data.country || ''
                         });
                         // Update security questions fields
-                        setSecurityQuestions({
+                        setSecurityQuestionsData({
                             security_question_1: res.data.security_question_1 || '',
                             security_answer_1: '',
                             security_question_2: res.data.security_question_2 || '',
@@ -791,7 +767,7 @@ export const Account: FC = () => {
                                             activeOpacity={0.8}
                                         >
                                             <S.SelectorText>
-                                                {securityQuestions[`security_question_${num}` as keyof typeof securityQuestions] || t('Select Security Question')}
+                                                {securityQuestionsData[`security_question_${num}` as keyof typeof securityQuestionsData] || t('Select Security Question')}
                                             </S.SelectorText>
                                             <S.SelectorIcon>▼</S.SelectorIcon>
                                         </S.SelectorRow>
@@ -809,7 +785,7 @@ export const Account: FC = () => {
                                             </S.DropdownContainer>
                                         )}
                                         <S.AnswerInput
-                                            value={securityQuestions[`security_answer_${num}` as keyof typeof securityQuestions]}
+                                            value={securityQuestionsData[`security_answer_${num}` as keyof typeof securityQuestionsData]}
                                             onChangeText={(value: string) => handleSecurityQuestionChange(num, 'answer', value)}
                                             placeholder={t('Enter your answer')}
                                             placeholderTextColor={themeColors.themeGray}
@@ -837,17 +813,17 @@ export const Account: FC = () => {
                             </>
                         ) : (
                             <>
-                                {securityQuestions.security_question_1 ||
-                                    securityQuestions.security_question_2 ||
-                                    securityQuestions.security_question_3 ? (
+                                {securityQuestionsData.security_question_1 ||
+                                    securityQuestionsData.security_question_2 ||
+                                    securityQuestionsData.security_question_3 ? (
                                     <>
                                         {[1, 2, 3].map((num) => (
-                                            securityQuestions[`security_question_${num}` as keyof typeof securityQuestions] ? (
+                                            securityQuestionsData[`security_question_${num}` as keyof typeof securityQuestionsData] ? (
                                                 <S.ItemRow key={`viewq${num}`}>
                                                     <S.ItemTextCol>
                                                         <S.ItemLabel>{t('Question')} {num}</S.ItemLabel>
                                                         <S.ItemValue>
-                                                            {securityQuestions[`security_question_${num}` as keyof typeof securityQuestions]}
+                                                            {securityQuestionsData[`security_question_${num}` as keyof typeof securityQuestionsData]}
                                                         </S.ItemValue>
                                                     </S.ItemTextCol>
                                                 </S.ItemRow>
@@ -904,7 +880,7 @@ export const Account: FC = () => {
             <ChangePasswordModal
                 visible={showChangePasswordModal}
                 onClose={() => setShowChangePasswordModal(false)}
-                onSuccess={() => {}}
+                onSuccess={() => { }}
             />
         </S.Scroll>
     );
