@@ -111,7 +111,7 @@ export const Results: FC = () => {
                 stickySectionHeadersEnabled={true}
                 showsVerticalScrollIndicator={true}
                 sections={grouped.map(section => ({
-                    title: formatDate(section.date),
+                    title: formatDate(section.date, 'long', true, true),
                     data: section.data,
                 }))}
                 keyExtractor={item => item.id.toString()}

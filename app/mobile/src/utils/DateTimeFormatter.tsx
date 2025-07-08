@@ -10,9 +10,14 @@ export const formatDateTimeGerman = (dateStr: string) => {
     });
 };
 
-export const formatDate = (dateStr: string) => {
+export const formatDate = (
+    dateStr: string,
+    format: 'long' | 'short' = 'long',
+    showYear = true,
+    showDayOfWeek = false
+) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString(undefined, { month: 'long', day: '2-digit' });
+    return date.toLocaleDateString(undefined, { year: showYear ? 'numeric' : undefined, month: format, day: '2-digit', weekday: showDayOfWeek ? 'long' : undefined });
 }
 
 export const formatTime = (dateStr: string, timeFormat: '12' | '24') => {

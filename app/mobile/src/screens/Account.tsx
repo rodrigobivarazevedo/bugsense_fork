@@ -12,7 +12,7 @@ import GenericDateTimePicker from '../components/GenericDateTimePicker';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import React from 'react';
+import { formatDate } from '../utils/DateTimeFormatter';
 
 export const Account: FC = () => {
     const { t } = useTranslation();
@@ -161,7 +161,7 @@ export const Account: FC = () => {
 
     const handleDateChange = async (date: Date) => {
         setShowDatePicker(false);
-        const formatted = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+        const formatted = date.toISOString().split('T')[0];
         if (user) {
             try {
                 const response = await Api.put('users/me/', {
@@ -663,7 +663,7 @@ export const Account: FC = () => {
                         <S.ItemRow>
                             <S.ItemTextCol>
                                 <S.ItemLabel>{t('Date of birth')}</S.ItemLabel>
-                                {renderEditableField('dob', user?.dob)}
+                                {renderEditableField('dob', formatDate(user?.dob, 'long', true))}
                             </S.ItemTextCol>
                             <S.EditIconBtnLight onPress={() => handleEdit('dob')}>
                                 <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
@@ -839,21 +839,29 @@ export const Account: FC = () => {
                                             disabled={!(hasSecurityQuestionsChanges() && areAllSecurityQuestionsFilled())}
                                             onPress={async () => { await handleSecurityQuestionsSave(); setSecurityQuestionsEditMode(false); }}
                                         >
-                                            <S.AccountSaveButtonText disabled={!(hasSecurityQuestionsChanges() && areAllSecurityQuestionsFilled())}>{t('Save Changes')}</S.AccountSaveButtonText>
+                                            <S.AccountSaveButtonText
+                                                disabled={!(hasSecurityQuestionsChanges() && areAllSecurityQuestionsFilled())}
+                                            >
+                                                {t('Save Changes')}
+                                            </S.AccountSaveButtonText>
                                         </S.AccountSaveButton>
                                     </S.AccountActionContainer>
                                 )}
                             </>
                         ) : (
                             <>
-                                {securityQuestions.security_question_1 || securityQuestions.security_question_2 || securityQuestions.security_question_3 ? (
+                                {securityQuestions.security_question_1 ||
+                                    securityQuestions.security_question_2 ||
+                                    securityQuestions.security_question_3 ? (
                                     <>
                                         {[1, 2, 3].map((num) => (
                                             securityQuestions[`security_question_${num}` as keyof typeof securityQuestions] ? (
                                                 <S.ItemRow key={`viewq${num}`}>
                                                     <S.ItemTextCol>
                                                         <S.ItemLabel>{t('Question')} {num}</S.ItemLabel>
-                                                        <S.ItemValue>{securityQuestions[`security_question_${num}` as keyof typeof securityQuestions]}</S.ItemValue>
+                                                        <S.ItemValue>
+                                                            {securityQuestions[`security_question_${num}` as keyof typeof securityQuestions]}
+                                                        </S.ItemValue>
                                                     </S.ItemTextCol>
                                                 </S.ItemRow>
                                             ) : null
