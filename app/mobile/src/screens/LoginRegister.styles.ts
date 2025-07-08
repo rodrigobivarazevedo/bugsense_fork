@@ -67,6 +67,15 @@ export const StepTitle = styled.Text`
     margin-bottom: ${rem(1.875)}px;
 `;
 
+export const NoteText = styled.Text`
+    color: ${themeColors.primary};
+    font-size: ${rem(0.875)}px;
+    text-align: center;
+    margin-bottom: ${rem(1.25)}px;
+    opacity: 0.8;
+    line-height: ${rem(1.25)}px;
+`;
+
 export const InputContainer = styled.View`
     width: 100%;
     margin-bottom: ${rem(1.25)}px;
@@ -262,8 +271,6 @@ export const AddQuestionText = styled.Text`
     font-size: ${rem(0.875)}px;
     font-family: 'System';
 `;
-
-
 
 export const SelectorRow = styled.TouchableOpacity`
     flex-direction: row;

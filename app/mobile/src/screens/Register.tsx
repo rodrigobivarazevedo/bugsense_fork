@@ -249,6 +249,9 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
         <>
             <S.StepText>{t('Step 2 of 2')}</S.StepText>
             <S.StepTitle>{t('Security Questions')}</S.StepTitle>
+            <S.NoteText>
+                {t('We need these questions so we can help you reset your password if you forget your password')}
+            </S.NoteText>
 
             {securityQuestionsData.map((question, index) => (
                 <S.SecurityQuestionContainer key={index}>
