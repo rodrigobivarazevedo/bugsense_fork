@@ -94,11 +94,10 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({ visible, onClose, o
         !passwordError &&
         !confirmError;
 
-    // TODO: Update to use correct API endpoint
     const handleSave = async () => {
         setLoading(true);
         try {
-            await Api.post('users/change-password/', {
+            await Api.post('change-password/', {
                 old_password: currentPassword,
                 new_password: newPassword,
             });
@@ -108,10 +107,26 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({ visible, onClose, o
             if (onSuccess) onSuccess();
         } catch (err: any) {
             setLoading(false);
-            const message =
-                err.response?.data?.detail ||
-                err.response?.data?.non_field_errors?.[0] ||
-                err.message;
+            let message = err.message;
+
+            if (err.response?.data?.old_password && Array.isArray(err.response.data.old_password)) {
+                message = err.response.data.old_password[0];
+            }
+            else if (err.response?.data?.non_field_errors && Array.isArray(err.response.data.non_field_errors)) {
+                message = err.response.data.non_field_errors[0];
+            }
+            else if (err.response?.data) {
+                const errorFields = Object.keys(err.response.data);
+                if (errorFields.length > 0) {
+                    const firstField = errorFields[0];
+                    if (Array.isArray(err.response.data[firstField])) {
+                        message = err.response.data[firstField][0];
+                    } else {
+                        message = err.response.data[firstField];
+                    }
+                }
+            }
+
             Alert.alert(t('Error'), message);
         }
     };
