@@ -131,11 +131,9 @@ export const Scan: FC = () => {
                     service: 'ml',
                 } as any
             );
-            Alert.alert('Success', 'Image uploaded successfully!');
-            setShowCamera(false);
-            setSelectedScanType(null);
-            setHasScanned(false);
-            setPendingQR(null);
+            Alert.alert('Success', 'Image uploaded successfully!', [
+                { text: 'OK', onPress: () => resetScan() }
+            ]);
         } catch (err) {
             Alert.alert('Upload failed', 'Could not upload image.');
         } finally {
