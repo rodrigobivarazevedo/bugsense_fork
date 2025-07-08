@@ -11,20 +11,8 @@ import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import RenderIcon from '../components/RenderIcon';
-
-function formatDate(dateStr: string) {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString(undefined, { month: 'long', day: '2-digit' });
-}
-
-function formatTime(dateStr: string, timeFormat: '12' | '24') {
-    const date = new Date(dateStr);
-    return date.toLocaleTimeString(undefined, {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: timeFormat === '12',
-    });
-}
+import { getTranslatedTestStatus } from '../utils/TestResultsStatus';
+import { formatDate, formatTime } from '../utils/DateTimeFormatter';
 
 function groupByDate(results: any[]) {
     const groups: { [date: string]: any[] } = {};
@@ -34,11 +22,6 @@ function groupByDate(results: any[]) {
         groups[date].push(item);
     });
     return Object.entries(groups).map(([date, data]) => ({ date, data }));
-}
-
-function getRandomStatus() {
-    // REVIEW: To be replaced after update in backend
-    return Math.random() < 0.5 ? 'In Progress' : 'Complete';
 }
 
 export const Results: FC = () => {
@@ -77,18 +60,7 @@ export const Results: FC = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                // REVIEW: Add mock fields for now
-                const withMockFields = response.data.map((item: any) => {
-                    const status = getRandomStatus(); // REVIEW: random status for visualization
-                    return {
-                        ...item,
-                        status,
-                        patient_name: 'John Doe', // REVIEW: mock patient name
-                        patient_id: 'P123', // REVIEW: mock patient id
-                        patient_dob: '1990-05-10', // REVIEW: mock patient dob
-                    };
-                });
-                setResults(withMockFields);
+                setResults(response.data);
             } catch (err: any) {
                 setError('Failed to load results.');
             } finally {
@@ -139,7 +111,7 @@ export const Results: FC = () => {
                 stickySectionHeadersEnabled={true}
                 showsVerticalScrollIndicator={true}
                 sections={grouped.map(section => ({
-                    title: formatDate(section.date),
+                    title: formatDate(section.date, 'long', true, true),
                     data: section.data,
                 }))}
                 keyExtractor={item => item.id.toString()}
@@ -158,21 +130,21 @@ export const Results: FC = () => {
                                 <View
                                     style={[
                                         styles.statusIndicator,
-                                        item.status === 'In Progress'
-                                            ? styles.statusIndicatorInProgress
-                                            : styles.statusIndicatorComplete,
+                                        item.result_status === 'ongoing' || item.result_status === 'preliminary_assessment'
+                                            ? styles.statusIndicatorYellow
+                                            : styles.statusIndicatorGreen,
                                     ]}
                                 />
-                                <Text style={styles.listItemStatus}>{item.status}</Text>
+                                <Text style={styles.listItemStatus}>{getTranslatedTestStatus(item.result_status)}</Text>
                             </View>
-                            {userType === 'doctor' && (
+                            {userType === 'doctor' && item.patient && (
                                 <View style={styles.listItemPatient}>
                                     <Text style={styles.listItemLabel}>Patient Name:</Text>
-                                    <Text style={styles.listItemValue}>{item.patient_name}</Text>
+                                    <Text style={styles.listItemValue}>{item.patient.full_name || '-'}</Text>
                                     <Text style={styles.listItemLabel}>ID:</Text>
-                                    <Text style={styles.listItemValue}>{item.patient_id}</Text>
+                                    <Text style={styles.listItemValue}>{item.patient.id || '-'}</Text>
                                     <Text style={styles.listItemLabel}>DOB:</Text>
-                                    <Text style={styles.listItemValue}>{item.patient_dob}</Text>
+                                    <Text style={styles.listItemValue}>{item.patient.dob || '-'}</Text>
                                 </View>
                             )}
                         </View>

@@ -69,10 +69,10 @@ export const styles = StyleSheet.create({
         borderRadius: rem(0.25),
         marginRight: rem(0.5),
     },
-    statusIndicatorInProgress: {
+    statusIndicatorYellow: {
         backgroundColor: '#FFD600',
     },
-    statusIndicatorComplete: {
+    statusIndicatorGreen: {
         backgroundColor: '#4CAF50',
     },
     listItem: {

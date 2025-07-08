@@ -6,6 +6,7 @@ import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ConfirmationModal from '../components/modal/ConfirmationModal';
 import { styles } from './Scan.styles';
+import TestKitSelectModal from '../components/modal/TestKitSelectModal';
 
 type ScanType = 'qr-code' | 'test-strip' | null;
 
@@ -16,6 +17,8 @@ export const Scan: FC = () => {
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [hasScanned, setHasScanned] = useState(false);
     const [showInstructionsModal, setShowInstructionsModal] = useState(false);
+    const [showTestKitModal, setShowTestKitModal] = useState(false);
+    const [pendingPhoto, setPendingPhoto] = useState<string | null>(null);
 
     const handleSelectScanType = (type: ScanType) => {
         setSelectedScanType(type);
@@ -83,11 +86,56 @@ export const Scan: FC = () => {
         setPendingQR(null);
     };
 
+    const fetchOngoingTestKits = async () => {
+        const token = await AsyncStorage.getItem('token');
+        const response = await Api.get('qr-codes/list/', {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data.filter((kit: any) => kit.result_status !== 'closed');
+    };
+
     const handlePictureTaken = async (photoUri: string) => {
         if (selectedScanType === 'test-strip') {
-            Alert.alert('Test Strip', 'Test strip processing is not yet implemented.', [
+            setPendingPhoto(photoUri);
+            setShowTestKitModal(true);
+        }
+    };
+
+    const handleTestKitModalClose = () => {
+        setShowTestKitModal(false);
+        setPendingPhoto(null);
+    };
+
+    const handleTestKitModalConfirm = async (qrData: string) => {
+        setShowTestKitModal(false);
+        if (!pendingPhoto) return;
+        try {
+            const token = await AsyncStorage.getItem('token');
+            const formData = new FormData();
+            formData.append('image', {
+                uri: pendingPhoto,
+                name: 'test_strip.jpg',
+                type: 'image/jpeg',
+            } as any);
+            const storage = 'local'; // TODO: Change to 'gcs' when deployed to Google Cloud Storage
+            await Api.post(
+                `upload/?qr_data=${encodeURIComponent(qrData)}&storage=${storage}`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    service: 'ml',
+                } as any
+            );
+            Alert.alert('Success', 'Image uploaded successfully!', [
                 { text: 'OK', onPress: () => resetScan() }
             ]);
+        } catch (err) {
+            Alert.alert('Upload failed', 'Could not upload image.');
+        } finally {
+            setPendingPhoto(null);
         }
     };
 
@@ -114,6 +162,12 @@ export const Scan: FC = () => {
                     onClose={handleCancelLinkKit}
                     onConfirm={handleConfirmLinkKit}
                     message={"This test kit will be linked to your profile. Do you want to continue?"}
+                />
+                <TestKitSelectModal
+                    isOpen={showTestKitModal}
+                    onClose={handleTestKitModalClose}
+                    onConfirm={handleTestKitModalConfirm}
+                    fetchTestKits={fetchOngoingTestKits}
                 />
             </>
         );

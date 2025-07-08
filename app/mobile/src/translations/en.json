@@ -100,5 +100,20 @@
     "What is your mother's maiden name?": "What is your mother's maiden name?",
     "What was the name of your first school?": "What was the name of your first school?",
     "What is your favorite childhood memory?": "What is your favorite childhood memory?",
-    "Question": "Question"
+    "Question": "Question",
+    "Answer": "Answer",
+    "Enter your answer": "Enter your answer",
+    "Security questions updated successfully": "Security questions updated successfully",
+    "Failed to update security questions. Please try again.": "Failed to update security questions. Please try again.",
+    "What is your favorite color?": "What is your favorite color?",
+    "What is your hometown?": "What is your hometown?",
+    "What was your first car?": "What was your first car?",
+    "What is your favorite food?": "What is your favorite food?",
+    "What is your dream job?": "What is your dream job?",
+    "test_status_ongoing": "In Progress",
+    "test_status_preliminary_assessment": "Preliminary Assessment",
+    "test_status_ready": "Ready",
+    "test_status_closed": "Completed",
+    "yes": "Yes",
+    "no": "No"
 }

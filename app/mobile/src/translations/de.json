@@ -97,5 +97,20 @@
     "What is your mother's maiden name?": "Wie heißt Ihre Mutter vor der Heirat?",
     "What was the name of your first school?": "Wie heißt Ihre erste Schule?",
     "What is your favorite childhood memory?": "Was ist Ihr liebster Erinnerungsort?",
-    "Question": "Frage"
+    "Question": "Frage",
+    "Answer": "Antwort",
+    "Enter your answer": "Geben Sie Ihre Antwort ein",
+    "Security questions updated successfully": "Sicherheitsfragen erfolgreich aktualisiert",
+    "Failed to update security questions. Please try again.": "Sicherheitsfragen konnten nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
+    "What is your favorite color?": "Was ist Ihr Lieblingsfarbe?",
+    "What is your hometown?": "Wo wohnen Sie?",
+    "What was your first car?": "Was war Ihr erstes Auto?",
+    "What is your favorite food?": "Was ist Ihr Lieblingsessen?",
+    "What is your dream job?": "Was ist Ihr Traumjob?",
+    "test_status_ongoing": "In Bearbeitung",
+    "test_status_preliminary_assessment": "Vorläufige Bewertung",
+    "test_status_ready": "Bereit",
+    "test_status_closed": "Abgeschlossen",
+    "yes": "Ja",
+    "no": "Nein"
 }

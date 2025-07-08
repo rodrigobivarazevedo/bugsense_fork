@@ -358,14 +358,14 @@ export const DoctorIdValue = styled.Text`
   font-size: ${rem(0.875)}px;
 `;
 
-export const AddressActionContainer = styled.View`
+export const AccountActionContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;
   margin-top: ${rem(1)}px;
   gap: ${rem(1)}px;
 `;
 
-export const AddressCancelButton = styled.TouchableOpacity`
+export const AccountCancelButton = styled.TouchableOpacity`
   flex: 1;
   background-color: ${themeColors.themeGray};
   border-radius: ${rem(0.5)}px;
@@ -373,22 +373,82 @@ export const AddressCancelButton = styled.TouchableOpacity`
   align-items: center;
 `;
 
-export const AddressCancelButtonText = styled.Text`
+export const AccountCancelButtonText = styled.Text`
   ${themeTypography.p};
   color: ${themeColors.white};
   font-weight: 600;
 `;
 
-export const AddressSaveButton = styled.TouchableOpacity`
+export const AccountSaveButton = styled.TouchableOpacity<{ disabled?: boolean }>`
   flex: 1;
-  background-color: ${themeColors.primary};
+  background-color: ${(props: { disabled?: boolean }) => props.disabled ? '#bdbdbd' : themeColors.primary};
   border-radius: ${rem(0.5)}px;
   padding: ${rem(1)}px;
   align-items: center;
 `;
 
-export const AddressSaveButtonText = styled.Text`
+export const AccountSaveButtonText = styled.Text<{ disabled?: boolean }>`
   ${themeTypography.p};
-  color: ${themeColors.white};
+  color: ${(props: { disabled?: boolean }) => props.disabled ? '#f5f5f5' : themeColors.white};
   font-weight: 600;
-`; 
+`;
+
+export const AnswerInput = styled.TextInput`
+  color: ${themeColors.themeGray};
+  font-size: 16px;
+  font-weight: 600;
+  padding: 0;
+  margin-bottom: ${rem(0.5)}px;
+`;
+
+export const SecurityQuestionBlock = styled.View`
+  margin-bottom: ${rem(1.5)}px;
+`;
+
+export const SelectorRow = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  border-radius: ${rem(0.5)}px;
+  border-width: 1px;
+  border-color: ${themeColors.primary};
+  background-color: #f7f7fa;
+  padding: ${rem(0.75)}px ${rem(1)}px;
+  margin-vertical: ${rem(0.5)}px;
+`;
+
+export const SelectorText = styled.Text`
+  flex: 1;
+  color: ${themeColors.primary};
+  font-size: ${rem(1)}px;
+  font-family: 'System';
+`;
+
+export const SelectorIcon = styled.Text`
+  color: ${themeColors.primary};
+  font-size: ${rem(1.25)}px;
+  margin-left: ${rem(0.5)}px;
+`;
+
+export const DropdownContainer = styled.View`
+  background-color: ${themeColors.white};
+  border: ${rem(0.0625)}px solid ${themeColors.primary};
+  border-radius: ${rem(0.5)}px;
+  margin-top: ${rem(0.25)}px;
+  box-shadow: 0px 4px 16px rgba(0,0,0,0.10);
+  elevation: 6;
+  width: 100%;
+  align-self: stretch;
+  z-index: 10;
+`;
+
+export const DropdownItem = styled.TouchableOpacity`
+  padding: ${rem(1)}px ${rem(1)}px;
+  border-bottom-width: 1px;
+  border-bottom-color: #f0f0f0;
+`;
+
+export const DropdownText = styled.Text`
+  color: ${themeColors.primary};
+  font-size: ${rem(1)}px;
+  font-family: 'System';
+`;

@@ -12,6 +12,7 @@ import GenericDateTimePicker from '../components/GenericDateTimePicker';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { formatDate } from '../utils/DateTimeFormatter';
 
 export const Account: FC = () => {
     const { t } = useTranslation();
@@ -38,6 +39,27 @@ export const Account: FC = () => {
     });
     const [showDatePicker, setShowDatePicker] = useState(false);
 
+    // Security questions editing states
+    const [securityQuestions, setSecurityQuestions] = useState({
+        security_question_1: '',
+        security_answer_1: '',
+        security_question_2: '',
+        security_answer_2: '',
+        security_question_3: '',
+        security_answer_3: ''
+    });
+    const [originalSecurityQuestions, setOriginalSecurityQuestions] = useState({
+        security_question_1: '',
+        security_answer_1: '',
+        security_question_2: '',
+        security_answer_2: '',
+        security_question_3: '',
+        security_answer_3: ''
+    });
+    const [showSecurityQuestionDropdown, setShowSecurityQuestionDropdown] = useState(false);
+    const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number | null>(null);
+    const [securityQuestionsEditMode, setSecurityQuestionsEditMode] = useState(false);
+
     const navigation = useNavigation();
 
     // Refs for address TextInput fields
@@ -45,6 +67,24 @@ export const Account: FC = () => {
     const cityInputRef = useRef<TextInput>(null);
     const postcodeInputRef = useRef<TextInput>(null);
     const countryInputRef = useRef<TextInput>(null);
+
+    // Refs for security answer TextInput fields
+    const securityAnswer1Ref = useRef<TextInput>(null);
+    const securityAnswer2Ref = useRef<TextInput>(null);
+    const securityAnswer3Ref = useRef<TextInput>(null);
+
+    const availableQuestions = [
+        t("What was your first pet's name?"),
+        t("In which city were you born?"),
+        t("What is your mother's maiden name?"),
+        t("What was the name of your first school?"),
+        t("What is your favorite childhood memory?"),
+        t("What is your favorite color?"),
+        t("What is your hometown?"),
+        t("What was your first car?"),
+        t("What is your favorite food?"),
+        t("What is your dream job?")
+    ];
 
     const handleEdit = (field: string) => {
         setEditingField(field);
@@ -121,7 +161,7 @@ export const Account: FC = () => {
 
     const handleDateChange = async (date: Date) => {
         setShowDatePicker(false);
-        const formatted = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+        const formatted = date.toISOString().split('T')[0];
         if (user) {
             try {
                 const response = await Api.put('users/me/', {
@@ -196,6 +236,85 @@ export const Account: FC = () => {
             addressFields.city !== originalAddressFields.city ||
             addressFields.postcode !== originalAddressFields.postcode ||
             addressFields.country !== originalAddressFields.country
+        );
+    };
+
+    // Security questions handlers
+    const handleSecurityQuestionChange = (questionNumber: number, field: 'question' | 'answer', value: string) => {
+        const questionKey = `security_question_${questionNumber}` as keyof typeof securityQuestions;
+        const answerKey = `security_answer_${questionNumber}` as keyof typeof securityQuestions;
+
+        setSecurityQuestions(prev => ({
+            ...prev,
+            [field === 'question' ? questionKey : answerKey]: value
+        }));
+    };
+
+    const handleSecurityQuestionSelect = (question: string, questionNumber: number) => {
+        handleSecurityQuestionChange(questionNumber, 'question', question);
+        setShowSecurityQuestionDropdown(false);
+        setSelectedQuestionIndex(null);
+    };
+
+    const getAvailableQuestionsForIndex = (questionNumber: number) => {
+        const usedQuestions = [
+            securityQuestions.security_question_1,
+            securityQuestions.security_question_2,
+            securityQuestions.security_question_3
+        ].filter((q, index) => index !== questionNumber - 1 && q);
+
+        return availableQuestions.filter(q => !usedQuestions.includes(q));
+    };
+
+    const handleSecurityQuestionsSave = async () => {
+        // Blur all security answer input fields
+        securityAnswer1Ref.current?.blur();
+        securityAnswer2Ref.current?.blur();
+        securityAnswer3Ref.current?.blur();
+
+        if (user) {
+            try {
+                const response = await Api.put('users/me/', securityQuestions);
+                setUser(response.data);
+                setOriginalSecurityQuestions(securityQuestions);
+                Alert.alert(t('Success'), t('Security questions updated successfully'));
+            } catch (error) {
+                console.error('Error updating security questions:', error);
+                Alert.alert(t('Error'), t('Failed to update security questions. Please try again.'));
+            }
+        }
+    };
+
+    const handleSecurityQuestionsCancel = () => {
+        // Blur all security answer input fields
+        securityAnswer1Ref.current?.blur();
+        securityAnswer2Ref.current?.blur();
+        securityAnswer3Ref.current?.blur();
+
+        setSecurityQuestions(originalSecurityQuestions);
+    };
+
+    // Check if security questions have changed
+    const hasSecurityQuestionsChanges = () => {
+        return (
+            securityQuestions.security_question_1 !== originalSecurityQuestions.security_question_1 ||
+            securityQuestions.security_answer_1 !== originalSecurityQuestions.security_answer_1 ||
+            securityQuestions.security_question_2 !== originalSecurityQuestions.security_question_2 ||
+            securityQuestions.security_answer_2 !== originalSecurityQuestions.security_answer_2 ||
+            securityQuestions.security_question_3 !== originalSecurityQuestions.security_question_3 ||
+            securityQuestions.security_answer_3 !== originalSecurityQuestions.security_answer_3
+        );
+    };
+
+    // Only enable save if all 3 questions and answers are filled
+    const areAllSecurityQuestionsFilled = () => {
+        return (
+            !!securityQuestions.security_question_1 &&
+            !!securityQuestions.security_answer_1 &&
+            !!securityQuestions.security_question_2 &&
+            !!securityQuestions.security_answer_2 &&
+            !!securityQuestions.security_question_3 &&
+            !!securityQuestions.security_answer_3
         );
     };
 
@@ -284,6 +403,9 @@ export const Account: FC = () => {
         city: string;
         postcode: string;
         country: string;
+        security_question_1: string;
+        security_question_2: string;
+        security_question_3: string;
         is_doctor?: boolean;
         institution_name?: string;
         doctor_id?: string;
@@ -307,6 +429,23 @@ export const Account: FC = () => {
                     city: res.data.city || '',
                     postcode: res.data.postcode || '',
                     country: res.data.country || ''
+                });
+                // Initialize security questions fields
+                setSecurityQuestions({
+                    security_question_1: res.data.security_question_1 || '',
+                    security_answer_1: '',
+                    security_question_2: res.data.security_question_2 || '',
+                    security_answer_2: '',
+                    security_question_3: res.data.security_question_3 || '',
+                    security_answer_3: ''
+                });
+                setOriginalSecurityQuestions({
+                    security_question_1: res.data.security_question_1 || '',
+                    security_answer_1: '',
+                    security_question_2: res.data.security_question_2 || '',
+                    security_answer_2: '',
+                    security_question_3: res.data.security_question_3 || '',
+                    security_answer_3: ''
                 });
             })
             .catch(err => console.error('Could not load profile', err));
@@ -349,6 +488,23 @@ export const Account: FC = () => {
                             city: res.data.city || '',
                             postcode: res.data.postcode || '',
                             country: res.data.country || ''
+                        });
+                        // Update security questions fields
+                        setSecurityQuestions({
+                            security_question_1: res.data.security_question_1 || '',
+                            security_answer_1: '',
+                            security_question_2: res.data.security_question_2 || '',
+                            security_answer_2: '',
+                            security_question_3: res.data.security_question_3 || '',
+                            security_answer_3: ''
+                        });
+                        setOriginalSecurityQuestions({
+                            security_question_1: res.data.security_question_1 || '',
+                            security_answer_1: '',
+                            security_question_2: res.data.security_question_2 || '',
+                            security_answer_2: '',
+                            security_question_3: res.data.security_question_3 || '',
+                            security_answer_3: ''
                         });
                     }
 
@@ -507,7 +663,7 @@ export const Account: FC = () => {
                         <S.ItemRow>
                             <S.ItemTextCol>
                                 <S.ItemLabel>{t('Date of birth')}</S.ItemLabel>
-                                {renderEditableField('dob', user?.dob)}
+                                {renderEditableField('dob', formatDate(user?.dob, 'long', true))}
                             </S.ItemTextCol>
                             <S.EditIconBtnLight onPress={() => handleEdit('dob')}>
                                 <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
@@ -622,14 +778,113 @@ export const Account: FC = () => {
                             </S.ItemTextCol>
                         </S.ItemRow>
                         {hasAddressChanges() && (
-                            <S.AddressActionContainer>
-                                <S.AddressCancelButton onPress={handleAddressCancel}>
-                                    <S.AddressCancelButtonText>{t('Cancel')}</S.AddressCancelButtonText>
-                                </S.AddressCancelButton>
-                                <S.AddressSaveButton onPress={handleAddressSave}>
-                                    <S.AddressSaveButtonText>{t('Save Changes')}</S.AddressSaveButtonText>
-                                </S.AddressSaveButton>
-                            </S.AddressActionContainer>
+                            <S.AccountActionContainer>
+                                <S.AccountCancelButton onPress={handleAddressCancel}>
+                                    <S.AccountCancelButtonText>{t('Cancel')}</S.AccountCancelButtonText>
+                                </S.AccountCancelButton>
+                                <S.AccountSaveButton onPress={handleAddressSave}>
+                                    <S.AccountSaveButtonText>{t('Save Changes')}</S.AccountSaveButtonText>
+                                </S.AccountSaveButton>
+                            </S.AccountActionContainer>
+                        )}
+                    </S.LightCard>
+
+                    <S.SectionTitle>{t('Security Questions')}</S.SectionTitle>
+                    <S.LightCard style={{ position: 'relative' }}>
+                        {securityQuestionsEditMode ? (
+                            <>
+                                {[1, 2, 3].map((num) => (
+                                    <S.SecurityQuestionBlock key={`qna${num}`}>
+                                        <S.ItemLabel>{t('Question')} {num}</S.ItemLabel>
+                                        <S.SelectorRow
+                                            onPress={() => {
+                                                setSelectedQuestionIndex(num);
+                                                setShowSecurityQuestionDropdown(selectedQuestionIndex !== num || !showSecurityQuestionDropdown);
+                                            }}
+                                            activeOpacity={0.8}
+                                        >
+                                            <S.SelectorText>
+                                                {securityQuestions[`security_question_${num}` as keyof typeof securityQuestions] || t('Select Security Question')}
+                                            </S.SelectorText>
+                                            <S.SelectorIcon>▼</S.SelectorIcon>
+                                        </S.SelectorRow>
+                                        {showSecurityQuestionDropdown && selectedQuestionIndex === num && (
+                                            <S.DropdownContainer>
+                                                {getAvailableQuestionsForIndex(num).map((question, idx) => (
+                                                    <S.DropdownItem
+                                                        key={idx}
+                                                        onPress={() => handleSecurityQuestionSelect(question, num)}
+                                                        activeOpacity={0.7}
+                                                    >
+                                                        <S.DropdownText>{question}</S.DropdownText>
+                                                    </S.DropdownItem>
+                                                ))}
+                                            </S.DropdownContainer>
+                                        )}
+                                        <S.AnswerInput
+                                            value={securityQuestions[`security_answer_${num}` as keyof typeof securityQuestions]}
+                                            onChangeText={(value: string) => handleSecurityQuestionChange(num, 'answer', value)}
+                                            placeholder={t('Enter your answer')}
+                                            placeholderTextColor={themeColors.themeGray}
+                                            ref={num === 1 ? securityAnswer1Ref : num === 2 ? securityAnswer2Ref : securityAnswer3Ref}
+                                        />
+                                    </S.SecurityQuestionBlock>
+                                ))}
+                                {hasSecurityQuestionsChanges() && (
+                                    <S.AccountActionContainer>
+                                        <S.AccountCancelButton onPress={() => { setSecurityQuestionsEditMode(false); handleSecurityQuestionsCancel(); }}>
+                                            <S.AccountCancelButtonText>{t('Cancel')}</S.AccountCancelButtonText>
+                                        </S.AccountCancelButton>
+                                        <S.AccountSaveButton
+                                            disabled={!(hasSecurityQuestionsChanges() && areAllSecurityQuestionsFilled())}
+                                            onPress={async () => { await handleSecurityQuestionsSave(); setSecurityQuestionsEditMode(false); }}
+                                        >
+                                            <S.AccountSaveButtonText
+                                                disabled={!(hasSecurityQuestionsChanges() && areAllSecurityQuestionsFilled())}
+                                            >
+                                                {t('Save Changes')}
+                                            </S.AccountSaveButtonText>
+                                        </S.AccountSaveButton>
+                                    </S.AccountActionContainer>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                {securityQuestions.security_question_1 ||
+                                    securityQuestions.security_question_2 ||
+                                    securityQuestions.security_question_3 ? (
+                                    <>
+                                        {[1, 2, 3].map((num) => (
+                                            securityQuestions[`security_question_${num}` as keyof typeof securityQuestions] ? (
+                                                <S.ItemRow key={`viewq${num}`}>
+                                                    <S.ItemTextCol>
+                                                        <S.ItemLabel>{t('Question')} {num}</S.ItemLabel>
+                                                        <S.ItemValue>
+                                                            {securityQuestions[`security_question_${num}` as keyof typeof securityQuestions]}
+                                                        </S.ItemValue>
+                                                    </S.ItemTextCol>
+                                                </S.ItemRow>
+                                            ) : null
+                                        ))}
+                                        <S.ActionButton onPress={() => setSecurityQuestionsEditMode(true)}>
+                                            <S.ActionButtonText>{t('Edit Security Questions')}</S.ActionButtonText>
+                                        </S.ActionButton>
+                                    </>
+                                ) : (
+                                    <>
+                                        <S.ItemRow>
+                                            <S.ItemTextCol>
+                                                <S.ItemLabel>
+                                                    {t('You have not set any security questions.Please set security questions to make sure you can reset your password.')}
+                                                </S.ItemLabel>
+                                            </S.ItemTextCol>
+                                        </S.ItemRow>
+                                        <S.ActionButton onPress={() => setSecurityQuestionsEditMode(true)}>
+                                            <S.ActionButtonText>{t('Add Security Questions')}</S.ActionButtonText>
+                                        </S.ActionButton>
+                                    </>
+                                )}
+                            </>
                         )}
                     </S.LightCard>
                 </>
