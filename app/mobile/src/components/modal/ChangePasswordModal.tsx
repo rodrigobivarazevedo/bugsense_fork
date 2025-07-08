@@ -28,6 +28,25 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({ visible, onClose, o
     const [userEmail, setUserEmail] = useState('');
     const [userFullName, setUserFullName] = useState('');
 
+    const clearAllState = () => {
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setShowCurrent(false);
+        setShowNew(false);
+        setShowConfirm(false);
+        setPasswordError('');
+        setConfirmError('');
+        setLoading(false);
+        setUserEmail('');
+        setUserFullName('');
+    };
+
+    const handleClose = () => {
+        clearAllState();
+        onClose();
+    };
+
     useEffect(() => {
         const getUserData = async () => {
             try {
@@ -44,6 +63,8 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({ visible, onClose, o
 
         if (visible) {
             getUserData();
+        } else {
+            clearAllState();
         }
     }, [visible]);
 
@@ -83,7 +104,7 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({ visible, onClose, o
             });
             setLoading(false);
             Alert.alert(t('Success'), t('Password changed successfully'));
-            onClose();
+            handleClose();
             if (onSuccess) onSuccess();
         } catch (err: any) {
             setLoading(false);
@@ -96,7 +117,7 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({ visible, onClose, o
     };
 
     return (
-        <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+        <Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
             <View style={styles.overlay}>
                 <View style={styles.modal}>
                     <View style={styles.modalBody}>
@@ -172,7 +193,7 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({ visible, onClose, o
                         <View style={styles.buttonRow}>
                             <TouchableOpacity
                                 style={styles.cancelButton}
-                                onPress={onClose}
+                                onPress={handleClose}
                                 disabled={loading}
                             >
                                 <Text style={styles.buttonText}>{t('Cancel')}</Text>
