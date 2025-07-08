@@ -6,7 +6,8 @@ interface ScanInstructionsModalProps {
     isOpen: boolean;
     onClose: () => void;
     onConfirm: () => void;
-    scanType: 'qr-code' | 'test-strip';
+    scanType: 'qr-code' | 'test-strip' | 'upload-test-strip';
+    onDismiss?: () => void;
 }
 
 const ScanInstructionsModal: FC<ScanInstructionsModalProps> = ({
@@ -14,26 +15,53 @@ const ScanInstructionsModal: FC<ScanInstructionsModalProps> = ({
     onClose,
     onConfirm,
     scanType,
+    onDismiss,
 }) => {
     const getInstructionsList = () => {
         if (scanType === 'qr-code') {
-            return [
-                'Make sure the QR code is clearly visible',
-                'Hold the camera close enough to capture the entire code',
-                'Ensure good lighting and avoid shadows',
-                'Keep the camera steady to avoid blurry images',
-                'The QR code should fill most of the screen',
-            ];
-        } else {
-            return [
-                'Place the test strip on a flat, well-lit surface',
-                'Hold the camera directly above the strip',
-                'Make sure the entire strip is visible in the frame',
-                'Ensure good lighting and avoid shadows',
-                'Keep the camera steady to avoid blurry images',
-                'The strip should be clearly focused and readable',
-            ];
+            return {
+                title: 'QR Code Scanning Instructions',
+                subtitle: 'To scan a QR code:',
+                instructions: [
+                    'Make sure the QR code is clearly visible',
+                    'Hold the camera close enough to capture the entire code',
+                    'Ensure good lighting and avoid shadows',
+                    'Keep the camera steady to avoid blurry images',
+                    'The QR code should fill most of the screen',
+                ],
+            };
+        } else if (scanType === 'test-strip') {
+            return {
+                title: 'Test Strip Scanning Instructions',
+                subtitle: 'To scan a test strip:',
+                instructions: [
+                    'Place the test strip on a flat, well-lit surface',
+                    'Hold the camera directly above the strip',
+                    'Make sure the entire strip is visible in the frame',
+                    'Ensure good lighting and avoid shadows',
+                    'Keep the camera steady to avoid blurry images',
+                    'The strip should be clearly focused and readable',
+                ],
+            };
+        } else if (scanType === 'upload-test-strip') {
+            return {
+                title: 'Upload Test Strip Instructions',
+                subtitle: 'To upload a test strip:',
+                instructions: [
+                    'Select a clear photo of the test strip from your gallery',
+                    'Ensure the test strip is fully visible in the image',
+                    'The photo should be well-lit and in focus',
+                    'Avoid images with glare, shadows, or obstructions',
+                    'Do not use edited or filtered images',
+                    'If possible, use a recent photo taken under good lighting conditions',
+                ],
+            };
         }
+        return {
+            title: '',
+            subtitle: '',
+            instructions: [],
+        };
     };
 
     // TODO: Verify look on Android
@@ -43,20 +71,18 @@ const ScanInstructionsModal: FC<ScanInstructionsModalProps> = ({
             transparent
             animationType="fade"
             onRequestClose={onClose}
+            onDismiss={onDismiss}
         >
             <View style={styles.overlay}>
                 <View style={styles.modal}>
                     <View style={styles.modalBody}>
                         <Text style={styles.heading}>
-                            {scanType === 'qr-code'
-                                ? 'QR Code Scanning Instructions'
-                                : 'Test Strip Scanning Instructions'
-                            }
+                            {getInstructionsList().title}
                         </Text>
                         <Text style={styles.messageSubtitle}>
-                            To scan a {scanType === 'qr-code' ? 'QR code' : 'test strip'}:
+                            {getInstructionsList().subtitle}
                         </Text>
-                        {getInstructionsList().map((item, idx) => (
+                        {getInstructionsList().instructions.map((item, idx) => (
                             <View
                                 key={idx}
                                 style={styles.messageContainer}

@@ -18,6 +18,7 @@ import { themeColors } from '../theme/GlobalTheme';
 import * as Clipboard from 'expo-clipboard';
 import { getTranslatedTestStatus } from '../utils/TestResultsStatus';
 import { useTranslation } from 'react-i18next';
+import ScanInstructionsModal from '../components/modal/ScanInstructionsModal';
 
 const formatDateGerman = (dateStr: string) => {
     if (!dateStr) return '-';
@@ -43,6 +44,8 @@ const ViewTest: FC = () => {
     const [uploading, setUploading] = useState(false);
     const [image, setImage] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
+    const [showScanModal, setShowScanModal] = useState(false);
+    const [shouldOpenPicker, setShouldOpenPicker] = useState(false);
 
     useEffect(() => {
         const fetchResult = async () => {
@@ -126,6 +129,26 @@ const ViewTest: FC = () => {
         setTimeout(() => setCopied(false), 1200);
     };
 
+    const handleScanModalConfirm = () => {
+        setShowScanModal(false);
+        setShouldOpenPicker(true);
+    };
+
+    const handleScanModalClose = () => {
+        setShowScanModal(false);
+    };
+
+    const handleScanModalDismiss = () => {
+        if (shouldOpenPicker) {
+            setShouldOpenPicker(false);
+            pickImage();
+        }
+    };
+
+    const handlePickFromGallery = () => {
+        setShowScanModal(true);
+    };
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.section}>
@@ -158,7 +181,7 @@ const ViewTest: FC = () => {
                 <View style={styles.imageButtonsWrapper}>
                     <TouchableOpacity
                         style={styles.uploadButton}
-                        onPress={pickImage}
+                        onPress={handlePickFromGallery}
                         activeOpacity={0.85}
                     >
                         <RenderIcon
@@ -213,6 +236,13 @@ const ViewTest: FC = () => {
                         </TouchableOpacity>
                     </>
                 )}
+                <ScanInstructionsModal
+                    isOpen={showScanModal}
+                    onClose={handleScanModalClose}
+                    onConfirm={handleScanModalConfirm}
+                    scanType="upload-test-strip"
+                    onDismiss={handleScanModalDismiss}
+                />
             </View>
 
             <View style={styles.section}>
