@@ -13,6 +13,9 @@ import BottomBar from './components/BottomBar';
 import UserLogin from './screens/UserLogin';
 import Register from './screens/Register';
 import ForgotPassword from './screens/ForgotPassword';
+import PasswordRecoveryStep1 from './screens/password_recovery_steps/PasswordRecoveryStep1';
+import PasswordRecoveryStep2 from './screens/password_recovery_steps/PasswordRecoveryStep2';
+import PasswordRecoveryStep3 from './screens/password_recovery_steps/PasswordRecoveryStep3';
 import DoctorLogin from './screens/DoctorLogin';
 import Home from './screens/Home';
 import Scan from './screens/Scan';
@@ -30,6 +33,9 @@ const routes = [
   { name: 'Login', component: UserLogin, wrapped: false },
   { name: 'Register', component: Register, wrapped: false },
   { name: 'ForgotPassword', component: ForgotPassword, wrapped: false },
+  { name: 'PasswordRecoveryStep1', component: PasswordRecoveryStep1, wrapped: false },
+  { name: 'PasswordRecoveryStep2', component: PasswordRecoveryStep2, wrapped: false },
+  { name: 'PasswordRecoveryStep3', component: PasswordRecoveryStep3, wrapped: false },
   { name: 'DoctorLogin', component: DoctorLogin, wrapped: false },
   { name: 'Home', component: Home, wrapped: true, showBottomBar: true },
   { name: 'Scan', component: Scan, wrapped: true, showBottomBar: true },

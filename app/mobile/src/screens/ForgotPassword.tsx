@@ -1,11 +1,10 @@
 import { FC, useState } from 'react';
-import { Alert, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import Logo from '../components/Logo';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './LoginRegister.styles';
 import { themeColors } from '../theme/GlobalTheme';
-import Api from '../api/Client';
 import validateEmail from '../utils/ValidateEmail';
 
 type ForgotPasswordScreenProps = {
@@ -30,29 +29,7 @@ const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
             return;
         }
 
-        try {
-            await Api.post('password-reset/', {
-                email,
-            });
-
-            Alert.alert(
-                t('Success'),
-                t('If an account exists with this email, you will receive password reset instructions.'),
-                [
-                    {
-                        text: 'OK',
-                        onPress: () => navigation.navigate('Login'),
-                    },
-                ]
-            );
-        } catch (err: any) {
-            console.error('Password reset request error', err);
-            const message =
-                err.response?.data?.detail ||
-                err.response?.data?.non_field_errors?.[0] ||
-                err.message;
-            Alert.alert(t('Error'), message);
-        }
+        navigation.navigate('PasswordRecoveryStep1');
     };
 
     const isFormValid = email && !emailError;
@@ -82,7 +59,7 @@ const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
             </S.InputContainer>
 
             <S.ActionButton onPress={handleSubmit} disabled={!isFormValid}>
-                <S.ActionButtonText>{t('Reset Password')}</S.ActionButtonText>
+                <S.ActionButtonText>{t('Continue')}</S.ActionButtonText>
             </S.ActionButton>
 
             <S.LinkContainer>

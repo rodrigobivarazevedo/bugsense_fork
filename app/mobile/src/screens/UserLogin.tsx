@@ -41,7 +41,7 @@ const UserLogin: FC<LoginScreenProps> = ({ navigation }) => {
                 err.response?.data?.detail ||
                 err.response?.data?.non_field_errors?.[0] ||
                 err.message;
-            Alert.alert(t('Login failed'), message); // TODO: Add error handling
+            Alert.alert(t('Login failed'), message);
         }
     };
 
@@ -95,7 +95,7 @@ const UserLogin: FC<LoginScreenProps> = ({ navigation }) => {
             </S.InputContainer>
 
             <S.ForgotPasswordButton>
-                <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                <TouchableOpacity onPress={() => navigation.navigate('PasswordRecoveryStep1', { initialEmail: username })}>
                     <S.ForgotPasswordText>
                         {t('Forgot password?')}
                     </S.ForgotPasswordText>
