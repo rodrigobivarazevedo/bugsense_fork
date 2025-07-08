@@ -105,4 +105,16 @@ export const styles = StyleSheet.create({
         color: '#444',
         marginRight: rem(1),
     },
+    noTestsContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: rem(2),
+    },
+    noTestsText: {
+        fontSize: rem(1.1),
+        color: '#666',
+        textAlign: 'center',
+        lineHeight: rem(1.5),
+    },
 });

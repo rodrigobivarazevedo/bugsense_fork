@@ -87,6 +87,33 @@ export const Results: FC = () => {
         );
     }
 
+    if (results.length === 0) {
+        return (
+            <View style={styles.container}>
+                <View style={styles.addButtonContainer}>
+                    <TouchableOpacity
+                        style={styles.addButton}
+                        onPress={() => navigation.navigate('Scan')}
+                        activeOpacity={0.8}
+                    >
+                        <View style={styles.addButtonIcon}>
+                            <RenderIcon
+                                family="materialIcons"
+                                icon="add"
+                                fontSize={styles.addButtonIcon.fontSize}
+                                color={styles.addButtonIcon.color}
+                            />
+                        </View>
+                        <Text style={styles.addButtonText}>Add new</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.noTestsContainer}>
+                    <Text style={styles.noTestsText}>No tests available</Text>
+                </View>
+            </View>
+        );
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.addButtonContainer}>
