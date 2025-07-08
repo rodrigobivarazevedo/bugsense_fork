@@ -4,7 +4,7 @@ import requests
 
 # inside ai-api folder run python -m app.utils.create_token and make sure to have a venv running with jwt package
 
-JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTE5OTE3NDl9.brsTzkfXbtTu5DKgp7GRcF8oig_W6CTET49Wyt3R01Q"  # Replace with your actual JWT token or generate it
+JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTE5OTI4MzN9.4LyTiu8YjStDP_NjvttFOZoD0EcdibcFR_CI6qMoTZI"  # Replace with your actual JWT token or generate it
 
 HEADERS = {
     "Authorization": f"Bearer {JWT_TOKEN}"

@@ -39,10 +39,11 @@ DJANGO_SECRET_KEY=$(generate_secret_key)
 
 # ai-api
 
-if grep -q '^DJANGO_SECRET_KEY=' .env; then
+if grep -q '^DJANGO_SECRET_KEY=' ./ai-api/.env; then
     sed -i '' "s/^DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}/" ./ai-api/.env  # macOS version
 else
     echo "DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}" >> ./ai-api/.env
+    
 fi
 
 if grep -q '^ML_API_KEY=' ./ai-api/.env; then
@@ -60,20 +61,23 @@ fi
 
 # core-api
 
-if [ -f .env ]; then
-  if ! grep -q "DJANGO_SECRET_KEY" .env; then
-    echo "Adding DJANGO_SECRET_KEY to existing .env file..."
-    echo "DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}" >> .env
-  fi
-  if ! grep -q "ML_API_KEY" .env; then
-    echo "Adding ML_API_KEY to existing .env file..."
-    echo "ML_API_KEY=${ML_API_KEY}" >> .env
-  fi
+if grep -q '^DJANGO_SECRET_KEY=' .env; then
+    sed -i '' "s/^DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}/" .env  # macOS version
 else
-  echo "Creating new .env file..."
-  echo "HOST_IP=$HOST_IP" > .env
-  echo "DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}" >> .env
-  echo "ML_API_KEY=${ML_API_KEY}" >> .env
+    echo "DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}" >> .env
+    
+fi
+
+if grep -q '^ML_API_KEY=' .env; then
+    sed -i '' "s/^ML_API_KEY=.*/ML_API_KEY=${ML_API_KEY}/" .env  # macOS version
+else
+    echo "ML_API_KEY=${ML_API_KEY}" >> ./ai-api/.env
+fi
+
+if grep -q '^HOST_IP=' .env; then
+    sed -i '' "s/^HOST_IP=.*/HOST_IP=${HOST_IP}/" .env  # macOS version
+else
+    echo "HOST_IP=${HOST_IP}" >> .env
 fi
 
 

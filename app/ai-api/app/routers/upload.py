@@ -142,10 +142,10 @@ async def send_results(
             
             
     # Send results to Django backend
-    #HOST_IP = secrets_manager.security_secrets.get("HOST_IP", "http://localhost:8000")
+    HOST_IP = secrets_manager.security_secrets.get("HOST_IP", "http://localhost:8000")
     ML_API_KEY = secrets_manager.security_secrets.get("ML_API_KEY")
     
-    async with httpx.AsyncClient(base_url=f"http://backend:8000") as client:
+    async with httpx.AsyncClient(base_url=f"http://{HOST_IP}:8000") as client:
         try:
             headers = {
                 "Content-Type": "application/json",
@@ -155,7 +155,7 @@ async def send_results(
                 "qr_data": qr_data,
                 "species": species if species else None,
                 "concentration": concentration,
-                "infected": True if concentration == "high" else False
+                "infection_detected": True if concentration == "high" else False
             }
             
             post_response = await client.post("/api/results/", json=payload, headers=headers)
