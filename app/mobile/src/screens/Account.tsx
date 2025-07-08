@@ -867,7 +867,7 @@ export const Account: FC = () => {
                                             ) : null
                                         ))}
                                         <S.ActionButton onPress={() => setSecurityQuestionsEditMode(true)}>
-                                            <S.ActionButtonText>{t('Edit Security Questions')}</S.ActionButtonText>
+                                            <S.ActionButtonText>{t('Update Security Questions')}</S.ActionButtonText>
                                         </S.ActionButton>
                                     </>
                                 ) : (
