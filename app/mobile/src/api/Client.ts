@@ -13,6 +13,8 @@ const Api = axios.create({
     },
 });
 
+// TODO: Remove console logs after testing in development
+
 Api.interceptors.request.use(async (config: any) => {
     const token = await AsyncStorage.getItem('accessToken');
     if (token && config.headers) {
