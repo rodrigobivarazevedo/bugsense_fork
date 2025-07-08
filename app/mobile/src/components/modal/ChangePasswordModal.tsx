@@ -73,6 +73,7 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({ visible, onClose, o
         !passwordError &&
         !confirmError;
 
+    // TODO: Update to use correct API endpoint
     const handleSave = async () => {
         setLoading(true);
         try {
