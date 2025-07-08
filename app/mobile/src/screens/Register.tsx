@@ -14,6 +14,7 @@ import { themeColors } from '../theme/GlobalTheme';
 import Api from '../api/Client';
 import validateEmail from '../utils/ValidateEmail';
 import RenderIcon from '../components/RenderIcon';
+import { validatePassword } from '../utils/ValidatePassword';
 
 type RegisterScreenProps = {
     navigation: NativeStackNavigationProp<any>;
@@ -54,28 +55,9 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
         setEmailError(errorMessage);
     };
 
-    const validatePassword = (pass: string): string => {
-        if (pass.length < 8) {
-            return t('Password must be at least 8 characters long');
-        }
-        if (!/[A-Z]/.test(pass)) {
-            return t('Password must contain at least one uppercase letter');
-        }
-        if (!/[a-z]/.test(pass)) {
-            return t('Password must contain at least one lowercase letter');
-        }
-        if (!/[!@#$%^&*(),.?":{}|<>]/.test(pass) && !/[0-9]/.test(pass)) {
-            return t('Password must contain at least one special character or number');
-        }
-        if (pass.toLowerCase() === email.toLowerCase() || pass.toLowerCase() === fullName.toLowerCase()) {
-            return t('Password cannot be the same as your email or name');
-        }
-        return '';
-    };
-
     const handlePasswordChange = (text: string) => {
         setPassword(text);
-        setPasswordError(validatePassword(text));
+        setPasswordError(validatePassword(text, email, fullName));
         if (confirmPassword && text !== confirmPassword) {
             setConfirmPasswordError(t('Passwords do not match'));
         } else {
@@ -377,15 +359,15 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                         </S.ActionButton>
                     ) : (
                         <S.ButtonRow>
-                                <S.SecondaryButton onPress={handleBack}>
-                                    <S.SecondaryButtonText>{t('Back')}</S.SecondaryButtonText>
-                                </S.SecondaryButton>
-                                <S.ActionButtonRegister
-                                    onPress={handleRegister}
-                                    disabled={!isStep2Valid}
-                                >
-                                    <S.ActionButtonText>{t('Register')}</S.ActionButtonText>
-                                </S.ActionButtonRegister>
+                            <S.SecondaryButton onPress={handleBack}>
+                                <S.SecondaryButtonText>{t('Back')}</S.SecondaryButtonText>
+                            </S.SecondaryButton>
+                            <S.ActionButtonRegister
+                                onPress={handleRegister}
+                                disabled={!isStep2Valid}
+                            >
+                                <S.ActionButtonText>{t('Register')}</S.ActionButtonText>
+                            </S.ActionButtonRegister>
                         </S.ButtonRow>
                     )}
                 </S.ScrollView>

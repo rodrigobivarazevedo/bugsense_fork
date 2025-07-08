@@ -13,6 +13,7 @@ import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { formatDate } from '../utils/DateTimeFormatter';
+import ChangePasswordModal from '../components/modal/ChangePasswordModal';
 
 export const Account: FC = () => {
     const { t } = useTranslation();
@@ -23,6 +24,7 @@ export const Account: FC = () => {
     const [tempValue, setTempValue] = useState<string>('');
     const [pendingValue, setPendingValue] = useState<string>('');
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+    const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
     // Address editing states
     const [addressFields, setAddressFields] = useState({
@@ -174,21 +176,6 @@ export const Account: FC = () => {
             }
         }
         setEditingField(null);
-    };
-
-    const handlePhoneSave = async () => {
-        if (user) {
-            try {
-                const response = await Api.put('users/me/', {
-                    phone_number: tempValue
-                });
-                setUser(response.data);
-                setEditingField(null);
-            } catch (error) {
-                console.error('Error updating phone number:', error);
-                Alert.alert(t('Error'), t('Failed to update phone number. Please try again.'));
-            }
-        }
     };
 
     // Address field handlers
@@ -896,7 +883,7 @@ export const Account: FC = () => {
                 </S.DeleteButton>
             )}
 
-            <S.ActionButton>
+            <S.ActionButton onPress={() => setShowChangePasswordModal(true)}>
                 <S.ActionButtonText>{t('Change password')}</S.ActionButtonText>
             </S.ActionButton>
             <S.ActionButton onPress={handleSignOut}>
@@ -913,6 +900,11 @@ export const Account: FC = () => {
                     : t('Are you sure you want to update your email address?')}
                 confirmText={t('Confirm')}
                 cancelText={t('Cancel')}
+            />
+            <ChangePasswordModal
+                visible={showChangePasswordModal}
+                onClose={() => setShowChangePasswordModal(false)}
+                onSuccess={() => {}}
             />
         </S.Scroll>
     );
