@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const USER_TABS = [
     { key: 'home', label: 'Home', family: 'foundation', icon: 'home' },
     { key: 'scan', label: 'Scan', family: 'entypo', icon: 'camera' },
-    { key: 'results', label: 'Results', family: 'foundation', icon: 'results' },
+    { key: 'tests', label: 'Tests', family: 'foundation', icon: 'results' },
     { key: 'more', label: 'More', family: 'feather', icon: 'more-horizontal' },
 ];
 

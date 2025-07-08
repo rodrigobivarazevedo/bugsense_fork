@@ -6,7 +6,7 @@ import {
     ActivityIndicator,
     TouchableOpacity,
 } from 'react-native';
-import { styles } from './Results.styles';
+import { styles } from './Tests.styles';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
@@ -24,7 +24,7 @@ function groupByDate(results: any[]) {
     return Object.entries(groups).map(([date, data]) => ({ date, data }));
 }
 
-export const Results: FC = () => {
+export const Tests: FC = () => {
     const navigation: any = useNavigation();
     const isFocused = useIsFocused();
     const [results, setResults] = useState<any[]>([]);
@@ -182,4 +182,4 @@ export const Results: FC = () => {
     );
 };
 
-export default Results;
+export default Tests;

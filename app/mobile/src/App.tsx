@@ -19,7 +19,7 @@ import PasswordRecoveryStep3 from './screens/password_recovery_steps/PasswordRec
 import DoctorLogin from './screens/DoctorLogin';
 import Home from './screens/Home';
 import Scan from './screens/Scan';
-import Results from './screens/Results';
+import Tests from './screens/Tests';
 import More from './screens/More';
 import Account from './screens/Account';
 import LanguageSelection from './screens/LanguageSelection';
@@ -39,7 +39,7 @@ const routes = [
   { name: 'DoctorLogin', component: DoctorLogin, wrapped: false },
   { name: 'Home', component: Home, wrapped: true, showBottomBar: true },
   { name: 'Scan', component: Scan, wrapped: true, showBottomBar: true },
-  { name: 'Results', component: Results, wrapped: true, showBottomBar: true },
+  { name: 'Tests', component: Tests, wrapped: true, showBottomBar: true },
   { name: 'More', component: More, wrapped: true, showBottomBar: true },
   { name: 'Account', component: Account, wrapped: true, showBottomBar: true },
   { name: 'LanguageSelection', alias: 'language', component: LanguageSelection, wrapped: true, showBottomBar: false },
