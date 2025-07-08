@@ -77,7 +77,7 @@ elif [ "$1" = "--load-data" ]; then
   echo "✨✨✨ Mobile App visible on exp://$HOST_IP:8081 ✨✨✨"
   echo "✨✨✨ Web App visible on http://$HOST_IP:3000 ✨✨✨"
   echo "✨✨✨ Local Web App visible on http://localhost:3000 ✨✨✨"
-  docker compose up -d
+  docker compose up --build
   
   echo "Waiting for database to be ready..."
   sleep 10
