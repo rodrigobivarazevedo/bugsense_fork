@@ -124,17 +124,16 @@ const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
                     {showInstitutionDropdown && !institutionsLoading && (
                         <S.DropdownContainer>
                             {institutions.map((institution) => (
-                                <TouchableOpacity
+                                <S.DropdownItem
                                     key={institution.id}
                                     onPress={() => {
                                         setSelectedInstitution(institution);
                                         setShowInstitutionDropdown(false);
                                     }}
+                                    activeOpacity={0.7}
                                 >
-                                    <S.DropdownItem>
-                                        <S.DropdownText>{institution.name}</S.DropdownText>
-                                    </S.DropdownItem>
-                                </TouchableOpacity>
+                                    <S.DropdownText>{institution.name}</S.DropdownText>
+                                </S.DropdownItem>
                             ))}
                         </S.DropdownContainer>
                     )}
