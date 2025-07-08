@@ -12,20 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import RenderIcon from '../components/RenderIcon';
 import { getTranslatedTestStatus } from '../utils/TestResultsStatus';
-
-function formatDate(dateStr: string) {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString(undefined, { month: 'long', day: '2-digit' });
-}
-
-function formatTime(dateStr: string, timeFormat: '12' | '24') {
-    const date = new Date(dateStr);
-    return date.toLocaleTimeString(undefined, {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: timeFormat === '12',
-    });
-}
+import { formatDate, formatTime } from '../utils/DateTimeFormatter';
 
 function groupByDate(results: any[]) {
     const groups: { [date: string]: any[] } = {};

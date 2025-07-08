@@ -19,18 +19,7 @@ import * as Clipboard from 'expo-clipboard';
 import { getTranslatedTestStatus } from '../utils/TestResultsStatus';
 import { useTranslation } from 'react-i18next';
 import ScanInstructionsModal from '../components/modal/ScanInstructionsModal';
-
-const formatDateGerman = (dateStr: string) => {
-    if (!dateStr) return '-';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('de-DE', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-};
+import { formatDateTimeGerman } from '../utils/DateTimeFormatter';
 
 const ViewTest: FC = () => {
     const { t } = useTranslation();
@@ -153,7 +142,7 @@ const ViewTest: FC = () => {
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.section}>
                 <Text style={styles.label}>Test Started At:</Text>
-                <Text style={styles.value}>{formatDateGerman(result?.created_at)}</Text>
+                <Text style={styles.value}>{formatDateTimeGerman(result?.created_at)}</Text>
                 <Text style={styles.label}>Test Status:</Text>
                 <Text style={styles.value}>{getTranslatedTestStatus(result?.status) || '-'}</Text>
                 <Text style={styles.label}>Test QR Data:</Text>
@@ -260,7 +249,7 @@ const ViewTest: FC = () => {
                         <Text style={styles.resultLabel}>Concentration: <Text style={styles.resultValue}>{
                             result.concentration ? `${result.concentration} CFU/mL` : '-'
                         }</Text></Text>
-                        <Text style={styles.resultLabel}>Test Completed At: <Text style={styles.resultValue}>{test.closed_at ? formatDateGerman(test.closed_at) : '-'}</Text></Text>
+                        <Text style={styles.resultLabel}>Test Completed At: <Text style={styles.resultValue}>{test.closed_at ? formatDateTimeGerman(test.closed_at) : '-'}</Text></Text>
                     </View>
                 ) : (
                     <Text style={styles.placeholder}>No results available for this test yet.</Text>

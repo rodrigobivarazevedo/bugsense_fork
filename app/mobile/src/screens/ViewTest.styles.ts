@@ -123,7 +123,7 @@ export const styles = StyleSheet.create({
         padding: rem(1),
         marginTop: rem(0.625),
         borderWidth: 1,
-        borderColor: themeColors.accent,
+        borderColor: 'transparent',
         shadowColor: themeColors.primary,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.06,
