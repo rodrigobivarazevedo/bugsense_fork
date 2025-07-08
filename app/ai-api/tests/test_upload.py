@@ -2,6 +2,12 @@ import os
 import re
 import requests
 
+JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTE5MDYyODR9.yehMu5KF3ocClcZ-cAOZ88xFJXgVgMnJvNqUvNU2ZWI"  # Replace with your actual JWT token or generate it
+
+HEADERS = {
+    "Authorization": f"Bearer {JWT_TOKEN}"
+}
+
 
 def send_image(image_path, qr_data):
     API_URL = "http://0.0.0.0:5001/ml_api/upload/"

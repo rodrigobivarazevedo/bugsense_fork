@@ -3,6 +3,9 @@ from fastapi.responses import JSONResponse
 from app.core.security import get_current_user
 from app.core.config import secrets_manager
 from app.utils.upload import save_file_locally, upload_image_to_gcs
+import asyncio
+from typing import Optional
+from fastapi import Request, HTTPException  # ← Needed
 
 router = APIRouter(prefix="/upload", tags=["Uploads"])
 
@@ -69,6 +72,7 @@ async def upload_image(
                 }
             )
     except Exception as e:
+        print("Upload error:", e)
         return JSONResponse(
             status_code=500,
             content={"error": str(e)}
@@ -76,8 +80,6 @@ async def upload_image(
 
 
 import httpx
-from typing import Optional
-from fastapi import Request, HTTPException  # ← Needed
 
 async def send_results(
     request: Request,
@@ -99,14 +101,12 @@ async def send_results(
         "Authorization": auth_header
     }
 
-    async with httpx.AsyncClient(base_url="http://localhost:5051/ml_api") as client:
+    async with httpx.AsyncClient(base_url="http://ml_service:5001/ml_api") as client:
         try:
-            # Fire off both requests concurrently
-            species_task = client.get("/prediction/species/", params=query_params, headers=headers)
-            concentration_task = client.get("/prediction/concentration/", params=query_params, headers=headers)
-
-            species_response, concentration_response = await species_task, await concentration_task
-
+            # Fire off both requests concurrently using asyncio.gather
+            species_response =  await client.get("/prediction/species/", params=query_params, headers=headers)
+            concentration_response = await client.get("/prediction/concentration/", params=query_params, headers=headers)
+            
             if species_response.status_code != 200:
                 raise HTTPException(
                     status_code=species_response.status_code, 
@@ -127,7 +127,10 @@ async def send_results(
             species = predictions["species_prediction"].get('final_preds')
             
             if concentration is None or species is None:
+                print("no results")
                 return 
+            
+            print("prediction ready")
             
         except httpx.RequestError as e:
             raise HTTPException(status_code=500, detail=f"HTTPX request error: {str(e)}")
@@ -138,10 +141,10 @@ async def send_results(
             
             
     # Send results to Django backend
-    HOST_IP = secrets_manager.security_secrets.get("HOST_IP", "http://localhost:8000")
+    #HOST_IP = secrets_manager.security_secrets.get("HOST_IP", "http://localhost:8000")
     ML_API_KEY = secrets_manager.security_secrets.get("ML_API_KEY")
     
-    async with httpx.AsyncClient(base_url=f"http://{HOST_IP}:8000") as client:
+    async with httpx.AsyncClient(base_url=f"http://backend:8000") as client:
         try:
             headers = {
                 "Content-Type": "application/json",
