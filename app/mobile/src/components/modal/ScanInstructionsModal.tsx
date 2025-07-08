@@ -97,7 +97,7 @@ const ScanInstructionsModal: FC<ScanInstructionsModalProps> = ({
                             <Text style={styles.buttonText}>Cancel</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={onConfirm} style={styles.confirmButton}>
-                            <Text style={styles.buttonText}>I Understand</Text>
+                            <Text style={styles.buttonText}>Understood</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
