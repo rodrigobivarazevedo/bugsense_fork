@@ -100,5 +100,9 @@
   - **No prediction is made.**
 - **Scenario 2:**  
   - User uploads 6 images.
-  - Stopping mechanism finds stopping point at index 5 (≥ 5).
+  - Stopping mechanism does **not** find a stopping point (no significant change detected in the image series).
+  - **No prediction is made.**
+- **Scenario 3:**  
+  - User uploads around 40 images.
+  - Stopping mechanism finds stopping point at index 30.
   - **Prediction is made and results are sent to Django.** 
