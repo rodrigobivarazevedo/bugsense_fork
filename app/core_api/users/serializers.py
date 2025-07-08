@@ -20,8 +20,11 @@ class UserSerializer(serializers.ModelSerializer):
             "country",
             "date_joined",
             "security_question_1",
+            "security_answer_1",
             "security_question_2",
+            "security_answer_2",
             "security_question_3",
+            "security_answer_3",
         ]
         read_only_fields = ["id"]
         extra_kwargs = {
@@ -35,8 +38,11 @@ class UserSerializer(serializers.ModelSerializer):
             "postcode": {"required": False},
             "country": {"required": False},
             "security_question_1": {"required": False},
+            "security_answer_1": {"required": False, "write_only": True},
             "security_question_2": {"required": False},
+            "security_answer_2": {"required": False, "write_only": True},
             "security_question_3": {"required": False},
+            "security_answer_3": {"required": False, "write_only": True},
         }
 
     def update(self, instance, validated_data):
