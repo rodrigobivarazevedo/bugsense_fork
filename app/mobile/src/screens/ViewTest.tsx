@@ -94,7 +94,7 @@ const ViewTest: FC = () => {
                 type: 'image/jpeg',
             } as any);
             const qrData = test?.qr_data;
-            const storage = 'local';
+            const storage = 'local'; // TODO: Change to 'gcs' when deployed to Google Cloud Storage
             await Api.post(
                 `upload/?qr_data=${encodeURIComponent(qrData)}&storage=${storage}`,
                 formData,
