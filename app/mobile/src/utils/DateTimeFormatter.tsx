@@ -28,3 +28,15 @@ export const formatTime = (dateStr: string, timeFormat: '12' | '24') => {
         hour12: timeFormat === '12',
     });
 }
+
+export const getTimeBasedGreeting = (): string => {
+    const hour = new Date().getHours();
+
+    if (hour >= 0 && hour < 12) {
+        return 'good_morning';
+    } else if (hour >= 12 && hour < 17) {
+        return 'good_afternoon';
+    } else {
+        return 'good_evening';
+    }
+};
