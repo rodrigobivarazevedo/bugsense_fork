@@ -19,7 +19,6 @@ export const Scan: FC = () => {
     const [showInstructionsModal, setShowInstructionsModal] = useState(false);
     const [showTestKitModal, setShowTestKitModal] = useState(false);
     const [pendingPhoto, setPendingPhoto] = useState<string | null>(null);
-    const [uploading, setUploading] = useState(false);
 
     const handleSelectScanType = (type: ScanType) => {
         setSelectedScanType(type);
@@ -110,7 +109,6 @@ export const Scan: FC = () => {
     const handleTestKitModalConfirm = async (qrData: string) => {
         setShowTestKitModal(false);
         if (!pendingPhoto) return;
-        setUploading(true);
         try {
             const token = await AsyncStorage.getItem('token');
             const formData = new FormData();
@@ -119,7 +117,7 @@ export const Scan: FC = () => {
                 name: 'test_strip.jpg',
                 type: 'image/jpeg',
             } as any);
-            const storage = 'local';
+            const storage = 'local'; // TODO: Change to 'gcs' when deployed to Google Cloud Storage
             await Api.post(
                 `upload/?qr_data=${encodeURIComponent(qrData)}&storage=${storage}`,
                 formData,
@@ -137,7 +135,6 @@ export const Scan: FC = () => {
         } catch (err) {
             Alert.alert('Upload failed', 'Could not upload image.');
         } finally {
-            setUploading(false);
             setPendingPhoto(null);
         }
     };
