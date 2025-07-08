@@ -1,213 +1,108 @@
-# Image Classification Microservice
+## Image Upload, Prediction, and Stopping Mechanism Flow
 
-A robust microservice for image classification using FastAPI, TensorFlow, and Inference (FTI) architecture.
+### 1. Image Upload
 
-## Architecture Overview
+- **Endpoint:** `POST /upload/`
+- **Inputs:**  
+  - `qr_data` (query param): Unique identifier for the image series.
+  - `image` (file): The image to upload.
+  - `storage` (query param): `"local"` or `"gcs"` (default: `"local"`).
+- **Auth:** JWT-based, validated via `get_current_user`.
 
-The system follows a microservice architecture pattern with the following components:
+- **Storage Logic:**
+  - If `storage == "gcs"`:  
+    The image is uploaded to Google Cloud Storage using `upload_image_to_gcs`.
+  - If `storage == "local"`:  
+    The image is saved to `storage/uploads/{qr_data}/{YYYY-MM-DD}/` using `save_file_locally`.
 
-1. **API Layer (FastAPI)**
-   - RESTful endpoints for image upload and prediction
-   - Input validation and request handling
-   - Response formatting
+- **Response:**  
+  - On success: 200 with a message.
+  - On failure: 400 or 500 with an error message.
 
-2. **Model Layer (TensorFlow)**
-   - Image classification model
-   - Model inference service
-   - Model versioning and management
+### 2. Prediction Triggering
 
-3. **Storage Layer**
-   - PostgreSQL for metadata and predictions
-   - MinIO for image storage (S3-compatible object storage)
+- After a successful upload, the backend **immediately attempts to trigger a prediction** by calling `await send_results(request, qr_data, storage=storage)`.
 
-## Database Schema
+### 3. Prediction Readiness: The Stopping Mechanism
 
-### PostgreSQL Schema
+- **Purpose:**  
+  To ensure predictions are only made when enough meaningful image data is available (e.g., enough timepoints or significant change).
 
-```sql
--- Users table
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email VARCHAR(255) UNIQUE NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+- **How it works:**
+  - When a prediction is requested, the backend loads all images for the given `qr_data` and date.
+  - The function `find_stopping_point` (in `app/utils/stopping_point.py`) analyzes the image series to determine the earliest index where a significant change is detected, using a sliding window and color difference metric (ΔE in LAB color space).
+  - If the stopping point index is **less than 5**, the system determines that there is **not enough data for a reliable prediction** and aborts the prediction attempt.
 
--- Images table
-CREATE TABLE images (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id),
-    filename VARCHAR(255) NOT NULL,
-    storage_path VARCHAR(512) NOT NULL,
-    mime_type VARCHAR(100) NOT NULL,
-    size_bytes BIGINT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+- **Code Reference:**  
+  - `prepare_input_tensor` in `app/ml_pipeline/features.py`:
+    ```python
+    stopping_point = find_stopping_point(images, threshold=23, mode="sliding_window")
+    if stopping_point < 5:
+        return None  # Not enough data for prediction
+    ```
+  - This logic is used for both species and concentration predictions.
 
--- Predictions table
-CREATE TABLE predictions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    image_id UUID REFERENCES images(id),
-    model_version VARCHAR(50) NOT NULL,
-    confidence_score FLOAT NOT NULL,
-    predicted_class VARCHAR(255) NOT NULL,
-    prediction_time_ms INTEGER NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+### 4. Prediction Request and Logic
 
--- Model versions table
-CREATE TABLE model_versions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    version VARCHAR(50) UNIQUE NOT NULL,
-    model_path VARCHAR(512) NOT NULL,
-    is_active BOOLEAN DEFAULT true,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-```
+- **Species and Concentration Predictions:**
+  - The backend makes two GET requests to its own ML API:
+    - `/prediction/species/`
+    - `/prediction/concentration/`
+  - Each endpoint:
+    - Loads the image series.
+    - Uses the stopping mechanism to check readiness.
+    - If ready, prepares the input tensor and runs the model.
+    - If not ready, returns a message indicating insufficient data.
 
-## Storage Architecture
+### 5. Sending Results to Django Backend
 
-### Image Storage (MinIO)
-- Images are stored in MinIO buckets
-- Each image is stored with a unique UUID as the filename
-- Images are organized in buckets by date (YYYY/MM/DD)
-- Original images are preserved for audit and retraining purposes
+- If **both** predictions are successful (i.e., not `None`), the backend sends a POST request to the Django backend at `/api/results/` with:
+  - `qr_data`
+  - `species`
+  - `concentration`
+  - `infected` (True if concentration is `"high"`, else False)
+- The request includes:
+  - `Content-Type: application/json`
+  - `X-ML-API-Key` (from secrets)
 
-## API Endpoints
+- **If either prediction is not ready (i.e., not enough data), no results are sent to Django.**
 
-### Image Upload and Prediction
-```
-POST /api/v1/predict
-Content-Type: multipart/form-data
+---
 
-Parameters:
-- file: Image file (required)
-- user_id: UUID (required)
+### Summary Table
 
-Response:
-{
-    "prediction_id": "uuid",
-    "image_id": "uuid",
-    "predicted_class": "string",
-    "confidence_score": float,
-    "prediction_time_ms": integer
-}
-```
+| Step                | Success Path                                      | Failure/Not Enough Data Path                |
+|---------------------|---------------------------------------------------|---------------------------------------------|
+| Upload image        | Image saved (local or GCS)                        | 400/500 error returned to client            |
+| Trigger prediction  | `send_results` called                             | -                                           |
+| Stopping mechanism  | If stopping point ≥ 5, proceed to prediction      | If < 5, abort prediction, no results sent   |
+| Prediction logic    | Both predictions made if ready                    | If not ready, returns message, no results   |
+| Send to Django      | If both predictions present, POSTs to Django      | If either is None, does **not** send        |
 
-### Get Prediction History
-```
-GET /api/v1/predictions
-Parameters:
-- user_id: UUID (required)
-- page: integer (optional)
-- limit: integer (optional)
+---
 
-Response:
-{
-    "predictions": [
-        {
-            "prediction_id": "uuid",
-            "image_id": "uuid",
-            "predicted_class": "string",
-            "confidence_score": float,
-            "created_at": "timestamp"
-        }
-    ],
-    "total": integer,
-    "page": integer,
-    "limit": integer
-}
-```
+### How the Stopping Mechanism Works
 
-## Setup Instructions
+- **Sliding Window:**  
+  Compares each image to the previous one using a region-of-interest (ROI) and color difference metric.
+- **Threshold:**  
+  If the mean color difference in any ROI exceeds the threshold (default: 23), that index is considered the stopping point.
+- **Minimum Data:**  
+  At least 5 images (timepoints) are required after the stopping point for a valid prediction.
 
-### Prerequisites
-- Python 3.8+
-- PostgreSQL 13+
-- MinIO Server
-- Docker and Docker Compose
+---
 
-### Environment Variables
-```env
-# Database
-POSTGRES_USER=your_user
-POSTGRES_PASSWORD=your_password
-POSTGRES_DB=image_classification
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
+## Example: When is a Prediction Triggered?
 
-# MinIO
-MINIO_ENDPOINT=localhost:9000
-MINIO_ACCESS_KEY=your_access_key
-MINIO_SECRET_KEY=your_secret_key
-MINIO_BUCKET_NAME=images
-
-# API
-API_HOST=0.0.0.0
-API_PORT=8000
-```
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd image-classification-service
-```
-
-2. Create and activate virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-4. Start the services using Docker Compose:
-```bash
-docker-compose up -d
-```
-
-## Development
-
-### Running Tests
-```bash
-pytest
-```
-
-### Code Style
-The project follows PEP 8 guidelines. Use the following command to check code style:
-```bash
-flake8
-```
-
-## Monitoring and Logging
-
-- Application logs are stored in `/logs`
-- Prometheus metrics are available at `/metrics`
-- Health check endpoint at `/health`
-
-## Security Considerations
-
-1. All API endpoints are protected with JWT authentication
-2. Images are validated for size and type before processing
-3. Rate limiting is implemented to prevent abuse
-4. Input sanitization is performed on all endpoints
-5. Regular security audits are performed
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details. 
+- **Scenario 1:**  
+  - User uploads 3 images.
+  - Stopping mechanism finds stopping point at index 2 (< 5).
+  - **No prediction is made.**
+- **Scenario 2:**  
+  - User uploads 6 images.
+  - Stopping mechanism does **not** find a stopping point (no significant change detected in the image series).
+  - **No prediction is made.**
+- **Scenario 3:**  
+  - User uploads around 40 images.
+  - Stopping mechanism finds stopping point at index 30.
+  - **Prediction is made and results are sent to Django.** 

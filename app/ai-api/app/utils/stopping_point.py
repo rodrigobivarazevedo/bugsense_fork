@@ -33,6 +33,7 @@ def is_significantly_different(prev_image, image, threshold, mode = "sliding_win
                     
 
 def find_stopping_point(image_tensor, threshold, mode = "sliding_window", use_roi_size=10, use_stride_size=5, use_prev_image=None):
+
     for index in range(len(image_tensor)):
         image = image_tensor[index]
         image = image.permute(1, 2, 0).numpy()
