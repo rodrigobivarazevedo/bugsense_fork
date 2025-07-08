@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { Modal, TouchableOpacity, Alert, View, Text, TextInput, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { themeColors } from '../../theme/GlobalTheme';
@@ -14,7 +14,7 @@ interface ChangePasswordModalProps {
     onSuccess?: () => void;
 }
 
-const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ visible, onClose, onSuccess }) => {
+const ChangePasswordModal: FC<ChangePasswordModalProps> = ({ visible, onClose, onSuccess }) => {
     const { t } = useTranslation();
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
