@@ -189,7 +189,21 @@ const ViewTest: FC = () => {
                 </View>
                 {image && (
                     <>
-                        <Image source={{ uri: image }} style={styles.image} resizeMode="cover" />
+                        <View style={styles.imageContainer}>
+                            <Image source={{ uri: image }} style={styles.image} resizeMode="cover" />
+                            <TouchableOpacity
+                                style={styles.deleteImageButton}
+                                onPress={() => setImage(null)}
+                                activeOpacity={0.7}
+                            >
+                                <RenderIcon
+                                    family="materialIcons"
+                                    icon="delete"
+                                    fontSize={22}
+                                    color={themeColors.white}
+                                />
+                            </TouchableOpacity>
+                        </View>
                         <TouchableOpacity
                             style={[styles.uploadButton, uploading && { backgroundColor: themeColors.themeGray }]}
                             onPress={uploadImage}

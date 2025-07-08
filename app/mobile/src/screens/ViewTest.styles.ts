@@ -98,6 +98,20 @@ export const styles = StyleSheet.create({
         fontSize: rem(1),
         letterSpacing: 0.5,
     },
+    imageContainer: {
+        position: 'relative',
+        width: '100%',
+        alignItems: 'center',
+    },
+    deleteImageButton: {
+        position: 'absolute',
+        top: rem(1),
+        right: rem(0.25),
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        borderRadius: rem(0.5),
+        padding: rem(0.25),
+        zIndex: 2,
+    },
     error: {
         color: 'red',
         marginTop: rem(0.5),
