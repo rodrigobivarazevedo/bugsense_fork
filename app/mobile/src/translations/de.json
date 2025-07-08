@@ -97,5 +97,9 @@
     "What is your mother's maiden name?": "Wie heißt Ihre Mutter vor der Heirat?",
     "What was the name of your first school?": "Wie heißt Ihre erste Schule?",
     "What is your favorite childhood memory?": "Was ist Ihr liebster Erinnerungsort?",
-    "Question": "Frage"
+    "Question": "Frage",
+    "test_status_ongoing": "In Bearbeitung",
+    "test_status_preliminary_assessment": "Vorläufige Bewertung",
+    "test_status_ready": "Bereit",
+    "test_status_closed": "Abgeschlossen"
 }

@@ -100,5 +100,9 @@
     "What is your mother's maiden name?": "What is your mother's maiden name?",
     "What was the name of your first school?": "What was the name of your first school?",
     "What is your favorite childhood memory?": "What is your favorite childhood memory?",
-    "Question": "Question"
+    "Question": "Question",
+    "test_status_ongoing": "In Progress",
+    "test_status_preliminary_assessment": "Preliminary Assessment",
+    "test_status_ready": "Ready",
+    "test_status_closed": "Completed"
 }

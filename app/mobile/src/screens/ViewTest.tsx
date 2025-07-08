@@ -16,6 +16,7 @@ import { styles } from './ViewTest.styles';
 import RenderIcon from '../components/RenderIcon';
 import { themeColors } from '../theme/GlobalTheme';
 import * as Clipboard from 'expo-clipboard';
+import { getTranslatedTestStatus } from '../utils/TestResultsStatus';
 
 const formatDateGerman = (dateStr: string) => {
     if (!dateStr) return '-';
@@ -123,7 +124,7 @@ const ViewTest: FC = () => {
                 <Text style={styles.label}>Test Started At:</Text>
                 <Text style={styles.value}>{formatDateGerman(result?.created_at)}</Text>
                 <Text style={styles.label}>Test Status:</Text>
-                <Text style={styles.value}>{result?.status || '-'}</Text>
+                <Text style={styles.value}>{getTranslatedTestStatus(result?.status) || '-'}</Text>
                 <Text style={styles.label}>Test QR Data:</Text>
                 <View style={styles.qrRow}>
                     <Text
