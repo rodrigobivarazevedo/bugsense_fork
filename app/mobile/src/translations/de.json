@@ -101,5 +101,7 @@
     "test_status_ongoing": "In Bearbeitung",
     "test_status_preliminary_assessment": "Vorläufige Bewertung",
     "test_status_ready": "Bereit",
-    "test_status_closed": "Abgeschlossen"
+    "test_status_closed": "Abgeschlossen",
+    "yes": "Ja",
+    "no": "Nein"
 }

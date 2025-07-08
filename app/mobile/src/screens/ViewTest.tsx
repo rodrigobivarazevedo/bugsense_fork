@@ -17,6 +17,7 @@ import RenderIcon from '../components/RenderIcon';
 import { themeColors } from '../theme/GlobalTheme';
 import * as Clipboard from 'expo-clipboard';
 import { getTranslatedTestStatus } from '../utils/TestResultsStatus';
+import { useTranslation } from 'react-i18next';
 
 const formatDateGerman = (dateStr: string) => {
     if (!dateStr) return '-';
@@ -31,6 +32,7 @@ const formatDateGerman = (dateStr: string) => {
 };
 
 const ViewTest: FC = () => {
+    const { t } = useTranslation();
     const navigation = useNavigation();
     const route = useRoute();
     // @ts-ignore
@@ -91,13 +93,19 @@ const ViewTest: FC = () => {
                 name: 'test_image.jpg',
                 type: 'image/jpeg',
             } as any);
-            formData.append('test_id', test?.id);
-            await Api.post('upload/image/', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const qrData = test?.qr_data;
+            const storage = 'local';
+            await Api.post(
+                `upload/?qr_data=${encodeURIComponent(qrData)}&storage=${storage}`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    service: 'ml',
+                } as any
+            );
             Alert.alert('Success', 'Image uploaded successfully!');
             setImage(null);
         } catch (err) {
@@ -201,9 +209,13 @@ const ViewTest: FC = () => {
                     <Text style={styles.error}>{error}</Text>
                 ) : result ? (
                     <View style={styles.resultBox}>
-                        <Text style={styles.resultLabel}>Infection Detected: <Text style={styles.resultValue}>{result.infection_detected ? 'Yes' : 'No'}</Text></Text>
+                        <Text style={styles.resultLabel}>Infection Detected: <Text style={styles.resultValue}>{
+                            result.infection_detected ? result.infection_detected ? t('yes') : t('no') : '-'
+                        }</Text></Text>
                         <Text style={styles.resultLabel}>Species: <Text style={styles.resultValue}>{result.species || '-'}</Text></Text>
-                        <Text style={styles.resultLabel}>Concentration: <Text style={styles.resultValue}>{result.concentration || '-'} CFU/mL</Text></Text>
+                        <Text style={styles.resultLabel}>Concentration: <Text style={styles.resultValue}>{
+                            result.concentration ? `${result.concentration} CFU/mL` : '-'
+                        }</Text></Text>
                         <Text style={styles.resultLabel}>Test Completed At: <Text style={styles.resultValue}>{test.closed_at ? formatDateGerman(test.closed_at) : '-'}</Text></Text>
                     </View>
                 ) : (

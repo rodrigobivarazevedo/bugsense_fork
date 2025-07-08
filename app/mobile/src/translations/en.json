@@ -104,5 +104,7 @@
     "test_status_ongoing": "In Progress",
     "test_status_preliminary_assessment": "Preliminary Assessment",
     "test_status_ready": "Ready",
-    "test_status_closed": "Completed"
+    "test_status_closed": "Completed",
+    "yes": "Yes",
+    "no": "No"
 }
