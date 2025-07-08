@@ -60,7 +60,7 @@ async def upload_image(
             message = "Image uploaded locally."
             
         # try to predict and send results to main backend
-        send_results(request, qr_data, storage=storage)
+        await send_results(request, qr_data, storage=storage)
             
         return JSONResponse(
                 status_code=200,
