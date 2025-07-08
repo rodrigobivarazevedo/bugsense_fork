@@ -40,6 +40,39 @@ export const validateSecurityQuestions = (questions: SecurityQuestionsData): boo
     );
 };
 
+export const validateSecurityQuestionsForUpdate = (
+    questions: SecurityQuestionsData,
+    originalQuestions: SecurityQuestionsData
+): boolean => {
+    const hasExistingQuestions = !!(
+        originalQuestions.security_question_1 ||
+        originalQuestions.security_question_2 ||
+        originalQuestions.security_question_3
+    );
+
+    if (!hasExistingQuestions) {
+        return validateSecurityQuestions(questions);
+    }
+
+    const changedQuestions = [];
+
+    if (questions.security_question_1 !== originalQuestions.security_question_1) {
+        changedQuestions.push({ question: questions.security_question_1, answer: questions.security_answer_1 });
+    }
+    if (questions.security_question_2 !== originalQuestions.security_question_2) {
+        changedQuestions.push({ question: questions.security_question_2, answer: questions.security_answer_2 });
+    }
+    if (questions.security_question_3 !== originalQuestions.security_question_3) {
+        changedQuestions.push({ question: questions.security_question_3, answer: questions.security_answer_3 });
+    }
+
+    if (changedQuestions.length === 0) {
+        return true;
+    }
+
+    return changedQuestions.every(q => q.question && q.answer);
+};
+
 export const getAvailableQuestionsForIndex = (
     questions: SecurityQuestionsData,
     questionIndex: number,

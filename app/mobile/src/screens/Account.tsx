@@ -17,7 +17,7 @@ import ChangePasswordModal from '../components/modal/ChangePasswordModal';
 import {
     securityQuestions,
     SecurityQuestionsData,
-    validateSecurityQuestions,
+    validateSecurityQuestionsForUpdate,
     getAvailableQuestionsForIndex as getAvailableQuestionsUtil,
     hasSecurityQuestionsChanges as hasSecurityQuestionsChangesUtil
 } from '../utils/SecurityQuestions';
@@ -32,6 +32,7 @@ export const Account: FC = () => {
     const [pendingValue, setPendingValue] = useState<string>('');
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
     const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+    const [showSecurityQuestionsConfirmationModal, setShowSecurityQuestionsConfirmationModal] = useState(false);
 
     // Address editing states
     const [addressFields, setAddressFields] = useState({
@@ -251,15 +252,36 @@ export const Account: FC = () => {
 
         if (user) {
             try {
-                const response = await Api.put('users/me/', securityQuestionsData);
+                const dataToSend: Partial<SecurityQuestionsData> = {};
+
+                if (securityQuestionsData.security_question_1 && securityQuestionsData.security_answer_1) {
+                    dataToSend.security_question_1 = securityQuestionsData.security_question_1;
+                    dataToSend.security_answer_1 = securityQuestionsData.security_answer_1;
+                }
+                if (securityQuestionsData.security_question_2 && securityQuestionsData.security_answer_2) {
+                    dataToSend.security_question_2 = securityQuestionsData.security_question_2;
+                    dataToSend.security_answer_2 = securityQuestionsData.security_answer_2;
+                }
+                if (securityQuestionsData.security_question_3 && securityQuestionsData.security_answer_3) {
+                    dataToSend.security_question_3 = securityQuestionsData.security_question_3;
+                    dataToSend.security_answer_3 = securityQuestionsData.security_answer_3;
+                }
+
+                const response = await Api.put('users/me/', dataToSend);
                 setUser(response.data);
                 setOriginalSecurityQuestions(securityQuestionsData);
                 Alert.alert(t('Success'), t('Security questions updated successfully'));
+                setSecurityQuestionsEditMode(false);
             } catch (error) {
                 console.error('Error updating security questions:', error);
                 Alert.alert(t('Error'), t('Failed to update security questions. Please try again.'));
             }
         }
+    };
+
+    const handleSecurityQuestionsSaveConfirm = async () => {
+        setShowSecurityQuestionsConfirmationModal(false);
+        await handleSecurityQuestionsSave();
     };
 
     const handleSecurityQuestionsCancel = () => {
@@ -276,9 +298,8 @@ export const Account: FC = () => {
         return hasSecurityQuestionsChangesUtil(securityQuestionsData, originalSecurityQuestions);
     };
 
-    // Only enable save if all 3 questions and answers are filled
-    const areAllSecurityQuestionsFilled = () => {
-        return validateSecurityQuestions(securityQuestionsData);
+    const canSaveSecurityQuestions = () => {
+        return validateSecurityQuestionsForUpdate(securityQuestionsData, originalSecurityQuestions);
     };
 
     const renderEditableField = (field: string, value: string) => {
@@ -795,15 +816,18 @@ export const Account: FC = () => {
                                 ))}
                                 {hasSecurityQuestionsChanges() && (
                                     <S.AccountActionContainer>
-                                        <S.AccountCancelButton onPress={() => { setSecurityQuestionsEditMode(false); handleSecurityQuestionsCancel(); }}>
+                                        <S.AccountCancelButton onPress={() => {
+                                            setSecurityQuestionsEditMode(false);
+                                            handleSecurityQuestionsCancel();
+                                        }}>
                                             <S.AccountCancelButtonText>{t('Cancel')}</S.AccountCancelButtonText>
                                         </S.AccountCancelButton>
                                         <S.AccountSaveButton
-                                            disabled={!(hasSecurityQuestionsChanges() && areAllSecurityQuestionsFilled())}
-                                            onPress={async () => { await handleSecurityQuestionsSave(); setSecurityQuestionsEditMode(false); }}
+                                            disabled={!(hasSecurityQuestionsChanges() && canSaveSecurityQuestions())}
+                                            onPress={() => setShowSecurityQuestionsConfirmationModal(true)}
                                         >
                                             <S.AccountSaveButtonText
-                                                disabled={!(hasSecurityQuestionsChanges() && areAllSecurityQuestionsFilled())}
+                                                disabled={!(hasSecurityQuestionsChanges() && canSaveSecurityQuestions())}
                                             >
                                                 {t('Save Changes')}
                                             </S.AccountSaveButtonText>
@@ -874,6 +898,15 @@ export const Account: FC = () => {
                 message={editingField === 'full_name'
                     ? t('Are you sure you want to update your name?')
                     : t('Are you sure you want to update your email address?')}
+                confirmText={t('Confirm')}
+                cancelText={t('Cancel')}
+            />
+            <ConfirmationModal
+                isOpen={showSecurityQuestionsConfirmationModal}
+                onClose={() => setShowSecurityQuestionsConfirmationModal(false)}
+                onConfirm={handleSecurityQuestionsSaveConfirm}
+                heading={t('Update Security Questions')}
+                message={t('Are you sure you want to update your security questions? The answers to the questions you edited will be updated.')}
                 confirmText={t('Confirm')}
                 cancelText={t('Cancel')}
             />
