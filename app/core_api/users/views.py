@@ -11,6 +11,7 @@ from .serializers import (
     QRCodeCreateSerializer,
     ResultsSerializer,
     ResultsCreateSerializer,
+    PasswordChangeSerializer,
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -913,4 +914,94 @@ class PasswordRecoveryResetView(APIView):
         user.password_reset_token = None
         user.password_reset_token_created = None
         user.save()
-        return Response({"detail": "Password reset successful."})
+        return Response({"detail": "Password reset successful."}, status=status.HTTP_200_OK)
+
+
+class PasswordChangeView(APIView):
+    """
+    POST /api/change-password/ with { old_password, new_password }
+    Changes the authenticated user's password after verifying the old password
+    """
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=['authentication'],
+        summary="Change User Password",
+        description="Change the authenticated user's password. Requires verification of the current password before allowing the change. The new password must be at least 8 characters long and different from the current password.",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "old_password": {
+                        "type": "string",
+                        "description": "Current password for verification"
+                    },
+                    "new_password": {
+                        "type": "string",
+                        "minLength": 8,
+                        "description": "New password (minimum 8 characters)"
+                    }
+                },
+                "required": ["old_password", "new_password"]
+            }
+        },
+        responses={
+            200: {
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "type": "string",
+                        "description": "Success message"
+                    }
+                }
+            },
+            400: {
+                "type": "object",
+                "properties": {
+                    "detail": {"type": "string"},
+                    "old_password": {"type": "array", "items": {"type": "string"}},
+                    "new_password": {"type": "array", "items": {"type": "string"}}
+                }
+            }
+        },
+        examples=[
+            OpenApiExample(
+                'Change Password Request',
+                value={
+                    'old_password': 'currentpassword123',
+                    'new_password': 'newsecurepassword456'
+                },
+                description='Request to change password with current and new password'
+            ),
+            OpenApiExample(
+                'Password Change Success',
+                value={
+                    'detail': 'Password changed successfully.'
+                },
+                description='Response confirming successful password change'
+            ),
+            OpenApiExample(
+                'Incorrect Old Password Error',
+                value={
+                    'old_password': ['Current password is incorrect.']
+                },
+                description='Error when old password is incorrect'
+            ),
+            OpenApiExample(
+                'Same Password Error',
+                value={
+                    'new_password': ['New password must be different from current password.']
+                },
+                description='Error when new password is the same as current password'
+            )
+        ]
+    )
+    def post(self, request):
+        serializer = PasswordChangeSerializer(
+            data=request.data, context={'request': request})
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"detail": "Password changed successfully."}, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
