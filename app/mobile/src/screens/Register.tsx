@@ -262,28 +262,28 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                     </S.SecurityQuestionHeader>
 
                     <S.InputContainer>
-                        <S.DropdownButton
+                        <S.SelectorRow
                             onPress={() => {
                                 setSelectedQuestionIndex(index);
                                 setShowDropdown(!showDropdown);
                             }}
+                            activeOpacity={0.8}
                         >
-                            <S.DropdownButtonText>
+                            <S.SelectorText>
                                 {question.question || t('Select Security Question')}
-                            </S.DropdownButtonText>
-                            <S.DropdownArrow>▼</S.DropdownArrow>
-                        </S.DropdownButton>
+                            </S.SelectorText>
+                            <S.SelectorIcon>▼</S.SelectorIcon>
+                        </S.SelectorRow>
                         {showDropdown && selectedQuestionIndex === index && (
                             <S.DropdownContainer>
                                 {getAvailableQuestionsForIndex(index).map((q, qIndex) => (
-                                    <TouchableOpacity
+                                    <S.DropdownItem
                                         key={qIndex}
                                         onPress={() => handleQuestionSelect(q, index)}
+                                        activeOpacity={0.7}
                                     >
-                                        <S.DropdownItem>
-                                            <S.DropdownText>{q}</S.DropdownText>
-                                        </S.DropdownItem>
-                                    </TouchableOpacity>
+                                        <S.DropdownText>{q}</S.DropdownText>
+                                    </S.DropdownItem>
                                 ))}
                             </S.DropdownContainer>
                         )}
