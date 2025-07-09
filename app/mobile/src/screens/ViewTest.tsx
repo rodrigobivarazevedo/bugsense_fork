@@ -20,6 +20,7 @@ import { getTranslatedTestStatus } from '../utils/TestResultsStatus';
 import { useTranslation } from 'react-i18next';
 import ScanInstructionsModal from '../components/modal/ScanInstructionsModal';
 import { formatDateTimeGerman } from '../utils/DateTimeFormatter';
+import { navigateToBacteriaDiscoverPage, getSpeciesDisplayName } from '../utils/BacteriaSpeciesUtils';
 
 const ViewTest: FC = () => {
     const { t } = useTranslation();
@@ -245,7 +246,23 @@ const ViewTest: FC = () => {
                         <Text style={styles.resultLabel}>Infection Detected: <Text style={styles.resultValue}>{
                             result.infection_detected ? result.infection_detected ? t('yes') : t('no') : '-'
                         }</Text></Text>
-                        <Text style={styles.resultLabel}>Species: <Text style={styles.resultValue}>{result.species || '-'}</Text></Text>
+                        <View style={styles.speciesRow}>
+                            <Text style={styles.resultLabel}>Specie: <Text style={styles.resultValue}>{getSpeciesDisplayName(result.species) || '-'}</Text></Text>
+                            {result.species && result.species !== 'Sterile' && (
+                                <TouchableOpacity
+                                    style={styles.infoButton}
+                                    onPress={() => navigateToBacteriaDiscoverPage(navigation, result.species)}
+                                    activeOpacity={0.7}
+                                >
+                                    <RenderIcon
+                                        family="ionIcons"
+                                        icon="information-circle"
+                                        fontSize={20}
+                                        color={themeColors.primary}
+                                    />
+                                </TouchableOpacity>
+                            )}
+                        </View>
                         <Text style={styles.resultLabel}>Concentration: <Text style={styles.resultValue}>{
                             result.concentration ? `${result.concentration} CFU/mL` : '-'
                         }</Text></Text>
