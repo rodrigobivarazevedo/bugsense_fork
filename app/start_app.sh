@@ -27,9 +27,23 @@ get_host_ip() {
   ifconfig en0 | awk '/inet / && $2 != "127.0.0.1" {print $2; exit}'
 }
 
+# Function to run docker compose with proper cleanup
+run_docker_compose() {
+  local compose_cmd="$1"
+  echo "Starting services with: $compose_cmd"
+  $compose_cmd &
+  local docker_pid=$!
+  
+  # Wait for the docker compose process
+  wait $docker_pid
+  
+  # When docker compose exits (either normally or via Ctrl+C), run down
+  echo "Stopping and removing containers..."
+  docker compose down
+}
 
-# export HOST_IP=$(ifconfig en0 \
-#   | awk '/inet / && !/127/ {print $2; exit}')
+# Trap Ctrl+C (SIGINT) and run docker compose down
+trap 'echo -e "\nCaught Ctrl+C, stopping containers..."; docker compose down; exit 0' SIGINT
 
 export HOST_IP=$(get_host_ip)
 
@@ -71,6 +85,7 @@ fi
 if grep -q '^ML_API_KEY=' .env; then
     sed -i '' "s/^ML_API_KEY=.*/ML_API_KEY=${ML_API_KEY}/" .env  # macOS version
 else
+    echo "ML_API_KEY=${ML_API_KEY}" >> .env
     echo "ML_API_KEY=${ML_API_KEY}" >> ./ai-api/.env
 fi
 
@@ -88,12 +103,12 @@ elif [ "$1" = "--build" ]; then
   echo "✨✨✨ Mobile App visible on exp://$HOST_IP:8081 ✨✨✨"
   echo "✨✨✨ Web App visible on http://$HOST_IP:3000 ✨✨✨"
   echo "✨✨✨ Local Web App visible on http://localhost:3000 ✨✨✨"
-  docker compose up --build
+  run_docker_compose "docker compose up --build"
 elif [ "$1" = "--load-data" ]; then
   echo "✨✨✨ Mobile App visible on exp://$HOST_IP:8081 ✨✨✨"
   echo "✨✨✨ Web App visible on http://$HOST_IP:3000 ✨✨✨"
   echo "✨✨✨ Local Web App visible on http://localhost:3000 ✨✨✨"
-  docker compose up --build
+  run_docker_compose "docker compose up --build"
   
   echo "Waiting for database to be ready..."
   sleep 10
@@ -115,5 +130,5 @@ else
   echo "✨✨✨ Mobile App visible on exp://$HOST_IP:8081 ✨✨✨"
   echo "✨✨✨ Web App visible on http://$HOST_IP:3000 ✨✨✨"
   echo "✨✨✨ Local Web App visible on http://localhost:3000 ✨✨✨"
-  docker compose up
+  run_docker_compose "docker compose up"
 fi
