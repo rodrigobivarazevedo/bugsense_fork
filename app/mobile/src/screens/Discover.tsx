@@ -12,16 +12,22 @@ const bacteriaList = [
         image: require('../assets/images/bacteria/escherichia-coli.png')
     },
     {
-        id: 'salmonella',
-        name: 'Salmonella',
-        description: 'Bacteria that can cause food poisoning and typhoid fever',
-        image: require('../assets/images/bacteria/salmonella.png')
+        id: 'enterococcus-faecalis',
+        name: 'Enterococcus faecalis',
+        description: 'Common gut bacteria that can cause foodborne illness',
+        image: require('../assets/images/bacteria/enterococcus-faecalis.png')
     },
     {
-        id: 'listeria-monocytogenes',
-        name: 'Listeria monocytogenes',
-        description: 'Can cause serious infections, especially in pregnant women',
-        image: require('../assets/images/bacteria/listeria-monocytogenes.png')
+        id: 'klebsiella-pneumoniae',
+        name: 'Klebsiella pneumoniae',
+        description: 'Common bacteria that can cause pneumonia',
+        image: require('../assets/images/bacteria/klebsiella-pneumoniae.png')
+    },
+    {
+        id: 'staphylococcus-saprophyticus',
+        name: 'Staphylococcus saprophyticus',
+        description: 'Common bacteria that can cause skin infections',
+        image: require('../assets/images/bacteria/staphylococcus-saprophyticus.png')
     },
     {
         id: 'staphylococcus-aureus',
@@ -30,29 +36,23 @@ const bacteriaList = [
         image: require('../assets/images/bacteria/staphylococcus-aureus.png')
     },
     {
-        id: 'campylobacter',
-        name: 'Campylobacter',
-        description: 'Leading cause of bacterial foodborne illness',
-        image: require('../assets/images/bacteria/campylobacter.png')
+        id: 'enterobacter-hormaechei',
+        name: 'Enterobacter hormaechei',
+        description: 'Common bacteria that can cause foodborne illness',
+        image: require('../assets/images/bacteria/enterobacter-hormaechei.png')
     },
     {
-        id: 'clostridium-perfringens',
-        name: 'Clostridium perfringens',
-        description: 'Bacteria that can cause food poisoning and gas gangrene',
-        image: require('../assets/images/bacteria/clostridium-perfringens.png')
+        id: 'pseudomonas-aeruginosa',
+        name: 'Pseudomonas aeruginosa',
+        description: 'Common bacteria that can cause pneumonia',
+        image: require('../assets/images/bacteria/pseudomonas-aeruginosa.png')
     },
     {
-        id: 'streptococcus-pyogenes',
-        name: 'Streptococcus pyogenes',
-        description: 'Bacteria that can cause strep throat and scarlet fever',
-        image: require('../assets/images/bacteria/streptococcus-pyogenes.png')
-    },
-    {
-        id: 'streptococcus-pneumoniae',
-        name: 'Streptococcus pneumoniae',
-        description: 'Bacteria that can cause pneumonia and meningitis',
-        image: require('../assets/images/bacteria/streptococcus-pneumoniae.png')
-    },
+        id: 'proteus-mirabilis',
+        name: 'Proteus mirabilis',
+        description: 'Common bacteria that can cause foodborne illness',
+        image: require('../assets/images/bacteria/proteus-mirabilis.png')
+    }
 ];
 
 export const Discover: FC<any> = ({ navigation }) => {
