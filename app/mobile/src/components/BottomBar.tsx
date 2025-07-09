@@ -1,10 +1,11 @@
-import { FC, useState, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import * as S from './BottomBar.styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation, useNavigationState } from '@react-navigation/native';
 import RenderIcon from './RenderIcon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { useTranslation } from 'react-i18next';
 
 const USER_TABS = [
     { key: 'home', label: 'Home', family: 'foundation', icon: 'home' },
@@ -19,12 +20,10 @@ const DOCTOR_TABS = [
     { key: 'more', label: 'More', family: 'feather', icon: 'more-horizontal' },
 ];
 
-const BottomBar: FC = () => {
+const BottomBar: FC<BottomTabBarProps> = ({ state, navigation }) => {
     const insets = useSafeAreaInsets();
-    const [activeTab, setActiveTab] = useState<string>('home');
     const [userType, setUserType] = useState<string>('patient');
-    const navigation = useNavigation();
-    const navigationState = useNavigationState(state => state);
+    const { t } = useTranslation();
 
     useEffect(() => {
         AsyncStorage.getItem('userType').then(type => {
@@ -32,41 +31,36 @@ const BottomBar: FC = () => {
         });
     }, []);
 
-    useEffect(() => {
-        if (!navigationState?.routes?.length) return;
-        const current = navigationState.routes[navigationState.index].name.toLowerCase();
-        const tabs = userType === 'doctor' ? DOCTOR_TABS : USER_TABS;
-        setActiveTab(tabs.some(t => t.key === current) ? current : '');
-    }, [navigationState, userType]);
-
-    const handleTabChange = (key: string) => {
-        setActiveTab(key);
-        const routeName = key.charAt(0).toUpperCase() + key.slice(1);
-        navigation.navigate(routeName as never);
-    };
-
     const tabs = userType === 'doctor' ? DOCTOR_TABS : USER_TABS;
 
     return (
         <S.Container insets={insets}>
-            {tabs.map(tab => (
-                <TouchableOpacity
-                    key={tab.key}
-                    onPress={() => handleTabChange(tab.key)}
-                >
-                    <S.IconWrapper>
-                        <RenderIcon
-                            family={tab.family as any}
-                            icon={tab.icon}
-                            fontSize={24}
-                            color={activeTab === tab.key ? 'primary' : 'themeGray'}
-                        />
-                        <S.Label isActive={activeTab === tab.key}>
-                            {tab.label}
-                        </S.Label>
-                    </S.IconWrapper>
-                </TouchableOpacity>
-            ))}
+            {tabs.map((tab) => {
+                const tabIndex = state.routes.findIndex(r => r.name.toLowerCase() === tab.key);
+                const isActive = state.index === tabIndex;
+                return (
+                    <TouchableOpacity
+                        key={tab.key}
+                        onPress={() => {
+                            if (!isActive && tabIndex !== -1) {
+                                navigation.navigate('Main', { screen: state.routes[tabIndex].name });
+                            }
+                        }}
+                    >
+                        <S.IconWrapper>
+                            <RenderIcon
+                                family={tab.family as any}
+                                icon={tab.icon}
+                                fontSize={24}
+                                color={isActive ? 'primary' : 'themeGray'}
+                            />
+                            <S.Label isActive={isActive}>
+                                {t(tab.label)}
+                            </S.Label>
+                        </S.IconWrapper>
+                    </TouchableOpacity>
+                );
+            })}
         </S.Container>
     );
 };

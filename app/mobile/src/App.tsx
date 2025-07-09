@@ -1,12 +1,14 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import './translations/i18n';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './translations/i18n';
-import { useTranslation } from 'react-i18next';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
+import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import type { NativeStackHeaderProps } from '@react-navigation/native-stack';
 
 import { handleThirdPartyLibraryWarnings } from './utils/HandleThirdPartyLibraryWarnings';
 handleThirdPartyLibraryWarnings();
@@ -32,81 +34,88 @@ import Patients from './screens/Patients';
 import TimeFormatSelection from './screens/TimeFormatSelection';
 import ViewTest from './screens/ViewTest';
 
-const routes = [
-  { name: 'Login', component: UserLogin, wrapped: false },
-  { name: 'Register', component: Register, wrapped: false },
-  { name: 'ForgotPassword', component: ForgotPassword, wrapped: false },
-  { name: 'PasswordRecoveryStep1', component: PasswordRecoveryStep1, wrapped: false },
-  { name: 'PasswordRecoveryStep2', component: PasswordRecoveryStep2, wrapped: false },
-  { name: 'PasswordRecoveryStep3', component: PasswordRecoveryStep3, wrapped: false },
-  { name: 'DoctorLogin', component: DoctorLogin, wrapped: false },
-  { name: 'Home', component: Home, wrapped: true, showBottomBar: true },
-  { name: 'Scan', component: Scan, wrapped: true, showBottomBar: true },
-  { name: 'Tests', component: Tests, wrapped: true, showBottomBar: true },
-  { name: 'More', component: More, wrapped: true, showBottomBar: true },
-  { name: 'Account', component: Account, wrapped: true, showBottomBar: true },
-  { name: 'LanguageSelection', alias: 'language', component: LanguageSelection, wrapped: true, showBottomBar: false },
-  { name: 'TimeFormatSelection', component: TimeFormatSelection, wrapped: true, showBottomBar: false },
-  { name: 'Discover', component: Discover, wrapped: true, showBottomBar: false },
-  { name: 'BacteriaRouter', alias: 'discover_bacteria', component: BacteriaRouter, wrapped: true, showBottomBar: false },
-  { name: 'Patients', component: Patients, wrapped: true, showBottomBar: true },
-  { name: 'ViewTest', alias: 'test_details_and_result', component: ViewTest, wrapped: true, showBottomBar: false },
+const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+const AppContainer = styled.View`
+  flex: 1;
+`;
+const ContentContainer = styled.View`
+  flex: 1;
+`;
+
+const wrappedScreens: string[] = [
+  'Home',
+  'Scan',
+  'Tests',
+  'More',
+  'Account',
+  'Patients',
+  'LanguageSelection',
+  'TimeFormatSelection',
+  'Discover',
+  'BacteriaRouter',
+  'ViewTest',
 ];
 
-export default function App() {
-  const [currentRoute, setCurrentRoute] = useState<string>('Home');
-  const navRef = useRef<NavigationContainerRef<any>>(null);
-  const { t } = useTranslation();
-  const showBottomBar = routes.find(r => r.name === currentRoute)?.showBottomBar;
-  const Stack = createNativeStackNavigator();
+function MainTabs() {
+  return (
+    <Tab.Navigator
+      tabBar={(props: BottomTabBarProps) => <BottomBar {...props} />}
+      screenOptions={({ navigation, route }) => ({
+        header: (headerProps) => (
+          <HeaderBar
+            {...headerProps}
+            navigation={navigation}
+            route={route}
+          />
+        ),
+      })}
+    >
+      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Scan" component={Scan} />
+      <Tab.Screen name="Tests" component={Tests} />
+      <Tab.Screen name="More" component={More} />
+      <Tab.Screen name="Account" component={Account} />
+      <Tab.Screen name="Patients" component={Patients} />
+    </Tab.Navigator>
+  );
+}
 
-  const AppContainer = styled.View`
-    flex: 1;
-  `;
-  const ContentContainer = styled.View`
-    flex: 1;
-  `;
+export default function App() {
+  const navRef = useRef<NavigationContainerRef<any>>(null);
 
   return (
     <SafeAreaProvider>
       <I18nextProvider i18n={i18n}>
-        <NavigationContainer
-          ref={navRef}
-          onReady={() => {
-            const name = navRef.current?.getCurrentRoute()?.name;
-            if (name) setCurrentRoute(name);
-          }}
-          onStateChange={() => {
-            const name = navRef.current?.getCurrentRoute()?.name;
-            if (name) setCurrentRoute(name);
-          }}
-        >
+        <NavigationContainer ref={navRef}>
           <AppContainer>
             <ContentContainer>
               <Stack.Navigator
                 screenOptions={{
-                  header: (props) => {
-                    const routeConfig = routes.find(r => r.name === props.route.name);
-                    if (routeConfig?.wrapped) {
+                  header: (props: NativeStackHeaderProps) => {
+                    if (wrappedScreens.includes(props.route.name)) {
                       return <HeaderBar {...props} />;
                     }
                     return null;
                   },
                 }}
               >
-                {routes.map(({ name, alias, component: Component }) => (
-                  <Stack.Screen
-                    key={name}
-                    name={name}
-                    component={Component}
-                    options={{
-                      headerTitle: alias ? t(alias) : t(name)
-                    }}
-                  />
-                ))}
+                <Stack.Screen name="Login" component={UserLogin} />
+                <Stack.Screen name="Register" component={Register} />
+                <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+                <Stack.Screen name="PasswordRecoveryStep1" component={PasswordRecoveryStep1} />
+                <Stack.Screen name="PasswordRecoveryStep2" component={PasswordRecoveryStep2} />
+                <Stack.Screen name="PasswordRecoveryStep3" component={PasswordRecoveryStep3} />
+                <Stack.Screen name="DoctorLogin" component={DoctorLogin} />
+                <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
+                <Stack.Screen name="LanguageSelection" component={LanguageSelection} />
+                <Stack.Screen name="TimeFormatSelection" component={TimeFormatSelection} />
+                <Stack.Screen name="Discover" component={Discover} />
+                <Stack.Screen name="BacteriaRouter" component={BacteriaRouter} />
+                <Stack.Screen name="ViewTest" component={ViewTest} />
               </Stack.Navigator>
             </ContentContainer>
-            {showBottomBar && <BottomBar />}
           </AppContainer>
         </NavigationContainer>
       </I18nextProvider>
