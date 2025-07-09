@@ -216,7 +216,7 @@ export const ItemTextCol = styled.View`
 export const EditIconBtnLight = styled.TouchableOpacity`
   padding: ${rem(0.5)}px;
   margin-left: ${rem(1)}px;
-  align-self: flex-start;
+  align-self: flex-end;
 `;
 
 export const ModalOverlay = styled.TouchableOpacity`

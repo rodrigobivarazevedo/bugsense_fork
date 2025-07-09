@@ -698,70 +698,121 @@ export const Account: FC = () => {
                         <S.ItemRow>
                             <S.ItemTextCol>
                                 <S.ItemLabel>{t('Street')}</S.ItemLabel>
-                                <TextInput
-                                    value={addressFields.street}
-                                    onChangeText={(value) => handleAddressFieldChange('street', value)}
-                                    placeholder={t('Enter street address')}
-                                    style={{
-                                        color: themeColors.primary,
-                                        fontSize: 16,
-                                        fontWeight: '600',
-                                        padding: 0,
-                                        marginBottom: rem(0.5),
-                                    }}
-                                    ref={streetInputRef}
-                                />
+                                {editingField === 'street' ? (
+                                    <TextInput
+                                        value={addressFields.street}
+                                        onChangeText={(value) => handleAddressFieldChange('street', value)}
+                                        placeholder={t('Enter street address')}
+                                        style={{
+                                            color: themeColors.primary,
+                                            fontSize: 16,
+                                            fontWeight: '600',
+                                            padding: 0,
+                                            marginBottom: rem(0.5),
+                                        }}
+                                        ref={streetInputRef}
+                                        autoFocus
+                                        onBlur={() => setEditingField(null)}
+                                    />
+                                ) : (
+                                    <S.ItemValue>{addressFields.street}</S.ItemValue>
+                                )}
                             </S.ItemTextCol>
+                            {editingField !== 'street' && (
+                                <S.EditIconBtnLight onPress={() => setEditingField('street')}>
+                                    <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                                </S.EditIconBtnLight>
+                            )}
                         </S.ItemRow>
                         <S.ItemRow>
                             <S.ItemTextCol>
                                 <S.ItemLabel>{t('City')}</S.ItemLabel>
-                                <TextInput
-                                    value={addressFields.city}
-                                    onChangeText={(value) => handleAddressFieldChange('city', value)}
-                                    placeholder={t('Enter city')}
-                                    style={{
-                                        color: themeColors.primary,
-                                        fontSize: 16,
-                                        fontWeight: '600',
-                                        padding: 0,
-                                        marginBottom: rem(0.5),
-                                    }}
-                                    ref={cityInputRef}
-                                />
+                                {editingField === 'city' ? (
+                                    <TextInput
+                                        value={addressFields.city}
+                                        onChangeText={(value) => handleAddressFieldChange('city', value)}
+                                        placeholder={t('Enter city')}
+                                        style={{
+                                            color: themeColors.primary,
+                                            fontSize: 16,
+                                            fontWeight: '600',
+                                            padding: 0,
+                                            marginBottom: rem(0.5),
+                                        }}
+                                        ref={cityInputRef}
+                                        autoFocus
+                                        onBlur={() => setEditingField(null)}
+                                    />
+                                ) : (
+                                    <S.ItemValue>{addressFields.city}</S.ItemValue>
+                                )}
                             </S.ItemTextCol>
+                            {editingField !== 'city' && (
+                                <S.EditIconBtnLight onPress={() => setEditingField('city')}>
+                                    <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                                </S.EditIconBtnLight>
+                            )}
                         </S.ItemRow>
                         <S.ItemRow>
                             <S.ItemTextCol>
                                 <S.ItemLabel>{t('Postcode')}</S.ItemLabel>
-                                <TextInput
-                                    value={addressFields.postcode}
-                                    onChangeText={(value) => handleAddressFieldChange('postcode', value)}
-                                    placeholder={t('Enter postcode')}
-                                    style={{
-                                        color: themeColors.primary,
-                                        fontSize: 16,
-                                        fontWeight: '600',
-                                        padding: 0,
-                                        marginBottom: rem(0.5),
-                                    }}
-                                    ref={postcodeInputRef}
-                                />
+                                {editingField === 'postcode' ? (
+                                    <TextInput
+                                        value={addressFields.postcode}
+                                        onChangeText={(value) => handleAddressFieldChange('postcode', value)}
+                                        placeholder={t('Enter postcode')}
+                                        style={{
+                                            color: themeColors.primary,
+                                            fontSize: 16,
+                                            fontWeight: '600',
+                                            padding: 0,
+                                            marginBottom: rem(0.5),
+                                        }}
+                                        ref={postcodeInputRef}
+                                        autoFocus
+                                        onBlur={() => setEditingField(null)}
+                                    />
+                                ) : (
+                                    <S.ItemValue>{addressFields.postcode}</S.ItemValue>
+                                )}
                             </S.ItemTextCol>
+                            {editingField !== 'postcode' && (
+                                <S.EditIconBtnLight onPress={() => setEditingField('postcode')}>
+                                    <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                                </S.EditIconBtnLight>
+                            )}
                         </S.ItemRow>
                         <S.ItemRow>
                             <S.ItemTextCol>
                                 <S.ItemLabel>{t('Country')}</S.ItemLabel>
-                                <S.CountrySelector onPress={() => setShowCountryPicker(true)}>
-                                    <S.CountrySelectorText>
-                                        {addressFields.country || t('Select a country')}
-                                    </S.CountrySelectorText>
-                                </S.CountrySelector>
+                                <S.ItemValue>{addressFields.country || t('Select a country')}</S.ItemValue>
                             </S.ItemTextCol>
-                            <S.EditIconBtnLight onPress={() => setShowCountryPicker(true)}>
-                                <RenderIcon family="materialIcons" icon="keyboard-arrow-down" fontSize={rem(1.25)} color="primary" />
-                            </S.EditIconBtnLight>
+                            {editingField !== 'country' && (
+                                <S.EditIconBtnLight style={{ alignSelf: 'center' }} onPress={() => setEditingField('country')}>
+                                    <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                                </S.EditIconBtnLight>
+                            )}
                         </S.ItemRow>
+                        {editingField === 'country' && (
+                            <CountryPicker
+                                visible={true}
+                                onClose={() => setEditingField(null)}
+                                onSelect={handleCountrySelect}
+                                countryCode={selectedCountry?.cca2 as CountryCode}
+                                withFilter
+                                withFlag
+                                withCountryNameButton
+                                withModal
+                                withAlphaFilter
+                                theme={{
+                                    backgroundColor: themeColors.white,
+                                    primaryColor: themeColors.primary,
+                                    primaryColorVariant: themeColors.secondary,
+                                    onBackgroundTextColor: themeColors.primary,
+                                    filterPlaceholderTextColor: themeColors.themeGray,
+                                }}
+                            />
+                        )}
                         {hasAddressChanges() && (
                             <S.AccountActionContainer>
                                 <S.AccountCancelButton onPress={handleAddressCancel}>
@@ -915,24 +966,6 @@ export const Account: FC = () => {
                 visible={showChangePasswordModal}
                 onClose={() => setShowChangePasswordModal(false)}
                 onSuccess={() => { }}
-            />
-            <CountryPicker
-                visible={showCountryPicker}
-                onClose={() => setShowCountryPicker(false)}
-                onSelect={handleCountrySelect}
-                countryCode={selectedCountry?.cca2 as CountryCode}
-                withFilter
-                withFlag
-                withCountryNameButton
-                withModal
-                withAlphaFilter
-                theme={{
-                    backgroundColor: themeColors.white,
-                    primaryColor: themeColors.primary,
-                    primaryColorVariant: themeColors.secondary,
-                    onBackgroundTextColor: themeColors.primary,
-                    filterPlaceholderTextColor: themeColors.themeGray,
-                }}
             />
         </S.Scroll>
     );
