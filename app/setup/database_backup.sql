@@ -604,6 +604,11 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 6	2025-07-07 20:02:35.568591+00	9	Result for robert.kim@email.com - No Infection (2025-07-07 19:56)	2	[{"changed": {"fields": ["Status"]}}]	12	1
 7	2025-07-07 20:02:48.554123+00	8	Result for james.wilson@email.com - Infected (2025-07-07 19:56)	2	[{"changed": {"fields": ["Status", "Species"]}}]	12	1
 8	2025-07-07 22:08:57.542326+00	11	Result for sarah.johnson@email.com - Infected (2025-07-07 20:17)	2	[{"changed": {"fields": ["Status", "Infection Detected"]}}]	12	1
+9	2025-07-09 16:07:25.100868+00	10	Result for maria.garcia@email.com - Infected (2025-07-07 19:56)	2	[{"changed": {"fields": ["Species"]}}]	12	1
+10	2025-07-09 16:07:40.560328+00	8	Result for james.wilson@email.com - Infected (2025-07-07 19:56)	2	[{"changed": {"fields": ["Species"]}}]	12	1
+11	2025-07-09 16:07:54.703225+00	6	Result for jennifer.lee@email.com - Infected (2025-07-07 19:49)	2	[{"changed": {"fields": ["Species"]}}]	12	1
+12	2025-07-09 16:08:06.497743+00	2	Result for michael.chen@email.com - Infected (2025-07-07 19:49)	2	[{"changed": {"fields": ["Species"]}}]	12	1
+13	2025-07-09 16:08:16.275448+00	1	Result for emily.rodriguez@email.com - Infected (2025-07-07 19:49)	2	[{"changed": {"fields": ["Species"]}}]	12	1
 \.
 
 
@@ -695,7 +700,8 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 COPY public.django_session (session_key, session_data, expire_date) FROM stdin;
 v6pcoymlyrdee65vnozz6cxcq2to2dce	.eJxVjEEOwiAQRe_C2hCGMlBcuvcMZIBBqoYmpV0Z765NutDtf-_9lwi0rTVsnZcwZXEWIE6_W6T04LaDfKd2m2Wa27pMUe6KPGiX1znz83K4fweVev3WyiWbkU0CZTVrhIRmsFhGUB4KWJdJDRqdJUi6gCHt9UgRnWdvgVi8P7dRNtY:1uBan0:gpgXqkvi9hEYmIbfh7EObEMqXRuI-6-pAUxepEoeJrY	2025-05-18 14:57:58.743831+00
 wr33dqmhybkg15iib8pqn7a2bkm9h40l	.eJxVjEEOwiAQRe_C2hCGMlBcuvcMZIBBqoYmpV0Z765NutDtf-_9lwi0rTVsnZcwZXEWIE6_W6T04LaDfKd2m2Wa27pMUe6KPGiX1znz83K4fweVev3WyiWbkU0CZTVrhIRmsFhGUB4KWJdJDRqdJUi6gCHt9UgRnWdvgVi8P7dRNtY:1uYr8n:VzqnW75V9F902LTmWoq90e7kPKQ3PS1bzm2K-oboXQA	2025-07-21 19:04:37.554157+00
-1ap1w09q73ipohrhvwpqcaktczenjmtr	.eJxVjEEOwiAQRe_C2hCGMlBcuvcMZIBBqoYmpV0Z765NutDtf-_9lwi0rTVsnZcwZXEWIE6_W6T04LaDfKd2m2Wa27pMUe6KPGiX1znz83K4fweVev3WyiWbkU0CZTVrhIRmsFhGUB4KWJdJDRqdJUi6gCHt9UgRnWdvgVi8P7dRNtY:1uZ8HF:veufyQDyyumxmDYxWeRpXStAXRAAUBjUNcHa1Gm7VP4	2025-07-22 13:22:29.826578+00
+n2jvplw0prmkfc5gf6jfb2s8omfzsmcj	.eJxVjEEOwiAQRe_C2hCGMlBcuvcMZIBBqoYmpV0Z765NutDtf-_9lwi0rTVsnZcwZXEWIE6_W6T04LaDfKd2m2Wa27pMUe6KPGiX1znz83K4fweVev3WyiWbkU0CZTVrhIRmsFhGUB4KWJdJDRqdJUi6gCHt9UgRnWdvgVi8P7dRNtY:1uZ8Qn:4GzKN94ll6qY6NcUY-jOw6-xc_aGA96-GEcIiF59flc	2025-07-22 13:32:21.774584+00
+12cq6863joyfph8d34wrew20ka7gj299	.eJxVjDsOwjAUBO_iGll-D8dxKOlzBmv9IwFkS3FSIe4OkVJAuzOzL-GwrZPbWlrcHMVFkDj9bh7hkcoO4h3lVmWoZV1mL3dFHrTJscb0vB7u38GENn1rkLGG8wBiAgejVJ-T1_6cEG0I1mYFE7XpANYM9p4YRMTdkEKve_H-AOe8N9w:1uZXJi:E9QL1opekCNtIShI9ZCvNeQevyFwgBuKHJ-qr34MiU0	2025-07-23 16:06:42.779254+00
 \.
 
 
@@ -809,6 +815,10 @@ COPY public.token_blacklist_outstandingtoken (id, token, created_at, expires_at,
 68	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjUyNDI4OCwiaWF0IjoxNzUxOTE5NDg4LCJqdGkiOiIxNTAwYjhlOWZlNmM0NGUxOGZiZDM2NzY0YWNkMWMwNyIsInVzZXJfaWQiOjEzfQ._1qs9Ec3raJ-zQm3j_8T4FnZ2NiRmFAN1gKsZ-AsZ9k	2025-07-07 20:18:08.665436+00	2025-07-14 20:18:08+00	13	1500b8e9fe6c44e18fbd36764acd1c07
 69	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjUzMDk5NiwiaWF0IjoxNzUxOTI2MTk2LCJqdGkiOiI1ZmNkMWQ5MDYyNzI0NzAwYTE5YjhjNDI2NGU5YWJjNiIsInVzZXJfaWQiOjN9.65qrwXKvUsjLmbqG_PsJvS3RI9ZnmlV1M0lx0vmu0DU	2025-07-07 22:09:56.624666+00	2025-07-14 22:09:56+00	3	5fcd1d9062724700a19b8c4264e9abc6
 70	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjUzMTA1MCwiaWF0IjoxNzUxOTI2MjUwLCJqdGkiOiJkOGQ2NWMxMDZlZTg0MTRjYTkxMGIwZWNjYjUwNzUyYyIsInVzZXJfaWQiOjEzfQ.U-sbnpaO_aD-H5NwOngcrNyWSueXyt70LkGryhPhl50	2025-07-07 22:10:50.976427+00	2025-07-14 22:10:50+00	13	d8d65c106ee8414ca910b0eccb50752c
+71	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjYxMzcwNCwiaWF0IjoxNzUyMDA4OTA0LCJqdGkiOiI3YThlZDJjNDM4ZDA0ZjhiYjNjNGRkZjllOWE4NWMyYSIsInVzZXJfaWQiOjJ9.1434JdwDhsocnShGhDkon17JWvBb-w3V97WPdsI1mxU	2025-07-08 21:08:24.054504+00	2025-07-15 21:08:24+00	2	7a8ed2c438d04f8bb3c4ddf9e9a85c2a
+72	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjYxMzczMywiaWF0IjoxNzUyMDA4OTMzLCJqdGkiOiIwYjdkY2U0MGNjZTQ0MTBlYTZjNzUzYjg5ZDQzY2QyMyIsInVzZXJfaWQiOjJ9.nwYKF6f4yEcHycdGnpxnuaCn4Sir_8-OfbV7iZvWbtA	2025-07-08 21:08:53.133282+00	2025-07-15 21:08:53+00	2	0b7dce40cce4410ea6c753b89d43cd23
+73	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjYxNDUwNSwiaWF0IjoxNzUyMDA5NzA1LCJqdGkiOiIwMDFhYWY2MTEzMTM0N2IzODZiOTJjM2U0YTMwNWQxNCIsInVzZXJfaWQiOjN9.KDSvHPM7KypOjPDSiHRXVIrCcwYsFJqQNwj79UIoU8w	2025-07-08 21:21:45.496871+00	2025-07-15 21:21:45+00	3	001aaf61131347b386b92c3e4a305d14
+74	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjYxNDcwMywiaWF0IjoxNzUyMDA5OTAzLCJqdGkiOiJkYjI0Mjk5ZWNlNGU0ODQzOTAxNWNhMmVjZDA4YWQ0MyIsInVzZXJfaWQiOjN9.FcGt37QXFKHc5Lav3Jy39Up_VGTksaJNeMvoWRYN-hg	2025-07-08 21:25:03.055577+00	2025-07-15 21:25:03+00	3	db24299ece4e48439015ca2ecd08ad43
 \.
 
 
@@ -818,12 +828,10 @@ COPY public.token_blacklist_outstandingtoken (id, token, created_at, expires_at,
 
 COPY public.users_customuser (id, password, last_login, is_superuser, first_name, last_name, is_staff, is_active, date_joined, email, full_name, gender, dob, phone_number, street, city, postcode, country, assigned_doctor_id, is_doctor, security_answer_1, security_answer_2, security_answer_3, security_question_1, security_question_2, security_question_3, password_reset_token, password_reset_token_created) FROM stdin;
 13	pbkdf2_sha256$1000000$BKRRfpPqcll0oImyjlyaCR$FbJsoLclP1BFBMjTO4XDWEPRkOnrIxtATpjbA5HBjt8=	\N	f			t	t	\N	anna.schmidt@berlinmedical.de	Dr. Anna Schmidt		\N	+49-30-11112222					\N	t							\N	\N
-2	pbkdf2_sha256$1000000$SmuzSAb2AdBP1d5usrU4Qr$MhtdNfckDAArYbsQU9muubH/5JWnqDzQFFQGWUBQD98=	\N	f			f	t	2025-05-04	test@example.com	Test User	Other	2025-05-04	01657486372	Eggenfeldner Strasse 55	Pfarrkirchen	84347	Germany	\N	f							\N	\N
 15	pbkdf2_sha256$1000000$fiJ8XFRNfmuCkfgMYi5Ytu$i5j/FMvSdVHqIWd20JzJTAsQrgtTHdkq2/nCIQLNHGg=	\N	f			t	t	\N	maria.weber@munichhealthcare.de	Dr. Maria Weber		\N	+49-89-55556666					\N	t							\N	\N
 14	pbkdf2_sha256$1000000$YwGeBM7dY4EhZxr8JK9tNs$ZDJ65BnMyXFQfPWRHOz1MCMisJd3hnx35rt2k6QJioc=	\N	f			t	t	\N	hans.mueller@berlinmedical.de	Dr. Hans Mueller		\N	+49-30-33334444					\N	t							\N	\N
 8	pbkdf2_sha256$1000000$knmJgMJo2dqm1swjxNOKmQ$ZI8Vezk+sI0A4vG/GiSbMoPaTa4SqLtv7Y/1w0MVYzI=	\N	f			f	t	2025-07-07	james.wilson@email.com	James Wilson	Male	1987-12-05	+49-211-44556677	Testweg 987	Düsseldorf	40210	Germany	15	f	pbkdf2_sha256$1000000$1LqtoDzr74SQqiT7jHip7T$cuopUKsJOzppB0Dmao6FDTIONkS40f6OsVL32ZcavX4=	pbkdf2_sha256$1000000$fWqAkJTn403Yzt7l5uOpBO$Mu34SSFhg8gKf2MHJpz4p9B/T1FZPIW134PEwwrPyHY=	pbkdf2_sha256$1000000$1Kk0IDtbJsWvzMGtxcclzP$zhSIGXNzgWwTR7hRbROhqd3gcKZqYcue+rhjooPPUmg=	What was your childhood best friend's name?	What is your favorite ice cream flavor?	What is your lucky number?	\N	\N
 5	pbkdf2_sha256$1000000$Wwm14MjRM5g5MYyDpH4kIz$9leiI7taGibVxw5H33XHs8zjdZaWjnhiZ01bG44FMkA=	\N	f			f	t	2025-07-07	emily.rodriguez@email.com	Emily Rodriguez	Female	1995-11-08	+49-40-11223344	Teststraße 789	Hamburg	20095	Germany	13	f	pbkdf2_sha256$1000000$00fsX61pYMY9JouHCvpNDX$7A2t52Q346Rfme8obJvtlr5Z2vDQ9TLvAlGo2qbMALs=	pbkdf2_sha256$1000000$sWNJ1LsL8jBZMZdyJyGyS2$m9gMUwUHX3tu15iflwZggOJNsLRXzjCjmOrPz6OglC8=	pbkdf2_sha256$1000000$p63yXTatvIWEh9Q9N0axof$xfVSv6A76XIo8lf+HJ54MXg0WeuEx0eDhzXQ6jDX20w=	What is your favorite movie?	What street did you grow up on?	What is your favorite food?	\N	\N
-1	pbkdf2_sha256$1000000$uPq6S6HuYtuPhfIq8zV77D$4td70F1rcENIBiMuAHiHKMp1+3PZ/HJv0UilzrmMKbQ=	2025-07-08 13:22:29.823557+00	t			t	t	\N	bugsense@admin.com			\N	\N					\N	f							\N	\N
 16	pbkdf2_sha256$1000000$2oAaSDvKWC2M4KiqoIuFm2$Zyrfk6ekJqMG+fTXP0zwHeb2Wz2bhSRkfcXnIjHkrlM=	\N	f			t	t	\N	klaus.fischer@munichhealthcare.de	Dr. Klaus Fischer		\N	+49-89-77778888					\N	t							\N	\N
 10	pbkdf2_sha256$1000000$jYlCXCCZxVJWDby3DtUJip$vg555U6MRnZW4Y5uK7/5++SG632YRi0JYZx6ax/ru44=	\N	f			f	t	2025-07-07	robert.kim@email.com	Robert Kim	Male	1989-01-25	+49-234-22334455	Musterweg 258	Bochum	44787	Germany	15	f	pbkdf2_sha256$1000000$MBkGEOgU0WF4fn5MsQuczp$Cma/1g8QroFFW4B+H1vgVD5AJoEaFHkyy1xQrSsZqHQ=	pbkdf2_sha256$1000000$CrTWFqkVy4nXj6kz1OoqOw$a4K4cQv41yjA0GeYBXySCRGhHGELXXY+ZMMg1mYgBV0=	pbkdf2_sha256$1000000$iIv2c4oEzue5iBHLVVRvyA$5uiAS2kAV58HUVqSo5J3uK79Gva92eXDglRXVm5F0HQ=	What is your favorite band?	What is your favorite animal?	What is your favorite drink?	\N	\N
 11	pbkdf2_sha256$1000000$2vFRHfjn9dqF0mSvhCjjDP$LdvAR7kXQxuEDXAZH0FOy9IgcedGug/3nX3m4TUxDLE=	\N	f			f	t	2025-07-07	jennifer.lee@email.com	Jennifer Lee	Female	1991-08-14	+49-231-11223344	Testallee 369	Dortmund	44135	Germany	16	f	pbkdf2_sha256$1000000$OHbWcv9Mq6BRnPm97pt6LU$d5reyYe/c6FqhRXZf7BsvMn0kvN/o2651bVaZ+ZxPNk=	pbkdf2_sha256$1000000$RK6csvKMFGv0lBbZ22bBDu$pZXMYBnqAV1t4T093HYCcbinhF7d5MgDQVqQyX77UHE=	pbkdf2_sha256$1000000$YSE7A3SNsI4dAzcGJVWfxg$rIx/z0/PvjoBZQBUsL2fLpG6IccK4HTHgloYzPhtsBE=	What is your favorite TV show?	What is your favorite dessert?	What is your favorite hobby?	\N	\N
@@ -832,7 +840,9 @@ COPY public.users_customuser (id, password, last_login, is_superuser, first_name
 7	pbkdf2_sha256$1000000$2Fgj5WK33YUKbWng7qGEr4$Xje4jiEzFueFiSOahoeB8ug50ad+xd1/4ChHQ4s6YEQ=	\N	f			f	t	2025-07-07	lisa.wang@email.com	Lisa Wang	Female	1990-09-30	+49-69-99887766	Musterplatz 654	Frankfurt	60311	Germany	14	f	pbkdf2_sha256$1000000$R5M3AJq22SoZ7GpRzvzSzW$XRxbjgHKaH0o4c34jEuqsRLw0ScCsTddPPftC7v9ess=	pbkdf2_sha256$1000000$oQpDVAUpy3RaVxYh2HYf0y$RZGtFWNspIJoNTsPJbgN4LG2I7L63/Q5P+KIwXKxMJo=	pbkdf2_sha256$1000000$CGE6YoUMNiRrHqSTqyOOyI$bHL+QXmBbh/EwvZjNTrSYlh18uY1dPZviXHpBF/OaVE=	What is your favorite book?	What is your dream vacation destination?	What is your favorite season?	\N	\N
 9	pbkdf2_sha256$1000000$WyjHoqdWp49urSgosbK4A1$8t/6L8uugn81jNIso+S1j4PplA0rYBz6zh6yCvx3VsE=	\N	f			f	t	2025-07-07	maria.garcia@email.com	Maria Garcia	Female	1993-06-18	+49-201-33445566	Beispielstraße 147	Essen	45127	Germany	15	f	pbkdf2_sha256$1000000$9R8CczZyJaWev37L3DYOBh$ZYRQlajvOXkea2+vjvPCFCtqpTZeWjVwBOVRXAW8qXE=	pbkdf2_sha256$1000000$UsCnwTS3kjkBvGG4pKbPNU$HVlZoGeS492gbdVy108wtEKKH2Vwim86bt2UbTPj34Y=	pbkdf2_sha256$1000000$m46mfA2SbR5mkfPnQ3yymP$rYokjviOFtomxUNHPLCNUfMpWVWPmfoSGM4+Q09DkiQ=	What is your favorite flower?	What was your first job?	What is your favorite holiday?	\N	\N
 12	pbkdf2_sha256$1000000$4lUIuVvpgKzMz6PewEU7xX$yOjCa5PP/I6EXZYZJHB1JWFNDqgzihAlTcF27tZzmmM=	\N	f			f	t	2025-07-07	christopher.brown@email.com	Christopher Brown	Male	1986-10-03	+49-228-55667788	Beispielplatz 741	Bonn	53111	Germany	16	f	pbkdf2_sha256$1000000$oB15O1scyNq56mbxJqddli$2BLcB555X41f7R30b0JoiN9pTMdYxxl5zvlF+eVuYio=	pbkdf2_sha256$1000000$aiTtxTxjO2JOJBowcvSFN0$oPHS3WZqXX9BxhXxiYTv3J45BdRE+tOIT8Ms2I0uo2w=	pbkdf2_sha256$1000000$83EqwIoqnPpdCoZ4X2SaXO$m5ZcBKIf8Kg1OuMbKuqplFQ4PPCLjZGrd/KWY//ZoKE=	What is your favorite restaurant?	What is your favorite game?	What is your favorite subject in school?	\N	\N
-3	pbkdf2_sha256$1000000$OEKljxFJl4Ra7I2Z07ckzh$Rj1/UXAXfSZr1WBwcF29pJpIOizG4RUmsAju35BZMAY=	\N	f			f	t	2025-07-07	sarah.johnson@email.com	Sarah Johnson	Female	1992-03-15	015550123	Musterstrasse 123	Berlin	10115	Germany	13	f	pbkdf2_sha256$1000000$uvj08bpXPuxSGnkjkS5HtN$g5XPI+Z7TWykTYrIpsXeR8xtwOhIiqy/WDXKffIA3zc=	pbkdf2_sha256$1000000$NhoRTRMNOFMtpJX3r2H327$cwj6fVrOWdlBaAU/to1ugsyui3AHuaSqCClZ1n9+Iwo=	pbkdf2_sha256$1000000$1vMfRfUChKgdVE6Atw5GCP$nEd3lRyLgUDn1hXdaj6wc3nI9dARYiP88MySpAdSoHY=	What was your first pet's name?	In which city were you born?	What is your mother's maiden name?	\N	\N
+2	pbkdf2_sha256$1000000$ChXwxwWIOQwceY1Gbv4k3W$Ezbo/jUoHXr/q6b68/f1i0a3QI2SBfZJWpGaEwWlDbA=	\N	f			f	t	2025-05-04	test@example.com	Test User	Other	2025-05-04	01657486372	Eggenfeldner Strasse 55	Pfarrkirchen	84347	Germany	\N	f							\N	\N
+1	pbkdf2_sha256$1000000$uPq6S6HuYtuPhfIq8zV77D$4td70F1rcENIBiMuAHiHKMp1+3PZ/HJv0UilzrmMKbQ=	2025-07-09 16:06:42.775968+00	t			t	t	\N	bugsense@admin.com			\N	\N					\N	f							\N	\N
+3	pbkdf2_sha256$1000000$OEKljxFJl4Ra7I2Z07ckzh$Rj1/UXAXfSZr1WBwcF29pJpIOizG4RUmsAju35BZMAY=	\N	f			f	t	2025-07-07	sarah.johnson@email.com	Sarah Johnson	Female	1992-03-15	015550123	Musterstrasse 123	Berlin	10115	Germany	13	f	pbkdf2_sha256$1000000$0trSzeL7JWzXFLUgiyrgCZ$r69caVnAEJfhlCFrHNdo+7yiTk+vP2YdrubXi2pR7Zg=	pbkdf2_sha256$1000000$NhoRTRMNOFMtpJX3r2H327$cwj6fVrOWdlBaAU/to1ugsyui3AHuaSqCClZ1n9+Iwo=	pbkdf2_sha256$1000000$1vMfRfUChKgdVE6Atw5GCP$nEd3lRyLgUDn1hXdaj6wc3nI9dARYiP88MySpAdSoHY=	What was the name of your first car?	In which city were you born?	What is your mother's maiden name?	1I6lx0xPl3EvbewKBuh23oaaGnMAoSDl1z109GKpvJI	2025-07-08 21:24:13.870777+00
 \.
 
 
@@ -877,18 +887,18 @@ COPY public.users_qrcode (id, qr_data, created_at, user_id, closed_at) FROM stdi
 --
 
 COPY public.users_results (id, infection_detected, species, concentration, antibiotic, created_at, qr_code_id, user_id, status) FROM stdin;
-1	t	Campylobacter	high	Azithromycin	2025-07-07 19:49:44.810795+00	1	5	ready
-2	t	Campylobacter	low	Azithromycin	2025-07-07 19:49:45.003238+00	2	4	ready
 4	f				2025-07-07 19:49:45.912151+00	4	6	ready
 5	f				2025-07-07 19:49:46.066474+00	5	7	ready
-6	t	Staphylococcus aureus	high	Penicillin	2025-07-07 19:49:47.287841+00	6	11	ready
 7	f				2025-07-07 19:49:47.455823+00	7	12	ready
-10	t	Salmonella	medium	Ciprofloxacin	2025-07-07 19:56:24.562738+00	10	9	closed
 9	f				2025-07-07 19:56:24.460803+00	9	10	closed
-8	t	Salmonella	medium	Ciprofloxacin	2025-07-07 19:56:24.366336+00	8	8	ready
 12	\N				2025-07-07 20:18:08.697637+00	12	3	ongoing
 11	t				2025-07-07 20:17:41.477541+00	11	3	preliminary_assessment
 3	f				2025-07-07 19:49:45.183694+00	3	3	closed
+10	t	Efaecalis	medium	Ciprofloxacin	2025-07-07 19:56:24.562738+00	10	9	closed
+8	t	Ehormaechei	medium	Ciprofloxacin	2025-07-07 19:56:24.366336+00	8	8	ready
+6	t	Paeruginosa	high	Penicillin	2025-07-07 19:49:47.287841+00	6	11	ready
+2	t	Pmirabilis	low	Azithromycin	2025-07-07 19:49:45.003238+00	2	4	ready
+1	t	Ecoli	high	Azithromycin	2025-07-07 19:49:44.810795+00	1	5	ready
 \.
 
 
@@ -917,7 +927,7 @@ SELECT pg_catalog.setval('public.auth_permission_id_seq', 56, true);
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bugsenseadmin
 --
 
-SELECT pg_catalog.setval('public.django_admin_log_id_seq', 8, true);
+SELECT pg_catalog.setval('public.django_admin_log_id_seq', 13, true);
 
 
 --
@@ -952,7 +962,7 @@ SELECT pg_catalog.setval('public.token_blacklist_blacklistedtoken_id_seq', 5, tr
 -- Name: token_blacklist_outstandingtoken_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bugsenseadmin
 --
 
-SELECT pg_catalog.setval('public.token_blacklist_outstandingtoken_id_seq', 70, true);
+SELECT pg_catalog.setval('public.token_blacklist_outstandingtoken_id_seq', 74, true);
 
 
 --
