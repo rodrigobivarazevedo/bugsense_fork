@@ -65,7 +65,6 @@ export const Discover: FC<any> = ({ navigation }) => {
 
     return (
         <S.Root contentContainerStyle={{ paddingBottom: Platform.OS === 'ios' ? insets.bottom + 30 : 60 }}>
-            <S.Title>{t('discover_bacteria')}</S.Title>
             <S.Subtitle>{t('discover_bacteria_subtitle')}</S.Subtitle>
             <S.BacteriaGrid>
                 {bacteriaList.map((bacteria) => (

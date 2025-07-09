@@ -45,20 +45,20 @@ const ContentContainer = styled.View`
   flex: 1;
 `;
 
-const wrappedScreens: string[] = [
-  'Home',
-  'Scan',
-  'Tests',
-  'More',
-  'Account',
-  'Patients',
-  'LanguageSelection',
-  'TimeFormatSelection',
-  'Discover',
-  'BacteriaRouter',
-  'ViewTest',
-  'News',
-];
+const WRAPPED_SCREENS_AND_TITLES_TRANSLATION_KEYS: Record<string, string> = {
+  Home: 'home',
+  Scan: 'scan',
+  Tests: 'tests',
+  More: 'more',
+  Account: 'account',
+  Patients: 'patients',
+  LanguageSelection: 'language',
+  TimeFormatSelection: 'time_format_selection',
+  Discover: 'discover_bacteria',
+  BacteriaRouter: 'discover_bacteria',
+  ViewTest: 'test_details_and_result',
+  News: 'news',
+};
 
 function MainTabs() {
   return (
@@ -70,6 +70,7 @@ function MainTabs() {
             {...headerProps}
             navigation={navigation}
             route={route}
+            headerTitle={WRAPPED_SCREENS_AND_TITLES_TRANSLATION_KEYS[route.name] || route.name}
           />
         ),
       })}
@@ -96,8 +97,13 @@ export default function App() {
               <Stack.Navigator
                 screenOptions={{
                   header: (props: NativeStackHeaderProps) => {
-                    if (wrappedScreens.includes(props.route.name)) {
-                      return <HeaderBar {...props} />;
+                    if (Object.keys(WRAPPED_SCREENS_AND_TITLES_TRANSLATION_KEYS).includes(props.route.name)) {
+                      return (
+                        <HeaderBar
+                          {...props}
+                          headerTitle={WRAPPED_SCREENS_AND_TITLES_TRANSLATION_KEYS[props.route.name] || props.route.name}
+                        />
+                      );
                     }
                     return null;
                   },
