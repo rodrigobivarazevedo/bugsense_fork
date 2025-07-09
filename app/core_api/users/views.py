@@ -325,7 +325,7 @@ class ResultsCreateView(CreateAPIView):
     - When retrieving a result with status 'ready' via GET request, status automatically changes to 'closed'
 
     Field Clearing:
-    - When infection_detected is set to False, species, concentration, and antibiotic fields are automatically cleared
+    - When infection_detected is set to False, species is set to "sterile", concentration and antibiotic fields are automatically cleared
 
     Required Fields for Ready Status:
     - When infection_detected is True, both species and concentration must be filled to set status to 'ready'
@@ -337,7 +337,7 @@ class ResultsCreateView(CreateAPIView):
     @extend_schema(
         tags=['results'],
         summary="Create or Update Analysis Result",
-        description="Create a new analysis result or update an existing one by providing the QR code string and any analysis data. The system will automatically find the user linked to the QR code. If a result already exists for this QR code, it will be updated with the new data. All fields except qr_data are optional.\n\nAuthentication:\n- JWT token (for doctors/patients)\n- X-ML-API-Key header (for ML model)\n\nNote: Results are automatically created with status 'ongoing' when QR codes are created via /api/qr-codes/. When updating existing results, the status automatically changes to 'preliminary_assessment' for any field update, or 'ready' if infection_detected is set to False. When infection_detected is set to False, the species, concentration, and antibiotic fields are automatically cleared. When infection_detected is True and both species and concentration are filled, the status automatically changes to 'ready' (antibiotic is optional). When retrieving a result with status 'ready' via GET request, the status automatically changes to 'closed'.",
+        description="Create a new analysis result or update an existing one by providing the QR code string and any analysis data. The system will automatically find the user linked to the QR code. If a result already exists for this QR code, it will be updated with the new data. All fields except qr_data are optional.\n\nAuthentication:\n- JWT token (for doctors/patients)\n- X-ML-API-Key header (for ML model)\n\nNote: Results are automatically created with status 'ongoing' when QR codes are created via /api/qr-codes/. When updating existing results, the status automatically changes to 'preliminary_assessment' for any field update, or 'ready' if infection_detected is set to False. When infection_detected is set to False, species is set to 'sterile' and concentration/antibiotic fields are automatically cleared. When infection_detected is True and both species and concentration are filled, the status automatically changes to 'ready' (antibiotic is optional). When retrieving a result with status 'ready' via GET request, the status automatically changes to 'closed'.",
         request=ResultsCreateSerializer,
         responses={
             201: ResultsSerializer,
@@ -390,12 +390,12 @@ class ResultsCreateView(CreateAPIView):
                 description='Example of completing required fields - status automatically changes to ready (antibiotic optional)'
             ),
             OpenApiExample(
-                'Update with No Infection (Status → ready, Fields Cleared)',
+                'Update with No Infection (Status → ready, Species → sterile)',
                 value={
                     'qr_data': 'https://example.com/sample-qr-data',
                     'infection_detected': False
                 },
-                description='Example of updating with no infection detected - status automatically changes to ready and species/concentration/antibiotic fields are cleared'
+                description='Example of updating with no infection detected - status automatically changes to ready, species is set to "sterile", and concentration/antibiotic fields are cleared'
             )
         ]
     )

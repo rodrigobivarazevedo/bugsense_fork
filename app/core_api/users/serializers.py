@@ -241,9 +241,9 @@ class ResultsCreateSerializer(serializers.ModelSerializer):
             # Auto-update status based on what was updated
             if validated_data:  # If any fields were updated
                 if 'infection_detected' in validated_data and validated_data['infection_detected'] is False:
-                    # If infection_detected was set to False, change status to 'ready' and clear other fields
+                    # If infection_detected was set to False, change status to 'ready', set species to "sterile", and clear other fields
                     result.status = 'ready'
-                    result.species = ''
+                    result.species = 'sterile'
                     result.concentration = ''
                     result.antibiotic = ''
                     # Set QR code closed_at when result becomes ready
@@ -279,9 +279,9 @@ class ResultsCreateSerializer(serializers.ModelSerializer):
             if 'status' not in validated_data:
                 validated_data['status'] = 'ongoing'
 
-            # If infection_detected is False in new creation, clear other fields
+            # If infection_detected is False in new creation, set species to "sterile" and clear other fields
             if 'infection_detected' in validated_data and validated_data['infection_detected'] is False:
-                validated_data['species'] = ''
+                validated_data['species'] = 'sterile'
                 validated_data['concentration'] = ''
                 validated_data['antibiotic'] = ''
 
