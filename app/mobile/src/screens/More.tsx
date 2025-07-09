@@ -1,6 +1,6 @@
-import { FC, Fragment, useEffect, useState } from 'react';
+import { FC, Fragment, useState, useCallback } from 'react';
 import { Linking } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import RenderIcon from '../components/RenderIcon';
 import companyInfo from '../json/companyInfo.json';
@@ -13,18 +13,24 @@ export const More: FC = () => {
     const [userType, setUserType] = useState<string>('patient');
     const [timeFormat, setTimeFormat] = useState<'12' | '24'>('12');
 
-    useEffect(() => {
-        AsyncStorage.getItem('userType').then(type => {
-            if (type && typeof type === 'string') {
-                setUserType(type);
-            }
-        });
-        AsyncStorage.getItem('timeFormat').then(format => {
-            if (format === '24' || format === '12') {
-                setTimeFormat(format);
-            }
-        });
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            let isActive = true;
+            AsyncStorage.getItem('userType').then(type => {
+                if (isActive && type && typeof type === 'string') {
+                    setUserType(type);
+                }
+            });
+            AsyncStorage.getItem('timeFormat').then(format => {
+                if (isActive && (format === '24' || format === '12')) {
+                    setTimeFormat(format);
+                }
+            });
+            return () => {
+                isActive = false;
+            };
+        }, [])
+    );
 
     const options = [
         {
