@@ -1,8 +1,7 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import './translations/i18n';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './translations/i18n';
-import { useTranslation } from 'react-i18next';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -45,7 +44,20 @@ const ContentContainer = styled.View`
   flex: 1;
 `;
 
-// Main app tabs
+const wrappedScreens: string[] = [
+  'Home',
+  'Scan',
+  'Tests',
+  'More',
+  'Account',
+  'Patients',
+  'LanguageSelection',
+  'TimeFormatSelection',
+  'Discover',
+  'BacteriaRouter',
+  'ViewTest',
+];
+
 function MainTabs() {
   return (
     <Tab.Navigator
@@ -72,7 +84,6 @@ function MainTabs() {
 
 export default function App() {
   const navRef = useRef<NavigationContainerRef<any>>(null);
-  const { t } = useTranslation();
 
   return (
     <SafeAreaProvider>
@@ -83,11 +94,6 @@ export default function App() {
               <Stack.Navigator
                 screenOptions={{
                   header: (props: NativeStackHeaderProps) => {
-                    // Only show header for wrapped screens
-                    const wrappedScreens = [
-                      'Home', 'Scan', 'Tests', 'More', 'Account', 'Patients',
-                      'LanguageSelection', 'TimeFormatSelection', 'Discover', 'BacteriaRouter', 'ViewTest'
-                    ];
                     if (wrappedScreens.includes(props.route.name)) {
                       return <HeaderBar {...props} />;
                     }
@@ -95,7 +101,6 @@ export default function App() {
                   },
                 }}
               >
-                {/* Auth and non-tab screens */}
                 <Stack.Screen name="Login" component={UserLogin} />
                 <Stack.Screen name="Register" component={Register} />
                 <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
@@ -103,9 +108,7 @@ export default function App() {
                 <Stack.Screen name="PasswordRecoveryStep2" component={PasswordRecoveryStep2} />
                 <Stack.Screen name="PasswordRecoveryStep3" component={PasswordRecoveryStep3} />
                 <Stack.Screen name="DoctorLogin" component={DoctorLogin} />
-                {/* Main app tabs as a single screen */}
                 <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
-                {/* Other wrapped screens not in tabs */}
                 <Stack.Screen name="LanguageSelection" component={LanguageSelection} />
                 <Stack.Screen name="TimeFormatSelection" component={TimeFormatSelection} />
                 <Stack.Screen name="Discover" component={Discover} />
