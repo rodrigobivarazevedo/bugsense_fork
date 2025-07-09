@@ -19,7 +19,7 @@ type GridItem = {
 const GRID_ITEMS: GridItem[] = [
   { key: 'overviews', label: 'Overviews', family: 'materialCommunity', icon: 'format-list-checkbox' },
   { key: 'discover', label: 'Discover', family: 'octicons', icon: 'light-bulb', route: 'Discover' },
-  { key: 'news', label: 'News', family: 'fontAwesome', icon: 'newspaper-o' },
+  { key: 'news', label: 'News', family: 'fontAwesome', icon: 'newspaper-o', route: 'News' },
   { key: 'contactUs', label: 'Contact Us', family: 'materialCommunity', icon: 'email-send-outline' },
 ];
 

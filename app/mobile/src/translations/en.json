@@ -149,6 +149,8 @@
     "Scan": "Scan",
     "Tests": "Tests",
     "More": "More",
-    "Account": "Account",
-    "Patients": "Patients"
+    "account": "Account",
+    "patients": "Patients",
+    "news": "News",
+    "time_format_selection": "Time Format"
 }

@@ -146,6 +146,8 @@
     "Scan": "Scannen",
     "Tests": "Tests",
     "More": "Mehr",
-    "Account": "Konto",
-    "Patients": "Patienten"
+    "account": "Konto",
+    "Patients": "Patienten",
+    "news": "Nachrichten",
+    "time_format_selection": "Zeitformat"
 }

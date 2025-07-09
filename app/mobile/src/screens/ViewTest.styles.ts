@@ -165,4 +165,17 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    speciesRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: rem(0.25),
+        marginTop: rem(0.375),
+    },
+    infoButton: {
+        paddingTop: rem(0.25),
+        borderRadius: rem(0.5),
+        backgroundColor: 'transparent',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 });

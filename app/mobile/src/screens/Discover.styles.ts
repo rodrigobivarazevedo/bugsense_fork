@@ -7,13 +7,6 @@ export const Root = styled.ScrollView`
   padding: ${rem(1)}px;
 `;
 
-export const Title = styled.Text`
-  font-size: ${rem(1.75)};
-  font-weight: bold;
-  color: #333;
-  margin-bottom: ${rem(1)}px;
-`;
-
 export const Subtitle = styled.Text`
   font-size: ${rem(1)};
   font-weight: bold;

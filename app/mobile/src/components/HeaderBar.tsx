@@ -5,12 +5,14 @@ import * as S from './HeaderBar.styles'
 import RenderIcon from './RenderIcon';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { rem } from '../utils/Responsive';
+import { useTranslation } from 'react-i18next';
 
 const MAIN_TABS = ['Home', 'Scan', 'Tests', 'Patients', 'More'];
 
-const HeaderBar: FC<any> = ({ navigation, route, options }) => {
+const HeaderBar: FC<any> = ({ navigation, route, options, headerTitle }) => {
     const insets = useSafeAreaInsets();
     const isMainTab = MAIN_TABS.includes(route.name);
+    const { t } = useTranslation();
 
     return (
         <S.Container insets={insets}>
@@ -55,7 +57,7 @@ const HeaderBar: FC<any> = ({ navigation, route, options }) => {
                         />
                     </TouchableOpacity>
                     <Text style={{ fontSize: rem(1.25), color: '#000', fontWeight: '500' }}>
-                        {options?.headerTitle || route.name}
+                        {t(headerTitle) || options?.headerTitle || route.name}
                     </Text>
                 </View>
             )}
