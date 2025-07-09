@@ -13,6 +13,7 @@ import { useNavigation, useIsFocused } from '@react-navigation/native';
 import RenderIcon from '../components/RenderIcon';
 import { getTranslatedTestStatus } from '../utils/TestResultsStatus';
 import { formatDate, formatTime } from '../utils/DateTimeFormatter';
+import { useTranslation } from 'react-i18next';
 
 function groupByDate(results: any[]) {
     const groups: { [date: string]: any[] } = {};
@@ -25,6 +26,7 @@ function groupByDate(results: any[]) {
 }
 
 export const Tests: FC = () => {
+    const { t } = useTranslation();
     const navigation: any = useNavigation();
     const isFocused = useIsFocused();
     const [results, setResults] = useState<any[]>([]);
@@ -162,7 +164,7 @@ export const Tests: FC = () => {
                                             : styles.statusIndicatorGreen,
                                     ]}
                                 />
-                                <Text style={styles.listItemStatus}>{getTranslatedTestStatus(item.result_status)}</Text>
+                                <Text style={styles.listItemStatus}>{getTranslatedTestStatus(item.result_status, t)}</Text>
                             </View>
                             {userType === 'doctor' && item.patient && (
                                 <View style={styles.listItemPatient}>

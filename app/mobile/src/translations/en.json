@@ -152,5 +152,6 @@
     "account": "Account",
     "patients": "Patients",
     "news": "News",
-    "time_format_selection": "Time Format"
+    "time_format_selection": "Time Format",
+    "notifications": "Notifications"
 }

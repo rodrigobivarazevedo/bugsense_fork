@@ -34,6 +34,7 @@ import Patients from './screens/Patients';
 import TimeFormatSelection from './screens/TimeFormatSelection';
 import ViewTest from './screens/ViewTest';
 import News from './screens/News';
+import Notifications from './screens/Notifications';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -58,6 +59,7 @@ const WRAPPED_SCREENS_AND_TITLES_TRANSLATION_KEYS: Record<string, string> = {
   BacteriaRouter: 'discover_bacteria',
   ViewTest: 'test_details_and_result',
   News: 'news',
+  Notifications: 'notifications',
 };
 
 function MainTabs() {
@@ -123,6 +125,7 @@ export default function App() {
                 <Stack.Screen name="BacteriaRouter" component={BacteriaRouter} />
                 <Stack.Screen name="ViewTest" component={ViewTest} />
                 <Stack.Screen name="News" component={News} />
+                <Stack.Screen name="Notifications" component={Notifications} />
               </Stack.Navigator>
             </ContentContainer>
           </AppContainer>

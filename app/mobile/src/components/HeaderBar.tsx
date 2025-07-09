@@ -24,7 +24,7 @@ const HeaderBar: FC<any> = ({ navigation, route, options, headerTitle }) => {
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <TouchableOpacity
                             style={{ marginRight: 12 }}
-                            onPress={() => { /* Handle notification press */ }}
+                            onPress={() => navigation.navigate('Notifications')}
                         >
                             <RenderIcon
                                 family="materialIcons"
