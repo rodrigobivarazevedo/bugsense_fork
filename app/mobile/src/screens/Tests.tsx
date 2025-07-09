@@ -68,7 +68,7 @@ export const Tests: FC = () => {
             }
         };
         fetchResults();
-    }, []);
+    }, [isFocused]);
 
     const grouped = groupByDate(results);
 
