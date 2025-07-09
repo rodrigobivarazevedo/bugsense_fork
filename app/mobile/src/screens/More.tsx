@@ -3,7 +3,7 @@ import { Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import RenderIcon from '../components/RenderIcon';
-import companyInfo from '../utils/companyInfo.json';
+import companyInfo from '../json/companyInfo.json';
 import * as S from './More.styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
