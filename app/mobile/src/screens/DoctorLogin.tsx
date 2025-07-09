@@ -76,7 +76,7 @@ const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
             await AsyncStorage.setItem('userType', 'doctor');
 
             console.log('Doctor login successful:', { doctorId, institution: selectedInstitution.name });
-            navigation.navigate('Home');
+            navigation.navigate('Main', { screen: 'Home' });
         } catch (err: any) {
             console.error('Doctor login error', err);
             const message =

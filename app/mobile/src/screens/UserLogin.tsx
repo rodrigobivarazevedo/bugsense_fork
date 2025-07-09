@@ -35,7 +35,7 @@ const UserLogin: FC<LoginScreenProps> = ({ navigation }) => {
             await AsyncStorage.setItem('userType', 'patient');
 
             console.log('Login attempted with:', { username });
-            navigation.navigate('Home');
+            navigation.navigate('Main', { screen: 'Home' });
         } catch (err: any) {
             console.error('Login error', err);
             const message =
