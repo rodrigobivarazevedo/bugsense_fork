@@ -216,7 +216,7 @@ export const ItemTextCol = styled.View`
 export const EditIconBtnLight = styled.TouchableOpacity`
   padding: ${rem(0.5)}px;
   margin-left: ${rem(1)}px;
-  align-self: flex-start;
+  align-self: flex-end;
 `;
 
 export const ModalOverlay = styled.TouchableOpacity`
@@ -451,4 +451,22 @@ export const DropdownText = styled.Text`
   color: ${themeColors.primary};
   font-size: ${rem(1)}px;
   font-family: 'System';
+`;
+
+export const CountrySelector = styled.TouchableOpacity`
+  padding-vertical: ${rem(0.5)}px;
+  border-radius: ${rem(0.25)}px;
+  background-color: #f7f7fa;
+  border-width: 1px;
+  border-color: ${themeColors.primary};
+  padding-horizontal: ${rem(0.75)}px;
+  margin-vertical: ${rem(0.25)}px;
+`;
+
+export const CountrySelectorText = styled.Text`
+  ${themeTypography.p};
+  color: ${themeColors.primary};
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: ${rem(0.5)}px;
 `;

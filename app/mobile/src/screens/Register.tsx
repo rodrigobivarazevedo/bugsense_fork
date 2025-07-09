@@ -7,6 +7,7 @@ import {
     KeyboardAvoidingView
 } from 'react-native';
 import Logo from '../components/Logo';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './LoginRegister.styles';
@@ -14,15 +15,12 @@ import { themeColors } from '../theme/GlobalTheme';
 import Api from '../api/Client';
 import validateEmail from '../utils/ValidateEmail';
 import RenderIcon from '../components/RenderIcon';
+import { validatePassword } from '../utils/ValidatePassword';
+import { securityQuestions, SecurityQuestion } from '../utils/SecurityQuestions';
 
 type RegisterScreenProps = {
     navigation: NativeStackNavigationProp<any>;
 };
-
-interface SecurityQuestion {
-    question: string;
-    answer: string;
-}
 
 const Register: FC<RegisterScreenProps> = ({ navigation }) => {
     const [currentStep, setCurrentStep] = useState(1);
@@ -33,20 +31,14 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
     const [passwordError, setPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const [emailError, setEmailError] = useState('');
-    const [securityQuestions, setSecurityQuestions] = useState<SecurityQuestion[]>([]);
+    const [securityQuestionsData, setSecurityQuestionsData] = useState<SecurityQuestion[]>([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number | null>(null);
     const { t } = useTranslation();
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
-    const availableQuestions = [
-        t("What was your first pet's name?"),
-        t("In which city were you born?"),
-        t("What is your mother's maiden name?"),
-        t("What was the name of your first school?"),
-        t("What is your favorite childhood memory?")
-    ];
+    const availableQuestions = securityQuestions(t);
 
     const handleEmailChange = (text: string) => {
         setEmail(text);
@@ -54,28 +46,9 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
         setEmailError(errorMessage);
     };
 
-    const validatePassword = (pass: string): string => {
-        if (pass.length < 8) {
-            return t('Password must be at least 8 characters long');
-        }
-        if (!/[A-Z]/.test(pass)) {
-            return t('Password must contain at least one uppercase letter');
-        }
-        if (!/[a-z]/.test(pass)) {
-            return t('Password must contain at least one lowercase letter');
-        }
-        if (!/[!@#$%^&*(),.?":{}|<>]/.test(pass) && !/[0-9]/.test(pass)) {
-            return t('Password must contain at least one special character or number');
-        }
-        if (pass.toLowerCase() === email.toLowerCase() || pass.toLowerCase() === fullName.toLowerCase()) {
-            return t('Password cannot be the same as your email or name');
-        }
-        return '';
-    };
-
     const handlePasswordChange = (text: string) => {
         setPassword(text);
-        setPasswordError(validatePassword(text));
+        setPasswordError(validatePassword(t, text, email, fullName));
         if (confirmPassword && text !== confirmPassword) {
             setConfirmPasswordError(t('Passwords do not match'));
         } else {
@@ -103,8 +76,8 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
         !emailError
     );
 
-    const isStep2Valid = securityQuestions.length === 3 &&
-        securityQuestions.every(q => q.question && q.answer.trim());
+    const isStep2Valid = securityQuestionsData.length === 3 &&
+        securityQuestionsData.every(q => q.question && q.answer.trim());
 
     const handleNext = () => {
         if (isStep1Valid) {
@@ -117,25 +90,25 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
     };
 
     const addSecurityQuestion = () => {
-        if (securityQuestions.length < 3) {
-            setSecurityQuestions([...securityQuestions, { question: '', answer: '' }]);
+        if (securityQuestionsData.length < 3) {
+            setSecurityQuestionsData([...securityQuestionsData, { question: '', answer: '' }]);
         }
     };
 
     const removeSecurityQuestion = (index: number) => {
-        setSecurityQuestions(securityQuestions.filter((_, i) => i !== index));
+        setSecurityQuestionsData(securityQuestionsData.filter((_, i) => i !== index));
     };
 
     const updateSecurityQuestion = (index: number, question: string) => {
-        const updated = [...securityQuestions];
+        const updated = [...securityQuestionsData];
         updated[index] = { ...updated[index], question };
-        setSecurityQuestions(updated);
+        setSecurityQuestionsData(updated);
     };
 
     const updateSecurityAnswer = (index: number, answer: string) => {
-        const updated = [...securityQuestions];
+        const updated = [...securityQuestionsData];
         updated[index] = { ...updated[index], answer };
-        setSecurityQuestions(updated);
+        setSecurityQuestionsData(updated);
     };
 
     const handleQuestionSelect = (question: string, index: number) => {
@@ -145,7 +118,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
     };
 
     const getAvailableQuestionsForIndex = (index: number) => {
-        const usedQuestions = securityQuestions
+        const usedQuestions = securityQuestionsData
             .map((q, i) => i !== index ? q.question : '')
             .filter(q => q);
         return availableQuestions.filter(q => !usedQuestions.includes(q));
@@ -162,12 +135,12 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                 email,
                 full_name: fullName,
                 password,
-                security_question_1: securityQuestions[0].question,
-                security_answer_1: securityQuestions[0].answer,
-                security_question_2: securityQuestions[1].question,
-                security_answer_2: securityQuestions[1].answer,
-                security_question_3: securityQuestions[2].question,
-                security_answer_3: securityQuestions[2].answer,
+                security_question_1: securityQuestionsData[0].question,
+                security_answer_1: securityQuestionsData[0].answer,
+                security_question_2: securityQuestionsData[1].question,
+                security_answer_2: securityQuestionsData[1].answer,
+                security_question_3: securityQuestionsData[2].question,
+                security_answer_3: securityQuestionsData[2].answer,
             };
 
             const response = await Api.post('register/', payload);
@@ -277,8 +250,11 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
         <>
             <S.StepText>{t('Step 2 of 2')}</S.StepText>
             <S.StepTitle>{t('Security Questions')}</S.StepTitle>
+            <S.NoteText>
+                {t('We need these questions so we can help you reset your password if you forget your password')}
+            </S.NoteText>
 
-            {securityQuestions.map((question, index) => (
+            {securityQuestionsData.map((question, index) => (
                 <S.SecurityQuestionContainer key={index}>
                     <S.SecurityQuestionHeader>
                         <S.SecurityQuestionNumber>
@@ -290,28 +266,28 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                     </S.SecurityQuestionHeader>
 
                     <S.InputContainer>
-                        <S.DropdownButton
+                        <S.SelectorRow
                             onPress={() => {
                                 setSelectedQuestionIndex(index);
                                 setShowDropdown(!showDropdown);
                             }}
+                            activeOpacity={0.8}
                         >
-                            <S.DropdownButtonText>
+                            <S.SelectorText>
                                 {question.question || t('Select Security Question')}
-                            </S.DropdownButtonText>
-                            <S.DropdownArrow>▼</S.DropdownArrow>
-                        </S.DropdownButton>
+                            </S.SelectorText>
+                            <S.SelectorIcon>▼</S.SelectorIcon>
+                        </S.SelectorRow>
                         {showDropdown && selectedQuestionIndex === index && (
                             <S.DropdownContainer>
                                 {getAvailableQuestionsForIndex(index).map((q, qIndex) => (
-                                    <TouchableOpacity
+                                    <S.DropdownItem
                                         key={qIndex}
                                         onPress={() => handleQuestionSelect(q, index)}
+                                        activeOpacity={0.7}
                                     >
-                                        <S.DropdownItem>
-                                            <S.DropdownText>{q}</S.DropdownText>
-                                        </S.DropdownItem>
-                                    </TouchableOpacity>
+                                        <S.DropdownText>{q}</S.DropdownText>
+                                    </S.DropdownItem>
                                 ))}
                             </S.DropdownContainer>
                         )}
@@ -331,7 +307,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                 </S.SecurityQuestionContainer>
             ))}
 
-            {securityQuestions.length < 3 && (
+            {securityQuestionsData.length < 3 && (
                 <S.AddQuestionButton onPress={addSecurityQuestion}>
                     <S.AddQuestionText>{t('Add Security Question')}</S.AddQuestionText>
                 </S.AddQuestionButton>
@@ -377,17 +353,19 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                         </S.ActionButton>
                     ) : (
                         <S.ButtonRow>
-                                <S.SecondaryButton onPress={handleBack}>
-                                    <S.SecondaryButtonText>{t('Back')}</S.SecondaryButtonText>
-                                </S.SecondaryButton>
-                                <S.ActionButtonRegister
-                                    onPress={handleRegister}
-                                    disabled={!isStep2Valid}
-                                >
-                                    <S.ActionButtonText>{t('Register')}</S.ActionButtonText>
-                                </S.ActionButtonRegister>
+                            <S.SecondaryButton onPress={handleBack}>
+                                <S.SecondaryButtonText>{t('Back')}</S.SecondaryButtonText>
+                            </S.SecondaryButton>
+                            <S.ActionButtonRegister
+                                onPress={handleRegister}
+                                disabled={!isStep2Valid}
+                            >
+                                <S.ActionButtonText>{t('Register')}</S.ActionButtonText>
+                            </S.ActionButtonRegister>
                         </S.ButtonRow>
                     )}
+
+                    <LanguageSwitcher />
                 </S.ScrollView>
             </KeyboardAvoidingView>
         </S.SafeAreaView>

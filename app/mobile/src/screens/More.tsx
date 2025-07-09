@@ -47,7 +47,7 @@ export const More: FC = () => {
                     iconFamily: 'materialIcons',
                     icon: 'perm-device-info',
                     label: 'device_permissions',
-                    onPress: () => {/* TODO: navigate or open settings */ },
+                    onPress: () => Linking.openSettings(),
                 },
             ],
         },

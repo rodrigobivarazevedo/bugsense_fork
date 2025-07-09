@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator } from 'react-native';
 import { styles } from './Modal.styles';
 import { themeColors } from '../../theme/GlobalTheme';
@@ -18,7 +18,7 @@ interface TestKitSelectModalProps {
     fetchTestKits: () => Promise<TestKit[]>;
 }
 
-const TestKitSelectModal: React.FC<TestKitSelectModalProps> = ({
+const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
     isOpen,
     onClose,
     onConfirm,

@@ -67,6 +67,15 @@ export const StepTitle = styled.Text`
     margin-bottom: ${rem(1.875)}px;
 `;
 
+export const NoteText = styled.Text`
+    color: ${themeColors.primary};
+    font-size: ${rem(0.875)}px;
+    text-align: center;
+    margin-bottom: ${rem(1.25)}px;
+    opacity: 0.8;
+    line-height: ${rem(1.25)}px;
+`;
+
 export const InputContainer = styled.View`
     width: 100%;
     margin-bottom: ${rem(1.25)}px;
@@ -188,31 +197,26 @@ export const ErrorText = styled.Text`
 `;
 
 export const DropdownContainer = styled.View`
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background-color: white;
+    background-color: ${themeColors.white};
     border: ${rem(0.0625)}px solid ${themeColors.primary};
-    border-radius: ${rem(0.25)}px;
-    max-height: ${rem(12.5)}px;
-    z-index: 1000;
-    elevation: 5;
-    shadow-color: #000;
-    shadow-offset: 0px 2px;
-    shadow-opacity: 0.25;
-    shadow-radius: 3.84px;
+    border-radius: ${rem(0.5)}px;
+    margin-top: ${rem(0.25)}px;
+    box-shadow: 0px 4px 16px rgba(0,0,0,0.10);
+    elevation: 6;
+    width: 100%;
+    align-self: stretch;
+    z-index: 10;
 `;
 
-export const DropdownItem = styled.View`
-    padding: ${rem(0.75)}px ${rem(1)}px;
-    border-bottom-width: ${rem(0.0625)}px;
-    border-bottom-color: #e0e0e0;
+export const DropdownItem = styled.TouchableOpacity`
+    padding: ${rem(1)}px ${rem(1)}px;
+    border-bottom-width: 1px;
+    border-bottom-color: #f0f0f0;
 `;
 
 export const DropdownText = styled.Text`
     color: ${themeColors.primary};
-    font-size: ${rem(0.875)}px;
+    font-size: ${rem(1)}px;
     font-family: 'System';
 `;
 
@@ -268,24 +272,25 @@ export const AddQuestionText = styled.Text`
     font-family: 'System';
 `;
 
-export const DropdownButton = styled.TouchableOpacity`
-    width: 100%;
-    padding: ${rem(1)}px;
-    border-bottom-width: ${rem(0.0625)}px;
-    border-bottom-color: ${themeColors.primary};
+export const SelectorRow = styled.TouchableOpacity`
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
+    border-radius: ${rem(0.5)}px;
+    border-width: 1px;
+    border-color: ${themeColors.primary};
+    background-color: #f7f7fa;
+    padding: ${rem(0.75)}px ${rem(1)}px;
+    margin-vertical: ${rem(0.5)}px;
 `;
 
-export const DropdownButtonText = styled.Text`
+export const SelectorText = styled.Text`
+    flex: 1;
     color: ${themeColors.primary};
     font-size: ${rem(1)}px;
     font-family: 'System';
-    flex: 1;
 `;
 
-export const DropdownArrow = styled.Text`
+export const SelectorIcon = styled.Text`
     color: ${themeColors.primary};
     font-size: ${rem(1.25)}px;
     margin-left: ${rem(0.5)}px;

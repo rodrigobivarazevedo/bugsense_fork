@@ -9,10 +9,19 @@ import { Platform, TextInput, Modal, TouchableOpacity, Alert } from 'react-nativ
 import { themeColors } from '../theme/GlobalTheme';
 import ConfirmationModal from '../components/modal/ConfirmationModal';
 import GenericDateTimePicker from '../components/GenericDateTimePicker';
+import CountryPicker, { Country, CountryCode } from 'react-native-country-picker-modal';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { formatDate } from '../utils/DateTimeFormatter';
+import ChangePasswordModal from '../components/modal/ChangePasswordModal';
+import {
+    securityQuestions,
+    SecurityQuestionsData,
+    validateSecurityQuestionsForUpdate,
+    getAvailableQuestionsForIndex as getAvailableQuestionsUtil,
+    hasSecurityQuestionsChanges as hasSecurityQuestionsChangesUtil
+} from '../utils/SecurityQuestions';
 
 export const Account: FC = () => {
     const { t } = useTranslation();
@@ -23,6 +32,8 @@ export const Account: FC = () => {
     const [tempValue, setTempValue] = useState<string>('');
     const [pendingValue, setPendingValue] = useState<string>('');
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+    const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+    const [showSecurityQuestionsConfirmationModal, setShowSecurityQuestionsConfirmationModal] = useState(false);
 
     // Address editing states
     const [addressFields, setAddressFields] = useState({
@@ -40,7 +51,7 @@ export const Account: FC = () => {
     const [showDatePicker, setShowDatePicker] = useState(false);
 
     // Security questions editing states
-    const [securityQuestions, setSecurityQuestions] = useState({
+    const [securityQuestionsData, setSecurityQuestionsData] = useState<SecurityQuestionsData>({
         security_question_1: '',
         security_answer_1: '',
         security_question_2: '',
@@ -48,7 +59,7 @@ export const Account: FC = () => {
         security_question_3: '',
         security_answer_3: ''
     });
-    const [originalSecurityQuestions, setOriginalSecurityQuestions] = useState({
+    const [originalSecurityQuestions, setOriginalSecurityQuestions] = useState<SecurityQuestionsData>({
         security_question_1: '',
         security_answer_1: '',
         security_question_2: '',
@@ -59,6 +70,8 @@ export const Account: FC = () => {
     const [showSecurityQuestionDropdown, setShowSecurityQuestionDropdown] = useState(false);
     const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number | null>(null);
     const [securityQuestionsEditMode, setSecurityQuestionsEditMode] = useState(false);
+    const [showCountryPicker, setShowCountryPicker] = useState(false);
+    const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
 
     const navigation = useNavigation();
 
@@ -66,25 +79,13 @@ export const Account: FC = () => {
     const streetInputRef = useRef<TextInput>(null);
     const cityInputRef = useRef<TextInput>(null);
     const postcodeInputRef = useRef<TextInput>(null);
-    const countryInputRef = useRef<TextInput>(null);
 
     // Refs for security answer TextInput fields
     const securityAnswer1Ref = useRef<TextInput>(null);
     const securityAnswer2Ref = useRef<TextInput>(null);
     const securityAnswer3Ref = useRef<TextInput>(null);
 
-    const availableQuestions = [
-        t("What was your first pet's name?"),
-        t("In which city were you born?"),
-        t("What is your mother's maiden name?"),
-        t("What was the name of your first school?"),
-        t("What is your favorite childhood memory?"),
-        t("What is your favorite color?"),
-        t("What is your hometown?"),
-        t("What was your first car?"),
-        t("What is your favorite food?"),
-        t("What is your dream job?")
-    ];
+    const availableQuestions = securityQuestions(t);
 
     const handleEdit = (field: string) => {
         setEditingField(field);
@@ -176,21 +177,6 @@ export const Account: FC = () => {
         setEditingField(null);
     };
 
-    const handlePhoneSave = async () => {
-        if (user) {
-            try {
-                const response = await Api.put('users/me/', {
-                    phone_number: tempValue
-                });
-                setUser(response.data);
-                setEditingField(null);
-            } catch (error) {
-                console.error('Error updating phone number:', error);
-                Alert.alert(t('Error'), t('Failed to update phone number. Please try again.'));
-            }
-        }
-    };
-
     // Address field handlers
     const handleAddressFieldChange = (field: string, value: string) => {
         setAddressFields(prev => ({
@@ -204,7 +190,6 @@ export const Account: FC = () => {
         streetInputRef.current?.blur();
         cityInputRef.current?.blur();
         postcodeInputRef.current?.blur();
-        countryInputRef.current?.blur();
 
         if (user) {
             try {
@@ -224,7 +209,6 @@ export const Account: FC = () => {
         streetInputRef.current?.blur();
         cityInputRef.current?.blur();
         postcodeInputRef.current?.blur();
-        countryInputRef.current?.blur();
 
         setAddressFields(originalAddressFields);
     };
@@ -241,10 +225,10 @@ export const Account: FC = () => {
 
     // Security questions handlers
     const handleSecurityQuestionChange = (questionNumber: number, field: 'question' | 'answer', value: string) => {
-        const questionKey = `security_question_${questionNumber}` as keyof typeof securityQuestions;
-        const answerKey = `security_answer_${questionNumber}` as keyof typeof securityQuestions;
+        const questionKey = `security_question_${questionNumber}` as keyof typeof securityQuestionsData;
+        const answerKey = `security_answer_${questionNumber}` as keyof typeof securityQuestionsData;
 
-        setSecurityQuestions(prev => ({
+        setSecurityQuestionsData(prev => ({
             ...prev,
             [field === 'question' ? questionKey : answerKey]: value
         }));
@@ -257,13 +241,7 @@ export const Account: FC = () => {
     };
 
     const getAvailableQuestionsForIndex = (questionNumber: number) => {
-        const usedQuestions = [
-            securityQuestions.security_question_1,
-            securityQuestions.security_question_2,
-            securityQuestions.security_question_3
-        ].filter((q, index) => index !== questionNumber - 1 && q);
-
-        return availableQuestions.filter(q => !usedQuestions.includes(q));
+        return getAvailableQuestionsUtil(securityQuestionsData, questionNumber, availableQuestions);
     };
 
     const handleSecurityQuestionsSave = async () => {
@@ -274,15 +252,36 @@ export const Account: FC = () => {
 
         if (user) {
             try {
-                const response = await Api.put('users/me/', securityQuestions);
+                const dataToSend: Partial<SecurityQuestionsData> = {};
+
+                if (securityQuestionsData.security_question_1 && securityQuestionsData.security_answer_1) {
+                    dataToSend.security_question_1 = securityQuestionsData.security_question_1;
+                    dataToSend.security_answer_1 = securityQuestionsData.security_answer_1;
+                }
+                if (securityQuestionsData.security_question_2 && securityQuestionsData.security_answer_2) {
+                    dataToSend.security_question_2 = securityQuestionsData.security_question_2;
+                    dataToSend.security_answer_2 = securityQuestionsData.security_answer_2;
+                }
+                if (securityQuestionsData.security_question_3 && securityQuestionsData.security_answer_3) {
+                    dataToSend.security_question_3 = securityQuestionsData.security_question_3;
+                    dataToSend.security_answer_3 = securityQuestionsData.security_answer_3;
+                }
+
+                const response = await Api.put('users/me/', dataToSend);
                 setUser(response.data);
-                setOriginalSecurityQuestions(securityQuestions);
+                setOriginalSecurityQuestions(securityQuestionsData);
                 Alert.alert(t('Success'), t('Security questions updated successfully'));
+                setSecurityQuestionsEditMode(false);
             } catch (error) {
                 console.error('Error updating security questions:', error);
                 Alert.alert(t('Error'), t('Failed to update security questions. Please try again.'));
             }
         }
+    };
+
+    const handleSecurityQuestionsSaveConfirm = async () => {
+        setShowSecurityQuestionsConfirmationModal(false);
+        await handleSecurityQuestionsSave();
     };
 
     const handleSecurityQuestionsCancel = () => {
@@ -291,31 +290,23 @@ export const Account: FC = () => {
         securityAnswer2Ref.current?.blur();
         securityAnswer3Ref.current?.blur();
 
-        setSecurityQuestions(originalSecurityQuestions);
+        setSecurityQuestionsData(originalSecurityQuestions);
+    };
+
+    const handleCountrySelect = (country: Country) => {
+        setSelectedCountry(country);
+        const countryName = typeof country.name === 'string' ? country.name : String(country.name);
+        handleAddressFieldChange('country', countryName);
+        setShowCountryPicker(false);
     };
 
     // Check if security questions have changed
     const hasSecurityQuestionsChanges = () => {
-        return (
-            securityQuestions.security_question_1 !== originalSecurityQuestions.security_question_1 ||
-            securityQuestions.security_answer_1 !== originalSecurityQuestions.security_answer_1 ||
-            securityQuestions.security_question_2 !== originalSecurityQuestions.security_question_2 ||
-            securityQuestions.security_answer_2 !== originalSecurityQuestions.security_answer_2 ||
-            securityQuestions.security_question_3 !== originalSecurityQuestions.security_question_3 ||
-            securityQuestions.security_answer_3 !== originalSecurityQuestions.security_answer_3
-        );
+        return hasSecurityQuestionsChangesUtil(securityQuestionsData, originalSecurityQuestions);
     };
 
-    // Only enable save if all 3 questions and answers are filled
-    const areAllSecurityQuestionsFilled = () => {
-        return (
-            !!securityQuestions.security_question_1 &&
-            !!securityQuestions.security_answer_1 &&
-            !!securityQuestions.security_question_2 &&
-            !!securityQuestions.security_answer_2 &&
-            !!securityQuestions.security_question_3 &&
-            !!securityQuestions.security_answer_3
-        );
+    const canSaveSecurityQuestions = () => {
+        return validateSecurityQuestionsForUpdate(securityQuestionsData, originalSecurityQuestions);
     };
 
     const renderEditableField = (field: string, value: string) => {
@@ -431,7 +422,7 @@ export const Account: FC = () => {
                     country: res.data.country || ''
                 });
                 // Initialize security questions fields
-                setSecurityQuestions({
+                setSecurityQuestionsData({
                     security_question_1: res.data.security_question_1 || '',
                     security_answer_1: '',
                     security_question_2: res.data.security_question_2 || '',
@@ -490,7 +481,7 @@ export const Account: FC = () => {
                             country: res.data.country || ''
                         });
                         // Update security questions fields
-                        setSecurityQuestions({
+                        setSecurityQuestionsData({
                             security_question_1: res.data.security_question_1 || '',
                             security_answer_1: '',
                             security_question_2: res.data.security_question_2 || '',
@@ -707,76 +698,121 @@ export const Account: FC = () => {
                         <S.ItemRow>
                             <S.ItemTextCol>
                                 <S.ItemLabel>{t('Street')}</S.ItemLabel>
-                                <TextInput
-                                    value={addressFields.street}
-                                    onChangeText={(value) => handleAddressFieldChange('street', value)}
-                                    placeholder={t('Enter street address')}
-                                    style={{
-                                        color: themeColors.primary,
-                                        fontSize: 16,
-                                        fontWeight: '600',
-                                        padding: 0,
-                                        marginBottom: rem(0.5),
-                                    }}
-                                    ref={streetInputRef}
-                                />
+                                {editingField === 'street' ? (
+                                    <TextInput
+                                        value={addressFields.street}
+                                        onChangeText={(value) => handleAddressFieldChange('street', value)}
+                                        placeholder={t('Enter street address')}
+                                        style={{
+                                            color: themeColors.primary,
+                                            fontSize: 16,
+                                            fontWeight: '600',
+                                            padding: 0,
+                                            marginBottom: rem(0.5),
+                                        }}
+                                        ref={streetInputRef}
+                                        autoFocus
+                                        onBlur={() => setEditingField(null)}
+                                    />
+                                ) : (
+                                    <S.ItemValue>{addressFields.street}</S.ItemValue>
+                                )}
                             </S.ItemTextCol>
+                            {editingField !== 'street' && (
+                                <S.EditIconBtnLight onPress={() => setEditingField('street')}>
+                                    <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                                </S.EditIconBtnLight>
+                            )}
                         </S.ItemRow>
                         <S.ItemRow>
                             <S.ItemTextCol>
                                 <S.ItemLabel>{t('City')}</S.ItemLabel>
-                                <TextInput
-                                    value={addressFields.city}
-                                    onChangeText={(value) => handleAddressFieldChange('city', value)}
-                                    placeholder={t('Enter city')}
-                                    style={{
-                                        color: themeColors.primary,
-                                        fontSize: 16,
-                                        fontWeight: '600',
-                                        padding: 0,
-                                        marginBottom: rem(0.5),
-                                    }}
-                                    ref={cityInputRef}
-                                />
+                                {editingField === 'city' ? (
+                                    <TextInput
+                                        value={addressFields.city}
+                                        onChangeText={(value) => handleAddressFieldChange('city', value)}
+                                        placeholder={t('Enter city')}
+                                        style={{
+                                            color: themeColors.primary,
+                                            fontSize: 16,
+                                            fontWeight: '600',
+                                            padding: 0,
+                                            marginBottom: rem(0.5),
+                                        }}
+                                        ref={cityInputRef}
+                                        autoFocus
+                                        onBlur={() => setEditingField(null)}
+                                    />
+                                ) : (
+                                    <S.ItemValue>{addressFields.city}</S.ItemValue>
+                                )}
                             </S.ItemTextCol>
+                            {editingField !== 'city' && (
+                                <S.EditIconBtnLight onPress={() => setEditingField('city')}>
+                                    <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                                </S.EditIconBtnLight>
+                            )}
                         </S.ItemRow>
                         <S.ItemRow>
                             <S.ItemTextCol>
                                 <S.ItemLabel>{t('Postcode')}</S.ItemLabel>
-                                <TextInput
-                                    value={addressFields.postcode}
-                                    onChangeText={(value) => handleAddressFieldChange('postcode', value)}
-                                    placeholder={t('Enter postcode')}
-                                    style={{
-                                        color: themeColors.primary,
-                                        fontSize: 16,
-                                        fontWeight: '600',
-                                        padding: 0,
-                                        marginBottom: rem(0.5),
-                                    }}
-                                    ref={postcodeInputRef}
-                                />
+                                {editingField === 'postcode' ? (
+                                    <TextInput
+                                        value={addressFields.postcode}
+                                        onChangeText={(value) => handleAddressFieldChange('postcode', value)}
+                                        placeholder={t('Enter postcode')}
+                                        style={{
+                                            color: themeColors.primary,
+                                            fontSize: 16,
+                                            fontWeight: '600',
+                                            padding: 0,
+                                            marginBottom: rem(0.5),
+                                        }}
+                                        ref={postcodeInputRef}
+                                        autoFocus
+                                        onBlur={() => setEditingField(null)}
+                                    />
+                                ) : (
+                                    <S.ItemValue>{addressFields.postcode}</S.ItemValue>
+                                )}
                             </S.ItemTextCol>
+                            {editingField !== 'postcode' && (
+                                <S.EditIconBtnLight onPress={() => setEditingField('postcode')}>
+                                    <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                                </S.EditIconBtnLight>
+                            )}
                         </S.ItemRow>
                         <S.ItemRow>
-                            {/* TODO: Add country picker */}
                             <S.ItemTextCol>
                                 <S.ItemLabel>{t('Country')}</S.ItemLabel>
-                                <TextInput
-                                    value={addressFields.country}
-                                    onChangeText={(value) => handleAddressFieldChange('country', value)}
-                                    placeholder={t('Enter country')}
-                                    style={{
-                                        color: themeColors.primary,
-                                        fontSize: 16,
-                                        fontWeight: '600',
-                                        padding: 0,
-                                        marginBottom: rem(0.5),
-                                    }}
-                                    ref={countryInputRef}
-                                />
+                                <S.ItemValue>{addressFields.country || t('Select a country')}</S.ItemValue>
                             </S.ItemTextCol>
+                            {editingField !== 'country' && (
+                                <S.EditIconBtnLight style={{ alignSelf: 'center' }} onPress={() => setEditingField('country')}>
+                                    <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                                </S.EditIconBtnLight>
+                            )}
                         </S.ItemRow>
+                        {editingField === 'country' && (
+                            <CountryPicker
+                                visible={true}
+                                onClose={() => setEditingField(null)}
+                                onSelect={handleCountrySelect}
+                                countryCode={selectedCountry?.cca2 as CountryCode}
+                                withFilter
+                                withFlag
+                                withCountryNameButton
+                                withModal
+                                withAlphaFilter
+                                theme={{
+                                    backgroundColor: themeColors.white,
+                                    primaryColor: themeColors.primary,
+                                    primaryColorVariant: themeColors.secondary,
+                                    onBackgroundTextColor: themeColors.primary,
+                                    filterPlaceholderTextColor: themeColors.themeGray,
+                                }}
+                            />
+                        )}
                         {hasAddressChanges() && (
                             <S.AccountActionContainer>
                                 <S.AccountCancelButton onPress={handleAddressCancel}>
@@ -804,7 +840,7 @@ export const Account: FC = () => {
                                             activeOpacity={0.8}
                                         >
                                             <S.SelectorText>
-                                                {securityQuestions[`security_question_${num}` as keyof typeof securityQuestions] || t('Select Security Question')}
+                                                {securityQuestionsData[`security_question_${num}` as keyof typeof securityQuestionsData] || t('Select Security Question')}
                                             </S.SelectorText>
                                             <S.SelectorIcon>▼</S.SelectorIcon>
                                         </S.SelectorRow>
@@ -822,7 +858,7 @@ export const Account: FC = () => {
                                             </S.DropdownContainer>
                                         )}
                                         <S.AnswerInput
-                                            value={securityQuestions[`security_answer_${num}` as keyof typeof securityQuestions]}
+                                            value={securityQuestionsData[`security_answer_${num}` as keyof typeof securityQuestionsData]}
                                             onChangeText={(value: string) => handleSecurityQuestionChange(num, 'answer', value)}
                                             placeholder={t('Enter your answer')}
                                             placeholderTextColor={themeColors.themeGray}
@@ -832,15 +868,18 @@ export const Account: FC = () => {
                                 ))}
                                 {hasSecurityQuestionsChanges() && (
                                     <S.AccountActionContainer>
-                                        <S.AccountCancelButton onPress={() => { setSecurityQuestionsEditMode(false); handleSecurityQuestionsCancel(); }}>
+                                        <S.AccountCancelButton onPress={() => {
+                                            setSecurityQuestionsEditMode(false);
+                                            handleSecurityQuestionsCancel();
+                                        }}>
                                             <S.AccountCancelButtonText>{t('Cancel')}</S.AccountCancelButtonText>
                                         </S.AccountCancelButton>
                                         <S.AccountSaveButton
-                                            disabled={!(hasSecurityQuestionsChanges() && areAllSecurityQuestionsFilled())}
-                                            onPress={async () => { await handleSecurityQuestionsSave(); setSecurityQuestionsEditMode(false); }}
+                                            disabled={!(hasSecurityQuestionsChanges() && canSaveSecurityQuestions())}
+                                            onPress={() => setShowSecurityQuestionsConfirmationModal(true)}
                                         >
                                             <S.AccountSaveButtonText
-                                                disabled={!(hasSecurityQuestionsChanges() && areAllSecurityQuestionsFilled())}
+                                                disabled={!(hasSecurityQuestionsChanges() && canSaveSecurityQuestions())}
                                             >
                                                 {t('Save Changes')}
                                             </S.AccountSaveButtonText>
@@ -850,24 +889,24 @@ export const Account: FC = () => {
                             </>
                         ) : (
                             <>
-                                {securityQuestions.security_question_1 ||
-                                    securityQuestions.security_question_2 ||
-                                    securityQuestions.security_question_3 ? (
+                                {securityQuestionsData.security_question_1 ||
+                                    securityQuestionsData.security_question_2 ||
+                                    securityQuestionsData.security_question_3 ? (
                                     <>
                                         {[1, 2, 3].map((num) => (
-                                            securityQuestions[`security_question_${num}` as keyof typeof securityQuestions] ? (
+                                            securityQuestionsData[`security_question_${num}` as keyof typeof securityQuestionsData] ? (
                                                 <S.ItemRow key={`viewq${num}`}>
                                                     <S.ItemTextCol>
                                                         <S.ItemLabel>{t('Question')} {num}</S.ItemLabel>
                                                         <S.ItemValue>
-                                                            {securityQuestions[`security_question_${num}` as keyof typeof securityQuestions]}
+                                                            {securityQuestionsData[`security_question_${num}` as keyof typeof securityQuestionsData]}
                                                         </S.ItemValue>
                                                     </S.ItemTextCol>
                                                 </S.ItemRow>
                                             ) : null
                                         ))}
                                         <S.ActionButton onPress={() => setSecurityQuestionsEditMode(true)}>
-                                            <S.ActionButtonText>{t('Edit Security Questions')}</S.ActionButtonText>
+                                            <S.ActionButtonText>{t('Update Security Questions')}</S.ActionButtonText>
                                         </S.ActionButton>
                                     </>
                                 ) : (
@@ -896,7 +935,7 @@ export const Account: FC = () => {
                 </S.DeleteButton>
             )}
 
-            <S.ActionButton>
+            <S.ActionButton onPress={() => setShowChangePasswordModal(true)}>
                 <S.ActionButtonText>{t('Change password')}</S.ActionButtonText>
             </S.ActionButton>
             <S.ActionButton onPress={handleSignOut}>
@@ -913,6 +952,20 @@ export const Account: FC = () => {
                     : t('Are you sure you want to update your email address?')}
                 confirmText={t('Confirm')}
                 cancelText={t('Cancel')}
+            />
+            <ConfirmationModal
+                isOpen={showSecurityQuestionsConfirmationModal}
+                onClose={() => setShowSecurityQuestionsConfirmationModal(false)}
+                onConfirm={handleSecurityQuestionsSaveConfirm}
+                heading={t('Update Security Questions')}
+                message={t('Are you sure you want to update your security questions? The answers to the questions you edited will be updated.')}
+                confirmText={t('Confirm')}
+                cancelText={t('Cancel')}
+            />
+            <ChangePasswordModal
+                visible={showChangePasswordModal}
+                onClose={() => setShowChangePasswordModal(false)}
+                onSuccess={() => { }}
             />
         </S.Scroll>
     );

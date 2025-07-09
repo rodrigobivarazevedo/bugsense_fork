@@ -4,6 +4,7 @@ import * as S from './Home.styles';
 import RenderLottie from '../components/RenderLottie';
 import RenderIcon from '../components/RenderIcon';
 import { rem } from '../utils/Responsive';
+import { getTimeBasedGreeting } from '../utils/DateTimeFormatter';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -54,7 +55,7 @@ export const Home: FC<any> = ({ navigation }) => {
     <S.Root>
       <S.Header>
         <S.HeaderRow>
-          <S.Greeting>{t('hello')}</S.Greeting>
+          <S.Greeting>{t(getTimeBasedGreeting())}</S.Greeting>
           <S.Lottie>
             <RenderLottie name="homeHello" startFrame={0} endFrame={150} />
           </S.Lottie>
