@@ -9,6 +9,7 @@ import { Platform, TextInput, Modal, TouchableOpacity, Alert } from 'react-nativ
 import { themeColors } from '../theme/GlobalTheme';
 import ConfirmationModal from '../components/modal/ConfirmationModal';
 import GenericDateTimePicker from '../components/GenericDateTimePicker';
+import CountryPicker, { Country, CountryCode } from 'react-native-country-picker-modal';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -69,6 +70,8 @@ export const Account: FC = () => {
     const [showSecurityQuestionDropdown, setShowSecurityQuestionDropdown] = useState(false);
     const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number | null>(null);
     const [securityQuestionsEditMode, setSecurityQuestionsEditMode] = useState(false);
+    const [showCountryPicker, setShowCountryPicker] = useState(false);
+    const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
 
     const navigation = useNavigation();
 
@@ -76,7 +79,6 @@ export const Account: FC = () => {
     const streetInputRef = useRef<TextInput>(null);
     const cityInputRef = useRef<TextInput>(null);
     const postcodeInputRef = useRef<TextInput>(null);
-    const countryInputRef = useRef<TextInput>(null);
 
     // Refs for security answer TextInput fields
     const securityAnswer1Ref = useRef<TextInput>(null);
@@ -188,7 +190,6 @@ export const Account: FC = () => {
         streetInputRef.current?.blur();
         cityInputRef.current?.blur();
         postcodeInputRef.current?.blur();
-        countryInputRef.current?.blur();
 
         if (user) {
             try {
@@ -208,7 +209,6 @@ export const Account: FC = () => {
         streetInputRef.current?.blur();
         cityInputRef.current?.blur();
         postcodeInputRef.current?.blur();
-        countryInputRef.current?.blur();
 
         setAddressFields(originalAddressFields);
     };
@@ -291,6 +291,13 @@ export const Account: FC = () => {
         securityAnswer3Ref.current?.blur();
 
         setSecurityQuestionsData(originalSecurityQuestions);
+    };
+
+    const handleCountrySelect = (country: Country) => {
+        setSelectedCountry(country);
+        const countryName = typeof country.name === 'string' ? country.name : String(country.name);
+        handleAddressFieldChange('country', countryName);
+        setShowCountryPicker(false);
     };
 
     // Check if security questions have changed
@@ -743,23 +750,17 @@ export const Account: FC = () => {
                             </S.ItemTextCol>
                         </S.ItemRow>
                         <S.ItemRow>
-                            {/* TODO: Add country picker */}
                             <S.ItemTextCol>
                                 <S.ItemLabel>{t('Country')}</S.ItemLabel>
-                                <TextInput
-                                    value={addressFields.country}
-                                    onChangeText={(value) => handleAddressFieldChange('country', value)}
-                                    placeholder={t('Enter country')}
-                                    style={{
-                                        color: themeColors.primary,
-                                        fontSize: 16,
-                                        fontWeight: '600',
-                                        padding: 0,
-                                        marginBottom: rem(0.5),
-                                    }}
-                                    ref={countryInputRef}
-                                />
+                                <S.CountrySelector onPress={() => setShowCountryPicker(true)}>
+                                    <S.CountrySelectorText>
+                                        {addressFields.country || t('Select a country')}
+                                    </S.CountrySelectorText>
+                                </S.CountrySelector>
                             </S.ItemTextCol>
+                            <S.EditIconBtnLight onPress={() => setShowCountryPicker(true)}>
+                                <RenderIcon family="materialIcons" icon="keyboard-arrow-down" fontSize={rem(1.25)} color="primary" />
+                            </S.EditIconBtnLight>
                         </S.ItemRow>
                         {hasAddressChanges() && (
                             <S.AccountActionContainer>
@@ -914,6 +915,24 @@ export const Account: FC = () => {
                 visible={showChangePasswordModal}
                 onClose={() => setShowChangePasswordModal(false)}
                 onSuccess={() => { }}
+            />
+            <CountryPicker
+                visible={showCountryPicker}
+                onClose={() => setShowCountryPicker(false)}
+                onSelect={handleCountrySelect}
+                countryCode={selectedCountry?.cca2 as CountryCode}
+                withFilter
+                withFlag
+                withCountryNameButton
+                withModal
+                withAlphaFilter
+                theme={{
+                    backgroundColor: themeColors.white,
+                    primaryColor: themeColors.primary,
+                    primaryColorVariant: themeColors.secondary,
+                    onBackgroundTextColor: themeColors.primary,
+                    filterPlaceholderTextColor: themeColors.themeGray,
+                }}
             />
         </S.Scroll>
     );

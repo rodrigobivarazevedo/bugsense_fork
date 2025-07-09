@@ -452,3 +452,21 @@ export const DropdownText = styled.Text`
   font-size: ${rem(1)}px;
   font-family: 'System';
 `;
+
+export const CountrySelector = styled.TouchableOpacity`
+  padding-vertical: ${rem(0.5)}px;
+  border-radius: ${rem(0.25)}px;
+  background-color: #f7f7fa;
+  border-width: 1px;
+  border-color: ${themeColors.primary};
+  padding-horizontal: ${rem(0.75)}px;
+  margin-vertical: ${rem(0.25)}px;
+`;
+
+export const CountrySelectorText = styled.Text`
+  ${themeTypography.p};
+  color: ${themeColors.primary};
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: ${rem(0.5)}px;
+`;
