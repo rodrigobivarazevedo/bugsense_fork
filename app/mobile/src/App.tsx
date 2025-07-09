@@ -33,6 +33,7 @@ import BacteriaRouter from './screens/BacteriaRouter';
 import Patients from './screens/Patients';
 import TimeFormatSelection from './screens/TimeFormatSelection';
 import ViewTest from './screens/ViewTest';
+import News from './screens/News';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -56,6 +57,7 @@ const wrappedScreens: string[] = [
   'Discover',
   'BacteriaRouter',
   'ViewTest',
+  'News',
 ];
 
 function MainTabs() {
@@ -114,6 +116,7 @@ export default function App() {
                 <Stack.Screen name="Discover" component={Discover} />
                 <Stack.Screen name="BacteriaRouter" component={BacteriaRouter} />
                 <Stack.Screen name="ViewTest" component={ViewTest} />
+                <Stack.Screen name="News" component={News} />
               </Stack.Navigator>
             </ContentContainer>
           </AppContainer>
