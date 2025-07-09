@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import RenderIcon from './RenderIcon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { useTranslation } from 'react-i18next';
 
 const USER_TABS = [
     { key: 'home', label: 'Home', family: 'foundation', icon: 'home' },
@@ -22,6 +23,7 @@ const DOCTOR_TABS = [
 const BottomBar: FC<BottomTabBarProps> = ({ state, navigation }) => {
     const insets = useSafeAreaInsets();
     const [userType, setUserType] = useState<string>('patient');
+    const { t } = useTranslation();
 
     useEffect(() => {
         AsyncStorage.getItem('userType').then(type => {
@@ -33,8 +35,7 @@ const BottomBar: FC<BottomTabBarProps> = ({ state, navigation }) => {
 
     return (
         <S.Container insets={insets}>
-            {tabs.map((tab, idx) => {
-                // Find the index of the tab in the navigation state
+            {tabs.map((tab) => {
                 const tabIndex = state.routes.findIndex(r => r.name.toLowerCase() === tab.key);
                 const isActive = state.index === tabIndex;
                 return (
@@ -54,7 +55,7 @@ const BottomBar: FC<BottomTabBarProps> = ({ state, navigation }) => {
                                 color={isActive ? 'primary' : 'themeGray'}
                             />
                             <S.Label isActive={isActive}>
-                                {tab.label}
+                                {t(tab.label)}
                             </S.Label>
                         </S.IconWrapper>
                     </TouchableOpacity>
