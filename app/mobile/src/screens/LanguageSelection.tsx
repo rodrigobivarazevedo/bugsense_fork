@@ -12,8 +12,8 @@ export const LanguageSelection: FC = () => {
         { code: 'de', name: 'Deutsch' },
     ];
 
-    const changeLanguage = (languageCode: string) => {
-        i18n.changeLanguage(languageCode);
+    const changeLanguage = async (languageCode: string) => {
+        await i18n.changeLanguage(languageCode);
     };
 
     return (

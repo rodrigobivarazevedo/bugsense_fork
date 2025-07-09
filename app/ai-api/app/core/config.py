@@ -31,7 +31,9 @@ class SecretsManager:
             "GOOGLE_CREDENTIALS",
             "ML_API_KEY",
             "DJANGO_SECRET_KEY",
-            "GCS_BUCKET_NAME"
+            "GCS_BUCKET_NAME",
+            "ALGORITHM",
+            "HOST_IP"
         ]
 
         print(f"Loading security secrets for {self.env} environment")
@@ -55,4 +57,3 @@ class SecretsManager:
 
 secrets_manager = SecretsManager()
 
-print(secrets_manager.security_secrets)

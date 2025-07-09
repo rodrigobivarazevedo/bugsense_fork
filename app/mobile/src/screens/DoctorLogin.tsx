@@ -2,6 +2,7 @@ import { FC, useState, useEffect } from 'react';
 import { Alert, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import Logo from '../components/Logo';
 import RenderIcon from '../components/RenderIcon';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './LoginRegister.styles';
@@ -75,7 +76,7 @@ const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
             await AsyncStorage.setItem('userType', 'doctor');
 
             console.log('Doctor login successful:', { doctorId, institution: selectedInstitution.name });
-            navigation.navigate('Home');
+            navigation.navigate('Main', { screen: 'Home' });
         } catch (err: any) {
             console.error('Doctor login error', err);
             const message =
@@ -124,17 +125,16 @@ const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
                     {showInstitutionDropdown && !institutionsLoading && (
                         <S.DropdownContainer>
                             {institutions.map((institution) => (
-                                <TouchableOpacity
+                                <S.DropdownItem
                                     key={institution.id}
                                     onPress={() => {
                                         setSelectedInstitution(institution);
                                         setShowInstitutionDropdown(false);
                                     }}
+                                    activeOpacity={0.7}
                                 >
-                                    <S.DropdownItem>
-                                        <S.DropdownText>{institution.name}</S.DropdownText>
-                                    </S.DropdownItem>
-                                </TouchableOpacity>
+                                    <S.DropdownText>{institution.name}</S.DropdownText>
+                                </S.DropdownItem>
                             ))}
                         </S.DropdownContainer>
                     )}
@@ -195,6 +195,8 @@ const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
                         </S.Link>
                     </TouchableOpacity>
                 </S.LinkContainer>
+
+                <LanguageSwitcher />
             </ScrollView>
         </S.Container>
     );

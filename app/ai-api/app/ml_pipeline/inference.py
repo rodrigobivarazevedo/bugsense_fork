@@ -4,12 +4,9 @@ from ml_models.model_registry.CNN_LSTM import CNNLSTMModel
 from ml_models.model_registry.CNN_concentration import ConcentrationClassifier
 import torch.nn.functional as F
 import numpy as np
-from pathlib import Path
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-MAIN_CLASSES = ['ClassA', 'Efae_Kp', 'Ssap_Eh', 'Pa_Pm_Sa', 'ClassB']
-CLASSES = ['Class0', 'Efaecalis', 'Kpneumoniae', 'Ssaprophyticus', 'Ehormaechei', 'Paeruginosa', 'Pmirabilis', 'Saureus', 'Class8']
 
 def load_ensemble_models(mode, num_folds=5, model_class=None, num_classes=5):
     """
@@ -26,7 +23,6 @@ def load_ensemble_models(mode, num_folds=5, model_class=None, num_classes=5):
     # for the subgroups. The results are saved in a confusion
     # matrix and the accuracy is printed.
     ######################################################
-      
     for fold in range(1, num_folds + 1):
         
         model_path =  f"/app/ml_models/species_models/{mode}_fold{fold}.pth"
@@ -117,8 +113,14 @@ def majority_vote(fold_models, images):
         voted_preds.append(int(most_common))
     return voted_preds
 
-    
-def predict(images: torch.Tensor, use_two_stage: bool = True, task="species"):
+
+def unwrap_if_singleton(x):
+    if isinstance(x, list) and len(x) == 1:
+        return x[0]
+    return x
+
+
+def predict(images: torch.Tensor, task="species", use_two_stage: bool = True):
     """
     Predicts using either only the first-tier or both tiers of the classification model.
     
@@ -131,6 +133,15 @@ def predict(images: torch.Tensor, use_two_stage: bool = True, task="species"):
         dict: Dictionary containing predictions from the first tier, and optionally from the second tier.
     """
     if task == "species":
+        
+        first_label_map = {
+            0: 'Sterile',
+            1: 'Efaecalis/Kpneumoniae',
+            2: 'Ssaprophyticus/Ehormaechei',
+            3: 'Paeruginosa/Pmirabilis/Saureus',
+            4: 'Ecoli'
+        }
+        
         final_label_map = {
             0: 'Sterile',
             1: 'Efaecalis',
@@ -142,15 +153,7 @@ def predict(images: torch.Tensor, use_two_stage: bool = True, task="species"):
             7: 'Saureus',
             8: 'Ecoli'
         }
-        
-        first_label_map = {
-            0: 'Sterile',
-            1: 'Efaecalis/Kpneumoniae',
-            2: 'Ssaprophyticus/Ehormaechei',
-            3: 'Paeruginosa/Pmirabilis/Saureus',
-            4: 'Ecoli'
-        }
-        
+            
         # Load First-tier models
         first_models = load_ensemble_models(mode='first_classification', num_folds=5, model_class=CNNLSTMModel, num_classes=5)
         first_preds, first_preds_conf = majority_vote_with_confidence(first_models, images)
@@ -158,19 +161,19 @@ def predict(images: torch.Tensor, use_two_stage: bool = True, task="species"):
         # check if the first tier confidence is too low
         if first_preds_conf and first_preds_conf[0] < 0.6:
             return {
-                    "first_tier_preds": first_preds,
-                    "second_tier_preds":  None,
-                    "first_tier_labels": [first_label_map[pred] for pred in first_preds],
-                    "final_preds": None 
-                }
+                "first_tier_preds": unwrap_if_singleton(first_preds),
+                "second_tier_preds":  None,
+                "first_tier_labels": unwrap_if_singleton([first_label_map[pred] for pred in first_preds]),
+                "final_preds": None 
+            }
 
         if not use_two_stage:
             return {
-                    "first_tier_preds": first_preds,
-                    "second_tier_preds":  None,
-                    "first_tier_labels": [first_label_map[pred] for pred in first_preds],
-                    "final_preds": None 
-                }
+                "first_tier_preds": unwrap_if_singleton(first_preds),
+                "second_tier_preds":  None,
+                "first_tier_labels": unwrap_if_singleton([first_label_map[pred] for pred in first_preds]),
+                "final_preds": None 
+            }
 
         # Load Second-tier models
         ef_kp_models = load_ensemble_models('ef_kp', num_folds=5, model_class=CNNLSTMModel, num_classes=2)
@@ -198,26 +201,43 @@ def predict(images: torch.Tensor, use_two_stage: bool = True, task="species"):
             second_preds.append(second)
             
         return {
-            "first_tier_preds": first_preds,
-            "second_tier_preds": second_preds,
-            "first_tier_labels": [first_label_map[pred] for pred in first_preds],
-            "final_preds": [final_label_map[pred] for pred in second_preds]   
+            "first_tier_preds": unwrap_if_singleton(first_preds),
+            "second_tier_preds": unwrap_if_singleton(second_preds),
+            "first_tier_labels": unwrap_if_singleton([first_label_map[pred] for pred in first_preds]),
+            "final_preds": unwrap_if_singleton([final_label_map[pred] for pred in second_preds])   
         }
         
     elif task == "concentration":
         
+        concentration_map = {
+            1: "high",
+            0: "low"
+        }
+        
+        # If a batch of images is passed, select the last one
+        if images.dim() == 4:  # Shape: [N, C, H, W]
+            image = images[-1]  # Last image in the sequence
+        elif images.dim() == 3:  # Shape: [C, H, W]
+            image = images
+        else:
+            raise ValueError("Expected image tensor with shape [C, H, W] or [N, C, H, W].")
+
         model = load_concentration_model(num_classes=2)
+
+        img = image.unsqueeze(0).to(device)  # Add batch dimension
+
+        output = model(img)  # Raw logits
+
+        probs = torch.softmax(output, dim=1)
+        confidence, predicted = torch.max(probs, 1)
         
-        img = images.unsqueeze(0).to(device)
-        
-        output = model(img)
-        #pred = output.argmax(dim=1)
-        _, predicted = torch.max(output, 1)
-        
-        # Convert to native Python ints
-        native_int_preds = int(predicted.cpu().numpy()) 
-        
-        return native_int_preds
+        native_int_preds = predicted.cpu().item() 
+        confidence_score = confidence.cpu().item()
+     
+        return {
+            "concentration": concentration_map.get(native_int_preds),
+            "confidence": confidence_score
+        }
 
 
         

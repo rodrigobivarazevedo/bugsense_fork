@@ -1,23 +1,23 @@
 import { FC, useEffect } from 'react';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import EscherichiaColi from './individual_bacteria/EscherichiaColi';
-import Salmonella from './individual_bacteria/Salmonella';
-// import ListeriaMonocytogenes from './individual_bacteria/ListeriaMonocytogenes';
-// import StaphylococcusAureus from './individual_bacteria/StaphylococcusAureus';
-// import Campylobacter from './individual_bacteria/Campylobacter';
-// import ClostridiumPerfringens from './individual_bacteria/ClostridiumPerfringens';
-// import StreptococcusPyogenes from './individual_bacteria/StreptococcusPyogenes';
-// import StreptococcusPneumoniae from './individual_bacteria/StreptococcusPneumoniae';
+import EnterococcusFaecalis from './individual_bacteria/EnterococcusFaecalis';
+import KlebsiellaPneumoniae from './individual_bacteria/KlebsiellaPneumoniae';
+import StaphylococcusSaprophyticus from './individual_bacteria/StaphylococcusSaprophyticus';
+import StaphylococcusAureus from './individual_bacteria/StaphylococcusAureus';
+import EnterobacterHormaechei from './individual_bacteria/EnterobacterHormaechei';
+import PseudomonasAeruginosa from './individual_bacteria/PseudomonasAeruginosa';
+import ProteusMirabilis from './individual_bacteria/ProteusMirabilis';
 
 const bacteriaPages = {
     'escherichia-coli': EscherichiaColi,
-    'salmonella': Salmonella,
-    // 'listeria-monocytogenes': ListeriaMonocytogenes,
-    // 'staphylococcus-aureus': StaphylococcusAureus,
-    // 'campylobacter': Campylobacter,
-    // 'clostridium-perfringens': ClostridiumPerfringens,
-    // 'streptococcus-pyogenes': StreptococcusPyogenes,
-    // 'streptococcus-pneumoniae': StreptococcusPneumoniae,
+    'enterococcus-faecalis': EnterococcusFaecalis,
+    'klebsiella-pneumoniae': KlebsiellaPneumoniae,
+    'staphylococcus-saprophyticus': StaphylococcusSaprophyticus,
+    'staphylococcus-aureus': StaphylococcusAureus,
+    'enterobacter-hormaechei': EnterobacterHormaechei,
+    'pseudomonas-aeruginosa': PseudomonasAeruginosa,
+    'proteus-mirabilis': ProteusMirabilis,
 };
 
 export const BacteriaRouter: FC = () => {

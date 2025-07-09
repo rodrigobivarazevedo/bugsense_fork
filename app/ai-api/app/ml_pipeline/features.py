@@ -72,13 +72,15 @@ def prepare_input_tensor(images: torch.Tensor, method="sliding_window") -> torch
         torch.Tensor or None: A tensor of shape (1, 5, C, H, W) for 'sliding_window',
                               or (1, C, H, W) for 'image', or None if not enough data.
     """
+    
     stopping_point = find_stopping_point(images, threshold=23, mode="sliding_window")
-
-    if stopping_point < 5:
+    
+    # dont make prediction before 6 hours
+    if stopping_point < 24: 
         print("stoping point", stopping_point)
         print("No stopping point for prediction yet")
         return None
-
+   
     if method == "sliding_window":
         start = max(stopping_point - 5, 0)
         end = stopping_point

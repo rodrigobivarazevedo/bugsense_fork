@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from app.ml_pipeline.inference import predict
 from app.ml_pipeline.features import load_image_series_from_folder, prepare_input_tensor
 from app.core.config import secrets_manager
+from typing import Optional
 
 router = APIRouter(prefix="/prediction", tags=["Prediction"])
 
@@ -16,20 +17,41 @@ router = APIRouter(prefix="/prediction", tags=["Prediction"])
 async def get_species_prediction(
     request: Request,
     qr_data: str = Query(...),
-    storage: str = Query("local", enum=["local", "gcs"])
+    date: Optional[str] = Query(None, description="Format: YYYY-MM-DD"), 
+    storage: Optional[str] = Query("local", enum=["local", "gcs"])
 ):
-    #token = await get_current_user(request)
+    
+    print("Request headers:", request.headers)
+    token = await get_current_user(request)
         
     try:
-        current_date = datetime.now().strftime("%Y-%m-%d")
         
+        if date:
+            try:
+                # Try to parse date string
+                parsed_date = datetime.strptime(date, "%Y-%m-%d").date()
+                input_date = parsed_date.strftime("%Y-%m-%d")
+            except ValueError:
+                raise HTTPException(
+                    status_code=422,
+                    detail="Invalid date format. Expected format: YYYY-MM-DD."
+                )
+        else:
+            input_date = datetime.now().strftime("%Y-%m-%d")
+        
+        if not qr_data:
+            raise HTTPException(
+                status_code=422,
+                detail="No qr code provided"
+            )
+                    
         if storage == "local":
-            folder_path =f"storage/uploads/{qr_data}/{current_date}/"
+            folder_path =f"storage/uploads/{qr_data}/{input_date}/"
             image_series = load_image_series_from_folder(folder_path, cloud=False)
             
         elif storage == "gcs":
             bucket_name = secrets_manager.security_secrets.get("GCS_BUCKET_NAME")
-            folder_path =f"gs://{bucket_name}/uploads/{qr_data}/{current_date}/"
+            folder_path =f"gs://{bucket_name}/uploads/{qr_data}/{input_date}/"
             
             image_series = load_image_series_from_folder(folder_path, cloud=True)
         
@@ -37,7 +59,8 @@ async def get_species_prediction(
             response = {
                 "message": "Not enough images to make a prediction.",
                 "qr_data": qr_data,
-                "date": current_date
+                "date": input_date,
+                "species": None
             }
 
             return JSONResponse(content=response,
@@ -49,9 +72,10 @@ async def get_species_prediction(
         
         if window_input_tensor is None:
             response = {
-                "message": "Not enouogh images to make a prediction.",
+                "message": "Not enough images to make a prediction.",
                 "qr_data": qr_data,
-                "date": current_date
+                "date": input_date,
+                "species": None
             }
 
             return JSONResponse(content=response,
@@ -59,13 +83,18 @@ async def get_species_prediction(
                         headers={"Content-Type": "application/json; charset=utf-8"}
                         )
 
-        result = predict(window_input_tensor, use_two_stage=True)
+        result = predict(window_input_tensor, task="species", use_two_stage=True)
+        
+        species = result.get("final_preds")
         
         response = {
-            "first_tier_preds": result["first_tier_preds"],
-            "first_tier_labels": result["first_tier_labels"],
-            "second_tier_preds": result["second_tier_preds"],
-            "final_preds": result["final_preds"]
+            "first_tier_preds": result.get("first_tier_preds"),
+            "first_tier_labels": result.get("first_tier_labels"),
+            "second_tier_preds": result.get("second_tier_preds"),
+            "message": "Prediction successful",
+            "qr_data": qr_data,
+            "date": input_date,
+            "species": species if species else None
         }
         
         return JSONResponse(content=response,
@@ -75,40 +104,61 @@ async def get_species_prediction(
         
     except Exception as e:
        print(f"error {e}")
-       #await db.rollback()
        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
-    
+   
+   
 
 @router.get(
-    "/concentration",
+    "/concentration/",
     summary="Retrieve user's prediction history",
     status_code=status.HTTP_200_OK,
 )
 async def get_concentration_prediction(
     request: Request,
     qr_data: str = Query(...),
-    storage: str = Query("local", enum=["local", "gcs"])
-    
+    date: Optional[str] = Query(None, description="Format: YYYY-MM-DD"), 
+    storage: Optional[str] = Query("local", enum=["local", "gcs"])
 ):
-    
-    token = get_current_user(request)
-    
-    try:
-        current_date = datetime.now().strftime("%Y-%m-%d")
+    token = await get_current_user(request)
         
+    try:
+        
+        if date:
+            try:
+                # Try to parse date string
+                parsed_date = datetime.strptime(date, "%Y-%m-%d").date()
+                input_date = parsed_date.strftime("%Y-%m-%d")
+            except ValueError:
+                raise HTTPException(
+                    status_code=422,
+                    detail="Invalid date format. Expected format: YYYY-MM-DD."
+                )
+        else:
+            input_date = datetime.now().strftime("%Y-%m-%d")
+        
+        if not qr_data:
+            raise HTTPException(
+                status_code=422,
+                detail="No qr code provided"
+            )
+                    
         if storage == "local":
-            folder_path =f"storage/uploads/{qr_data}/{current_date}/"
+            folder_path =f"storage/uploads/{qr_data}/{input_date}/"
+            image_series = load_image_series_from_folder(folder_path, cloud=False)
             
         elif storage == "gcs":
-            folder_path =f"storage/uploads/{qr_data}/{current_date}/"
-              
-        image_series = load_image_series_from_folder(folder_path)
+            bucket_name = secrets_manager.security_secrets.get("GCS_BUCKET_NAME")
+            folder_path =f"gs://{bucket_name}/uploads/{qr_data}/{input_date}/"
+            
+            image_series = load_image_series_from_folder(folder_path, cloud=True)
         
         if image_series is None:
             response = {
-                "message": "Not enouogh images to make a prediction.",
+                "message": "Not enough images to make a prediction.",
                 "qr_data": qr_data,
-                "date": current_date
+                "date": input_date,
+                "confidence": None,
+                "concentration": None,
             }
 
             return JSONResponse(content=response,
@@ -120,9 +170,11 @@ async def get_concentration_prediction(
         
         if image_input_tensor is None:
             response = {
-                "message": "Not enouogh images to make a prediction.",
+                "message": "Not enough images to make a prediction.",
                 "qr_data": qr_data,
-                "date": current_date
+                "date": input_date,
+                "confidence": None,
+                "concentration": None,
             }
 
             return JSONResponse(content=response,
@@ -130,10 +182,17 @@ async def get_concentration_prediction(
                         headers={"Content-Type": "application/json; charset=utf-8"}
                         )
 
-        result = predict(image_input_tensor, use_two_stage = True, task="concentration")
+        result = predict(image_input_tensor, task="concentration")
         
+        confidence = result.get("confidence")
+        concentration = result.get("concentration")
+
         response = {
-            "final_preds": result
+            "message": "Prediction successful",
+            "qr_data": qr_data,
+            "date": input_date,
+            "confidence": confidence,
+            "concentration": concentration if concentration else None,
         }
         
         return JSONResponse(content=response,
