@@ -126,7 +126,7 @@
     "Enter new password": "Enter new password",
     "Confirm new password": "Confirm new password",
     "Set New Password": "Set New Password",
-    "You have no security questions set. Please contact admin@bugsense or contact Admin to reset password": "You have no security questions set. Please contact admin@bugsense or contact Admin to reset password",
+    "You have no security questions set. Please contact the Admin to reset password": "You have no security questions set. Please contact the Admin to reset password",
     "Security questions retrieved successfully": "Security questions retrieved successfully",
     "Answer validated successfully": "Answer validated successfully",
     "Password reset successful": "Password reset successful",

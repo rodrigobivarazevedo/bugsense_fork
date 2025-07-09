@@ -62,7 +62,7 @@ const PasswordRecoveryStep1: FC<PasswordRecoveryStep1Props> = ({ navigation }) =
             if (!hasQuestions) {
                 Alert.alert(
                     t('Error'),
-                    t('You have no security questions set. Please contact admin@bugsense or contact Admin to reset password'),
+                    t('You have no security questions set. Please contact the Admin to reset password'),
                     [
                         {
                             text: 'OK',

@@ -123,7 +123,7 @@
     "Enter new password": "Neues Passwort eingeben",
     "Confirm new password": "Neues Passwort bestätigen",
     "Set New Password": "Neues Passwort setzen",
-    "You have no security questions set. Please contact admin@bugsense or contact Admin to reset password": "Sie haben keine Sicherheitsfragen festgelegt. Bitte kontaktieren Sie admin@bugsense oder den Administrator, um Ihr Passwort zurückzusetzen",
+    "You have no security questions set. Please contact the Admin to reset password": "Sie haben keine Sicherheitsfragen festgelegt. Bitte kontaktieren Sie den Administrator, um Ihr Passwort zurückzusetzen",
     "Security questions retrieved successfully": "Sicherheitsfragen erfolgreich abgerufen",
     "Answer validated successfully": "Antwort erfolgreich überprüft",
     "Password reset successful": "Passwort erfolgreich zurückgesetzt",
