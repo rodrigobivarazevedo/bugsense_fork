@@ -2,6 +2,7 @@ import { FC, useState, useEffect } from 'react';
 import { Alert, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import Logo from '../components/Logo';
 import RenderIcon from '../components/RenderIcon';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './LoginRegister.styles';
@@ -194,6 +195,8 @@ const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
                         </S.Link>
                     </TouchableOpacity>
                 </S.LinkContainer>
+
+                <LanguageSwitcher />
             </ScrollView>
         </S.Container>
     );

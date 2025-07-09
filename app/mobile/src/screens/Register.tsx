@@ -7,6 +7,7 @@ import {
     KeyboardAvoidingView
 } from 'react-native';
 import Logo from '../components/Logo';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as S from './LoginRegister.styles';
@@ -363,6 +364,8 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                             </S.ActionButtonRegister>
                         </S.ButtonRow>
                     )}
+
+                    <LanguageSwitcher />
                 </S.ScrollView>
             </KeyboardAvoidingView>
         </S.SafeAreaView>

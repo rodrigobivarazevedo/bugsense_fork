@@ -11,7 +11,7 @@
     "language": "Sprache",
     "app_settings": "App Einstellungen",
     "more_info_and_support": "Mehr Info und Support",
-    "device_permissions": "Geräterechte",
+    "device_permissions": "Geräteeinstellungen",
     "email_us": "E-Mail an uns",
     "call_us": "Anruf an uns",
     "visit_our_website": "Unsere Website besuchen",
@@ -138,5 +138,8 @@
     "Confirm New Password": "Neues Passwort bestätigen",
     "Continue": "Weiter",
     "Back to login?": "Zurück zur Anmeldung?",
-    "of": "von"
+    "of": "von",
+    "Change Language": "Sprache ändern",
+    "English": "Englisch",
+    "German": "Deutsch"
 }
