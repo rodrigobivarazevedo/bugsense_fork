@@ -104,6 +104,8 @@ export const styles = StyleSheet.create({
     listItemValue: {
         color: '#444',
         marginRight: rem(1),
+        fontSize: rem(0.9),
+        marginTop: rem(0.25),
     },
     noTestsContainer: {
         flex: 1,

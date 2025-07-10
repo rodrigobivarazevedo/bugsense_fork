@@ -145,7 +145,7 @@ const ViewTest: FC = () => {
                 <Text style={styles.label}>Test Started At:</Text>
                 <Text style={styles.value}>{formatDateTimeGerman(result?.created_at)}</Text>
                 <Text style={styles.label}>Test Status:</Text>
-                <Text style={styles.value}>{getTranslatedTestStatus(result?.status) || '-'}</Text>
+                <Text style={styles.value}>{getTranslatedTestStatus(result?.status, t) || '-'}</Text>
                 <Text style={styles.label}>Test QR Data:</Text>
                 <View style={styles.qrRow}>
                     <Text

@@ -4,11 +4,13 @@ import {
     Text,
     SectionList,
     ActivityIndicator,
-    TextInput
+    TextInput,
+    TouchableOpacity,
 } from 'react-native';
 import { styles } from './Patients.styles';
 import Api from '../api/Client';
 import RenderIcon from '../components/RenderIcon';
+import { useNavigation } from '@react-navigation/native';
 
 interface Patient {
     id: number;
@@ -39,6 +41,7 @@ function groupPatientsAZ(patients: Patient[]): Section[] {
 }
 
 const Patients: FC = () => {
+    const navigation: any = useNavigation();
     const [patients, setPatients] = useState<Patient[]>([]);
     const [filtered, setFiltered] = useState<Patient[]>([]);
     const [loading, setLoading] = useState(true);
@@ -137,6 +140,10 @@ const Patients: FC = () => {
         return null;
     };
 
+    const handlePatientPress = (patient: Patient) => {
+        navigation.navigate('ViewPatient', { patientId: patient.id });
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.searchBarContainer}>
@@ -163,15 +170,20 @@ const Patients: FC = () => {
                         <Text style={styles.sectionHeader}>{title}</Text>
                     )}
                     renderItem={({ item }) => (
-                        <View style={styles.patientItem}>
-                            <Text style={styles.patientName}>{item.full_name}</Text>
-                            <View style={styles.patientDetailsContainer}>
-                                <Text style={styles.patientDetails}>
-                                    {item.dob ? item.dob : 'DOB: -'}
-                                </Text>
-                                {genderIndicator(item.gender)}
+                        <TouchableOpacity
+                            onPress={() => handlePatientPress(item)}
+                            activeOpacity={0.7}
+                        >
+                            <View style={styles.patientItem}>
+                                <Text style={styles.patientName}>{item.full_name}</Text>
+                                <View style={styles.patientDetailsContainer}>
+                                    <Text style={styles.patientDetails}>
+                                        {item.dob ? item.dob : 'DOB: -'}
+                                    </Text>
+                                    {genderIndicator(item.gender)}
+                                </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     )}
                 />
             )}

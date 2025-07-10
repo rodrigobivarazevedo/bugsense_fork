@@ -9,7 +9,7 @@ import {
 import { styles } from './Tests.styles';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
 import RenderIcon from '../components/RenderIcon';
 import { getTranslatedTestStatus } from '../utils/TestResultsStatus';
 import { formatDate, formatTime } from '../utils/DateTimeFormatter';
@@ -25,23 +25,18 @@ function groupByDate(results: any[]) {
     return Object.entries(groups).map(([date, data]) => ({ date, data }));
 }
 
-export const Tests: FC = () => {
+const PatientTests: FC = () => {
     const { t } = useTranslation();
     const navigation: any = useNavigation();
+    const route = useRoute();
     const isFocused = useIsFocused();
+    // @ts-ignore
+    const { patientId, patientName } = route.params || {};
+
     const [results, setResults] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [userType, setUserType] = useState<string>('patient');
     const [timeFormat, setTimeFormat] = useState<'12' | '24'>('12');
-
-    useEffect(() => {
-        AsyncStorage.getItem('userType').then(type => {
-            if (type && typeof type === 'string') {
-                setUserType(type);
-            }
-        });
-    }, []);
 
     useEffect(() => {
         AsyncStorage.getItem('timeFormat').then(format => {
@@ -53,24 +48,25 @@ export const Tests: FC = () => {
 
     useEffect(() => {
         const fetchResults = async () => {
+            if (!patientId) return;
             setLoading(true);
             setError(null);
             try {
                 const token = await AsyncStorage.getItem('token');
-                const response = await Api.get('qr-codes/list/', {
+                const response = await Api.get(`results/list/?user_id=${patientId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
                 setResults(response.data);
             } catch (err: any) {
-                setError('Failed to load results.');
+                setError('Failed to load patient test results.');
             } finally {
                 setLoading(false);
             }
         };
         fetchResults();
-    }, [isFocused]);
+    }, [isFocused, patientId]);
 
     const grouped = groupByDate(results);
 
@@ -92,25 +88,8 @@ export const Tests: FC = () => {
     if (results.length === 0) {
         return (
             <View style={styles.container}>
-                <View style={styles.addButtonContainer}>
-                    <TouchableOpacity
-                        style={styles.addButton}
-                        onPress={() => navigation.navigate('Scan')}
-                        activeOpacity={0.8}
-                    >
-                        <View style={styles.addButtonIcon}>
-                            <RenderIcon
-                                family="materialIcons"
-                                icon="add"
-                                fontSize={styles.addButtonIcon.fontSize}
-                                color={styles.addButtonIcon.color}
-                            />
-                        </View>
-                        <Text style={styles.addButtonText}>Add new</Text>
-                    </TouchableOpacity>
-                </View>
                 <View style={styles.noTestsContainer}>
-                    <Text style={styles.noTestsText}>No tests available</Text>
+                    <Text style={styles.noTestsText}>No tests available for this patient</Text>
                 </View>
             </View>
         );
@@ -118,23 +97,6 @@ export const Tests: FC = () => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.addButtonContainer}>
-                <TouchableOpacity
-                    style={styles.addButton}
-                    onPress={() => navigation.navigate('Scan')}
-                    activeOpacity={0.8}
-                >
-                    <View style={styles.addButtonIcon}>
-                        <RenderIcon
-                            family="materialIcons"
-                            icon="add"
-                            fontSize={styles.addButtonIcon.fontSize}
-                            color={styles.addButtonIcon.color}
-                        />
-                    </View>
-                    <Text style={styles.addButtonText}>Add new</Text>
-                </TouchableOpacity>
-            </View>
             <SectionList
                 contentContainerStyle={styles.contentContainer}
                 stickySectionHeadersEnabled={true}
@@ -159,22 +121,22 @@ export const Tests: FC = () => {
                                 <View
                                     style={[
                                         styles.statusIndicator,
-                                        item.result_status === 'ongoing' || item.result_status === 'preliminary_assessment'
+                                        item.status === 'ongoing' || item.status === 'preliminary_assessment'
                                             ? styles.statusIndicatorYellow
                                             : styles.statusIndicatorGreen,
                                     ]}
                                 />
-                                <Text style={styles.listItemStatus}>{getTranslatedTestStatus(item.result_status, t)}</Text>
+                                <Text style={styles.listItemStatus}>{getTranslatedTestStatus(item.status, t)}</Text>
                             </View>
-                            {userType === 'doctor' && item.patient && (
-                                <View style={styles.listItemPatient}>
-                                    <Text style={styles.listItemLabel}>Patient Name:</Text>
-                                    <Text style={styles.listItemValue}>{item.patient.full_name || '-'}</Text>
-                                    <Text style={styles.listItemLabel}>ID:</Text>
-                                    <Text style={styles.listItemValue}>{item.patient.id || '-'}</Text>
-                                    <Text style={styles.listItemLabel}>DOB:</Text>
-                                    <Text style={styles.listItemValue}>{item.patient.dob || '-'}</Text>
-                                </View>
+                            {item.infection_detected !== undefined && (
+                                <Text style={styles.listItemValue}>
+                                    Infection: {item.infection_detected ? t('yes') : t('no')}
+                                </Text>
+                            )}
+                            {item.species && (
+                                <Text style={styles.listItemValue}>
+                                    Species: {item.species}
+                                </Text>
                             )}
                         </View>
                     </TouchableOpacity>
@@ -184,4 +146,4 @@ export const Tests: FC = () => {
     );
 };
 
-export default Tests;
+export default PatientTests; 

@@ -149,5 +149,8 @@
     "account": "Konto",
     "Patients": "Patienten",
     "news": "Nachrichten",
-    "time_format_selection": "Zeitformat"
+    "time_format_selection": "Zeitformat",
+    "notifications": "Benachrichtigungen",
+    "patient_details": "Patientendetails",
+    "patient_tests": "Patiententests"
 }
