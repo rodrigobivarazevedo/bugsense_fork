@@ -69,6 +69,21 @@
   max-width: 400px;
 }
 
+.noTestsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  text-align: center;
+}
+
+.noTestsText {
+  font-size: 1.1rem;
+  color: #666;
+  margin-top: 1rem;
+}
+
 .sectionList {
   margin-top: 3.5rem;
 }
@@ -96,6 +111,11 @@
   box-shadow: 0 1px 3px rgba(46, 39, 71, 0.04);
   display: flex;
   flex-direction: column;
+  transition: background-color 0.2s ease;
+}
+
+.listItem:hover {
+  background: #f0f0f0;
 }
 
 .listItemTime {

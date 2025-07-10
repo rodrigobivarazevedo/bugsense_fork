@@ -59,13 +59,18 @@ const Upload: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append("image", file);
-      formData.append("storage", "local");
-      if (qrData.trim()) {
-        formData.append("qr_data", qrData.trim());
-      }
-      const response = await Api.post("/ml_api/upload/", formData, {
+
+      const storage = "local"; // TODO: Change to 'gcs' when deployed to Google Cloud Storage
+      const uploadUrl = qrData.trim()
+        ? `upload/?qr_data=${encodeURIComponent(
+            qrData.trim()
+          )}&storage=${storage}`
+        : `upload/?storage=${storage}`;
+
+      const response = await Api.post(uploadUrl, formData, {
         headers: { "Content-Type": "multipart/form-data" },
-      });
+        service: "ml",
+      } as any);
       setSuccessMsg(response.data.message || "Upload successful!");
       setFile(null);
     } catch (err: any) {
@@ -145,3 +150,5 @@ const Upload: React.FC = () => {
 };
 
 export default Upload;
+
+// TODO: react package for resolving qr code from uploaded image
