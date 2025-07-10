@@ -1,0 +1,169 @@
+.container {
+  min-height: 100vh;
+  background: #fff;
+  padding: 2.5rem 1rem 1rem 1rem;
+  position: relative;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.addButtonContainer {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.addButton {
+  background: #2e2747;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(46, 39, 71, 0.08);
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.addButton:hover {
+  background: #1a1530;
+  box-shadow: 0 4px 16px rgba(46, 39, 71, 0.15);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+.spinner {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 4px solid #ece6ff;
+  border-top: 4px solid #2e2747;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.errorMsg {
+  background: #ffebee;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin: 2rem auto;
+  font-size: 1rem;
+  text-align: center;
+  border: 1px solid #ffcdd2;
+  max-width: 400px;
+}
+
+.noTestsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  text-align: center;
+}
+
+.noTestsText {
+  font-size: 1.1rem;
+  color: #666;
+  margin-top: 1rem;
+}
+
+.sectionList {
+  margin-top: 3.5rem;
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.sectionHeader {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2e2747;
+  background: #ece6ff;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem 0.75rem 0 0;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 1px 3px rgba(46, 39, 71, 0.04);
+}
+
+.listItem {
+  background: #f7f7f7;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1rem 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 3px rgba(46, 39, 71, 0.04);
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.2s ease;
+}
+
+.listItem:hover {
+  background: #f0f0f0;
+}
+
+.listItemTime {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.listItemStatusContainer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.statusIndicator {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  display: inline-block;
+}
+.statusIndicatorInProgress {
+  background: #ffd600;
+}
+.statusIndicatorComplete {
+  background: #4caf50;
+}
+
+.listItemStatus {
+  font-size: 1rem;
+  color: #2e2747;
+  font-weight: 600;
+}
+
+.listItemPatient {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+
+.listItemLabel {
+  font-weight: bold;
+  color: #444;
+  margin-right: 0.25rem;
+}
+
+.listItemValue {
+  color: #444;
+  margin-right: 1rem;
+}

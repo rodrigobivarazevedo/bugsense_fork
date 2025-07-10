@@ -47,13 +47,6 @@ const More: React.FC = () => {
     if (tf === "24" || tf === "12") setTimeFormat(tf);
   }, []);
 
-  const handleTimeFormatChange = () => {
-    const newFormat = timeFormat === "12" ? "24" : "12";
-    setTimeFormat(newFormat);
-    localStorage.setItem(TIME_FORMAT_KEY, newFormat);
-    // Optionally: send to backend if supported
-  };
-
   const patientOptions: OptionSection[] = [
     {
       section: "app_settings",
@@ -68,7 +61,7 @@ const More: React.FC = () => {
           label: "time_format",
           extra:
             timeFormat === "24" ? t("24_hour_format") : t("12_hour_format"),
-          onPress: handleTimeFormatChange,
+          onPress: () => navigate("/time-format-selection"),
         },
         {
           icon: <InfoIcon className={styles.icon} />,
@@ -119,7 +112,7 @@ const More: React.FC = () => {
           label: "time_format",
           extra:
             timeFormat === "24" ? t("24_hour_format") : t("12_hour_format"),
-          onPress: handleTimeFormatChange,
+          onPress: () => navigate("/time-format-selection"),
         },
         {
           icon: <InfoIcon className={styles.icon} />,
