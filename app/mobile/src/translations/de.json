@@ -150,5 +150,7 @@
     "Patients": "Patienten",
     "news": "Nachrichten",
     "time_format_selection": "Zeitformat",
-    "notifications": "Benachrichtigungen"
+    "notifications": "Benachrichtigungen",
+    "patient_details": "Patientendetails",
+    "patient_tests": "Patiententests"
 }

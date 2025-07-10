@@ -33,6 +33,8 @@ import BacteriaRouter from './screens/BacteriaRouter';
 import Patients from './screens/Patients';
 import TimeFormatSelection from './screens/TimeFormatSelection';
 import ViewTest from './screens/ViewTest';
+import ViewPatient from './screens/ViewPatient';
+import PatientTests from './screens/PatientTests';
 import News from './screens/News';
 import Notifications from './screens/Notifications';
 
@@ -58,6 +60,8 @@ const WRAPPED_SCREENS_AND_TITLES_TRANSLATION_KEYS: Record<string, string> = {
   Discover: 'discover_bacteria',
   BacteriaRouter: 'discover_bacteria',
   ViewTest: 'test_details_and_result',
+  ViewPatient: 'patient_details',
+  PatientTests: 'patient_tests',
   News: 'news',
   Notifications: 'notifications',
 };
@@ -124,6 +128,8 @@ export default function App() {
                 <Stack.Screen name="Discover" component={Discover} />
                 <Stack.Screen name="BacteriaRouter" component={BacteriaRouter} />
                 <Stack.Screen name="ViewTest" component={ViewTest} />
+                <Stack.Screen name="ViewPatient" component={ViewPatient} />
+                <Stack.Screen name="PatientTests" component={PatientTests} />
                 <Stack.Screen name="News" component={News} />
                 <Stack.Screen name="Notifications" component={Notifications} />
               </Stack.Navigator>
