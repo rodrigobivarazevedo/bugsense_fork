@@ -43,7 +43,7 @@ run_docker_compose() {
 }
 
 # Trap Ctrl+C (SIGINT) and run docker compose down
-trap 'echo -e "\nCaught Ctrl+C, stopping containers..."; docker compose down; exit 0' SIGINT
+trap 'echo -e "\nCaught Ctrl+C, stopping containers..."; docker compose down; exit 0' SIGINT SIGTERM
 
 export HOST_IP=$(get_host_ip)
 
@@ -108,24 +108,23 @@ elif [ "$1" = "--load-data" ]; then
   echo "✨✨✨ Mobile App visible on exp://$HOST_IP:8081 ✨✨✨"
   echo "✨✨✨ Web App visible on http://$HOST_IP:3000 ✨✨✨"
   echo "✨✨✨ Local Web App visible on http://localhost:3000 ✨✨✨"
-  run_docker_compose "docker compose up --build"
   
-  echo "Waiting for database to be ready..."
-  sleep 10
+  # Start services first
+  docker compose up --build -d
   
-  echo "Loading initial data..."
-  docker compose exec db psql -U bugsenseadmin -d bugsense -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+  # Wait a moment for services to start
+  sleep 5
   
-  echo "Copying SQL file to container..."
-  docker cp ./setup/database_backup.sql $(docker compose ps -q db):/tmp/database_backup.sql
-  
-  echo "Loading SQL file..."
-  docker compose exec db psql -U bugsenseadmin -d bugsense -f /tmp/database_backup.sql
-  
-  echo "Running database migrations..."
-  docker compose exec backend python manage.py migrate
-  
-  docker compose logs -f
+  # Load data only if containers are running
+  if docker compose ps | grep -q "Up"; then
+    echo "Loading initial data (if database is empty)..."
+    ./setup/load_initial_data.sh
+    
+    echo "Showing logs..."
+    docker compose logs -f
+  else
+    echo "Services failed to start. Check logs with: docker compose logs"
+  fi
 else
   echo "✨✨✨ Mobile App visible on exp://$HOST_IP:8081 ✨✨✨"
   echo "✨✨✨ Web App visible on http://$HOST_IP:3000 ✨✨✨"
