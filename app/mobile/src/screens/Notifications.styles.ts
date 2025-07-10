@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
         marginBottom: rem(0.5),
         flexDirection: 'column',
         borderLeftWidth: rem(0.25),
-        borderLeftColor: themeColors.primary,
+        borderLeftColor: '#4CAF50',
     },
     notificationHeader: {
         flexDirection: 'row',
@@ -43,11 +43,6 @@ export const styles = StyleSheet.create({
         lineHeight: rem(1.3),
         marginBottom: rem(0.5),
     },
-    notificationStatus: {
-        fontSize: rem(0.85),
-        color: '#4CAF50',
-        fontWeight: '600',
-    },
     noNotificationsContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -59,6 +54,14 @@ export const styles = StyleSheet.create({
         color: '#666',
         textAlign: 'center',
         lineHeight: rem(1.5),
+    },
+    notificationPatient: {
+        marginTop: rem(0.5),
+    },
+    notificationPatientText: {
+        fontSize: 12,
+        color: '#666',
+        fontWeight: '500'
     },
     loadingContainer: {
         flex: 1,

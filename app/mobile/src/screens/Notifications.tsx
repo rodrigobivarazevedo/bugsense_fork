@@ -88,14 +88,11 @@ export const Notifications: FC = () => {
                     </Text>
                 </View>
                 <Text style={styles.notificationMessage}>
-                    Your test result is now ready for review. Tap to view the detailed results.
-                </Text>
-                <Text style={styles.notificationStatus}>
-                    Status: {getTranslatedTestStatus(item.result_status, t)}
+                    Your test result is now ready. Tap to view the detailed results.
                 </Text>
                 {userType === 'doctor' && item.patient && (
-                    <View style={{ marginTop: 8 }}>
-                        <Text style={{ fontSize: 12, color: '#666', fontWeight: '500' }}>
+                    <View style={styles.notificationPatient}>
+                        <Text style={styles.notificationPatientText}>
                             Patient: {item.patient.full_name || 'N/A'}
                         </Text>
                     </View>
