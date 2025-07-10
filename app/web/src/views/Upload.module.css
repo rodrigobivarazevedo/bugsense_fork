@@ -1,0 +1,155 @@
+.container {
+  min-height: 100vh;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 2rem 1rem;
+}
+
+.heading {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2e2747;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.optionsRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+  width: 100%;
+  max-width: 600px;
+}
+
+.optionCard {
+  flex: 1 1 0;
+  background: #f5f5f5;
+  border-radius: 1rem;
+  padding: 1.5rem 1rem;
+  border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
+  box-shadow: 0 2px 8px rgba(46, 39, 71, 0.04);
+}
+
+.optionCard:hover {
+  border-color: #2e2747;
+  background: #ece6ff;
+}
+
+.selectedCard {
+  background: #ece6ff;
+  border-color: #2e2747;
+  box-shadow: 0 4px 16px rgba(46, 39, 71, 0.08);
+}
+
+.optionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #2e2747;
+  text-align: center;
+}
+
+.optionDesc {
+  font-size: 1rem;
+  color: #555;
+  text-align: center;
+}
+
+.uploadForm {
+  width: 100%;
+  max-width: 400px;
+  background: #fafbfc;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(46, 39, 71, 0.04);
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 0 auto;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputLabel {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #2e2747;
+  margin-bottom: 0.25rem;
+}
+
+.textInput {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #ece6ff;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  color: #2e2747;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.textInput:focus {
+  border-color: #2e2747;
+}
+
+.fileInput {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  color: #2e2747;
+}
+
+.uploadButton {
+  width: 100%;
+  padding: 1rem;
+  background: #2e2747;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+  margin-top: 0.5rem;
+}
+
+.uploadButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.errorMsg {
+  background: #ffebee;
+  color: #c62828;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  text-align: center;
+  border: 1px solid #ffcdd2;
+}
+
+.successMsg {
+  background: #e2f6eb;
+  color: #2e7d32;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  text-align: center;
+  border: 1px solid #b2dfdb;
+}

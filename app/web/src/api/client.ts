@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
+const ML_API_BASE_URL = "http://0.0.0.0:5001/ml_api/";
 
 const Api = axios.create({
   baseURL: API_BASE_URL,
@@ -11,7 +12,15 @@ const Api = axios.create({
   },
 });
 
+// Add a 'service' flag to the config to choose the service
 Api.interceptors.request.use(async (config: any) => {
+  // Determine which baseURL to use
+  if (config.service === "ml") {
+    config.baseURL = ML_API_BASE_URL;
+  } else {
+    config.baseURL = API_BASE_URL;
+  }
+
   const token = localStorage.getItem("accessToken");
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -21,7 +30,7 @@ Api.interceptors.request.use(async (config: any) => {
     "API Request:",
     JSON.stringify(
       {
-        method: config.method.toUpperCase(),
+        method: config.method?.toUpperCase(),
         url: config.url,
         baseURL: config.baseURL,
         data: config.data,
@@ -31,6 +40,7 @@ Api.interceptors.request.use(async (config: any) => {
             ? "Bearer [REDACTED]"
             : undefined,
         },
+        service: config.service || "backend",
       },
       null,
       2

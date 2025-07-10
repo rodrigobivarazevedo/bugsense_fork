@@ -1,8 +1,12 @@
 .root {
   min-height: 100vh;
   padding: 5rem 1.5rem 1.5rem;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
-} 
+}
+
+.content {
+  width: 100%;
+}

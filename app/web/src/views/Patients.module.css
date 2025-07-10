@@ -1,0 +1,143 @@
+.container {
+  min-height: 100vh;
+  background: var(--white);
+  padding: 2.5rem 1rem 1rem 1rem;
+  position: relative;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  font-size: 1.1rem;
+  color: var(--themeGray);
+}
+
+.error {
+  background: #ffebee;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin: 2rem auto;
+  font-size: 1rem;
+  text-align: center;
+  border: 1px solid #ffcdd2;
+  max-width: 400px;
+}
+
+.searchBarContainer {
+  margin-bottom: 1.5rem;
+}
+
+.searchBar {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid var(--secondary);
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  color: var(--primary);
+  background: var(--white);
+  transition: border-color 0.2s;
+}
+
+.searchBar:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.searchBar::placeholder {
+  color: var(--themeGray);
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  text-align: center;
+}
+
+.emptyText {
+  font-size: 1.1rem;
+  color: var(--themeGray);
+}
+
+.sectionList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section {
+  background: var(--white);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(46, 39, 71, 0.08);
+  border: 1px solid #f0f0f0;
+}
+
+.sectionHeader {
+  background: var(--primary);
+  color: var(--white);
+  padding: 1rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.patientItem {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f5f5f5;
+  transition: background 0.2s;
+}
+
+.patientItem:last-child {
+  border-bottom: none;
+}
+
+.patientItem:hover {
+  background: var(--secondary);
+}
+
+.patientName {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+.patientDetailsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.patientDetails {
+  font-size: 0.9rem;
+  color: var(--themeGray);
+}
+
+.genderIndicatorWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background: var(--secondary);
+  border-radius: 1rem;
+}
+
+.genderIcon {
+  font-size: 1rem;
+}
+
+.genderIndicatorWrapper .patientDetails {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin: 0;
+}
