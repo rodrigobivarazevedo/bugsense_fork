@@ -472,15 +472,19 @@ class ResultsListView(ListAPIView):
                     {
                         "user_id": 38,
                         "qr_data": "QR_TEST_DATA_001",
-                        "status": "closed"
+                        "status": "closed",
+                        "species": "E. coli",
+                        "infection_detected": True
                     },
                     {
                         "user_id": 38,
                         "qr_data": "test-test-test",
-                        "status": "preliminary_assessment"
+                        "status": "preliminary_assessment",
+                        "species": "",
+                        "infection_detected": True
                     }
                 ],
-                description='Doctor view showing all results for assigned patients (summary format)'
+                description='Doctor view showing all results for assigned patients (summary format with species and infection status)'
             ),
             OpenApiExample(
                 'List Pending Results Only',
@@ -488,10 +492,12 @@ class ResultsListView(ListAPIView):
                     {
                         "user_id": 38,
                         "qr_data": "test-test-test",
-                        "status": "preliminary_assessment"
+                        "status": "preliminary_assessment",
+                        "species": "",
+                        "infection_detected": True
                     }
                 ],
-                description='Filtered view showing only results that need attention (pending=true)'
+                description='Filtered view showing only results that need attention (pending=true) with species and infection status'
             ),
             OpenApiExample(
                 'Patient Results (Full Details)',
@@ -530,12 +536,14 @@ class ResultsListView(ListAPIView):
             if pending:
                 results = results.filter(
                     status__in=['ready', 'preliminary_assessment'])
-            # Return only user_id, qr_data, and result status
+            # Return user_id, qr_data, status, species, and infection_detected
             data = [
                 {
                     'user_id': r.user.id,
                     'qr_data': r.qr_code.qr_data,
-                    'status': r.status
+                    'status': r.status,
+                    'species': r.species or '',
+                    'infection_detected': r.infection_detected
                 }
                 for r in results
             ]

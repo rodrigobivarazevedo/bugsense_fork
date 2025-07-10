@@ -609,6 +609,21 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 11	2025-07-09 16:07:54.703225+00	6	Result for jennifer.lee@email.com - Infected (2025-07-07 19:49)	2	[{"changed": {"fields": ["Species"]}}]	12	1
 12	2025-07-09 16:08:06.497743+00	2	Result for michael.chen@email.com - Infected (2025-07-07 19:49)	2	[{"changed": {"fields": ["Species"]}}]	12	1
 13	2025-07-09 16:08:16.275448+00	1	Result for emily.rodriguez@email.com - Infected (2025-07-07 19:49)	2	[{"changed": {"fields": ["Species"]}}]	12	1
+14	2025-07-10 21:05:57.777971+00	3	Result for sarah.johnson@email.com - No Infection (2025-07-07 19:49)	2	[{"changed": {"fields": ["Species"]}}]	12	1
+15	2025-07-10 21:06:08.193723+00	9	Result for robert.kim@email.com - No Infection (2025-07-07 19:56)	2	[{"changed": {"fields": ["Species"]}}]	12	1
+16	2025-07-10 21:06:14.605676+00	7	Result for christopher.brown@email.com - No Infection (2025-07-07 19:49)	2	[{"changed": {"fields": ["Species"]}}]	12	1
+17	2025-07-10 21:06:27.099996+00	5	Result for lisa.wang@email.com - No Infection (2025-07-07 19:49)	2	[{"changed": {"fields": ["Species"]}}]	12	1
+18	2025-07-10 21:06:34.424503+00	4	Result for david.thompson@email.com - No Infection (2025-07-07 19:49)	2	[{"changed": {"fields": ["Species"]}}]	12	1
+19	2025-07-10 21:13:28.501459+00	14	Result for sarah.johnson@email.com - Infected (2025-07-10 21:08)	2	[{"changed": {"fields": ["Status"]}}]	12	1
+20	2025-07-10 21:16:11.588099+00	14	Result for sarah.johnson@email.com - Infected (2025-07-10 21:08)	2	[{"changed": {"fields": ["Status"]}}]	12	1
+21	2025-07-10 21:18:48.97708+00	3	Result for sarah.johnson@email.com - No Infection (2025-07-07 19:49)	2	[{"changed": {"fields": ["Species"]}}]	12	1
+22	2025-07-10 21:18:57.194444+00	4	Result for david.thompson@email.com - No Infection (2025-07-07 19:49)	2	[{"changed": {"fields": ["Species"]}}]	12	1
+23	2025-07-10 21:19:04.611415+00	5	Result for lisa.wang@email.com - No Infection (2025-07-07 19:49)	2	[{"changed": {"fields": ["Species"]}}]	12	1
+24	2025-07-10 21:19:27.092161+00	7	Result for christopher.brown@email.com - No Infection (2025-07-07 19:49)	2	[{"changed": {"fields": ["Species"]}}]	12	1
+25	2025-07-10 21:19:34.52649+00	9	Result for robert.kim@email.com - No Infection (2025-07-07 19:56)	2	[{"changed": {"fields": ["Species"]}}]	12	1
+26	2025-07-10 21:19:42.065102+00	13	Result for sarah.johnson@email.com - No Infection (2025-07-09 22:43)	2	[{"changed": {"fields": ["Species"]}}]	12	1
+27	2025-07-10 21:19:59.947435+00	14	Result for sarah.johnson@email.com - Infected (2025-07-10 21:08)	2	[{"changed": {"fields": ["Species", "Concentration"]}}]	12	1
+28	2025-07-10 21:21:25.709314+00	14	Result for sarah.johnson@email.com - Infected (2025-07-10 21:08)	2	[{"changed": {"fields": ["Status"]}}]	12	1
 \.
 
 
@@ -699,9 +714,9 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 
 COPY public.django_session (session_key, session_data, expire_date) FROM stdin;
 v6pcoymlyrdee65vnozz6cxcq2to2dce	.eJxVjEEOwiAQRe_C2hCGMlBcuvcMZIBBqoYmpV0Z765NutDtf-_9lwi0rTVsnZcwZXEWIE6_W6T04LaDfKd2m2Wa27pMUe6KPGiX1znz83K4fweVev3WyiWbkU0CZTVrhIRmsFhGUB4KWJdJDRqdJUi6gCHt9UgRnWdvgVi8P7dRNtY:1uBan0:gpgXqkvi9hEYmIbfh7EObEMqXRuI-6-pAUxepEoeJrY	2025-05-18 14:57:58.743831+00
-wr33dqmhybkg15iib8pqn7a2bkm9h40l	.eJxVjEEOwiAQRe_C2hCGMlBcuvcMZIBBqoYmpV0Z765NutDtf-_9lwi0rTVsnZcwZXEWIE6_W6T04LaDfKd2m2Wa27pMUe6KPGiX1znz83K4fweVev3WyiWbkU0CZTVrhIRmsFhGUB4KWJdJDRqdJUi6gCHt9UgRnWdvgVi8P7dRNtY:1uYr8n:VzqnW75V9F902LTmWoq90e7kPKQ3PS1bzm2K-oboXQA	2025-07-21 19:04:37.554157+00
 n2jvplw0prmkfc5gf6jfb2s8omfzsmcj	.eJxVjEEOwiAQRe_C2hCGMlBcuvcMZIBBqoYmpV0Z765NutDtf-_9lwi0rTVsnZcwZXEWIE6_W6T04LaDfKd2m2Wa27pMUe6KPGiX1znz83K4fweVev3WyiWbkU0CZTVrhIRmsFhGUB4KWJdJDRqdJUi6gCHt9UgRnWdvgVi8P7dRNtY:1uZ8Qn:4GzKN94ll6qY6NcUY-jOw6-xc_aGA96-GEcIiF59flc	2025-07-22 13:32:21.774584+00
 12cq6863joyfph8d34wrew20ka7gj299	.eJxVjDsOwjAUBO_iGll-D8dxKOlzBmv9IwFkS3FSIe4OkVJAuzOzL-GwrZPbWlrcHMVFkDj9bh7hkcoO4h3lVmWoZV1mL3dFHrTJscb0vB7u38GENn1rkLGG8wBiAgejVJ-T1_6cEG0I1mYFE7XpANYM9p4YRMTdkEKve_H-AOe8N9w:1uZXJi:E9QL1opekCNtIShI9ZCvNeQevyFwgBuKHJ-qr34MiU0	2025-07-23 16:06:42.779254+00
+f9orik780696lsp3i8s150zqr6v9ylt4	.eJxVjEsOwjAMBe-SNYoIcVKbJfueIbKdhBZQI_WzQtwdVeoCtm9m3tsk3tYhbUuZ05jN1Thz-t2E9VmmHeQHT_dmtU3rPIrdFXvQxfYtl9ftcP8OBl6GvS6ISp2EWGum6MIlEtQYqGMPAlhBEUGU0XsGPUMOAaMKFYIgjsznC-GJN6U:1uZyHx:PmvHZZtBXNwuT6K-YF9V_rScYBbqyBVmldUsN-Sg4sE	2025-07-24 20:54:41.913745+00
 \.
 
 
@@ -737,6 +752,8 @@ COPY public.token_blacklist_blacklistedtoken (id, blacklisted_at, token_id) FROM
 3	2025-07-07 19:24:24.645426+00	4
 4	2025-07-07 22:10:19.862074+00	69
 5	2025-07-07 22:11:04.341142+00	70
+6	2025-07-09 22:29:02.539378+00	76
+7	2025-07-09 22:31:40.242984+00	78
 \.
 
 
@@ -819,6 +836,15 @@ COPY public.token_blacklist_outstandingtoken (id, token, created_at, expires_at,
 72	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjYxMzczMywiaWF0IjoxNzUyMDA4OTMzLCJqdGkiOiIwYjdkY2U0MGNjZTQ0MTBlYTZjNzUzYjg5ZDQzY2QyMyIsInVzZXJfaWQiOjJ9.nwYKF6f4yEcHycdGnpxnuaCn4Sir_8-OfbV7iZvWbtA	2025-07-08 21:08:53.133282+00	2025-07-15 21:08:53+00	2	0b7dce40cce4410ea6c753b89d43cd23
 73	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjYxNDUwNSwiaWF0IjoxNzUyMDA5NzA1LCJqdGkiOiIwMDFhYWY2MTEzMTM0N2IzODZiOTJjM2U0YTMwNWQxNCIsInVzZXJfaWQiOjN9.KDSvHPM7KypOjPDSiHRXVIrCcwYsFJqQNwj79UIoU8w	2025-07-08 21:21:45.496871+00	2025-07-15 21:21:45+00	3	001aaf61131347b386b92c3e4a305d14
 74	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjYxNDcwMywiaWF0IjoxNzUyMDA5OTAzLCJqdGkiOiJkYjI0Mjk5ZWNlNGU0ODQzOTAxNWNhMmVjZDA4YWQ0MyIsInVzZXJfaWQiOjN9.FcGt37QXFKHc5Lav3Jy39Up_VGTksaJNeMvoWRYN-hg	2025-07-08 21:25:03.055577+00	2025-07-15 21:25:03+00	3	db24299ece4e48439015ca2ecd08ad43
+75	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjcwNDU4NywiaWF0IjoxNzUyMDk5Nzg3LCJqdGkiOiI5ODM4NzYwNDA2MGM0YTg4OTliMjhhMjI2YmY2NTdlYSIsInVzZXJfaWQiOjEzfQ.9mqmD9EIvwmBs3B8-ogVJAv1h9AGzHw-NrIUF8zg1Ps	2025-07-09 22:23:07.985251+00	2025-07-16 22:23:07+00	13	98387604060c4a8899b28a226bf657ea
+76	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjcwNDkxNSwiaWF0IjoxNzUyMTAwMTE1LCJqdGkiOiI5MzgzNDNhNTliZjk0ZDdlOGJhZTRmYjQ5MGY5NDViMyIsInVzZXJfaWQiOjEzfQ.NhOk966d5zoYZKt0qW3zE7CMGsUDld9rUMWL0QVDhjo	2025-07-09 22:28:35.144595+00	2025-07-16 22:28:35+00	13	938343a59bf94d7e8bae4fb490f945b3
+77	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjcwNTAyOSwiaWF0IjoxNzUyMTAwMjI5LCJqdGkiOiJmZTg1MDdhZDAzYjQ0NDM3ODVhNmY5NDgwMjkzZTk1MCIsInVzZXJfaWQiOjEzfQ.JL9rwSEQ4QRLCXfsWa4gj1Cckj2kshYhblHSVWBtiw4	2025-07-09 22:30:29.639942+00	2025-07-16 22:30:29+00	13	fe8507ad03b4443785a6f9480293e950
+78	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjcwNTAzNiwiaWF0IjoxNzUyMTAwMjM2LCJqdGkiOiIyNTllNTJmNTljMDA0MzE3OGE2MmVmOGU0Mjk3ODljMyIsInVzZXJfaWQiOjEzfQ.OYLDq5VMoPyhjIcXUIB8A_oqVXEhdKhfMeakCM_mAFw	2025-07-09 22:30:36.29193+00	2025-07-16 22:30:36+00	13	259e52f59c0043178a62ef8e429789c3
+79	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjcwNTExOCwiaWF0IjoxNzUyMTAwMzE4LCJqdGkiOiI1ZTg4OWRhYmE2N2Y0YzZmYmU1OGY5MTljYmRhNWVkNiIsInVzZXJfaWQiOjN9.0c0ZZFyNyfJFUm102EgcfmRHR5MTYMpMFcpMDE3LQQQ	2025-07-09 22:31:58.153719+00	2025-07-16 22:31:58+00	3	5e889daba67f4c6fbe58f919cbda5ed6
+80	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1Mjc4NTc4OSwiaWF0IjoxNzUyMTgwOTg5LCJqdGkiOiJmNDNkNmQyYzM2ZjM0ZjVlYjFkNTYzMmQ1ODM3ZGU1NCIsInVzZXJfaWQiOjEzfQ.ivyg20ptC1xSK1EUcd0xdoyY6BOGXNiQ-RHbM3MfI2A	2025-07-10 20:56:29.001189+00	2025-07-17 20:56:29+00	13	f43d6d2c36f34f5eb1d5632d5837de54
+81	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1Mjc4NjI1MywiaWF0IjoxNzUyMTgxNDUzLCJqdGkiOiIwZTM1YzE3NGM4YjI0MmZmYTNlMjNkNDg2OTlmZmY0ZSIsInVzZXJfaWQiOjEzfQ.NnKlxRh2ECdvq9wiqElFRqWsjX4P281oog6HbaHxF68	2025-07-10 21:04:13.626204+00	2025-07-17 21:04:13+00	13	0e35c174c8b242ffa3e23d48699fff4e
+82	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1Mjc4NjQ4NSwiaWF0IjoxNzUyMTgxNjg1LCJqdGkiOiJjNzM5YjdmM2IyNDY0MTk0OWNmMTZkYmU5MmQxNTViMyIsInVzZXJfaWQiOjN9.a-jlk5-9ZUKG4GcidwfEfWV12KBXPo6YBxOlu5ZyDV8	2025-07-10 21:08:05.1929+00	2025-07-17 21:08:05+00	3	c739b7f3b24641949cf16dbe92d155b3
+83	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1Mjc4NjY0MiwiaWF0IjoxNzUyMTgxODQyLCJqdGkiOiI5YjdjNDczMmRlMzU0MDAxYjgwMWNmYzllMjg0NjU5NCIsInVzZXJfaWQiOjEzfQ.1_DFRmCdJ3z2Qh9Y4kcAN6wGE8guRQb9j1p-dLLL5Jc	2025-07-10 21:10:42.957466+00	2025-07-17 21:10:42+00	13	9b7c4732de354001b801cfc9e2846594
 \.
 
 
@@ -840,8 +866,8 @@ COPY public.users_customuser (id, password, last_login, is_superuser, first_name
 7	pbkdf2_sha256$1000000$2Fgj5WK33YUKbWng7qGEr4$Xje4jiEzFueFiSOahoeB8ug50ad+xd1/4ChHQ4s6YEQ=	\N	f			f	t	2025-07-07	lisa.wang@email.com	Lisa Wang	Female	1990-09-30	+49-69-99887766	Musterplatz 654	Frankfurt	60311	Germany	14	f	pbkdf2_sha256$1000000$R5M3AJq22SoZ7GpRzvzSzW$XRxbjgHKaH0o4c34jEuqsRLw0ScCsTddPPftC7v9ess=	pbkdf2_sha256$1000000$oQpDVAUpy3RaVxYh2HYf0y$RZGtFWNspIJoNTsPJbgN4LG2I7L63/Q5P+KIwXKxMJo=	pbkdf2_sha256$1000000$CGE6YoUMNiRrHqSTqyOOyI$bHL+QXmBbh/EwvZjNTrSYlh18uY1dPZviXHpBF/OaVE=	What is your favorite book?	What is your dream vacation destination?	What is your favorite season?	\N	\N
 9	pbkdf2_sha256$1000000$WyjHoqdWp49urSgosbK4A1$8t/6L8uugn81jNIso+S1j4PplA0rYBz6zh6yCvx3VsE=	\N	f			f	t	2025-07-07	maria.garcia@email.com	Maria Garcia	Female	1993-06-18	+49-201-33445566	Beispielstraße 147	Essen	45127	Germany	15	f	pbkdf2_sha256$1000000$9R8CczZyJaWev37L3DYOBh$ZYRQlajvOXkea2+vjvPCFCtqpTZeWjVwBOVRXAW8qXE=	pbkdf2_sha256$1000000$UsCnwTS3kjkBvGG4pKbPNU$HVlZoGeS492gbdVy108wtEKKH2Vwim86bt2UbTPj34Y=	pbkdf2_sha256$1000000$m46mfA2SbR5mkfPnQ3yymP$rYokjviOFtomxUNHPLCNUfMpWVWPmfoSGM4+Q09DkiQ=	What is your favorite flower?	What was your first job?	What is your favorite holiday?	\N	\N
 12	pbkdf2_sha256$1000000$4lUIuVvpgKzMz6PewEU7xX$yOjCa5PP/I6EXZYZJHB1JWFNDqgzihAlTcF27tZzmmM=	\N	f			f	t	2025-07-07	christopher.brown@email.com	Christopher Brown	Male	1986-10-03	+49-228-55667788	Beispielplatz 741	Bonn	53111	Germany	16	f	pbkdf2_sha256$1000000$oB15O1scyNq56mbxJqddli$2BLcB555X41f7R30b0JoiN9pTMdYxxl5zvlF+eVuYio=	pbkdf2_sha256$1000000$aiTtxTxjO2JOJBowcvSFN0$oPHS3WZqXX9BxhXxiYTv3J45BdRE+tOIT8Ms2I0uo2w=	pbkdf2_sha256$1000000$83EqwIoqnPpdCoZ4X2SaXO$m5ZcBKIf8Kg1OuMbKuqplFQ4PPCLjZGrd/KWY//ZoKE=	What is your favorite restaurant?	What is your favorite game?	What is your favorite subject in school?	\N	\N
+1	pbkdf2_sha256$1000000$uPq6S6HuYtuPhfIq8zV77D$4td70F1rcENIBiMuAHiHKMp1+3PZ/HJv0UilzrmMKbQ=	2025-07-10 20:54:41.911277+00	t			t	t	\N	bugsense@admin.com			\N	\N					\N	f							\N	\N
 2	pbkdf2_sha256$1000000$ChXwxwWIOQwceY1Gbv4k3W$Ezbo/jUoHXr/q6b68/f1i0a3QI2SBfZJWpGaEwWlDbA=	\N	f			f	t	2025-05-04	test@example.com	Test User	Other	2025-05-04	01657486372	Eggenfeldner Strasse 55	Pfarrkirchen	84347	Germany	\N	f							\N	\N
-1	pbkdf2_sha256$1000000$uPq6S6HuYtuPhfIq8zV77D$4td70F1rcENIBiMuAHiHKMp1+3PZ/HJv0UilzrmMKbQ=	2025-07-09 16:06:42.775968+00	t			t	t	\N	bugsense@admin.com			\N	\N					\N	f							\N	\N
 3	pbkdf2_sha256$1000000$OEKljxFJl4Ra7I2Z07ckzh$Rj1/UXAXfSZr1WBwcF29pJpIOizG4RUmsAju35BZMAY=	\N	f			f	t	2025-07-07	sarah.johnson@email.com	Sarah Johnson	Female	1992-03-15	015550123	Musterstrasse 123	Berlin	10115	Germany	13	f	pbkdf2_sha256$1000000$0trSzeL7JWzXFLUgiyrgCZ$r69caVnAEJfhlCFrHNdo+7yiTk+vP2YdrubXi2pR7Zg=	pbkdf2_sha256$1000000$NhoRTRMNOFMtpJX3r2H327$cwj6fVrOWdlBaAU/to1ugsyui3AHuaSqCClZ1n9+Iwo=	pbkdf2_sha256$1000000$1vMfRfUChKgdVE6Atw5GCP$nEd3lRyLgUDn1hXdaj6wc3nI9dARYiP88MySpAdSoHY=	What was the name of your first car?	In which city were you born?	What is your mother's maiden name?	1I6lx0xPl3EvbewKBuh23oaaGnMAoSDl1z109GKpvJI	2025-07-08 21:24:13.870777+00
 \.
 
@@ -879,6 +905,8 @@ COPY public.users_qrcode (id, qr_data, created_at, user_id, closed_at) FROM stdi
 10	QR_9_1751918184	2025-07-07 19:56:24.561708+00	9	2025-07-07 20:01:00.315637+00
 11	QR_SARAH_1_$(date +%s)	2025-07-07 20:17:41.476305+00	3	\N
 12	QR_SARAH_2_$(date +%s)	2025-07-07 20:18:08.696436+00	3	\N
+13	test-sterile-sample	2025-07-09 22:43:23.251993+00	3	2025-07-09 22:43:41.029089+00
+14	QR-CODE-Test-4	2025-07-10 21:08:17.238996+00	3	2025-07-10 21:11:04.997278+00
 \.
 
 
@@ -887,18 +915,20 @@ COPY public.users_qrcode (id, qr_data, created_at, user_id, closed_at) FROM stdi
 --
 
 COPY public.users_results (id, infection_detected, species, concentration, antibiotic, created_at, qr_code_id, user_id, status) FROM stdin;
-4	f				2025-07-07 19:49:45.912151+00	4	6	ready
-5	f				2025-07-07 19:49:46.066474+00	5	7	ready
-7	f				2025-07-07 19:49:47.455823+00	7	12	ready
-9	f				2025-07-07 19:56:24.460803+00	9	10	closed
 12	\N				2025-07-07 20:18:08.697637+00	12	3	ongoing
 11	t				2025-07-07 20:17:41.477541+00	11	3	preliminary_assessment
-3	f				2025-07-07 19:49:45.183694+00	3	3	closed
 10	t	Efaecalis	medium	Ciprofloxacin	2025-07-07 19:56:24.562738+00	10	9	closed
 8	t	Ehormaechei	medium	Ciprofloxacin	2025-07-07 19:56:24.366336+00	8	8	ready
 6	t	Paeruginosa	high	Penicillin	2025-07-07 19:49:47.287841+00	6	11	ready
-2	t	Pmirabilis	low	Azithromycin	2025-07-07 19:49:45.003238+00	2	4	ready
-1	t	Ecoli	high	Azithromycin	2025-07-07 19:49:44.810795+00	1	5	ready
+2	t	Pmirabilis	low	Azithromycin	2025-07-07 19:49:45.003238+00	2	4	closed
+1	t	Ecoli	high	Azithromycin	2025-07-07 19:49:44.810795+00	1	5	closed
+3	f	Sterile			2025-07-07 19:49:45.183694+00	3	3	closed
+4	f	Sterile			2025-07-07 19:49:45.912151+00	4	6	ready
+5	f	Sterile			2025-07-07 19:49:46.066474+00	5	7	ready
+7	f	Sterile			2025-07-07 19:49:47.455823+00	7	12	ready
+9	f	Sterile			2025-07-07 19:56:24.460803+00	9	10	closed
+13	f	Sterile			2025-07-09 22:43:23.25541+00	13	3	closed
+14	t	Ecoli	Low		2025-07-10 21:08:17.242792+00	14	3	ready
 \.
 
 
@@ -927,7 +957,7 @@ SELECT pg_catalog.setval('public.auth_permission_id_seq', 56, true);
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bugsenseadmin
 --
 
-SELECT pg_catalog.setval('public.django_admin_log_id_seq', 13, true);
+SELECT pg_catalog.setval('public.django_admin_log_id_seq', 28, true);
 
 
 --
@@ -955,14 +985,14 @@ SELECT pg_catalog.setval('public.institutions_institution_id_seq', 2, true);
 -- Name: token_blacklist_blacklistedtoken_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bugsenseadmin
 --
 
-SELECT pg_catalog.setval('public.token_blacklist_blacklistedtoken_id_seq', 5, true);
+SELECT pg_catalog.setval('public.token_blacklist_blacklistedtoken_id_seq', 7, true);
 
 
 --
 -- Name: token_blacklist_outstandingtoken_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bugsenseadmin
 --
 
-SELECT pg_catalog.setval('public.token_blacklist_outstandingtoken_id_seq', 74, true);
+SELECT pg_catalog.setval('public.token_blacklist_outstandingtoken_id_seq', 83, true);
 
 
 --
@@ -990,14 +1020,14 @@ SELECT pg_catalog.setval('public.users_customuser_user_permissions_id_seq', 1, f
 -- Name: users_qrcode_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bugsenseadmin
 --
 
-SELECT pg_catalog.setval('public.users_qrcode_id_seq', 12, true);
+SELECT pg_catalog.setval('public.users_qrcode_id_seq', 14, true);
 
 
 --
 -- Name: users_results_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bugsenseadmin
 --
 
-SELECT pg_catalog.setval('public.users_results_id_seq', 12, true);
+SELECT pg_catalog.setval('public.users_results_id_seq', 14, true);
 
 
 --
