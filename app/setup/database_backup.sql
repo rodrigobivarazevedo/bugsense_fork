@@ -624,6 +624,7 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 26	2025-07-10 21:19:42.065102+00	13	Result for sarah.johnson@email.com - No Infection (2025-07-09 22:43)	2	[{"changed": {"fields": ["Species"]}}]	12	1
 27	2025-07-10 21:19:59.947435+00	14	Result for sarah.johnson@email.com - Infected (2025-07-10 21:08)	2	[{"changed": {"fields": ["Species", "Concentration"]}}]	12	1
 28	2025-07-10 21:21:25.709314+00	14	Result for sarah.johnson@email.com - Infected (2025-07-10 21:08)	2	[{"changed": {"fields": ["Status"]}}]	12	1
+29	2025-07-10 21:43:17.460115+00	2	test@example.com	2	[{"changed": {"fields": ["password"]}}]	10	1
 \.
 
 
@@ -716,7 +717,7 @@ COPY public.django_session (session_key, session_data, expire_date) FROM stdin;
 v6pcoymlyrdee65vnozz6cxcq2to2dce	.eJxVjEEOwiAQRe_C2hCGMlBcuvcMZIBBqoYmpV0Z765NutDtf-_9lwi0rTVsnZcwZXEWIE6_W6T04LaDfKd2m2Wa27pMUe6KPGiX1znz83K4fweVev3WyiWbkU0CZTVrhIRmsFhGUB4KWJdJDRqdJUi6gCHt9UgRnWdvgVi8P7dRNtY:1uBan0:gpgXqkvi9hEYmIbfh7EObEMqXRuI-6-pAUxepEoeJrY	2025-05-18 14:57:58.743831+00
 n2jvplw0prmkfc5gf6jfb2s8omfzsmcj	.eJxVjEEOwiAQRe_C2hCGMlBcuvcMZIBBqoYmpV0Z765NutDtf-_9lwi0rTVsnZcwZXEWIE6_W6T04LaDfKd2m2Wa27pMUe6KPGiX1znz83K4fweVev3WyiWbkU0CZTVrhIRmsFhGUB4KWJdJDRqdJUi6gCHt9UgRnWdvgVi8P7dRNtY:1uZ8Qn:4GzKN94ll6qY6NcUY-jOw6-xc_aGA96-GEcIiF59flc	2025-07-22 13:32:21.774584+00
 12cq6863joyfph8d34wrew20ka7gj299	.eJxVjDsOwjAUBO_iGll-D8dxKOlzBmv9IwFkS3FSIe4OkVJAuzOzL-GwrZPbWlrcHMVFkDj9bh7hkcoO4h3lVmWoZV1mL3dFHrTJscb0vB7u38GENn1rkLGG8wBiAgejVJ-T1_6cEG0I1mYFE7XpANYM9p4YRMTdkEKve_H-AOe8N9w:1uZXJi:E9QL1opekCNtIShI9ZCvNeQevyFwgBuKHJ-qr34MiU0	2025-07-23 16:06:42.779254+00
-f9orik780696lsp3i8s150zqr6v9ylt4	.eJxVjEsOwjAMBe-SNYoIcVKbJfueIbKdhBZQI_WzQtwdVeoCtm9m3tsk3tYhbUuZ05jN1Thz-t2E9VmmHeQHT_dmtU3rPIrdFXvQxfYtl9ftcP8OBl6GvS6ISp2EWGum6MIlEtQYqGMPAlhBEUGU0XsGPUMOAaMKFYIgjsznC-GJN6U:1uZyHx:PmvHZZtBXNwuT6K-YF9V_rScYBbqyBVmldUsN-Sg4sE	2025-07-24 20:54:41.913745+00
+ccg0jkpufqv4wa8jh3okqyjka1ye393x	.eJxVjEEOwiAQRe_C2hAoUwou3XsGMsNMpWpoUtqV8e7apAvd_vfef6mE21rS1mRJE6uzsur0uxHmh9Qd8B3rbdZ5rusykd4VfdCmrzPL83K4fwcFW_nWfUTnTccWHFHMTMb1g0Tv0IGHzo6BmE3MOKCMxAjBWwmWgkGAHFC9P93oOCM:1uZz2z:1wOYooFPihEFOTQRabt-H0wS-frpVgFN_-jshxI6ssE	2025-07-24 21:43:17.469879+00
 \.
 
 
@@ -754,6 +755,7 @@ COPY public.token_blacklist_blacklistedtoken (id, blacklisted_at, token_id) FROM
 5	2025-07-07 22:11:04.341142+00	70
 6	2025-07-09 22:29:02.539378+00	76
 7	2025-07-09 22:31:40.242984+00	78
+8	2025-07-10 21:43:32.718501+00	84
 \.
 
 
@@ -845,6 +847,7 @@ COPY public.token_blacklist_outstandingtoken (id, token, created_at, expires_at,
 81	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1Mjc4NjI1MywiaWF0IjoxNzUyMTgxNDUzLCJqdGkiOiIwZTM1YzE3NGM4YjI0MmZmYTNlMjNkNDg2OTlmZmY0ZSIsInVzZXJfaWQiOjEzfQ.NnKlxRh2ECdvq9wiqElFRqWsjX4P281oog6HbaHxF68	2025-07-10 21:04:13.626204+00	2025-07-17 21:04:13+00	13	0e35c174c8b242ffa3e23d48699fff4e
 82	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1Mjc4NjQ4NSwiaWF0IjoxNzUyMTgxNjg1LCJqdGkiOiJjNzM5YjdmM2IyNDY0MTk0OWNmMTZkYmU5MmQxNTViMyIsInVzZXJfaWQiOjN9.a-jlk5-9ZUKG4GcidwfEfWV12KBXPo6YBxOlu5ZyDV8	2025-07-10 21:08:05.1929+00	2025-07-17 21:08:05+00	3	c739b7f3b24641949cf16dbe92d155b3
 83	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1Mjc4NjY0MiwiaWF0IjoxNzUyMTgxODQyLCJqdGkiOiI5YjdjNDczMmRlMzU0MDAxYjgwMWNmYzllMjg0NjU5NCIsInVzZXJfaWQiOjEzfQ.1_DFRmCdJ3z2Qh9Y4kcAN6wGE8guRQb9j1p-dLLL5Jc	2025-07-10 21:10:42.957466+00	2025-07-17 21:10:42+00	13	9b7c4732de354001b801cfc9e2846594
+84	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1Mjc4ODYwMCwiaWF0IjoxNzUyMTgzODAwLCJqdGkiOiJkYjhhMTBkNjk5MzU0ZDcyYWJiZTE1MDVkMTlhMWJlNSIsInVzZXJfaWQiOjJ9.F8Ln-6h1YIf8-jns-IIorS-RpM0-JoGINn0UPqahGQ0	2025-07-10 21:43:20.28262+00	2025-07-17 21:43:20+00	2	db8a10d699354d72abbe1505d19a1be5
 \.
 
 
@@ -866,8 +869,8 @@ COPY public.users_customuser (id, password, last_login, is_superuser, first_name
 7	pbkdf2_sha256$1000000$2Fgj5WK33YUKbWng7qGEr4$Xje4jiEzFueFiSOahoeB8ug50ad+xd1/4ChHQ4s6YEQ=	\N	f			f	t	2025-07-07	lisa.wang@email.com	Lisa Wang	Female	1990-09-30	+49-69-99887766	Musterplatz 654	Frankfurt	60311	Germany	14	f	pbkdf2_sha256$1000000$R5M3AJq22SoZ7GpRzvzSzW$XRxbjgHKaH0o4c34jEuqsRLw0ScCsTddPPftC7v9ess=	pbkdf2_sha256$1000000$oQpDVAUpy3RaVxYh2HYf0y$RZGtFWNspIJoNTsPJbgN4LG2I7L63/Q5P+KIwXKxMJo=	pbkdf2_sha256$1000000$CGE6YoUMNiRrHqSTqyOOyI$bHL+QXmBbh/EwvZjNTrSYlh18uY1dPZviXHpBF/OaVE=	What is your favorite book?	What is your dream vacation destination?	What is your favorite season?	\N	\N
 9	pbkdf2_sha256$1000000$WyjHoqdWp49urSgosbK4A1$8t/6L8uugn81jNIso+S1j4PplA0rYBz6zh6yCvx3VsE=	\N	f			f	t	2025-07-07	maria.garcia@email.com	Maria Garcia	Female	1993-06-18	+49-201-33445566	Beispielstraße 147	Essen	45127	Germany	15	f	pbkdf2_sha256$1000000$9R8CczZyJaWev37L3DYOBh$ZYRQlajvOXkea2+vjvPCFCtqpTZeWjVwBOVRXAW8qXE=	pbkdf2_sha256$1000000$UsCnwTS3kjkBvGG4pKbPNU$HVlZoGeS492gbdVy108wtEKKH2Vwim86bt2UbTPj34Y=	pbkdf2_sha256$1000000$m46mfA2SbR5mkfPnQ3yymP$rYokjviOFtomxUNHPLCNUfMpWVWPmfoSGM4+Q09DkiQ=	What is your favorite flower?	What was your first job?	What is your favorite holiday?	\N	\N
 12	pbkdf2_sha256$1000000$4lUIuVvpgKzMz6PewEU7xX$yOjCa5PP/I6EXZYZJHB1JWFNDqgzihAlTcF27tZzmmM=	\N	f			f	t	2025-07-07	christopher.brown@email.com	Christopher Brown	Male	1986-10-03	+49-228-55667788	Beispielplatz 741	Bonn	53111	Germany	16	f	pbkdf2_sha256$1000000$oB15O1scyNq56mbxJqddli$2BLcB555X41f7R30b0JoiN9pTMdYxxl5zvlF+eVuYio=	pbkdf2_sha256$1000000$aiTtxTxjO2JOJBowcvSFN0$oPHS3WZqXX9BxhXxiYTv3J45BdRE+tOIT8Ms2I0uo2w=	pbkdf2_sha256$1000000$83EqwIoqnPpdCoZ4X2SaXO$m5ZcBKIf8Kg1OuMbKuqplFQ4PPCLjZGrd/KWY//ZoKE=	What is your favorite restaurant?	What is your favorite game?	What is your favorite subject in school?	\N	\N
-1	pbkdf2_sha256$1000000$uPq6S6HuYtuPhfIq8zV77D$4td70F1rcENIBiMuAHiHKMp1+3PZ/HJv0UilzrmMKbQ=	2025-07-10 20:54:41.911277+00	t			t	t	\N	bugsense@admin.com			\N	\N					\N	f							\N	\N
-2	pbkdf2_sha256$1000000$ChXwxwWIOQwceY1Gbv4k3W$Ezbo/jUoHXr/q6b68/f1i0a3QI2SBfZJWpGaEwWlDbA=	\N	f			f	t	2025-05-04	test@example.com	Test User	Other	2025-05-04	01657486372	Eggenfeldner Strasse 55	Pfarrkirchen	84347	Germany	\N	f							\N	\N
+1	pbkdf2_sha256$1000000$uPq6S6HuYtuPhfIq8zV77D$4td70F1rcENIBiMuAHiHKMp1+3PZ/HJv0UilzrmMKbQ=	2025-07-10 21:42:57.477014+00	t			t	t	\N	bugsense@admin.com			\N	\N					\N	f							\N	\N
+2	pbkdf2_sha256$1000000$riCHj6mnagomJbpymQlFiU$TCcFN/WAcARey7mYCZLV6NorKP5HNG/HAmfUvOOIey4=	\N	f			f	t	2025-05-04	test@example.com	Test User	Other	2025-05-04	01657486372	Eggenfeldner Strasse 55	Pfarrkirchen	84347	Germany	\N	f							\N	\N
 3	pbkdf2_sha256$1000000$OEKljxFJl4Ra7I2Z07ckzh$Rj1/UXAXfSZr1WBwcF29pJpIOizG4RUmsAju35BZMAY=	\N	f			f	t	2025-07-07	sarah.johnson@email.com	Sarah Johnson	Female	1992-03-15	015550123	Musterstrasse 123	Berlin	10115	Germany	13	f	pbkdf2_sha256$1000000$0trSzeL7JWzXFLUgiyrgCZ$r69caVnAEJfhlCFrHNdo+7yiTk+vP2YdrubXi2pR7Zg=	pbkdf2_sha256$1000000$NhoRTRMNOFMtpJX3r2H327$cwj6fVrOWdlBaAU/to1ugsyui3AHuaSqCClZ1n9+Iwo=	pbkdf2_sha256$1000000$1vMfRfUChKgdVE6Atw5GCP$nEd3lRyLgUDn1hXdaj6wc3nI9dARYiP88MySpAdSoHY=	What was the name of your first car?	In which city were you born?	What is your mother's maiden name?	1I6lx0xPl3EvbewKBuh23oaaGnMAoSDl1z109GKpvJI	2025-07-08 21:24:13.870777+00
 \.
 
@@ -957,7 +960,7 @@ SELECT pg_catalog.setval('public.auth_permission_id_seq', 56, true);
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bugsenseadmin
 --
 
-SELECT pg_catalog.setval('public.django_admin_log_id_seq', 28, true);
+SELECT pg_catalog.setval('public.django_admin_log_id_seq', 29, true);
 
 
 --
@@ -985,14 +988,14 @@ SELECT pg_catalog.setval('public.institutions_institution_id_seq', 2, true);
 -- Name: token_blacklist_blacklistedtoken_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bugsenseadmin
 --
 
-SELECT pg_catalog.setval('public.token_blacklist_blacklistedtoken_id_seq', 7, true);
+SELECT pg_catalog.setval('public.token_blacklist_blacklistedtoken_id_seq', 8, true);
 
 
 --
 -- Name: token_blacklist_outstandingtoken_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bugsenseadmin
 --
 
-SELECT pg_catalog.setval('public.token_blacklist_outstandingtoken_id_seq', 83, true);
+SELECT pg_catalog.setval('public.token_blacklist_outstandingtoken_id_seq', 84, true);
 
 
 --
