@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import LanguageIcon from "@mui/icons-material/Language";
-import InfoIcon from "@mui/icons-material/Info";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
@@ -63,11 +62,6 @@ const More: React.FC = () => {
             timeFormat === "24" ? t("24_hour_format") : t("12_hour_format"),
           onPress: () => navigate("/time-format-selection"),
         },
-        {
-          icon: <InfoIcon className={styles.icon} />,
-          label: "device_permissions",
-          onPress: () => {},
-        },
       ],
     },
     {
@@ -113,11 +107,6 @@ const More: React.FC = () => {
           extra:
             timeFormat === "24" ? t("24_hour_format") : t("12_hour_format"),
           onPress: () => navigate("/time-format-selection"),
-        },
-        {
-          icon: <InfoIcon className={styles.icon} />,
-          label: "device_permissions",
-          onPress: () => {},
         },
       ],
     },

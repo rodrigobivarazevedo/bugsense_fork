@@ -1,6 +1,5 @@
 .container {
   min-height: 100vh;
-  background: var(--white);
   padding: 2.5rem 1rem 1rem 1rem;
   position: relative;
   max-width: 700px;
@@ -29,13 +28,13 @@
 }
 
 .profileCard {
-  background: linear-gradient(135deg, var(--primary) 0%, #1a1530 100%);
-  border-radius: 1rem;
+  background: #2e2747;
+  border-radius: 1.5rem;
   padding: 2rem;
   margin-bottom: 2rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(46, 39, 71, 0.15);
+  box-shadow: 0 4px 20px rgba(46, 39, 71, 0.1);
 }
 
 .profileCardContent {
@@ -48,6 +47,13 @@
 
 .profileImage {
   flex-shrink: 0;
+  background: #ece6ff;
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .profileIcon {
@@ -61,25 +67,28 @@
 }
 
 .userName {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 700;
   margin: 0 0 0.5rem 0;
-  color: var(--white);
+  color: #fff;
 }
 
 .dateJoined {
-  font-size: 0.9rem;
+  font-size: 1rem;
   opacity: 0.8;
   margin: 0 0 1rem 0;
-  color: var(--white);
+  color: #fff;
 }
 
 .userTypeIndicator {
   display: inline-block;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 0.25rem 0.75rem;
+  background: #ece6ff;
+  color: #2e2747;
+  padding: 0.25rem 1rem;
   border-radius: 1rem;
   margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 .userTypeText {
@@ -124,16 +133,19 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  background: #ece6ff;
+  color: #2e2747;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
   cursor: pointer;
   transition: background 0.2s;
   margin-top: 1rem;
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 .qrButton:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: #d6cfff;
 }
 
 .qrIcon {
@@ -146,19 +158,19 @@
 }
 
 .sectionTitle {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 700;
-  color: var(--primary);
+  color: #2e2747;
   margin: 2rem 0 1rem 0;
 }
 
 .lightCard {
-  background: var(--white);
-  border-radius: 0.75rem;
+  background: #fff;
+  border-radius: 1.25rem;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 2px 8px rgba(46, 39, 71, 0.08);
-  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 8px rgba(46, 39, 71, 0.05);
+  border: none;
 }
 
 .itemRow {
@@ -166,7 +178,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 0;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid #ece6ff;
 }
 
 .itemRow:last-child {
@@ -178,32 +190,33 @@
 }
 
 .itemLabel {
-  font-size: 0.9rem;
-  color: var(--themeGray);
+  font-size: 1rem;
+  color: #757575;
   margin-bottom: 0.25rem;
   display: block;
+  font-weight: 500;
 }
 
 .itemValue {
-  font-size: 1rem;
-  color: var(--primary);
-  font-weight: 600;
+  font-size: 1.1rem;
+  color: #2e2747;
+  font-weight: 700;
 }
 
 .editableInput {
   width: 100%;
   padding: 0.5rem;
-  border: 2px solid var(--secondary);
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  color: var(--primary);
-  background: var(--white);
+  border: 2px solid #ece6ff;
+  border-radius: 0.75rem;
+  font-size: 1.1rem;
+  color: #2e2747;
+  background: #fff;
   margin-top: 0.25rem;
 }
 
 .editableInput:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: #2e2747;
 }
 
 .editIconBtnLight {
@@ -214,10 +227,11 @@
   border-radius: 0.5rem;
   transition: background 0.2s;
   font-size: 1.2rem;
+  color: #2e2747;
 }
 
 .editIconBtnLight:hover {
-  background: var(--secondary);
+  background: #ece6ff;
 }
 
 .genderSelector {
@@ -228,23 +242,24 @@
 
 .genderSelector button {
   padding: 0.5rem 1rem;
-  border: 2px solid var(--secondary);
-  border-radius: 0.5rem;
-  background: var(--white);
-  color: var(--primary);
+  border: 2px solid #ece6ff;
+  border-radius: 0.75rem;
+  background: #fff;
+  color: #2e2747;
   cursor: pointer;
   transition: all 0.2s;
+  font-weight: 600;
 }
 
 .genderSelector button:hover {
-  background: var(--secondary);
-  border-color: var(--primary);
+  background: #ece6ff;
+  border-color: #2e2747;
 }
 
 .securityQuestionBlock {
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid #ece6ff;
 }
 
 .securityQuestionBlock:last-child {
@@ -311,17 +326,17 @@
 .answerInput {
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid var(--secondary);
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  color: var(--primary);
-  background: var(--white);
+  border: 2px solid #ece6ff;
+  border-radius: 0.75rem;
+  font-size: 1.1rem;
+  color: #2e2747;
+  background: #fff;
   margin-top: 0.5rem;
 }
 
 .answerInput:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: #2e2747;
 }
 
 .accountActionContainer {
@@ -329,33 +344,33 @@
   gap: 1rem;
   margin-top: 1.5rem;
   padding-top: 1rem;
-  border-top: 1px solid #f5f5f5;
+  border-top: 1px solid #ece6ff;
 }
 
 .accountCancelButton {
   flex: 1;
   padding: 0.75rem;
-  border: 2px solid var(--themeGray);
-  border-radius: 0.5rem;
-  background: var(--white);
-  color: var(--themeGray);
+  border: 2px solid #757575;
+  border-radius: 0.75rem;
+  background: #fff;
+  color: #757575;
   cursor: pointer;
   font-weight: 600;
   transition: all 0.2s;
 }
 
 .accountCancelButton:hover {
-  border-color: var(--primary);
-  color: var(--primary);
+  border-color: #2e2747;
+  color: #2e2747;
 }
 
 .accountSaveButton {
   flex: 1;
   padding: 0.75rem;
   border: none;
-  border-radius: 0.5rem;
-  background: var(--primary);
-  color: var(--white);
+  border-radius: 0.75rem;
+  background: #2e2747;
+  color: #fff;
   cursor: pointer;
   font-weight: 600;
   transition: background 0.2s;
@@ -366,27 +381,27 @@
 }
 
 .accountSaveButton:disabled {
-  background: var(--themeGray);
+  background: #757575;
   cursor: not-allowed;
 }
 
 .actionButton {
   width: 100%;
   padding: 1rem;
-  border: 2px solid var(--primary);
+  border: 2px solid #ece6ff;
   border-radius: 0.75rem;
-  background: var(--white);
-  color: var(--primary);
+  background: #ece6ff;
+  color: #2e2747;
   cursor: pointer;
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: 700;
+  font-size: 1.1rem;
   transition: all 0.2s;
   margin-bottom: 1rem;
 }
 
 .actionButton:hover {
-  background: var(--primary);
-  color: var(--white);
+  background: #d6cfff;
+  color: #2e2747;
 }
 
 .deleteButton {
@@ -394,18 +409,18 @@
   padding: 1rem;
   border: 2px solid #dc3545;
   border-radius: 0.75rem;
-  background: var(--white);
-  color: #dc3545;
+  background: #dc3545;
+  color: #fff;
   cursor: pointer;
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: 700;
+  font-size: 1.1rem;
   transition: all 0.2s;
   margin-bottom: 1rem;
 }
 
 .deleteButton:hover {
-  background: #dc3545;
-  color: var(--white);
+  background: #b71c1c;
+  color: #fff;
 }
 
 .modalOverlay {
@@ -469,4 +484,56 @@
 
 .modalActions button:hover {
   opacity: 0.9;
+}
+
+.countryDropdownWrapper {
+  position: relative;
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+.countrySearchInput {
+  width: 100%;
+  padding: 0.5rem;
+  border: 2px solid var(--secondary);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  color: var(--primary);
+  background: var(--white);
+  margin-bottom: 0.25rem;
+}
+
+.countrySearchInput:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.countryDropdownList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 2px solid #ece6ff;
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 32px rgba(46, 39, 71, 0.15), 0 1.5px 6px rgba(0, 0, 0, 0.08);
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 99999;
+}
+
+.countryDropdownItem {
+  padding: 0.75rem;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  color: #2e2747;
+  transition: background 0.2s;
+  font-size: 1rem;
+}
+
+.countryDropdownItem:hover {
+  background: #ece6ff;
 }
