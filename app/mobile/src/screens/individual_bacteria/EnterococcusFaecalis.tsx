@@ -26,19 +26,23 @@ const enterococcusFaecalisData = {
     ],
     prevention: [
         {
-            icon: 'wash',
+            family: 'fontAwesome5',
+            icon: 'hands-wash',
             text: 'Practice good hand hygiene, especially in healthcare settings'
         },
         {
-            icon: 'clean',
+            family: 'materialIcons',
+            icon: 'clean-hands',
             text: 'Proper sterilization of medical equipment'
         },
         {
-            icon: 'isolation',
+            family: 'materialIcons',
+            icon: 'do-not-touch',
             text: 'Isolation protocols for infected patients'
         },
         {
-            icon: 'antibiotics',
+            family: 'fontAwesome6',
+            icon: 'prescription-bottle-medical',
             text: 'Judicious use of antibiotics to prevent resistance'
         }
     ],

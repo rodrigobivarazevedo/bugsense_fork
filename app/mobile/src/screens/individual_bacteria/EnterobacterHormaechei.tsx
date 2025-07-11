@@ -26,19 +26,23 @@ const enterobacterHormaecheiData = {
     ],
     prevention: [
         {
-            icon: 'wash',
+            family: 'fontAwesome5',
+            icon: 'hands-wash',
             text: 'Strict hand hygiene in healthcare settings'
         },
         {
-            icon: 'clean',
+            family: 'materialIcons',
+            icon: 'clean-hands',
             text: 'Proper sterilization of medical equipment'
         },
         {
-            icon: 'isolation',
+            family: 'materialIcons',
+            icon: 'do-not-touch',
             text: 'Contact precautions for infected patients'
         },
         {
-            icon: 'antibiotics',
+            family: 'fontAwesome6',
+            icon: 'prescription-bottle-medical',
             text: 'Antibiotic stewardship to prevent resistance'
         }
     ],

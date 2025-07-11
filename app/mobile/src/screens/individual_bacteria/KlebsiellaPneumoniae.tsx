@@ -26,19 +26,23 @@ const klebsiellaPneumoniaeData = {
     ],
     prevention: [
         {
-            icon: 'wash',
+            family: 'fontAwesome5',
+            icon: 'hands-wash',
             text: 'Strict hand hygiene protocols in healthcare settings'
         },
         {
-            icon: 'isolation',
+            family: 'materialIcons',
+            icon: 'do-not-touch',
             text: 'Contact precautions for infected patients'
         },
         {
-            icon: 'clean',
+            family: 'materialIcons',
+            icon: 'clean-hands',
             text: 'Proper disinfection of medical equipment'
         },
         {
-            icon: 'antibiotics',
+            family: 'fontAwesome6',
+            icon: 'prescription-bottle-medical',
             text: 'Antibiotic stewardship to prevent resistance'
         }
     ],

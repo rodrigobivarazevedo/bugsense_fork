@@ -26,19 +26,23 @@ const staphylococcusAureusData = {
     ],
     prevention: [
         {
-            icon: 'wash',
+            family: 'fontAwesome5',
+            icon: 'hands-wash',
             text: 'Frequent hand washing with soap and water'
         },
         {
-            icon: 'clean',
+            family: 'materialIcons',
+            icon: 'clean-hands',
             text: 'Keep wounds clean and covered until healed'
         },
         {
-            icon: 'personal',
+            family: 'materialIcons',
+            icon: 'do-not-touch',
             text: 'Avoid sharing personal items (towels, razors)'
         },
         {
-            icon: 'antibiotics',
+            family: 'fontAwesome6',
+            icon: 'prescription-bottle-medical',
             text: 'Complete prescribed antibiotic courses'
         }
     ],

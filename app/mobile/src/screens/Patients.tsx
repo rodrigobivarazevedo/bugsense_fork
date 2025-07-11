@@ -10,7 +10,7 @@ import {
 import { styles } from './Patients.styles';
 import Api from '../api/Client';
 import RenderIcon from '../components/RenderIcon';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 interface Patient {
     id: number;
@@ -62,9 +62,11 @@ const Patients: FC = () => {
         }
     }, []);
 
-    useEffect(() => {
-        fetchPatients();
-    }, [fetchPatients]);
+    useFocusEffect(
+        useCallback(() => {
+            fetchPatients();
+        }, [fetchPatients])
+    );
 
     useEffect(() => {
         if (!search) {

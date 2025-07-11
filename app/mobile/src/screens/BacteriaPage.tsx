@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
+import RenderIcon from '../components/RenderIcon';
 import * as S from './BacteriaPage.styles';
 
 interface BacteriaInfo {
@@ -15,6 +16,7 @@ interface BacteriaInfo {
     transmission: string[];
     symptoms: string[];
     prevention: {
+        family: string;
         icon: string;
         text: string;
     }[];
@@ -87,7 +89,12 @@ export const BacteriaPage: FC<BacteriaPageProps> = ({ bacteria }) => {
                         {bacteria.prevention.map((item, index) => (
                             <S.PreventionItem key={index}>
                                 <S.PreventionIcon>
-                                    {/* Add icon component here */}
+                                    <RenderIcon
+                                        family={item.family as any}
+                                        icon={item.icon}
+                                        fontSize={20}
+                                        color="primary"
+                                    />
                                 </S.PreventionIcon>
                                 <S.PreventionText>{item.text}</S.PreventionText>
                             </S.PreventionItem>
