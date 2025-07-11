@@ -180,6 +180,7 @@ class QRCodeCreateSerializer(serializers.ModelSerializer):
 
 class ResultsSerializer(serializers.ModelSerializer):
     qr_data = serializers.CharField(source='qr_code.qr_data', read_only=True)
+    closed_at = serializers.DateTimeField(source='qr_code.closed_at', read_only=True)
 
     class Meta:
         model = Results
@@ -193,9 +194,10 @@ class ResultsSerializer(serializers.ModelSerializer):
             'species',
             'concentration',
             'antibiotic',
-            'created_at'
+            'created_at',
+            'closed_at'
         ]
-        read_only_fields = ['id', 'created_at', 'qr_data']
+        read_only_fields = ['id', 'created_at', 'qr_data', 'closed_at']
 
 
 class ResultsCreateSerializer(serializers.ModelSerializer):
