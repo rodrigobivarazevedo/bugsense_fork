@@ -474,17 +474,19 @@ class ResultsListView(ListAPIView):
                         "qr_data": "QR_TEST_DATA_001",
                         "status": "closed",
                         "species": "E. coli",
-                        "infection_detected": True
+                        "infection_detected": True,
+                        "closed_at": "2025-07-05T15:02:35.347783Z"
                     },
                     {
                         "user_id": 38,
                         "qr_data": "test-test-test",
                         "status": "preliminary_assessment",
                         "species": "",
-                        "infection_detected": True
+                        "infection_detected": True,
+                        "closed_at": null
                     }
                 ],
-                description='Doctor view showing all results for assigned patients (summary format with species and infection status)'
+                description='Doctor view showing all results for assigned patients (summary format with species, infection status, and closed_at timestamp)'
             ),
             OpenApiExample(
                 'List Pending Results Only',
@@ -494,10 +496,11 @@ class ResultsListView(ListAPIView):
                         "qr_data": "test-test-test",
                         "status": "preliminary_assessment",
                         "species": "",
-                        "infection_detected": True
+                        "infection_detected": True,
+                        "closed_at": null
                     }
                 ],
-                description='Filtered view showing only results that need attention (pending=true) with species and infection status'
+                description='Filtered view showing only results that need attention (pending=true) with species, infection status, and closed_at timestamp'
             ),
             OpenApiExample(
                 'Patient Results (Full Details)',
@@ -512,7 +515,8 @@ class ResultsListView(ListAPIView):
                         "species": "E. coli",
                         "concentration": "10^6 CFU/ml",
                         "antibiotic": "",
-                        "created_at": "2025-07-05T15:02:35.347783Z"
+                        "created_at": "2025-07-05T15:02:35.347783Z",
+                        "closed_at": "2025-07-05T15:02:35.347783Z"
                     }
                 ],
                 description='Full result details when using qr_data or user_id filters'
@@ -536,14 +540,15 @@ class ResultsListView(ListAPIView):
             if pending:
                 results = results.filter(
                     status__in=['ready', 'preliminary_assessment'])
-            # Return user_id, qr_data, status, species, and infection_detected
+            # Return user_id, qr_data, status, species, infection_detected, and closed_at
             data = [
                 {
                     'user_id': r.user.id,
                     'qr_data': r.qr_code.qr_data,
                     'status': r.status,
                     'species': r.species or '',
-                    'infection_detected': r.infection_detected
+                    'infection_detected': r.infection_detected,
+                    'closed_at': r.qr_code.closed_at
                 }
                 for r in results
             ]
