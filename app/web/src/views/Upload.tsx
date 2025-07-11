@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import jsQR from "jsqr";
 import Api from "../api/client";
 import styles from "./Upload.module.css";
+import { authUtils } from "../utils/auth";
 
 const SCAN_TYPES = [
   {
@@ -124,18 +125,40 @@ const Upload: React.FC = () => {
       setErrorMsg("Please select a scan type and choose a file.");
       return;
     }
-    setUploading(true);
+    const user = authUtils.getUser();
+    if (!user) {
+      setErrorMsg("User not found. Please log in again.");
+      return;
+    }
     try {
+      // 1. Register the kit for the user (if not already registered)
+      try {
+        await Api.post("qr-codes/", { user_id: user.id, qr_data: qrData });
+      } catch (err: any) {
+        // If already exists, ignore and continue
+        if (
+          err.response?.data?.detail &&
+          err.response.data.detail.toLowerCase().includes("already exists")
+        ) {
+          // continue
+        } else {
+          setErrorMsg(
+            err.response?.data?.detail ||
+              err.message ||
+              "Failed to register kit."
+          );
+          return;
+        }
+      }
+      // 2. Upload the image as before
       const formData = new FormData();
       formData.append("image", file);
-
       const storage = "local"; // TODO: Change to 'gcs' when deployed to Google Cloud Storage
       const uploadUrl = qrData.trim()
         ? `upload/?qr_data=${encodeURIComponent(
             qrData.trim()
           )}&storage=${storage}`
         : `upload/?storage=${storage}`;
-
       const response = await Api.post(uploadUrl, formData, {
         headers: { "Content-Type": "multipart/form-data" },
         service: "ml",
