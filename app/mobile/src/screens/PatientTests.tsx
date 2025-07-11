@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -9,8 +9,7 @@ import {
 import { styles } from './Tests.styles';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
-import RenderIcon from '../components/RenderIcon';
+import { useNavigation, useRoute, useIsFocused, useFocusEffect } from '@react-navigation/native';
 import { getTranslatedTestStatus } from '../utils/TestResultsStatus';
 import { formatDate, formatTime } from '../utils/DateTimeFormatter';
 import { useTranslation } from 'react-i18next';
@@ -46,27 +45,29 @@ const PatientTests: FC = () => {
         });
     }, [isFocused]);
 
-    useEffect(() => {
-        const fetchResults = async () => {
-            if (!patientId) return;
-            setLoading(true);
-            setError(null);
-            try {
-                const token = await AsyncStorage.getItem('token');
-                const response = await Api.get(`results/list/?user_id=${patientId}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setResults(response.data);
-            } catch (err: any) {
-                setError('Failed to load patient test results.');
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchResults();
-    }, [isFocused, patientId]);
+    useFocusEffect(
+        useCallback(() => {
+            const fetchResults = async () => {
+                if (!patientId) return;
+                setLoading(true);
+                setError(null);
+                try {
+                    const token = await AsyncStorage.getItem('token');
+                    const response = await Api.get(`results/list/?user_id=${patientId}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+                    setResults(response.data);
+                } catch (err: any) {
+                    setError('Failed to load patient test results.');
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchResults();
+        }, [isFocused, patientId])
+    );
 
     const grouped = groupByDate(results);
 
