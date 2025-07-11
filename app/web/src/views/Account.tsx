@@ -12,6 +12,21 @@ import {
 } from "../utils/SecurityQuestions";
 import validateEmail from "../utils/ValidateEmail";
 import { validatePassword } from "../utils/ValidatePassword";
+import {
+  AccountCircle,
+  Edit,
+  QrCode,
+  ArrowDropDown,
+  Delete,
+  CheckCircle,
+  Cancel,
+} from "@mui/icons-material";
+import IconButton from "@mui/material/IconButton";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import countryList from "../utils/countryList";
+import ReactDOM from "react-dom";
+import ChangePasswordModal from "../components/modal/ChangePasswordModal";
 
 interface User {
   id: number;
@@ -401,6 +416,65 @@ const Account: React.FC = () => {
     }
   };
 
+  const countryInputRef = React.useRef<HTMLInputElement | null>(null);
+  const countryDropdownRef = React.useRef<HTMLDivElement | null>(null);
+  const [dropdownPos, setDropdownPos] = useState<{
+    top: number;
+    left: number;
+    width: number;
+  }>({ top: 0, left: 0, width: 0 });
+
+  useEffect(() => {
+    if (editingField === "country" && countryInputRef.current) {
+      const rect = countryInputRef.current.getBoundingClientRect();
+      setDropdownPos({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      });
+    }
+  }, [editingField]);
+
+  useEffect(() => {
+    if (editingField !== "country") return;
+    function updateDropdownPos() {
+      if (countryInputRef.current) {
+        const rect = countryInputRef.current.getBoundingClientRect();
+        setDropdownPos({
+          top: rect.bottom + window.scrollY,
+          left: rect.left + window.scrollX,
+          width: rect.width,
+        });
+      }
+    }
+    updateDropdownPos();
+    window.addEventListener("scroll", updateDropdownPos, true);
+    window.addEventListener("resize", updateDropdownPos);
+    return () => {
+      window.removeEventListener("scroll", updateDropdownPos, true);
+      window.removeEventListener("resize", updateDropdownPos);
+    };
+  }, [editingField]);
+
+  useEffect(() => {
+    if (editingField !== "country") return;
+    function handleClick(e: MouseEvent) {
+      const input = countryInputRef.current;
+      const dropdown = countryDropdownRef.current;
+      if (
+        input &&
+        !input.contains(e.target as Node) &&
+        dropdown &&
+        !dropdown.contains(e.target as Node)
+      ) {
+        setEditingField(null);
+        setTempValue("");
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [editingField]);
+
   if (loading) {
     return (
       <div className={styles.container}>
@@ -424,7 +498,7 @@ const Account: React.FC = () => {
       <div className={styles.profileCard}>
         <div className={styles.profileCardContent}>
           <div className={styles.profileImage}>
-            <span className={styles.profileIcon}>👤</span>
+            <AccountCircle fontSize="large" sx={{ color: "var(--white)" }} />
           </div>
           <div className={styles.profileInfo}>
             <h2 className={styles.userName}>{user?.full_name}</h2>
@@ -456,7 +530,7 @@ const Account: React.FC = () => {
 
             {userType === "patient" && (
               <div className={styles.qrButton}>
-                <span className={styles.qrIcon}>📱</span>
+                <QrCode fontSize="small" sx={{ color: "var(--white)" }} />
                 <span className={styles.qrButtonText}>
                   {t("View my QR code")}
                 </span>
@@ -474,12 +548,14 @@ const Account: React.FC = () => {
             {renderEditableField("full_name", user?.full_name)}
           </div>
           {userType === "patient" && (
-            <button
+            <IconButton
               className={styles.editIconBtnLight}
               onClick={() => handleEdit("full_name")}
+              size="small"
+              sx={{ color: "var(--primary)" }}
             >
-              ✏️
-            </button>
+              <Edit fontSize="inherit" />
+            </IconButton>
           )}
         </div>
 
@@ -490,13 +566,13 @@ const Account: React.FC = () => {
                 <span className={styles.itemLabel}>{t("Gender")}</span>
                 {editingField === "gender" ? (
                   <div className={styles.genderSelector}>
-                    <button onClick={() => handleGenderSelect("male")}>
+                    <button onClick={() => handleGenderSelect("Male")}>
                       Male
                     </button>
-                    <button onClick={() => handleGenderSelect("female")}>
+                    <button onClick={() => handleGenderSelect("Female")}>
                       Female
                     </button>
-                    <button onClick={() => handleGenderSelect("other")}>
+                    <button onClick={() => handleGenderSelect("Other")}>
                       Other
                     </button>
                   </div>
@@ -506,12 +582,14 @@ const Account: React.FC = () => {
                   </span>
                 )}
               </div>
-              <button
+              <IconButton
                 className={styles.editIconBtnLight}
                 onClick={() => handleEdit("gender")}
+                size="small"
+                sx={{ color: "var(--primary)" }}
               >
-                ✏️
-              </button>
+                <Edit fontSize="inherit" />
+              </IconButton>
             </div>
             <div className={styles.itemRow}>
               <div className={styles.itemTextCol}>
@@ -531,12 +609,14 @@ const Account: React.FC = () => {
                   </span>
                 )}
               </div>
-              <button
+              <IconButton
                 className={styles.editIconBtnLight}
                 onClick={() => handleEdit("dob")}
+                size="small"
+                sx={{ color: "var(--primary)" }}
               >
-                ✏️
-              </button>
+                <Edit fontSize="inherit" />
+              </IconButton>
             </div>
           </>
         )}
@@ -550,12 +630,14 @@ const Account: React.FC = () => {
             {renderEditableField("email", user?.email)}
           </div>
           {userType === "patient" && (
-            <button
+            <IconButton
               className={styles.editIconBtnLight}
               onClick={() => handleEdit("email")}
+              size="small"
+              sx={{ color: "var(--primary)" }}
             >
-              ✏️
-            </button>
+              <Edit fontSize="inherit" />
+            </IconButton>
           )}
         </div>
         <div className={styles.itemRow}>
@@ -564,12 +646,14 @@ const Account: React.FC = () => {
             {renderEditableField("phone_number", user?.phone_number)}
           </div>
           {userType === "patient" && (
-            <button
+            <IconButton
               className={styles.editIconBtnLight}
               onClick={() => handleEdit("phone_number")}
+              size="small"
+              sx={{ color: "var(--primary)" }}
             >
-              ✏️
-            </button>
+              <Edit fontSize="inherit" />
+            </IconButton>
           )}
         </div>
       </div>
@@ -600,12 +684,14 @@ const Account: React.FC = () => {
                 )}
               </div>
               {editingField !== "street" && (
-                <button
+                <IconButton
                   className={styles.editIconBtnLight}
                   onClick={() => setEditingField("street")}
+                  size="small"
+                  sx={{ color: "var(--primary)" }}
                 >
-                  ✏️
-                </button>
+                  <Edit fontSize="inherit" />
+                </IconButton>
               )}
             </div>
             <div className={styles.itemRow}>
@@ -628,12 +714,14 @@ const Account: React.FC = () => {
                 )}
               </div>
               {editingField !== "city" && (
-                <button
+                <IconButton
                   className={styles.editIconBtnLight}
                   onClick={() => setEditingField("city")}
+                  size="small"
+                  sx={{ color: "var(--primary)" }}
                 >
-                  ✏️
-                </button>
+                  <Edit fontSize="inherit" />
+                </IconButton>
               )}
             </div>
             <div className={styles.itemRow}>
@@ -658,27 +746,88 @@ const Account: React.FC = () => {
                 )}
               </div>
               {editingField !== "postcode" && (
-                <button
+                <IconButton
                   className={styles.editIconBtnLight}
                   onClick={() => setEditingField("postcode")}
+                  size="small"
+                  sx={{ color: "var(--primary)" }}
                 >
-                  ✏️
-                </button>
+                  <Edit fontSize="inherit" />
+                </IconButton>
               )}
             </div>
             <div className={styles.itemRow}>
               <div className={styles.itemTextCol}>
                 <span className={styles.itemLabel}>{t("Country")}</span>
-                <span className={styles.itemValue}>
-                  {addressFields.country || t("Select a country")}
-                </span>
+                {editingField === "country" ? (
+                  <div
+                    className={styles.countryDropdownWrapper}
+                    style={{ position: "relative" }}
+                  >
+                    <input
+                      ref={countryInputRef}
+                      type="text"
+                      placeholder={t("Search country")}
+                      value={tempValue}
+                      onChange={(e) => setTempValue(e.target.value)}
+                      className={styles.countrySearchInput}
+                      autoFocus
+                    />
+                    {ReactDOM.createPortal(
+                      <div
+                        ref={countryDropdownRef}
+                        className={styles.countryDropdownList}
+                        style={{
+                          position: "absolute",
+                          top: dropdownPos.top,
+                          left: dropdownPos.left,
+                          width: dropdownPos.width,
+                          border: "2px solid red", // DEBUG: Remove after confirming overlay
+                          background: "#fff",
+                          zIndex: 99999,
+                        }}
+                      >
+                        {countryList
+                          .filter((c: string) =>
+                            c.toLowerCase().includes(tempValue.toLowerCase())
+                          )
+                          .slice(0, 10)
+                          .map((country: string, idx: number) => (
+                            <div
+                              key={country}
+                              className={styles.countryDropdownItem}
+                              onClick={() => {
+                                handleAddressFieldChange("country", country);
+                                setEditingField(null);
+                                setTempValue("");
+                              }}
+                            >
+                              {country}
+                            </div>
+                          ))}
+                      </div>,
+                      document.body
+                    )}
+                  </div>
+                ) : (
+                  <span className={styles.itemValue}>
+                    {addressFields.country || t("Select a country")}
+                  </span>
+                )}
               </div>
-              <button
-                className={styles.editIconBtnLight}
-                onClick={() => setEditingField("country")}
-              >
-                ✏️
-              </button>
+              {editingField !== "country" && (
+                <IconButton
+                  className={styles.editIconBtnLight}
+                  onClick={() => {
+                    setEditingField("country");
+                    setTempValue("");
+                  }}
+                  size="small"
+                  sx={{ color: "var(--primary)" }}
+                >
+                  <Edit fontSize="inherit" />
+                </IconButton>
+              )}
             </div>
             {hasAddressChanges() && (
               <div className={styles.accountActionContainer}>
@@ -711,40 +860,35 @@ const Account: React.FC = () => {
                       {t("Question")} {num}
                     </span>
                     <div className={styles.selectorRow}>
-                      <button
-                        className={styles.selectorButton}
-                        onClick={() => {
-                          setSelectedQuestionIndex(num);
-                          setShowSecurityQuestionDropdown(
-                            selectedQuestionIndex !== num ||
-                              !showSecurityQuestionDropdown
-                          );
-                        }}
+                      <Select
+                        value={
+                          securityQuestionsData[
+                            `security_question_${num}` as keyof typeof securityQuestionsData
+                          ] || ""
+                        }
+                        onChange={(e) =>
+                          handleSecurityQuestionSelect(
+                            e.target.value as string,
+                            num
+                          )
+                        }
+                        displayEmpty
+                        fullWidth
+                        size="small"
+                        sx={{ width: "100%", background: "var(--white)" }}
                       >
-                        {securityQuestionsData[
-                          `security_question_${num}` as keyof typeof securityQuestionsData
-                        ] || t("Select Security Question")}
-                        <span className={styles.selectorIcon}>▼</span>
-                      </button>
+                        <MenuItem value="">
+                          {t("Select Security Question")}
+                        </MenuItem>
+                        {getAvailableQuestionsForIndex(num).map(
+                          (question, idx) => (
+                            <MenuItem key={idx} value={question}>
+                              {question}
+                            </MenuItem>
+                          )
+                        )}
+                      </Select>
                     </div>
-                    {showSecurityQuestionDropdown &&
-                      selectedQuestionIndex === num && (
-                        <div className={styles.dropdownContainer}>
-                          {getAvailableQuestionsForIndex(num).map(
-                            (question, idx) => (
-                              <button
-                                key={idx}
-                                className={styles.dropdownItem}
-                                onClick={() =>
-                                  handleSecurityQuestionSelect(question, num)
-                                }
-                              >
-                                {question}
-                              </button>
-                            )
-                          )}
-                        </div>
-                      )}
                     <input
                       type="text"
                       value={
@@ -852,6 +996,10 @@ const Account: React.FC = () => {
 
       {userType === "patient" && (
         <button className={styles.deleteButton} onClick={handleDelete}>
+          <Delete
+            fontSize="inherit"
+            sx={{ verticalAlign: "middle", marginRight: 8 }}
+          />
           {t("Delete My Account")}
         </button>
       )}
@@ -873,8 +1021,20 @@ const Account: React.FC = () => {
             <h3>Save Changes</h3>
             <p>Are you sure you want to save these changes?</p>
             <div className={styles.modalActions}>
-              <button onClick={handleCancel}>Cancel</button>
-              <button onClick={handleConfirmSave}>Save</button>
+              <button onClick={handleCancel}>
+                <Cancel
+                  fontSize="small"
+                  sx={{ color: "var(--themeGray)", marginRight: 4 }}
+                />{" "}
+                Cancel
+              </button>
+              <button onClick={handleConfirmSave}>
+                <CheckCircle
+                  fontSize="small"
+                  sx={{ color: "var(--primary)", marginRight: 4 }}
+                />{" "}
+                Save
+              </button>
             </div>
           </div>
         </div>
@@ -890,13 +1050,29 @@ const Account: React.FC = () => {
               <button
                 onClick={() => setShowSecurityQuestionsConfirmationModal(false)}
               >
+                <Cancel
+                  fontSize="small"
+                  sx={{ color: "var(--themeGray)", marginRight: 4 }}
+                />{" "}
                 Cancel
               </button>
-              <button onClick={handleSecurityQuestionsSave}>Save</button>
+              <button onClick={handleSecurityQuestionsSave}>
+                <CheckCircle
+                  fontSize="small"
+                  sx={{ color: "var(--primary)", marginRight: 4 }}
+                />{" "}
+                Save
+              </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        visible={showChangePasswordModal}
+        onClose={() => setShowChangePasswordModal(false)}
+      />
     </div>
   );
 };

@@ -12,7 +12,7 @@ import Account from "./views/Account";
 import HeaderBar from "./components/HeaderBar";
 import Root from "./root/Root";
 import Scan from "./views/Upload";
-import Results from "./views/Results";
+import Tests from "./views/Tests";
 import More from "./views/More";
 import Notifications from "./views/Notifications";
 import Login from "./views/Login";
@@ -70,7 +70,7 @@ const AppRoutes = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/account" element={<Account />} />
             <Route path="/upload" element={<Scan />} />
-            <Route path="/results" element={<Results />} />
+            <Route path="/tests" element={<Tests />} />
             <Route path="/more" element={<More />} />
             <Route path="/language-selection" element={<LanguageSelection />} />
             <Route path="/notifications" element={<Notifications />} />

@@ -8,12 +8,12 @@
 }
 
 .section {
-  background: var(--white);
-  border-radius: 0.75rem;
+  background: #fff;
+  border-radius: 1.25rem;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
   box-shadow: 0 2px 8px rgba(46, 39, 71, 0.08);
-  border: 1px solid #f0f0f0;
+  border: none;
 }
 
 .label {
@@ -45,9 +45,9 @@
   font-weight: 500;
   word-break: break-all;
   padding: 0.5rem;
-  background: var(--secondary);
+  background: #ece6ff;
   border-radius: 0.5rem;
-  border: 1px solid #e0e0e0;
+  border: none;
 }
 
 .copyButton {
@@ -86,10 +86,10 @@
 .uploadButton {
   flex: 1;
   padding: 1rem;
-  border: 2px solid var(--primary);
+  border: none;
   border-radius: 0.75rem;
-  background: var(--white);
-  color: var(--primary);
+  background: #2e2747;
+  color: #fff;
   cursor: pointer;
   font-weight: 600;
   font-size: 1rem;
@@ -98,11 +98,10 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
-
 .uploadButton:hover {
-  background: var(--primary);
-  color: var(--white);
+  background: #1a1530;
 }
 
 .uploadButton.uploading {
@@ -113,25 +112,7 @@
 }
 
 .scanButton {
-  flex: 1;
-  padding: 1rem;
-  border: 2px solid var(--secondary);
-  border-radius: 0.75rem;
-  background: var(--white);
-  color: var(--primary);
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.scanButton:hover {
-  background: var(--secondary);
-  border-color: var(--primary);
+  display: none;
 }
 
 .imageContainer {
@@ -199,25 +180,30 @@
 }
 
 .resultBox {
-  background: var(--secondary);
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  border: 1px solid #e0e0e0;
+  background: #ece6ff;
+  border-radius: 1rem;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(46, 39, 71, 0.06);
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
 }
-
 .resultLabel {
-  font-size: 1rem;
-  color: var(--primary);
-  font-weight: 600;
-  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+  color: #2e2747;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-
 .resultValue {
   font-weight: 400;
-  color: var(--text);
+  color: #2e2747;
+  margin-left: 0.5rem;
 }
 
 .speciesRow {

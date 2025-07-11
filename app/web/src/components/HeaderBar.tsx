@@ -53,14 +53,14 @@ const HeaderBar: React.FC<any> = () => {
         {t("upload")}
       </NavLink>
       <NavLink
-        to="/results"
+        to="/tests"
         className={({ isActive }) =>
           `${styles.navLink} ${isActive ? styles.active : ""}`
         }
         onClick={closeMenu}
       >
         <ResultsIcon />
-        {t("results")}
+        {t("tests")}
       </NavLink>
       <NavLink
         to="/more"

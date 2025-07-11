@@ -7,16 +7,27 @@
   margin: 0 auto;
 }
 
+.date {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2e2747;
+  margin: 4.5rem 0 1.5rem 2rem;
+  background: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+/* 2. Add new button at top right */
 .addButtonContainer {
-  position: fixed;
-  bottom: 2rem;
+  position: absolute;
+  top: 2rem;
   right: 2rem;
   z-index: 1000;
   display: flex;
-  align-items: flex-end;
   justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 0;
 }
-
 .addButton {
   background: #2e2747;
   color: #fff;
@@ -28,10 +39,29 @@
   box-shadow: 0 2px 8px rgba(46, 39, 71, 0.08);
   cursor: pointer;
   transition: background 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 .addButton:hover {
   background: #1a1530;
   box-shadow: 0 4px 16px rgba(46, 39, 71, 0.15);
+}
+.addButtonIcon {
+  background: #fff;
+  color: #2e2747;
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+.addButtonText {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
 }
 
 .loading {
@@ -69,6 +99,7 @@
   max-width: 400px;
 }
 
+/* 4. Empty state */
 .noTestsContainer {
   display: flex;
   flex-direction: column;
@@ -77,21 +108,19 @@
   min-height: 300px;
   text-align: center;
 }
-
 .noTestsText {
   font-size: 1.1rem;
   color: #666;
   margin-top: 1rem;
 }
 
+/* 3. Section list and cards */
 .sectionList {
-  margin-top: 3.5rem;
+  margin-top: 0.5rem;
 }
-
 .section {
   margin-bottom: 2rem;
 }
-
 .sectionHeader {
   font-size: 1.2rem;
   font-weight: bold;
@@ -102,34 +131,29 @@
   margin-bottom: 0.5rem;
   box-shadow: 0 1px 3px rgba(46, 39, 71, 0.04);
 }
-
 .listItem {
-  background: #f7f7f7;
-  border-radius: 0.75rem;
+  background: #fff;
+  border-radius: 1rem;
   padding: 1.25rem 1rem 1rem 1.25rem;
   margin-bottom: 0.75rem;
-  box-shadow: 0 1px 3px rgba(46, 39, 71, 0.04);
+  box-shadow: 0 2px 8px rgba(46, 39, 71, 0.05);
   display: flex;
   flex-direction: column;
   transition: background-color 0.2s ease;
 }
-
 .listItem:hover {
   background: #f0f0f0;
 }
-
 .listItemTime {
   font-size: 1rem;
   color: #666;
   margin-bottom: 0.25rem;
 }
-
 .listItemStatusContainer {
   display: flex;
   align-items: center;
   margin-bottom: 0.25rem;
 }
-
 .statusIndicator {
   width: 0.75rem;
   height: 0.75rem;
@@ -143,26 +167,22 @@
 .statusIndicatorComplete {
   background: #4caf50;
 }
-
 .listItemStatus {
   font-size: 1rem;
   color: #2e2747;
   font-weight: 600;
 }
-
 .listItemPatient {
   margin-top: 0.5rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem 1.5rem;
 }
-
 .listItemLabel {
   font-weight: bold;
   color: #444;
   margin-right: 0.25rem;
 }
-
 .listItemValue {
   color: #444;
   margin-right: 1rem;

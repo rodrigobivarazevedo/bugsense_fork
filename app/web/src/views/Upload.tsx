@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import jsQR from "jsqr";
 import Api from "../api/client";
 import styles from "./Upload.module.css";
 
@@ -35,16 +36,84 @@ const Upload: React.FC = () => {
     setQrData("");
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-      setSuccessMsg("");
-      setErrorMsg("");
-    }
-  };
-
   const handleQrDataChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQrData(e.target.value);
+  };
+
+  const drawBoundingBox = (location: any, image: HTMLImageElement) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = image.width;
+    canvas.height = image.height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    ctx.drawImage(image, 0, 0);
+    ctx.strokeStyle = "#FF3B58";
+    ctx.lineWidth = 4;
+
+    ctx.beginPath();
+    ctx.moveTo(location.topLeftCorner.x, location.topLeftCorner.y);
+    ctx.lineTo(location.topRightCorner.x, location.topRightCorner.y);
+    ctx.lineTo(location.bottomRightCorner.x, location.bottomRightCorner.y);
+    ctx.lineTo(location.bottomLeftCorner.x, location.bottomLeftCorner.y);
+    ctx.closePath();
+    ctx.stroke();
+
+    // Append canvas for visual aid (optional - can be removed or styled)
+    document.getElementById("preview")?.appendChild(canvas);
+  };
+
+  const extractQrCodeFromImage = async (file: File): Promise<string | null> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const img = new Image();
+        img.onload = function () {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return reject("Canvas context not available.");
+          ctx.drawImage(img, 0, 0);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const code = jsQR(imageData.data, imageData.width, imageData.height);
+          if (code) {
+            drawBoundingBox(code.location, img);
+            resolve(code.data);
+          } else {
+            resolve(null);
+          }
+        };
+        if (event.target?.result) {
+          img.src = event.target.result as string;
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const uploadedFile = e.target.files[0];
+      setFile(uploadedFile);
+      setSuccessMsg("");
+      setErrorMsg("");
+
+      // Clear previous preview
+      const preview = document.getElementById("preview");
+      if (preview) preview.innerHTML = "";
+
+      if (selectedScanType === "qr-code") {
+        const result = await extractQrCodeFromImage(uploadedFile);
+        if (result) {
+          setQrData(result);
+          setSuccessMsg("QR code successfully extracted!");
+        } else {
+          setErrorMsg("Could not detect a QR code in the image.");
+        }
+      }
+    }
   };
 
   const handleUpload = async (e: React.FormEvent) => {
@@ -134,6 +203,10 @@ const Upload: React.FC = () => {
               />
             </label>
           </div>
+          <div
+            id="preview"
+            style={{ marginTop: "1rem", textAlign: "center" }}
+          />
           {errorMsg && <div className={styles.errorMsg}>{errorMsg}</div>}
           {successMsg && <div className={styles.successMsg}>{successMsg}</div>}
           <button
@@ -150,5 +223,3 @@ const Upload: React.FC = () => {
 };
 
 export default Upload;
-
-// TODO: react package for resolving qr code from uploaded image

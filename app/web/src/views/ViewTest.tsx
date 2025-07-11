@@ -9,6 +9,7 @@ import {
   getSpeciesDisplayName,
   navigateToBacteriaDiscoverPage,
 } from "../utils/BacteriaSpeciesUtils";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 
 interface TestResult {
   id: string | number;
@@ -170,15 +171,11 @@ const ViewTest: React.FC = () => {
         <div className={styles.imageButtonsWrapper}>
           <button
             className={styles.uploadButton}
-            onClick={handlePickFromGallery}
+            type="button"
+            onClick={() => navigate("/upload")}
           >
-            📁 Pick from Gallery
-          </button>
-          <button
-            className={styles.scanButton}
-            onClick={() => navigate("/upload", { state: { testId: test.id } })}
-          >
-            📷 Launch Scanner
+            <FolderOpenIcon style={{ marginRight: 8 }} />
+            Return to Upload
           </button>
         </div>
 
