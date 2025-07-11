@@ -2,7 +2,7 @@ import os
 import re
 import requests
 
-JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTE5MDYyODR9.yehMu5KF3ocClcZ-cAOZ88xFJXgVgMnJvNqUvNU2ZWI"  # Replace with your actual JWT token or generate it
+JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTIyNTM0OTN9.9sbs9A0woJLyK3omtbyRI0DWnXv9YqqXBBoDP_U5ff8"  # Replace with your actual JWT token or generate it
 
 HEADERS = {
     "Authorization": f"Bearer {JWT_TOKEN}"
@@ -57,14 +57,14 @@ def load_images(dir_path):
 if __name__ == "__main__":
 
     data_users = [
-        ("test_data/Ste_L_0036_top/", "user1"), # sterile, low concentration
-        ("test_data/S.S_L_0023_top/", "user2"), # S.Saprophyticus, low concentration
-        ("test_data/S.A_L_0026_top/", "user3"), # S.Aureus, high concentration
-        ("test_data/P.M_L_0052_top/", "user4"), # P.Mirabilis, high concentration
-        ("test_data/P.A_L_0018_top/", "user5"), # P.Aeruginosa, low concentration
-        ("test_data/K.P_L_0050_top/", "user6"), # K.Pneumoniae, high concentration
-        ("test_data/E.H_L_0059_top/", "user7"), # E.Hormaechei, high concentration 
-        ("test_data/E.F_L_0035_top/", "user8"), # E.Faecalis, high concentration
+        # ("test_data/Ste_L_0036_top/", "user1"), # sterile, low concentration
+        # ("test_data/S.S_L_0023_top/", "user2"), # S.Saprophyticus, low concentration
+        # ("test_data/S.A_L_0026_top/", "user3"), # S.Aureus, high concentration
+        # ("test_data/P.M_L_0052_top/", "user4"), # P.Mirabilis, high concentration
+        # ("test_data/P.A_L_0018_top/", "user5"), # P.Aeruginosa, low concentration
+        # ("test_data/K.P_L_0050_top/", "user6"), # K.Pneumoniae, high concentration
+        # ("test_data/E.H_L_0059_top/", "user7"), # E.Hormaechei, high concentration 
+        # ("test_data/E.F_L_0035_top/", "user8"), # E.Faecalis, high concentration
         ("test_data/E.C_L_0039_top/", "user9"), # E.Coli, high concentration
     ]
 

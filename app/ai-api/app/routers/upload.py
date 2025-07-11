@@ -34,7 +34,6 @@ async def upload_image(
                 qr_data=qr_data,
                 bucket_name=secrets_manager.security_secrets.get("GCS_BUCKET_NAME"),
                 credentials_json=secrets_manager.security_secrets.get("GOOGLE_CREDENTIALS")
-                
             )
             
             if not gcs_url:
