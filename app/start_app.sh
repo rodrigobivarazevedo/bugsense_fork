@@ -6,16 +6,17 @@ show_help() {
   echo "Options:"
   echo "  --help     Display this help message"
   echo "  --build    Build and start all services"
-  echo "  --load-data Start services and load initial data"
+  echo "  --load-data Start services and load initial data (will reset database if data exists)"
   echo ""
   echo "Description:"
   echo "  This script manages the BugSense application services."
   echo "  Without any options, it starts all services without building."
+  echo "  The --load-data option will always reset the database and load fresh data."
   echo ""
   echo "Examples:"
   echo "  ./start_app.sh --help     # Show this help message"
   echo "  ./start_app.sh --build    # Build and start all services"
-  echo "  ./start_app.sh --load-data # Start services and load initial data"
+  echo "  ./start_app.sh --load-data # Start services and load initial data (resets DB)"
   echo "  ./start_app.sh            # Start services without building"
 }
 
@@ -117,8 +118,25 @@ elif [ "$1" = "--load-data" ]; then
   
   # Load data only if containers are running
   if docker compose ps | grep -q "Up"; then
-    echo "Loading initial data (if database is empty)..."
-    ./setup/load_initial_data.sh
+    echo "Resetting database and loading fresh data..."
+    
+    # Reset the database completely
+    echo "Dropping all existing data..."
+    docker compose exec -T db psql -U bugsenseadmin bugsense -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+    
+    # Load the database backup
+    echo "Loading database backup..."
+    docker compose exec -T db psql -U bugsenseadmin bugsense < ./setup/database_backup.sql
+    
+    # Run migrations to ensure everything is up to date
+    echo "Running migrations..."
+    docker compose exec backend python manage.py migrate
+    
+    # Load additional user data if needed
+    echo "Loading user data..."
+    docker compose exec backend python manage.py loaddata /app/setup/user_data.json
+    
+    echo "Database reset and data loading completed!"
     
     echo "Showing logs..."
     docker compose logs -f
