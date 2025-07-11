@@ -55,8 +55,8 @@ def upload_image_to_gcs(
     Uploads an image file to Google Cloud Storage without making it public.
     Returns the internal GCS path (not accessible to users).
     """
-    storage_client = get_storage_client(bucket_name)
-    bucket = storage_client.bucket(credentials_json)
+    storage_client = get_storage_client(credentials_json)
+    bucket = storage_client.bucket(bucket_name)
 
     current_date = datetime.now().strftime("%Y-%m-%d")
     timestamp = datetime.now().strftime("%H-%M-%S-%f")
