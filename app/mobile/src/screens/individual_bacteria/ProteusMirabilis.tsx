@@ -26,19 +26,23 @@ const proteusMirabilisData = {
     ],
     prevention: [
         {
-            icon: 'wash',
+            family: 'fontAwesome5',
+            icon: 'hands-wash',
             text: 'Maintain good personal hygiene'
         },
         {
-            icon: 'water',
+            family: 'fontAwesome6',
+            icon: 'glass-water',
             text: 'Stay well-hydrated to prevent urinary stasis'
         },
         {
-            icon: 'clean',
+            family: 'materialIcons',
+            icon: 'clean-hands',
             text: 'Proper sterilization of urinary catheters'
         },
         {
-            icon: 'antibiotics',
+            family: 'fontAwesome6',
+            icon: 'prescription-bottle-medical',
             text: 'Complete prescribed antibiotic courses'
         }
     ],

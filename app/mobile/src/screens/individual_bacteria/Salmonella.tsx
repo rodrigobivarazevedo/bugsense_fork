@@ -25,18 +25,22 @@ const salmonellaData = {
     ],
     prevention: [
         {
-            icon: 'cook',
+            family: 'fontAwesome6',
+            icon: 'bowl-food',
             text: 'Cook poultry, eggs, and meat thoroughly'
         },
         {
-            icon: 'wash',
+            family: 'fontAwesome5',
+            icon: 'hands-wash',
             text: 'Wash hands after handling raw meat or eggs'
         },
         {
-            icon: 'clean',
+            family: 'materialIcons',
+            icon: 'clean-hands',
             text: 'Clean kitchen surfaces and utensils properly'
         },
         {
+            family: 'fontAwesome6',
             icon: 'store',
             text: 'Refrigerate food promptly and properly'
         }

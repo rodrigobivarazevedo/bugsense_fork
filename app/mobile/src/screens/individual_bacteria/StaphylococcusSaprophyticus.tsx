@@ -26,19 +26,23 @@ const staphylococcusSaprophyticusData = {
     ],
     prevention: [
         {
-            icon: 'wash',
+            family: 'fontAwesome5',
+            icon: 'hands-wash',
             text: 'Maintain good personal hygiene, especially after sexual activity'
         },
         {
-            icon: 'water',
+            family: 'fontAwesome6',
+            icon: 'glass-water',
             text: 'Stay well-hydrated and urinate frequently'
         },
         {
-            icon: 'clean',
+            family: 'materialIcons',
+            icon: 'clean-hands',
             text: 'Wipe from front to back after using the bathroom'
         },
         {
-            icon: 'clothing',
+            family: 'ionIcons',
+            icon: 'shirt',
             text: 'Wear cotton underwear and avoid tight-fitting clothing'
         }
     ],

@@ -26,20 +26,29 @@ const pseudomonasAeruginosaData = {
     ],
     prevention: [
         {
-            icon: 'wash',
+            family: 'fontAwesome5',
+            icon: 'hands-wash',
             text: 'Strict hand hygiene and infection control protocols'
         },
         {
-            icon: 'clean',
+            family: 'materialIcons',
+            icon: 'clean-hands',
             text: 'Proper sterilization of medical equipment'
         },
         {
-            icon: 'water',
+            family: 'fontAwesome6',
+            icon: 'glass-water',
             text: 'Avoid contaminated water sources'
         },
         {
-            icon: 'isolation',
+            family: 'materialIcons',
+            icon: 'do-not-touch',
             text: 'Contact precautions for infected patients'
+        },
+        {
+            family: 'fontAwesome6',
+            icon: 'prescription-bottle-medical',
+            text: 'Antibiotic stewardship to prevent resistance'
         }
     ],
     treatment: 'Treatment of Pseudomonas aeruginosa infections is extremely challenging due to its intrinsic and acquired resistance to many antibiotics. It often requires combination therapy with agents like piperacillin-tazobactam, ceftazidime, or carbapenems. The bacterium can develop resistance during treatment, making susceptibility testing crucial. In severe cases, newer antibiotics like ceftolozane-tazobactam or ceftazidime-avibactam may be necessary.'

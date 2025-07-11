@@ -25,19 +25,23 @@ const escherichiaColiData = {
     ],
     prevention: [
         {
-            icon: 'wash',
+            family: 'fontAwesome5',
+            icon: 'hands-wash',
             text: 'Wash hands thoroughly with soap and water'
         },
         {
-            icon: 'cook',
-            text: 'Cook meat thoroughly to safe temperatures'
+            family: 'fontAwesome6',
+            icon: 'bowl-food',
+            text: 'Cook meat thoroughly to safe temperatures',
         },
         {
-            icon: 'clean',
+            family: 'materialIcons',
+            icon: 'clean-hands',
             text: 'Wash fruits and vegetables before eating'
         },
         {
-            icon: 'water',
+            family: 'fontAwesome6',
+            icon: 'glass-water',
             text: 'Drink only pasteurized milk and juices'
         }
     ],
