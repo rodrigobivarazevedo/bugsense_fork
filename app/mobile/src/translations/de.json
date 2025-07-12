@@ -300,5 +300,15 @@
     "staphylococcus_aureus_disoverPage_quick_description": "Gemeinsame Bakterien, die Hautinfektionen verursachen können",
     "enterobacter_hormaechei_disoverPage_quick_description": "Gemeinsame Bakterien, die Lebensmittelvergiftung verursachen können",
     "pseudomonas_aeruginosa_disoverPage_quick_description": "Gemeinsame Bakterien, die Pneumonie verursachen können",
-    "proteus_mirabilis_disoverPage_quick_description": "Gemeinsame Bakterien, die Lebensmittelvergiftung verursachen können"
+    "proteus_mirabilis_disoverPage_quick_description": "Gemeinsame Bakterien, die Lebensmittelvergiftung verursachen können",
+    "overview_subtitle_doctor": "Schneller Zugriff auf laufende Tests für alle Ihre Patienten",
+    "overview_subtitle_patient": "Schneller Zugriff auf Ihre laufenden Tests",
+    "ongoing_tests": "Laufende Tests",
+    "ongoing_tests_for_patients": "Laufende Tests für Patienten",
+    "no_ongoing_tests": "Keine laufenden Tests",
+    "no_ongoing_tests_for_patients": "Keine laufenden Tests",
+    "no_ongoing_tests_description": "Sie haben derzeit keine Tests in Bearbeitung. Starten Sie einen neuen Test, indem Sie ein Testkit scannen.",
+    "no_ongoing_tests_for_patients_description": "Keiner Ihrer Patienten hat derzeit laufende Tests.",
+    "test": "Test",
+    "retry": "Wiederholen"
 }

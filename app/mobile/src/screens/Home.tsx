@@ -38,7 +38,7 @@ export const Home: FC<any> = ({ navigation }) => {
   };
 
   const GRID_ITEMS: GridItem[] = [
-    { key: 'overviews', label: t('overviews'), family: 'materialCommunity', icon: 'format-list-checkbox' },
+    { key: 'overviews', label: t('overviews'), family: 'materialCommunity', icon: 'format-list-checkbox', route: 'Overview' },
     { key: 'discover', label: t('discover'), family: 'octicons', icon: 'light-bulb', route: 'Discover' },
     { key: 'news', label: t('news'), family: 'fontAwesome', icon: 'newspaper-o', route: 'News' },
     { key: 'contactUs', label: t('contact_us'), family: 'materialCommunity', icon: 'email-send-outline' },

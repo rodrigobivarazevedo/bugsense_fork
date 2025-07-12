@@ -300,5 +300,15 @@
     "staphylococcus_aureus_disoverPage_quick_description": "Common bacteria that can cause skin infections",
     "enterobacter_hormaechei_disoverPage_quick_description": "Common bacteria that can cause foodborne illness",
     "pseudomonas_aeruginosa_disoverPage_quick_description": "Common bacteria that can cause pneumonia",
-    "proteus_mirabilis_disoverPage_quick_description": "Common bacteria that can cause foodborne illness"
+    "proteus_mirabilis_disoverPage_quick_description": "Common bacteria that can cause foodborne illness",
+    "overview_subtitle_doctor": "Quick access to ongoing tests for all your patients",
+    "overview_subtitle_patient": "Quick access to your ongoing tests",
+    "ongoing_tests": "Ongoing Tests",
+    "ongoing_tests_for_patients": "Ongoing Tests for Patients",
+    "no_ongoing_tests": "No Ongoing Tests",
+    "no_ongoing_tests_for_patients": "No Ongoing Tests",
+    "no_ongoing_tests_description": "You don't have any tests in progress at the moment. Start a new test by scanning a test kit.",
+    "no_ongoing_tests_for_patients_description": "None of your patients have ongoing tests at the moment.",
+    "test": "Test",
+    "retry": "Retry"
 }

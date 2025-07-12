@@ -37,6 +37,7 @@ import ViewPatient from './screens/ViewPatient';
 import PatientTests from './screens/PatientTests';
 import News from './screens/News';
 import Notifications from './screens/Notifications';
+import Overview from './screens/Overview';
 import { NotificationProvider } from './context/NotificationContext';
 
 const Stack = createNativeStackNavigator();
@@ -65,6 +66,7 @@ const WRAPPED_SCREENS_AND_TITLES_TRANSLATION_KEYS: Record<string, string> = {
   PatientTests: 'patient_tests',
   News: 'news',
   Notifications: 'notifications',
+  Overview: 'overview',
 };
 
 function MainTabs() {
@@ -134,6 +136,7 @@ export default function App() {
                   <Stack.Screen name="PatientTests" component={PatientTests} />
                   <Stack.Screen name="News" component={News} />
                   <Stack.Screen name="Notifications" component={Notifications} />
+                  <Stack.Screen name="Overview" component={Overview} />
                 </Stack.Navigator>
               </ContentContainer>
             </AppContainer>
