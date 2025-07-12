@@ -9,6 +9,7 @@ import { styles } from './Scan.styles';
 import TestKitSelectModal from '../components/modal/TestKitSelectModal';
 import PatientSelectModal from '../components/modal/PatientSelectModal';
 import TestSelectModal from '../components/modal/TestSelectModal';
+import { useTranslation } from 'react-i18next';
 
 type ScanType = 'qr-code' | 'test-strip' | null;
 
@@ -21,6 +22,7 @@ interface Patient {
 }
 
 export const Scan: FC = () => {
+    const { t } = useTranslation();
     const [selectedScanType, setSelectedScanType] = useState<ScanType>(null);
     const [showCamera, setShowCamera] = useState(false);
     const [pendingQR, setPendingQR] = useState<string | null>(null);
@@ -131,16 +133,16 @@ export const Scan: FC = () => {
             });
 
             const successMessage = userType === 'doctor'
-                ? `QR code scanned and linked to patient '${selectedPatient?.full_name}' successfully!`
-                : 'QR code scanned and linked successfully!';
+                ? t('qr_linked_to_patient', { name: selectedPatient?.full_name })
+                : t('qr_linked_to_profile');
 
-            Alert.alert('Success', successMessage, [
-                { text: 'OK', onPress: () => resetScan() }
+            Alert.alert(t('success'), successMessage, [
+                { text: t('ok_capital'), onPress: () => resetScan() }
             ]);
         } catch (error) {
             console.error('Error sending QR code data:', error);
             Alert.alert('Error', 'Failed to process QR code. Please try again.', [
-                { text: 'OK', onPress: () => resetScan() }
+                { text: t('ok_capital'), onPress: () => resetScan() }
             ]);
         }
     };
@@ -195,8 +197,8 @@ export const Scan: FC = () => {
                     service: 'ml',
                 } as any
             );
-            Alert.alert('Success', 'Image uploaded successfully!', [
-                { text: 'OK', onPress: () => resetScan() }
+            Alert.alert(t('success'), t('image_uploaded_success'), [
+                { text: t('ok_capital'), onPress: () => resetScan() }
             ]);
         } catch (err) {
             Alert.alert('Upload failed', 'Could not upload image.');
@@ -231,8 +233,8 @@ export const Scan: FC = () => {
                     service: 'ml',
                 } as any
             );
-            Alert.alert('Success', `Image uploaded successfully for patient '${selectedPatient?.full_name}'!`, [
-                { text: 'OK', onPress: () => resetScan() }
+            Alert.alert(t('success'), t('image_uploaded_for_patient', { name: selectedPatient?.full_name }), [
+                { text: t('ok_capital'), onPress: () => resetScan() }
             ]);
         } catch (err) {
             Alert.alert('Upload failed', 'Could not upload image.');
@@ -265,8 +267,8 @@ export const Scan: FC = () => {
                     onClose={handleCancelLinkKit}
                     onConfirm={handleConfirmLinkKit}
                     message={userType === 'doctor'
-                        ? `This test kit will be linked to patient '${selectedPatient?.full_name}'. Do you want to continue?`
-                        : "This test kit will be linked to your profile. Do you want to continue?"
+                        ? t('confirm_link_kit_to_patient', { name: selectedPatient?.full_name })
+                        : t('confirm_link_kit_to_profile')
                     }
                 />
                 <TestKitSelectModal
@@ -287,28 +289,28 @@ export const Scan: FC = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.heading}>What would you like to scan?</Text>
+            <Text style={styles.heading}>{t('scan_what_to_scan')}</Text>
             <View style={styles.optionsRow}>
                 <TouchableOpacity
                     style={[styles.optionCard, selectedScanType === 'qr-code' && styles.selectedCard]}
                     onPress={() => handleSelectScanType('qr-code')}
                 >
-                    <Text style={styles.optionTitle}>Test Kit QR Code</Text>
-                    <Text style={styles.optionDesc}>Scan the QR code on your test kit</Text>
+                    <Text style={styles.optionTitle}>{t('scan_test_kit_qr')}</Text>
+                    <Text style={styles.optionDesc}>{t('scan_test_kit_qr_desc')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={[styles.optionCard, selectedScanType === 'test-strip' && styles.selectedCard]}
                     onPress={() => handleSelectScanType('test-strip')}
                 >
-                    <Text style={styles.optionTitle}>Test Strip</Text>
-                    <Text style={styles.optionDesc}>Scan the test strip result</Text>
+                    <Text style={styles.optionTitle}>{t('scan_test_strip')}</Text>
+                    <Text style={styles.optionDesc}>{t('scan_test_strip_desc')}</Text>
                 </TouchableOpacity>
             </View>
 
             {userType === 'doctor' && selectedPatient && (
                 <View style={styles.patientInfo}>
                     <Text style={styles.patientInfoText}>
-                        Selected Patient: {selectedPatient.full_name}
+                        {t('selected_patient', { name: selectedPatient.full_name })}
                     </Text>
                 </View>
             )}
@@ -318,7 +320,7 @@ export const Scan: FC = () => {
                 onPress={handleLaunchCamera}
                 disabled={!selectedScanType}
             >
-                <Text style={styles.launchButtonText}>Launch Camera</Text>
+                <Text style={styles.launchButtonText}>{t('launch_camera')}</Text>
             </TouchableOpacity>
 
             <ScanInstructionsModal

@@ -51,7 +51,7 @@ const ViewTest: FC = () => {
                 });
                 setResult(response.data && response.data.length > 0 ? response.data[0] : null);
             } catch (err) {
-                setError('Failed to load test results.');
+                setError(t('failed_to_load_test_results'));
             } finally {
                 setLoading(false);
             }
@@ -62,7 +62,7 @@ const ViewTest: FC = () => {
     const pickImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (!permissionResult.granted) {
-            Alert.alert('Permission required', 'Permission to access media library is required!');
+            Alert.alert(t('permission_required'), t('permission_to_access_media_library_required'));
             return;
         }
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -99,10 +99,10 @@ const ViewTest: FC = () => {
                     service: 'ml',
                 } as any
             );
-            Alert.alert('Success', 'Image uploaded successfully!');
+            Alert.alert(t('success'), t('image_uploaded_successfully'));
             setImage(null);
         } catch (err) {
-            Alert.alert('Upload failed', 'Could not upload image.');
+            Alert.alert(t('upload_failed'), t('could_not_upload_image'));
         } finally {
             setUploading(false);
         }
@@ -142,11 +142,11 @@ const ViewTest: FC = () => {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.section}>
-                <Text style={styles.label}>Test Started At:</Text>
+                <Text style={styles.label}>{t('test_started_at_colon')}</Text>
                 <Text style={styles.value}>{formatDateTimeGerman(result?.created_at)}</Text>
-                <Text style={styles.label}>Test Status:</Text>
+                <Text style={styles.label}>{t('test_status_colon')}</Text>
                 <Text style={styles.value}>{getTranslatedTestStatus(result?.status, t) || '-'}</Text>
-                <Text style={styles.label}>Test QR Data:</Text>
+                <Text style={styles.label}>{t('test_qr_data_colon')}</Text>
                 <View style={styles.qrRow}>
                     <Text
                         style={styles.qrValue}
@@ -168,7 +168,7 @@ const ViewTest: FC = () => {
 
             {result?.status !== 'closed' && (
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Upload Image</Text>
+                    <Text style={styles.sectionTitle}>{t('upload_image')}</Text>
                     <View style={styles.imageButtonsWrapper}>
                         <TouchableOpacity
                             style={styles.uploadButton}
@@ -182,7 +182,7 @@ const ViewTest: FC = () => {
                                 color={themeColors.white}
                             />
                             <Text style={styles.uploadButtonText}>
-                                Pick from Gallery
+                                {t('pick_from_gallery')}
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
@@ -197,7 +197,7 @@ const ViewTest: FC = () => {
                                 color={themeColors.primary}
                             />
                             <Text style={styles.scanButtonText}>
-                                Launch Scanner
+                                {t('launch_scanner')}
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -238,18 +238,18 @@ const ViewTest: FC = () => {
             )}
 
             <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Detailed Result</Text>
+                <Text style={styles.sectionTitle}>{t('detailed_result')}</Text>
                 {loading ? (
                     <ActivityIndicator size="small" color={themeColors.primary} />
                 ) : error ? (
                     <Text style={styles.error}>{error}</Text>
                 ) : result ? (
                     <View style={styles.resultBox}>
-                        <Text style={styles.resultLabel}>Infection Detected: <Text style={styles.resultValue}>{
+                        <Text style={styles.resultLabel}>{t('infection_detected_colon')}: <Text style={styles.resultValue}>{
                             result.infection_detected ? result.infection_detected ? t('yes') : t('no') : '-'
                         }</Text></Text>
                         <View style={styles.speciesRow}>
-                            <Text style={styles.resultLabel}>Specie: <Text style={styles.resultValue}>{getSpeciesDisplayName(result.species) || '-'}</Text></Text>
+                            <Text style={styles.resultLabel}>{t('specie_colon')}: <Text style={styles.resultValue}>{getSpeciesDisplayName(result.species) || '-'}</Text></Text>
                             {result.species && result.species !== 'Sterile' && (
                                 <TouchableOpacity
                                     style={styles.infoButton}
@@ -265,13 +265,13 @@ const ViewTest: FC = () => {
                                 </TouchableOpacity>
                             )}
                         </View>
-                        <Text style={styles.resultLabel}>Concentration: <Text style={styles.resultValue}>{
+                        <Text style={styles.resultLabel}>{t('concentration_colon')}: <Text style={styles.resultValue}>{
                             result.concentration ? `${result.concentration} CFU/mL` : '-'
                         }</Text></Text>
-                        <Text style={styles.resultLabel}>Test Completed At: <Text style={styles.resultValue}>{test.closed_at ? formatDateTimeGerman(test.closed_at) : '-'}</Text></Text>
+                        <Text style={styles.resultLabel}>{t('test_completed_at_colon')}: <Text style={styles.resultValue}>{test.closed_at ? formatDateTimeGerman(test.closed_at) : '-'}</Text></Text>
                     </View>
                 ) : (
-                    <Text style={styles.placeholder}>No results available for this test yet.</Text>
+                    <Text style={styles.placeholder}>{t('no_results_available_for_this_test_yet')}</Text>
                 )}
             </View>
         </ScrollView>

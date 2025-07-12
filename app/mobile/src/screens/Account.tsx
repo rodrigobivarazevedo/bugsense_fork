@@ -110,7 +110,7 @@ export const Account: FC = () => {
                 setEditingField(null);
             } catch (error) {
                 console.error('Error updating field:', error);
-                Alert.alert(t('Error'), t('Failed to update field. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_field'));
             }
         }
     };
@@ -125,7 +125,7 @@ export const Account: FC = () => {
                 setUser(response.data);
             } catch (error) {
                 console.error('Error updating field:', error);
-                Alert.alert(t('Error'), t('Failed to update field. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_field'));
             }
         }
         setEditingField(null);
@@ -154,7 +154,7 @@ export const Account: FC = () => {
                 setUser(response.data);
             } catch (error) {
                 console.error('Error updating gender:', error);
-                Alert.alert(t('Error'), t('Failed to update gender. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_gender'));
             }
         }
         setEditingField(null);
@@ -171,7 +171,7 @@ export const Account: FC = () => {
                 setUser(response.data);
             } catch (error) {
                 console.error('Error updating date of birth:', error);
-                Alert.alert(t('Error'), t('Failed to update date of birth. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_date_of_birth'));
             }
         }
         setEditingField(null);
@@ -196,10 +196,10 @@ export const Account: FC = () => {
                 const response = await Api.put('users/me/', addressFields);
                 setUser(response.data);
                 setOriginalAddressFields(addressFields);
-                Alert.alert(t('Success'), t('Address updated successfully'));
+                Alert.alert(t('success'), t('address_updated_successfully'));
             } catch (error) {
                 console.error('Error updating address:', error);
-                Alert.alert(t('Error'), t('Failed to update address. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_address'));
             }
         }
     };
@@ -270,11 +270,11 @@ export const Account: FC = () => {
                 const response = await Api.put('users/me/', dataToSend);
                 setUser(response.data);
                 setOriginalSecurityQuestions(securityQuestionsData);
-                Alert.alert(t('Success'), t('Security questions updated successfully'));
+                Alert.alert(t('success'), t('security_questions_updated_successfully'));
                 setSecurityQuestionsEditMode(false);
             } catch (error) {
                 console.error('Error updating security questions:', error);
-                Alert.alert(t('Error'), t('Failed to update security questions. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_security_questions'));
             }
         }
     };
@@ -513,7 +513,7 @@ export const Account: FC = () => {
                         });
                     } else {
                         console.error('Could not load profile', err);
-                        Alert.alert(t('Error'), t('Could not load profile'));
+                        Alert.alert(t('error'), t('could_not_load_profile'));
                     }
                 }
             })();
@@ -538,12 +538,12 @@ export const Account: FC = () => {
 
     const handleDelete = () => {
         Alert.alert(
-            t('Delete My Account'),
-            t('Are you sure you want to delete your account? This cannot be undone.'),
+            t('delete_my_account'),
+            t('are_you_sure_you_want_to_delete_your_account_this_cannot_be_undone'),
             [
-                { text: t('Cancel'), style: 'cancel' },
+                { text: t('cancel'), style: 'cancel' },
                 {
-                    text: t('Delete'),
+                    text: t('delete'),
                     style: 'destructive',
                     onPress: async () => {
                         try {
@@ -555,7 +555,7 @@ export const Account: FC = () => {
                             });
                         } catch (err: any) {
                             console.error('Delete failed', err);
-                            Alert.alert(t('Error'), t('Could not delete account. Please try again.'));
+                            Alert.alert(t('error'), t('could_not_delete_account'));
                         }
                     }
                 }

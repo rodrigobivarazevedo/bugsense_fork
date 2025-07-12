@@ -11,6 +11,7 @@ import { styles } from './Patients.styles';
 import Api from '../api/Client';
 import RenderIcon from '../components/RenderIcon';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 interface Patient {
     id: number;
@@ -42,6 +43,7 @@ function groupPatientsAZ(patients: Patient[]): Section[] {
 
 const Patients: FC = () => {
     const navigation: any = useNavigation();
+    const { t } = useTranslation();
     const [patients, setPatients] = useState<Patient[]>([]);
     const [filtered, setFiltered] = useState<Patient[]>([]);
     const [loading, setLoading] = useState(true);
@@ -56,11 +58,11 @@ const Patients: FC = () => {
             setPatients(response.data);
             setFiltered(response.data);
         } catch (err: any) {
-            setError('Failed to load patients.');
+            setError(t('failed_to_load_patients'));
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [t]);
 
     useFocusEffect(
         useCallback(() => {
@@ -94,7 +96,7 @@ const Patients: FC = () => {
     if (error) {
         return (
             <View style={styles.container}>
-                <Text style={styles.emptyText}>{error}</Text>
+                <Text style={styles.emptyText}>{t('failed_to_load_patients')}</Text>
             </View>
         );
     }
@@ -109,7 +111,7 @@ const Patients: FC = () => {
                         fontSize={20}
                         color="primary"
                     />
-                    <Text style={styles.patientDetails}>Male</Text>
+                    <Text style={styles.patientDetails}>{t('male')}</Text>
                 </View>
             );
         }
@@ -122,7 +124,7 @@ const Patients: FC = () => {
                         fontSize={20}
                         color="primary"
                     />
-                    <Text style={styles.patientDetails}>Female</Text>
+                    <Text style={styles.patientDetails}>{t('female')}</Text>
                 </View>
             );
         }
@@ -135,7 +137,7 @@ const Patients: FC = () => {
                         fontSize={20}
                         color="primary"
                     />
-                    <Text style={styles.patientDetails}>Other</Text>
+                    <Text style={styles.patientDetails}>{t('other')}</Text>
                 </View>
             );
         }
@@ -151,7 +153,7 @@ const Patients: FC = () => {
             <View style={styles.searchBarContainer}>
                 <TextInput
                     style={styles.searchBar}
-                    placeholder="Search patients..."
+                    placeholder={t('search_patients')}
                     value={search}
                     onChangeText={setSearch}
                     autoCapitalize="none"
@@ -161,7 +163,7 @@ const Patients: FC = () => {
             </View>
             {sections.length === 0 ? (
                 <View style={styles.emptyState}>
-                    <Text style={styles.emptyText}>No patients found.</Text>
+                    <Text style={styles.emptyText}>{t('no_patients_found')}</Text>
                 </View>
             ) : (
                 <SectionList
@@ -180,7 +182,7 @@ const Patients: FC = () => {
                                 <Text style={styles.patientName}>{item.full_name}</Text>
                                 <View style={styles.patientDetailsContainer}>
                                     <Text style={styles.patientDetails}>
-                                        {item.dob ? item.dob : 'DOB: -'}
+                                        {item.dob ? item.dob : t('dob_not_available')}
                                     </Text>
                                     {genderIndicator(item.gender)}
                                 </View>
