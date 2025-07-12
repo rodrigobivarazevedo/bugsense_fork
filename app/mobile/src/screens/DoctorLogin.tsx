@@ -43,7 +43,7 @@ const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
             setInstitutions(response.data);
         } catch (err: any) {
             console.error('Failed to fetch institutions', err);
-            Alert.alert(t('Error'), t('Failed to load institutions. Please try again.'));
+            Alert.alert(t('error'), t('failed_to_load_institutions'));
         } finally {
             setInstitutionsLoading(false);
         }
@@ -51,12 +51,12 @@ const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
 
     const handleLogin = async () => {
         if (!selectedInstitution) {
-            Alert.alert(t('Error'), t('Please select an institution'));
+            Alert.alert(t('error'), t('please_select_an_institution'));
             return;
         }
 
         if (!doctorId || !password) {
-            Alert.alert(t('Error'), t('Please fill in all fields'));
+            Alert.alert(t('error'), t('please_fill_in_all_fields'));
             return;
         }
 
@@ -83,7 +83,7 @@ const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
                 err.response?.data?.detail ||
                 err.response?.data?.non_field_errors?.[0] ||
                 err.message;
-            Alert.alert(t('Login failed'), message);
+            Alert.alert(t('login_failed'), message);
         } finally {
             setLoading(false);
         }
@@ -100,7 +100,7 @@ const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
                 <S.InputContainer>
                     <S.InputWrapper>
                         <S.StyledInput
-                            placeholder={t('Select Institution')}
+                            placeholder={t('select_institution')}
                             placeholderTextColor={themeColors.primary}
                             value={selectedInstitution?.name || ''}
                             editable={false}
@@ -119,7 +119,7 @@ const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
                     </S.InputWrapper>
                     {institutionsLoading && (
                         <S.ErrorText style={{ color: themeColors.primary }}>
-                            {t('Loading institutions...')}
+                            {t('loading_institutions')}
                         </S.ErrorText>
                     )}
                     {showInstitutionDropdown && !institutionsLoading && (
@@ -144,7 +144,7 @@ const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
                 <S.InputContainer>
                     <S.InputWrapper>
                         <S.StyledInput
-                            placeholder={t('Doctor ID')}
+                            placeholder={t('doctor_id')}
                             placeholderTextColor={themeColors.primary}
                             value={doctorId}
                             onChangeText={setDoctorId}
@@ -157,7 +157,7 @@ const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
                 <S.InputContainer>
                     <S.InputWrapper>
                         <S.StyledInput
-                            placeholder={t('Enter your password')}
+                            placeholder={t('enter_your_password')}
                             placeholderTextColor={themeColors.primary}
                             secureTextEntry={!passwordVisible}
                             value={password}
@@ -183,15 +183,15 @@ const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
                     {loading ? (
                         <ActivityIndicator color="white" />
                     ) : (
-                        <S.ActionButtonText>{t('Login as Doctor')}</S.ActionButtonText>
+                        <S.ActionButtonText>{t('login_as_doctor')}</S.ActionButtonText>
                     )}
                 </S.ActionButton>
 
                 <S.LinkContainer>
-                    <S.LinkText>{t('Are you a patient?')}</S.LinkText>
+                    <S.LinkText>{t('are_you_a_patient')}</S.LinkText>
                     <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                         <S.Link>
-                            {t('Login as Patient')}
+                            {t('login_as_patient')}
                         </S.Link>
                     </TouchableOpacity>
                 </S.LinkContainer>

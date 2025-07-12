@@ -104,7 +104,7 @@ export const Scan: FC = () => {
 
             if (userType === 'doctor') {
                 if (!selectedPatient) {
-                    Alert.alert('Error', 'No patient selected.');
+                    Alert.alert(t('error'), t('no_patient_selected'));
                     resetScan();
                     return;
                 }
@@ -112,7 +112,7 @@ export const Scan: FC = () => {
             } else {
                 const userString = await AsyncStorage.getItem('user');
                 if (!userString) {
-                    Alert.alert('Error', 'User data not found. Please log in again.');
+                    Alert.alert(t('error'), t('user_data_not_found'));
                     resetScan();
                     return;
                 }
@@ -121,7 +121,7 @@ export const Scan: FC = () => {
                 userId = user.id || user.user_id;
 
                 if (!userId) {
-                    Alert.alert('Error', 'User ID not found. Please log in again.');
+                    Alert.alert(t('error'), t('user_id_not_found'));
                     resetScan();
                     return;
                 }
@@ -141,7 +141,7 @@ export const Scan: FC = () => {
             ]);
         } catch (error) {
             console.error('Error sending QR code data:', error);
-            Alert.alert('Error', 'Failed to process QR code. Please try again.', [
+            Alert.alert(t('error'), t('failed_to_process_qr_code'), [
                 { text: t('ok_capital'), onPress: () => resetScan() }
             ]);
         }
@@ -201,7 +201,7 @@ export const Scan: FC = () => {
                 { text: t('ok_capital'), onPress: () => resetScan() }
             ]);
         } catch (err) {
-            Alert.alert('Upload failed', 'Could not upload image.');
+            Alert.alert(t('error'), t('failed_to_upload_image'));
         } finally {
             setPendingPhoto(null);
         }
@@ -237,7 +237,7 @@ export const Scan: FC = () => {
                 { text: t('ok_capital'), onPress: () => resetScan() }
             ]);
         } catch (err) {
-            Alert.alert('Upload failed', 'Could not upload image.');
+            Alert.alert(t('error'), t('failed_to_upload_image'));
         } finally {
             setPendingPhoto(null);
         }

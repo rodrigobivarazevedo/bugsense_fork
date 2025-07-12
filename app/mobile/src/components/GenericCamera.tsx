@@ -9,6 +9,7 @@ import RenderIcon from './RenderIcon';
 import { Platform } from 'react-native';
 import { themeColors } from '../theme/GlobalTheme';
 import * as S from './GenericCamera.styles';
+import { useTranslation } from 'react-i18next';
 
 interface GenericCameraProps {
   onPictureTaken: (photo: string) => void;
@@ -29,6 +30,7 @@ export const GenericCamera: FC<GenericCameraProps> = ({
   showImagePreview = true,
   scanMode = 'photo',
 }) => {
+  const { t } = useTranslation();
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>('back');
   const [flash, setFlash] = useState<'off' | 'on'>('off');
@@ -39,7 +41,7 @@ export const GenericCamera: FC<GenericCameraProps> = ({
     return (
       <S.Root>
         <S.PermissionsContainer>
-          <S.ButtonText>Loading permissions…</S.ButtonText>
+          <S.ButtonText>{t('loading_permissions')}</S.ButtonText>
         </S.PermissionsContainer>
       </S.Root>
     );
@@ -49,9 +51,9 @@ export const GenericCamera: FC<GenericCameraProps> = ({
     return (
       <S.Root>
         <S.PermissionsContainer>
-          <S.ButtonText>Camera access is required</S.ButtonText>
+          <S.ButtonText>{t('camera_access_is_required')}</S.ButtonText>
           <S.Button onPress={requestPermission}>
-            <S.ButtonText>Grant Permission</S.ButtonText>
+            <S.ButtonText>{t('grant_permission')}</S.ButtonText>
           </S.Button>
         </S.PermissionsContainer>
       </S.Root>
@@ -175,7 +177,7 @@ export const GenericCamera: FC<GenericCameraProps> = ({
           <S.QRCodeOverlay>
             <S.QRCodeFrame />
             <S.QRCodeInstructions>
-              <S.QRCodeInstructionsText>Position QR code within the frame</S.QRCodeInstructionsText>
+              <S.QRCodeInstructionsText>{t('position_qr_code_within_the_frame')}</S.QRCodeInstructionsText>
             </S.QRCodeInstructions>
           </S.QRCodeOverlay>
         </S.StyledCamera>

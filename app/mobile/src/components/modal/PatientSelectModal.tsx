@@ -11,6 +11,7 @@ import {
 import { styles } from './Modal.styles';
 import { themeColors } from '../../theme/GlobalTheme';
 import Api from '../../api/Client';
+import { useTranslation } from 'react-i18next';
 
 interface Patient {
     id: number;
@@ -31,6 +32,7 @@ const PatientSelectModal: FC<PatientSelectModalProps> = ({
     onClose,
     onConfirm,
 }) => {
+    const { t } = useTranslation();
     const [patients, setPatients] = useState<Patient[]>([]);
     const [filtered, setFiltered] = useState<Patient[]>([]);
     const [search, setSearch] = useState('');
@@ -92,10 +94,10 @@ const PatientSelectModal: FC<PatientSelectModalProps> = ({
             <View style={styles.overlay}>
                 <View style={styles.modal}>
                     <View style={styles.modalBody}>
-                        <Text style={styles.heading}>Select Patient</Text>
+                        <Text style={styles.heading}>{t('select_patient')}</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Search patients by name or email..."
+                            placeholder={t('search_patients_by_name_or_email')}
                             value={search}
                             onChangeText={setSearch}
                         />
@@ -104,7 +106,7 @@ const PatientSelectModal: FC<PatientSelectModalProps> = ({
                             <ActivityIndicator size="small" />
                         ) : filtered.length === 0 ? (
                             <Text style={styles.openTestKitsListText}>
-                                No patients found. Please check your patient assignments.
+                                {t('no_patients_found_please_check_your_patient_assignments')}
                             </Text>
                         ) : (
                             <FlatList
@@ -142,14 +144,14 @@ const PatientSelectModal: FC<PatientSelectModalProps> = ({
                     </View>
                     <View style={styles.buttonRow}>
                         <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
-                            <Text style={styles.buttonText}>Cancel</Text>
+                            <Text style={styles.buttonText}>{t('cancel')}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={handleConfirm}
                             style={[styles.confirmButton, { opacity: selectedPatient ? 1 : 0.5 }]}
                             disabled={!selectedPatient}
                         >
-                            <Text style={styles.buttonText}>Confirm</Text>
+                            <Text style={styles.buttonText}>{t('confirm')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

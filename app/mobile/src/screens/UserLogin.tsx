@@ -42,7 +42,7 @@ const UserLogin: FC<LoginScreenProps> = ({ navigation }) => {
                 err.response?.data?.detail ||
                 err.response?.data?.non_field_errors?.[0] ||
                 err.message;
-            Alert.alert(t('Login failed'), message);
+            Alert.alert(t('login_failed'), message);
         }
     };
 
@@ -55,7 +55,7 @@ const UserLogin: FC<LoginScreenProps> = ({ navigation }) => {
             <S.InputContainer>
                 <S.InputWrapper>
                     <S.StyledInput
-                        placeholder={t('Email Address')}
+                        placeholder={t('email_address')}
                         placeholderTextColor={themeColors.primary}
                         value={username}
                         onChangeText={setUsername}
@@ -68,7 +68,7 @@ const UserLogin: FC<LoginScreenProps> = ({ navigation }) => {
             <S.InputContainer>
                 <S.InputWrapper>
                     <S.StyledInput
-                        placeholder={t('Enter your password')}
+                        placeholder={t('enter_your_password')}
                         placeholderTextColor={themeColors.primary}
                         secureTextEntry={!passwordVisible}
                         value={password}
@@ -98,29 +98,29 @@ const UserLogin: FC<LoginScreenProps> = ({ navigation }) => {
             <S.ForgotPasswordButton>
                 <TouchableOpacity onPress={() => navigation.navigate('PasswordRecoveryStep1', { initialEmail: username })}>
                     <S.ForgotPasswordText>
-                        {t('Forgot password?')}
+                        {t('forgot_password')}
                     </S.ForgotPasswordText>
                 </TouchableOpacity>
             </S.ForgotPasswordButton>
 
             <S.ActionButton onPress={handleLogin} disabled={!username || !password}>
-                <S.ActionButtonText>{t('Login')}</S.ActionButtonText>
+                <S.ActionButtonText>{t('login')}</S.ActionButtonText>
             </S.ActionButton>
 
             <S.LinkContainer>
-                <S.LinkText>{t('Don\'t have an account?')}</S.LinkText>
+                <S.LinkText>{t('dont_have_an_account')}</S.LinkText>
                 <TouchableOpacity onPress={() => navigation.navigate('Register')}>
                     <S.Link>
-                        {t('Register')}
+                        {t('register')}
                     </S.Link>
                 </TouchableOpacity>
             </S.LinkContainer>
 
             <S.LinkContainer>
-                <S.LinkText>{t('Are you medical personnel?')}</S.LinkText>
+                <S.LinkText>{t('are_you_medical_personnel')}</S.LinkText>
                 <TouchableOpacity onPress={() => navigation.navigate('DoctorLogin')}>
                     <S.Link>
-                        {t('Login as Doctor')}
+                        {t('login_as_doctor')}
                     </S.Link>
                 </TouchableOpacity>
             </S.LinkContainer>

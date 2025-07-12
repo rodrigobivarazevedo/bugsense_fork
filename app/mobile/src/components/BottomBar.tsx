@@ -8,17 +8,17 @@ import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useTranslation } from 'react-i18next';
 
 const USER_TABS = [
-    { key: 'home', label: 'Home', family: 'foundation', icon: 'home' },
-    { key: 'scan', label: 'Scan', family: 'entypo', icon: 'camera' },
-    { key: 'tests', label: 'Tests', family: 'foundation', icon: 'results' },
-    { key: 'more', label: 'More', family: 'feather', icon: 'more-horizontal' },
+    { key: 'home', label: 'home', family: 'foundation', icon: 'home' },
+    { key: 'scan', label: 'scan', family: 'entypo', icon: 'camera' },
+    { key: 'tests', label: 'tests', family: 'foundation', icon: 'results' },
+    { key: 'more', label: 'more', family: 'feather', icon: 'more-horizontal' },
 ];
 
 const DOCTOR_TABS = [
-    { key: 'home', label: 'Home', family: 'foundation', icon: 'home' },
-    { key: 'scan', label: 'Scan', family: 'entypo', icon: 'camera' },
-    { key: 'patients', label: 'Patients', family: 'ionIcons', icon: 'people' },
-    { key: 'more', label: 'More', family: 'feather', icon: 'more-horizontal' },
+    { key: 'home', label: 'home', family: 'foundation', icon: 'home' },
+    { key: 'scan', label: 'scan', family: 'entypo', icon: 'camera' },
+    { key: 'patients', label: 'patients', family: 'ionIcons', icon: 'people' },
+    { key: 'more', label: 'more', family: 'feather', icon: 'more-horizontal' },
 ];
 
 const BottomBar: FC<BottomTabBarProps> = ({ state, navigation }) => {

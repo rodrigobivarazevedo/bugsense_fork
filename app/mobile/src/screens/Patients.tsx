@@ -153,7 +153,7 @@ const Patients: FC = () => {
             <View style={styles.searchBarContainer}>
                 <TextInput
                     style={styles.searchBar}
-                    placeholder={t('search_patients')}
+                    placeholder={t('search_patients_by_name_or_email')}
                     value={search}
                     onChangeText={setSearch}
                     autoCapitalize="none"
@@ -163,7 +163,7 @@ const Patients: FC = () => {
             </View>
             {sections.length === 0 ? (
                 <View style={styles.emptyState}>
-                    <Text style={styles.emptyText}>{t('no_patients_found')}</Text>
+                    <Text style={styles.emptyText}>{t('no_patients_found_please_check_your_patient_assignments')}</Text>
                 </View>
             ) : (
                 <SectionList

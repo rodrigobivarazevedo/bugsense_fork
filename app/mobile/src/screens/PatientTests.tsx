@@ -60,7 +60,7 @@ const PatientTests: FC = () => {
                     });
                     setResults(response.data);
                 } catch (err: any) {
-                    setError('Failed to load patient test results.');
+                    setError(t('failed_to_load_patient_test_results'));
                 } finally {
                     setLoading(false);
                 }
@@ -90,7 +90,7 @@ const PatientTests: FC = () => {
         return (
             <View style={styles.container}>
                 <View style={styles.noTestsContainer}>
-                    <Text style={styles.noTestsText}>No tests available for this patient</Text>
+                    <Text style={styles.noTestsText}>{t('no_tests_available_for_this_patient')}</Text>
                 </View>
             </View>
         );
@@ -131,12 +131,12 @@ const PatientTests: FC = () => {
                             </View>
                             {item.infection_detected !== undefined && (
                                 <Text style={styles.listItemValue}>
-                                    Infection: {item.infection_detected ? t('yes') : t('no')}
+                                    {t('infection_colon')}: {item.infection_detected ? t('yes') : t('no')}
                                 </Text>
                             )}
                             {item.species && (
                                 <Text style={styles.listItemValue}>
-                                    Species: {item.species}
+                                    {t('species_colon')}: {item.species}
                                 </Text>
                             )}
                         </View>

@@ -3,6 +3,7 @@ import { Modal, View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndic
 import { styles } from './Modal.styles';
 import { themeColors } from '../../theme/GlobalTheme';
 import { formatDateTimeGerman } from '../../utils/DateTimeFormatter';
+import { useTranslation } from 'react-i18next';
 
 interface TestKit {
     id: number;
@@ -24,6 +25,7 @@ const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
     onConfirm,
     fetchTestKits,
 }) => {
+    const { t } = useTranslation();
     const [testKits, setTestKits] = useState<TestKit[]>([]);
     const [filtered, setFiltered] = useState<TestKit[]>([]);
     const [search, setSearch] = useState('');
@@ -72,10 +74,10 @@ const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
             <View style={styles.overlay}>
                 <View style={styles.modal}>
                     <View style={styles.modalBody}>
-                        <Text style={styles.heading}>Select Test Kit</Text>
+                        <Text style={styles.heading}>{t('select_test_kit')}</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Search test kits by QR data..."
+                            placeholder={t('search_test_kits_by_qr_data')}
                             value={search}
                             onChangeText={setSearch}
                         />
@@ -84,7 +86,7 @@ const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
                             <ActivityIndicator size="small" />
                         ) : filtered.length === 0 ? (
                             <Text style={styles.openTestKitsListText}>
-                                No ongoing test kits found. Please scan a new test kit.
+                                {t('no_ongoing_test_kits_found_please_scan_a_new_test_kit')}
                             </Text>
                         ) : (
                             <FlatList
@@ -122,14 +124,14 @@ const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
                     </View>
                     <View style={styles.buttonRow}>
                         <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
-                            <Text style={styles.buttonText}>Cancel</Text>
+                            <Text style={styles.buttonText}>{t('cancel')}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={handleConfirm}
                             style={[styles.confirmButton, { opacity: selectedQr ? 1 : 0.5 }]}
                             disabled={!selectedQr}
                         >
-                            <Text style={styles.buttonText}>Confirm</Text>
+                            <Text style={styles.buttonText}>{t('confirm')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

@@ -35,7 +35,7 @@ const PasswordRecoveryStep3: FC<PasswordRecoveryStep3Props> = ({ navigation }) =
         setNewPassword(text);
         setPasswordError(validatePassword(t, text, email, ''));
         if (confirmPassword && text !== confirmPassword) {
-            setConfirmPasswordError(t('Passwords do not match'));
+            setConfirmPasswordError(t('passwords_do_not_match'));
         } else {
             setConfirmPasswordError('');
         }
@@ -44,7 +44,7 @@ const PasswordRecoveryStep3: FC<PasswordRecoveryStep3Props> = ({ navigation }) =
     const handleConfirmPasswordChange = (text: string) => {
         setConfirmPassword(text);
         if (text !== newPassword) {
-            setConfirmPasswordError(t('Passwords do not match'));
+            setConfirmPasswordError(t('passwords_do_not_match'));
         } else {
             setConfirmPasswordError('');
         }
@@ -52,17 +52,17 @@ const PasswordRecoveryStep3: FC<PasswordRecoveryStep3Props> = ({ navigation }) =
 
     const handleSetNewPassword = async () => {
         if (!newPassword.trim()) {
-            Alert.alert(t('Error'), t('Please enter a new password'));
+            Alert.alert(t('Error'), t('please_enter_a_new_password'));
             return;
         }
 
         if (!confirmPassword.trim()) {
-            Alert.alert(t('Error'), t('Please confirm your new password'));
+            Alert.alert(t('Error'), t('please_confirm_your_new_password'));
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            Alert.alert(t('Error'), t('Passwords do not match'));
+            Alert.alert(t('Error'), t('passwords_do_not_match'));
             return;
         }
 
@@ -95,7 +95,7 @@ const PasswordRecoveryStep3: FC<PasswordRecoveryStep3Props> = ({ navigation }) =
                 err.response?.data?.detail ||
                 err.response?.data?.non_field_errors?.[0] ||
                 err.message ||
-                t('Failed to reset password');
+                t('failed_to_reset_password');
             Alert.alert(t('Error'), message);
         } finally {
             setIsLoading(false);
@@ -119,13 +119,13 @@ const PasswordRecoveryStep3: FC<PasswordRecoveryStep3Props> = ({ navigation }) =
             >
                 <S.ScrollView keyboardShouldPersistTaps="handled">
                     <S.LogoContainer>
-                        <S.StepTitle>{t('Set New Password')}</S.StepTitle>
+                        <S.StepTitle>{t('set_new_password')}</S.StepTitle>
                     </S.LogoContainer>
 
                     <S.InputContainer>
                         <S.InputWrapper>
                             <S.StyledInput
-                                placeholder={t('Email Address')}
+                                placeholder={t('email_address')}
                                 placeholderTextColor={themeColors.primary}
                                 value={email}
                                 editable={false}
@@ -137,7 +137,7 @@ const PasswordRecoveryStep3: FC<PasswordRecoveryStep3Props> = ({ navigation }) =
                     <S.InputContainer>
                         <S.InputWrapper>
                             <S.StyledInput
-                                placeholder={t('New Password')}
+                                placeholder={t('new_password')}
                                 placeholderTextColor={themeColors.primary}
                                 value={newPassword}
                                 onChangeText={handleNewPasswordChange}
@@ -173,7 +173,7 @@ const PasswordRecoveryStep3: FC<PasswordRecoveryStep3Props> = ({ navigation }) =
                     <S.InputContainer>
                         <S.InputWrapper>
                             <S.StyledInput
-                                placeholder={t('Confirm New Password')}
+                                placeholder={t('confirm_new_password')}
                                 placeholderTextColor={themeColors.primary}
                                 value={confirmPassword}
                                 onChangeText={handleConfirmPasswordChange}
@@ -208,15 +208,15 @@ const PasswordRecoveryStep3: FC<PasswordRecoveryStep3Props> = ({ navigation }) =
 
                     <S.ActionButton onPress={handleSetNewPassword} disabled={!isFormValid}>
                         <S.ActionButtonText>
-                            {isLoading ? t('Loading...') : t('Set New Password')}
+                            {isLoading ? t('loading') : t('set_new_password')}
                         </S.ActionButtonText>
                     </S.ActionButton>
 
                     <S.LinkContainer>
-                        <S.LinkText>{t('Back to login?')}</S.LinkText>
+                        <S.LinkText>{t('back_to_login')}</S.LinkText>
                         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                             <S.Link>
-                                {t('Login')}
+                                {t('login')}
                             </S.Link>
                         </TouchableOpacity>
                     </S.LinkContainer>

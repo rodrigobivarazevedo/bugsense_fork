@@ -61,7 +61,7 @@ export const Notifications: FC = () => {
 
                 setNotifications(readyTests);
             } catch (err: any) {
-                setError('Failed to load notifications.');
+                setError(t('failed_to_load_notifications'));
             } finally {
                 setLoading(false);
             }
