@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -9,10 +9,10 @@ import {
 import { styles } from './Notifications.styles';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useNavigation, useIsFocused, useFocusEffect } from '@react-navigation/native';
 import { formatDateTimeGerman } from '../utils/DateTimeFormatter';
-import { getTranslatedTestStatus } from '../utils/TestResultsStatus';
 import { useTranslation } from 'react-i18next';
+import { useNotificationContext } from '../context/NotificationContext';
 
 interface NotificationItem {
     id: number;
@@ -34,6 +34,7 @@ export const Notifications: FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [userType, setUserType] = useState<string>('patient');
+    const { refetch } = useNotificationContext();
 
     useEffect(() => {
         AsyncStorage.getItem('userType').then(type => {
@@ -72,6 +73,12 @@ export const Notifications: FC = () => {
     const handleNotificationPress = (notification: NotificationItem) => {
         navigation.navigate('ViewTest', { test: notification });
     };
+
+    useFocusEffect(
+        React.useCallback(() => {
+            refetch();
+        }, [refetch])
+    );
 
     const renderNotificationItem = ({ item }: { item: NotificationItem }) => (
         <TouchableOpacity

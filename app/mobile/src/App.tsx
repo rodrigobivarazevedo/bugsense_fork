@@ -37,6 +37,7 @@ import ViewPatient from './screens/ViewPatient';
 import PatientTests from './screens/PatientTests';
 import News from './screens/News';
 import Notifications from './screens/Notifications';
+import { NotificationProvider } from './context/NotificationContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -97,45 +98,47 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <I18nextProvider i18n={i18n}>
-        <NavigationContainer ref={navRef}>
-          <AppContainer>
-            <ContentContainer>
-              <Stack.Navigator
-                screenOptions={{
-                  header: (props: NativeStackHeaderProps) => {
-                    if (Object.keys(WRAPPED_SCREENS_AND_TITLES_TRANSLATION_KEYS).includes(props.route.name)) {
-                      return (
-                        <HeaderBar
-                          {...props}
-                          headerTitle={WRAPPED_SCREENS_AND_TITLES_TRANSLATION_KEYS[props.route.name] || props.route.name}
-                        />
-                      );
-                    }
-                    return null;
-                  },
-                }}
-              >
-                <Stack.Screen name="Login" component={UserLogin} />
-                <Stack.Screen name="Register" component={Register} />
-                <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-                <Stack.Screen name="PasswordRecoveryStep1" component={PasswordRecoveryStep1} />
-                <Stack.Screen name="PasswordRecoveryStep2" component={PasswordRecoveryStep2} />
-                <Stack.Screen name="PasswordRecoveryStep3" component={PasswordRecoveryStep3} />
-                <Stack.Screen name="DoctorLogin" component={DoctorLogin} />
-                <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
-                <Stack.Screen name="LanguageSelection" component={LanguageSelection} />
-                <Stack.Screen name="TimeFormatSelection" component={TimeFormatSelection} />
-                <Stack.Screen name="Discover" component={Discover} />
-                <Stack.Screen name="BacteriaRouter" component={BacteriaRouter} />
-                <Stack.Screen name="ViewTest" component={ViewTest} />
-                <Stack.Screen name="ViewPatient" component={ViewPatient} />
-                <Stack.Screen name="PatientTests" component={PatientTests} />
-                <Stack.Screen name="News" component={News} />
-                <Stack.Screen name="Notifications" component={Notifications} />
-              </Stack.Navigator>
-            </ContentContainer>
-          </AppContainer>
-        </NavigationContainer>
+        <NotificationProvider>
+          <NavigationContainer ref={navRef}>
+            <AppContainer>
+              <ContentContainer>
+                <Stack.Navigator
+                  screenOptions={{
+                    header: (props: NativeStackHeaderProps) => {
+                      if (Object.keys(WRAPPED_SCREENS_AND_TITLES_TRANSLATION_KEYS).includes(props.route.name)) {
+                        return (
+                          <HeaderBar
+                            {...props}
+                            headerTitle={WRAPPED_SCREENS_AND_TITLES_TRANSLATION_KEYS[props.route.name] || props.route.name}
+                          />
+                        );
+                      }
+                      return null;
+                    },
+                  }}
+                >
+                  <Stack.Screen name="Login" component={UserLogin} />
+                  <Stack.Screen name="Register" component={Register} />
+                  <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+                  <Stack.Screen name="PasswordRecoveryStep1" component={PasswordRecoveryStep1} />
+                  <Stack.Screen name="PasswordRecoveryStep2" component={PasswordRecoveryStep2} />
+                  <Stack.Screen name="PasswordRecoveryStep3" component={PasswordRecoveryStep3} />
+                  <Stack.Screen name="DoctorLogin" component={DoctorLogin} />
+                  <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
+                  <Stack.Screen name="LanguageSelection" component={LanguageSelection} />
+                  <Stack.Screen name="TimeFormatSelection" component={TimeFormatSelection} />
+                  <Stack.Screen name="Discover" component={Discover} />
+                  <Stack.Screen name="BacteriaRouter" component={BacteriaRouter} />
+                  <Stack.Screen name="ViewTest" component={ViewTest} />
+                  <Stack.Screen name="ViewPatient" component={ViewPatient} />
+                  <Stack.Screen name="PatientTests" component={PatientTests} />
+                  <Stack.Screen name="News" component={News} />
+                  <Stack.Screen name="Notifications" component={Notifications} />
+                </Stack.Navigator>
+              </ContentContainer>
+            </AppContainer>
+          </NavigationContainer>
+        </NotificationProvider>
       </I18nextProvider>
     </SafeAreaProvider>
   );

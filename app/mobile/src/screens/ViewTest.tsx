@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -9,7 +9,7 @@ import {
     Alert,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { styles } from './ViewTest.styles';
@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import ScanInstructionsModal from '../components/modal/ScanInstructionsModal';
 import { formatDateTimeGerman } from '../utils/DateTimeFormatter';
 import { navigateToBacteriaDiscoverPage, getSpeciesDisplayName } from '../utils/BacteriaSpeciesUtils';
+import { useNotificationContext } from '../context/NotificationContext';
 
 const ViewTest: FC = () => {
     const { t } = useTranslation();
@@ -36,6 +37,7 @@ const ViewTest: FC = () => {
     const [copied, setCopied] = useState(false);
     const [showScanModal, setShowScanModal] = useState(false);
     const [shouldOpenPicker, setShouldOpenPicker] = useState(false);
+    const { refetch } = useNotificationContext();
 
     useEffect(() => {
         const fetchResult = async () => {
@@ -58,6 +60,12 @@ const ViewTest: FC = () => {
         };
         fetchResult();
     }, [test?.qr_data]);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            refetch();
+        }, [refetch])
+    );
 
     const pickImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();

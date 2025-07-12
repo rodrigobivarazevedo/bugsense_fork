@@ -74,6 +74,7 @@ const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
             await AsyncStorage.setItem('refreshToken', refresh);
             await AsyncStorage.setItem('user', JSON.stringify(doctor));
             await AsyncStorage.setItem('userType', 'doctor');
+            await AsyncStorage.setItem('token', access);
 
             console.log('Doctor login successful:', { doctorId, institution: selectedInstitution.name });
             navigation.navigate('Main', { screen: 'Home' });

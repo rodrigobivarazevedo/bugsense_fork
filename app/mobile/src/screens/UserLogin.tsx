@@ -33,6 +33,7 @@ const UserLogin: FC<LoginScreenProps> = ({ navigation }) => {
             await AsyncStorage.setItem('refreshToken', refresh);
             await AsyncStorage.setItem('user', JSON.stringify(user));
             await AsyncStorage.setItem('userType', 'patient');
+            await AsyncStorage.setItem('token', access);
 
             console.log('Login attempted with:', { username });
             navigation.navigate('Main', { screen: 'Home' });
