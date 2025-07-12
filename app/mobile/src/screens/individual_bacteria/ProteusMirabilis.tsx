@@ -17,7 +17,7 @@ const ProteusMirabilis: FC = () => {
     const bacteria = {
         id: '8',
         name: t('bacteria.proteus_mirabilis.name'),
-        scientificName: t('bacteria.proteus_mirabilis.scientific_name'),
+        scientificName: t('bacteria.proteus_mirabilis.scientific_name_abbreviated'),
         image: require('../../assets/images/bacteria/proteus-mirabilis.png'),
         description: t('bacteria.proteus_mirabilis.description'),
         type: t('bacteria.proteus_mirabilis.type'),

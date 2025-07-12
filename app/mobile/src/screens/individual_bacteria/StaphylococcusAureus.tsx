@@ -17,7 +17,7 @@ const StaphylococcusAureus: FC = () => {
     const bacteria = {
         id: '5',
         name: t('bacteria.staphylococcus_aureus.name'),
-        scientificName: t('bacteria.staphylococcus_aureus.scientific_name'),
+        scientificName: t('bacteria.staphylococcus_aureus.scientific_name_abbreviated'),
         image: require('../../assets/images/bacteria/staphylococcus-aureus.png'),
         description: t('bacteria.staphylococcus_aureus.description'),
         type: t('bacteria.staphylococcus_aureus.type'),

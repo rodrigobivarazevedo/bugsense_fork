@@ -18,7 +18,7 @@ const PseudomonasAeruginosa: FC = () => {
     const bacteria = {
         id: '7',
         name: t('bacteria.pseudomonas_aeruginosa.name'),
-        scientificName: t('bacteria.pseudomonas_aeruginosa.scientific_name'),
+        scientificName: t('bacteria.pseudomonas_aeruginosa.scientific_name_abbreviated'),
         image: require('../../assets/images/bacteria/pseudomonas-aeruginosa.png'),
         description: t('bacteria.pseudomonas_aeruginosa.description'),
         type: t('bacteria.pseudomonas_aeruginosa.type'),

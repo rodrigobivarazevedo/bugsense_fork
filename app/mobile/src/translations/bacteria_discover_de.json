@@ -2,7 +2,7 @@
     "bacteria": {
         "pseudomonas_aeruginosa": {
             "name": "Pseudomonas aeruginosa",
-            "scientific_name": "Pseudomonas aeruginosa",
+            "scientific_name_abbreviated": "P. aeruginosa",
             "description": "Pseudomonas aeruginosa ist ein gramnegatives Bakterium, das ein wichtiger opportunistischer Krankheitserreger ist und besonders gefährlich für immungeschwächte Patienten. Es ist bekannt für seine bemerkenswerte Fähigkeit, Resistenzen gegen mehrere Antibiotika zu entwickeln und in verschiedenen Umgebungen zu überleben.",
             "type": "Gram-negativ",
             "shape": "Stäbchenförmig",
@@ -44,7 +44,7 @@
         },
         "escherichia_coli": {
             "name": "Escherichia coli",
-            "scientific_name": "Escherichia coli",
+            "scientific_name_abbreviated": "E. coli",
             "description": "Escherichia coli (E. coli) ist eine Bakterienart, die normalerweise im Darm von Menschen und Tieren lebt. Während die meisten Stämme harmlos sind, können einige schwere Lebensmittelvergiftungen und andere Infektionen verursachen.",
             "type": "Gram-negativ",
             "shape": "Stäbchenförmig",
@@ -84,7 +84,7 @@
         },
         "enterobacter_hormaechei": {
             "name": "Enterobacter hormaechei",
-            "scientific_name": "Enterobacter hormaechei",
+            "scientific_name_abbreviated": "E. hormaechei",
             "description": "Enterobacter hormaechei ist ein gramnegatives Bakterium aus der Familie der Enterobacteriaceae. Es ist ein aufkommender opportunistischer Erreger, der verschiedene Infektionen verursachen kann, insbesondere im Gesundheitswesen und bei immungeschwächten Patienten.",
             "type": "Gram-negativ",
             "shape": "Stäbchenförmig",
@@ -125,7 +125,7 @@
         },
         "enterococcus_faecalis": {
             "name": "Enterococcus faecalis",
-            "scientific_name": "Enterococcus faecalis",
+            "scientific_name_abbreviated": "E. faecalis",
             "description": "Enterococcus faecalis ist ein grampositives Bakterium, das zur normalen Darmflora von Menschen und Tieren gehört. Während es bei gesunden Personen meist harmlos ist, kann es insbesondere in Krankenhäusern und bei immungeschwächten Patienten schwere Infektionen verursachen.",
             "type": "Gram-positiv",
             "shape": "Kokken (rund)",
@@ -166,7 +166,7 @@
         },
         "klebsiella_pneumoniae": {
             "name": "Klebsiella pneumoniae",
-            "scientific_name": "Klebsiella pneumoniae",
+            "scientific_name_abbreviated": "K. pneumoniae",
             "description": "Klebsiella pneumoniae ist ein gramnegatives Bakterium, das verschiedene Infektionen verursachen kann, insbesondere im Gesundheitswesen. Es ist bekannt für seine Fähigkeit, Resistenzen gegen mehrere Antibiotika zu entwickeln, was es zu einem bedeutenden Problem in der modernen Medizin macht.",
             "type": "Gram-negativ",
             "shape": "Stäbchenförmig",
@@ -207,7 +207,7 @@
         },
         "proteus_mirabilis": {
             "name": "Proteus mirabilis",
-            "scientific_name": "Proteus mirabilis",
+            "scientific_name_abbreviated": "P. mirabilis",
             "description": "Proteus mirabilis ist ein gramnegatives Bakterium, das eine häufige Ursache für Harnwegsinfektionen ist und Harnsteine bilden kann. Es ist bekannt für seine charakteristische Schwarmmotilität und seine Fähigkeit, Urease zu produzieren, was zur Bildung von Struvitsteinen in den Harnwegen führen kann.",
             "type": "Gram-negativ",
             "shape": "Stäbchenförmig",
@@ -248,7 +248,7 @@
         },
         "staphylococcus_saprophyticus": {
             "name": "Staphylococcus saprophyticus",
-            "scientific_name": "Staphylococcus saprophyticus",
+            "scientific_name_abbreviated": "S. saprophyticus",
             "description": "Staphylococcus saprophyticus ist ein grampositives Bakterium, das eine häufige Ursache für Harnwegsinfektionen ist, insbesondere bei jungen sexuell aktiven Frauen. Es ist Teil der normalen Hautflora und ist im Allgemeinen weniger pathogen als andere Staphylokokken-Arten.",
             "type": "Gram-positiv",
             "shape": "Kokken (rund)",

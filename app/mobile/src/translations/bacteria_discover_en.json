@@ -2,7 +2,7 @@
     "bacteria": {
         "pseudomonas_aeruginosa": {
             "name": "Pseudomonas aeruginosa",
-            "scientific_name": "Pseudomonas aeruginosa",
+            "scientific_name_abbreviated": "P. aeruginosa",
             "description": "Pseudomonas aeruginosa is a Gram-negative bacterium that is a major opportunistic pathogen, particularly dangerous for immunocompromised patients. It is known for its remarkable ability to develop resistance to multiple antibiotics and its ability to survive in diverse environments.",
             "type": "Gram-negative",
             "shape": "Rod-shaped",
@@ -42,49 +42,9 @@
                 "description": "Treatment of Pseudomonas aeruginosa infections is extremely challenging due to its intrinsic and acquired resistance to many antibiotics. It often requires combination therapy with agents like piperacillin-tazobactam, ceftazidime, or carbapenems. The bacterium can develop resistance during treatment, making susceptibility testing crucial. In severe cases, newer antibiotics like ceftolozane-tazobactam or ceftazidime-avibactam may be necessary."
             }
         },
-        "salmonella": {
-            "name": "Salmonella",
-            "scientific_name": "Salmonella enterica",
-            "description": "Salmonella is a group of bacteria that can cause foodborne illness. There are many different types of Salmonella bacteria, and they can cause a range of illnesses from mild gastroenteritis to severe systemic infections.",
-            "type": "Gram-negative",
-            "shape": "Rod-shaped",
-            "transmission": {
-                "title": "Transmission",
-                "methods": [
-                    "Contaminated food (especially eggs, poultry, and dairy)",
-                    "Contact with infected animals",
-                    "Person-to-person contact",
-                    "Contaminated water"
-                ]
-            },
-            "symptoms": {
-                "title": "Symptoms",
-                "list": [
-                    "Diarrhea",
-                    "Fever",
-                    "Abdominal cramps",
-                    "Nausea and vomiting",
-                    "Headache",
-                    "Dehydration"
-                ]
-            },
-            "prevention": {
-                "title": "Prevention",
-                "tips": [
-                    "Cook poultry, eggs, and meat thoroughly",
-                    "Wash hands after handling raw meat or eggs",
-                    "Clean kitchen surfaces and utensils properly",
-                    "Refrigerate food promptly and properly"
-                ]
-            },
-            "treatment": {
-                "title": "Treatment",
-                "description": "Most cases of Salmonella infection resolve on their own within 4-7 days. Treatment focuses on preventing dehydration by drinking plenty of fluids. In severe cases, antibiotics may be prescribed. Hospitalization may be necessary for severe cases or for people at high risk of complications."
-            }
-        },
         "staphylococcus_aureus": {
             "name": "Staphylococcus aureus",
-            "scientific_name": "Staphylococcus aureus",
+            "scientific_name_abbreviated": "S. aureus",
             "description": "Staphylococcus aureus is a Gram-positive bacterium that can cause a wide range of infections, from minor skin infections to life-threatening conditions. It is known for its ability to develop resistance to antibiotics, particularly methicillin-resistant S. aureus (MRSA).",
             "type": "Gram-positive",
             "shape": "Cocci (spherical)",
@@ -125,7 +85,7 @@
         },
         "staphylococcus_saprophyticus": {
             "name": "Staphylococcus saprophyticus",
-            "scientific_name": "Staphylococcus saprophyticus",
+            "scientific_name_abbreviated": "S. saprophyticus",
             "description": "Staphylococcus saprophyticus is a Gram-positive bacterium that is a common cause of urinary tract infections, particularly in young sexually active women. It is part of the normal skin flora and is generally less pathogenic than other staphylococcal species.",
             "type": "Gram-positive",
             "shape": "Cocci (spherical)",
@@ -166,7 +126,7 @@
         },
         "escherichia_coli": {
             "name": "Escherichia coli",
-            "scientific_name": "Escherichia coli",
+            "scientific_name_abbreviated": "E. coli",
             "description": "Escherichia coli (E. coli) is a type of bacteria that normally lives in the intestines of people and animals. While most strains are harmless, some can cause serious food poisoning and other infections.",
             "type": "Gram-negative",
             "shape": "Rod-shaped",
@@ -206,7 +166,7 @@
         },
         "enterobacter_hormaechei": {
             "name": "Enterobacter hormaechei",
-            "scientific_name": "Enterobacter hormaechei",
+            "scientific_name_abbreviated": "E. hormaechei",
             "description": "Enterobacter hormaechei is a Gram-negative bacterium that belongs to the Enterobacteriaceae family. It is an emerging opportunistic pathogen that can cause various infections, particularly in healthcare settings and immunocompromised patients.",
             "type": "Gram-negative",
             "shape": "Rod-shaped",
@@ -247,7 +207,7 @@
         },
         "enterococcus_faecalis": {
             "name": "Enterococcus faecalis",
-            "scientific_name": "Enterococcus faecalis",
+            "scientific_name_abbreviated": "E. faecalis",
             "description": "Enterococcus faecalis is a Gram-positive bacterium that is part of the normal intestinal flora in humans and animals. While generally harmless in healthy individuals, it can cause serious infections, particularly in hospital settings and in immunocompromised patients.",
             "type": "Gram-positive",
             "shape": "Cocci (spherical)",
@@ -288,7 +248,7 @@
         },
         "klebsiella_pneumoniae": {
             "name": "Klebsiella pneumoniae",
-            "scientific_name": "Klebsiella pneumoniae",
+            "scientific_name_abbreviated": "K. pneumoniae",
             "description": "Klebsiella pneumoniae is a Gram-negative bacterium that can cause various infections, particularly in healthcare settings. It is known for its ability to develop resistance to multiple antibiotics, making it a significant concern in modern medicine.",
             "type": "Gram-negative",
             "shape": "Rod-shaped",
@@ -329,7 +289,7 @@
         },
         "proteus_mirabilis": {
             "name": "Proteus mirabilis",
-            "scientific_name": "Proteus mirabilis",
+            "scientific_name_abbreviated": "P. mirabilis",
             "description": "Proteus mirabilis is a Gram-negative bacterium that is a common cause of urinary tract infections and can form urinary stones. It is known for its characteristic swarming motility and its ability to produce urease, which can lead to the formation of struvite stones in the urinary tract.",
             "type": "Gram-negative",
             "shape": "Rod-shaped",

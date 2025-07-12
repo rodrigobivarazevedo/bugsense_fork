@@ -17,7 +17,7 @@ const StaphylococcusSaprophyticus: FC = () => {
     const bacteria = {
         id: '4',
         name: t('bacteria.staphylococcus_saprophyticus.name'),
-        scientificName: t('bacteria.staphylococcus_saprophyticus.scientific_name'),
+        scientificName: t('bacteria.staphylococcus_saprophyticus.scientific_name_abbreviated'),
         image: require('../../assets/images/bacteria/staphylococcus-saprophyticus.png'),
         description: t('bacteria.staphylococcus_saprophyticus.description'),
         type: t('bacteria.staphylococcus_saprophyticus.type'),

@@ -17,7 +17,7 @@ const EscherichiaColi: FC = () => {
     const bacteria = {
         id: '1',
         name: t('bacteria.escherichia_coli.name'),
-        scientificName: t('bacteria.escherichia_coli.scientific_name'),
+        scientificName: t('bacteria.escherichia_coli.scientific_name_abbreviated'),
         image: require('../../assets/images/bacteria/escherichia-coli.png'),
         description: t('bacteria.escherichia_coli.description'),
         type: t('bacteria.escherichia_coli.type'),

@@ -17,7 +17,7 @@ const EnterobacterHormaechei: FC = () => {
     const bacteria = {
         id: '6',
         name: t('bacteria.enterobacter_hormaechei.name'),
-        scientificName: t('bacteria.enterobacter_hormaechei.scientific_name'),
+        scientificName: t('bacteria.enterobacter_hormaechei.scientific_name_abbreviated'),
         image: require('../../assets/images/bacteria/enterobacter-hormaechei.png'),
         description: t('bacteria.enterobacter_hormaechei.description'),
         type: t('bacteria.enterobacter_hormaechei.type'),

@@ -17,7 +17,7 @@ const EnterococcusFaecalis: FC = () => {
     const bacteria = {
         id: '2',
         name: t('bacteria.enterococcus_faecalis.name'),
-        scientificName: t('bacteria.enterococcus_faecalis.scientific_name'),
+        scientificName: t('bacteria.enterococcus_faecalis.scientific_name_abbreviated'),
         image: require('../../assets/images/bacteria/enterococcus-faecalis.png'),
         description: t('bacteria.enterococcus_faecalis.description'),
         type: t('bacteria.enterococcus_faecalis.type'),

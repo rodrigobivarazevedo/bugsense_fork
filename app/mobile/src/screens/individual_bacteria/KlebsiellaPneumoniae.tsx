@@ -17,7 +17,7 @@ const KlebsiellaPneumoniae: FC = () => {
     const bacteria = {
         id: '3',
         name: t('bacteria.klebsiella_pneumoniae.name'),
-        scientificName: t('bacteria.klebsiella_pneumoniae.scientific_name'),
+        scientificName: t('bacteria.klebsiella_pneumoniae.scientific_name_abbreviated'),
         image: require('../../assets/images/bacteria/klebsiella-pneumoniae.png'),
         description: t('bacteria.klebsiella_pneumoniae.description'),
         type: t('bacteria.klebsiella_pneumoniae.type'),
