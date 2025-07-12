@@ -1,55 +1,36 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import BacteriaPage from '../BacteriaPage';
 
-const escherichiaColiData = {
-    id: '1',
-    name: 'Escherichia coli',
-    scientificName: 'Escherichia coli',
-    image: require('../../assets/images/bacteria/escherichia-coli.png'),
-    description: 'Escherichia coli (E. coli) is a type of bacteria that normally lives in the intestines of people and animals. While most strains are harmless, some can cause serious food poisoning and other infections.',
-    type: 'Gram-negative',
-    shape: 'Rod-shaped',
-    transmission: [
-        'Contaminated food or water',
-        'Contact with infected animals',
-        'Person-to-person contact',
-        'Poor hygiene practices'
-    ],
-    symptoms: [
-        'Severe stomach cramps',
-        'Diarrhea (often bloody)',
-        'Vomiting',
-        'Fever (usually not very high)',
-        'Dehydration',
-        'Fatigue'
-    ],
-    prevention: [
-        {
-            family: 'fontAwesome5',
-            icon: 'hands-wash',
-            text: 'Wash hands thoroughly with soap and water'
-        },
-        {
-            family: 'fontAwesome6',
-            icon: 'bowl-food',
-            text: 'Cook meat thoroughly to safe temperatures',
-        },
-        {
-            family: 'materialIcons',
-            icon: 'clean-hands',
-            text: 'Wash fruits and vegetables before eating'
-        },
-        {
-            family: 'fontAwesome6',
-            icon: 'glass-water',
-            text: 'Drink only pasteurized milk and juices'
-        }
-    ],
-    treatment: 'Most E. coli infections resolve on their own within 5-7 days. Treatment focuses on managing symptoms and preventing dehydration. Antibiotics are generally not recommended as they may increase the risk of complications. In severe cases, hospitalization may be required for intravenous fluids and supportive care.'
-};
+const preventionIcons = [
+    { family: 'fontAwesome5', icon: 'hands-wash' },
+    { family: 'fontAwesome6', icon: 'bowl-food' },
+    { family: 'materialIcons', icon: 'clean-hands' },
+    { family: 'fontAwesome6', icon: 'glass-water' }
+];
 
 const EscherichiaColi: FC = () => {
-    return <BacteriaPage bacteria={escherichiaColiData} />;
+    const { t } = useTranslation('bacteria_discover');
+    const transmission = t('bacteria.escherichia_coli.transmission.methods', { returnObjects: true }) as string[];
+    const symptoms = t('bacteria.escherichia_coli.symptoms.list', { returnObjects: true }) as string[];
+    const preventionTips = t('bacteria.escherichia_coli.prevention.tips', { returnObjects: true }) as string[];
+    const bacteria = {
+        id: '1',
+        name: t('bacteria.escherichia_coli.name'),
+        scientificName: t('bacteria.escherichia_coli.scientific_name'),
+        image: require('../../assets/images/bacteria/escherichia-coli.png'),
+        description: t('bacteria.escherichia_coli.description'),
+        type: t('bacteria.escherichia_coli.type'),
+        shape: t('bacteria.escherichia_coli.shape'),
+        transmission,
+        symptoms,
+        prevention: preventionTips.map((text, idx) => ({
+            ...preventionIcons[idx],
+            text
+        })),
+        treatment: t('bacteria.escherichia_coli.treatment.description')
+    };
+    return <BacteriaPage bacteria={bacteria} />;
 };
 
 export default EscherichiaColi;
