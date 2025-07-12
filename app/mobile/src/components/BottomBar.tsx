@@ -16,6 +16,7 @@ const USER_TABS = [
 
 const DOCTOR_TABS = [
     { key: 'home', label: 'Home', family: 'foundation', icon: 'home' },
+    { key: 'scan', label: 'Scan', family: 'entypo', icon: 'camera' },
     { key: 'patients', label: 'Patients', family: 'ionIcons', icon: 'people' },
     { key: 'more', label: 'More', family: 'feather', icon: 'more-horizontal' },
 ];

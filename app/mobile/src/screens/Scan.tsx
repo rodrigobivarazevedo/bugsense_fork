@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { Alert, View, Text, TouchableOpacity } from 'react-native';
 import GenericCamera from '../components/GenericCamera';
 import ScanInstructionsModal from '../components/modal/ScanInstructionsModal';
@@ -7,8 +7,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ConfirmationModal from '../components/modal/ConfirmationModal';
 import { styles } from './Scan.styles';
 import TestKitSelectModal from '../components/modal/TestKitSelectModal';
+import PatientSelectModal from '../components/modal/PatientSelectModal';
+import TestSelectModal from '../components/modal/TestSelectModal';
 
 type ScanType = 'qr-code' | 'test-strip' | null;
+
+interface Patient {
+    id: number;
+    email: string;
+    full_name: string;
+    gender: string;
+    dob: string | null;
+}
 
 export const Scan: FC = () => {
     const [selectedScanType, setSelectedScanType] = useState<ScanType>(null);
@@ -20,12 +30,47 @@ export const Scan: FC = () => {
     const [showTestKitModal, setShowTestKitModal] = useState(false);
     const [pendingPhoto, setPendingPhoto] = useState<string | null>(null);
 
+    // Doctor-specific states
+    const [userType, setUserType] = useState<string>('patient');
+    const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+    const [showPatientModal, setShowPatientModal] = useState(false);
+    const [showTestSelectModal, setShowTestSelectModal] = useState(false);
+
+    useEffect(() => {
+        // Get user type from AsyncStorage
+        AsyncStorage.getItem('userType').then(type => {
+            if (type && typeof type === 'string') {
+                setUserType(type);
+            }
+        });
+    }, []);
+
     const handleSelectScanType = (type: ScanType) => {
         setSelectedScanType(type);
+        if (userType === 'doctor') {
+            // For doctors, show patient selection after scan type selection
+            setShowPatientModal(true);
+        }
+    };
+
+    const handlePatientSelect = (patient: Patient) => {
+        setSelectedPatient(patient);
+        setShowPatientModal(false);
+        setShowInstructionsModal(true);
+    };
+
+    const handlePatientModalClose = () => {
+        setShowPatientModal(false);
+        setSelectedScanType(null);
+        setSelectedPatient(null);
     };
 
     const handleLaunchCamera = () => {
-        setShowInstructionsModal(true);
+        if (userType === 'doctor' && !selectedPatient) {
+            setShowPatientModal(true);
+        } else {
+            setShowInstructionsModal(true);
+        }
     };
 
     const handleInstructionsConfirm = () => {
@@ -35,6 +80,10 @@ export const Scan: FC = () => {
 
     const handleInstructionsCancel = () => {
         setShowInstructionsModal(false);
+        if (userType === 'doctor') {
+            setSelectedPatient(null);
+            setSelectedScanType(null);
+        }
     };
 
     const handleQRCodeScanned = (qrData: string) => {
@@ -47,21 +96,33 @@ export const Scan: FC = () => {
     const handleConfirmLinkKit = async () => {
         setShowConfirmModal(false);
         if (!pendingQR) return;
+
         try {
-            const userString = await AsyncStorage.getItem('user');
-            if (!userString) {
-                Alert.alert('Error', 'User data not found. Please log in again.');
-                resetScan();
-                return;
-            }
+            let userId;
 
-            const user = JSON.parse(userString);
-            const userId = user.id || user.user_id;
+            if (userType === 'doctor') {
+                if (!selectedPatient) {
+                    Alert.alert('Error', 'No patient selected.');
+                    resetScan();
+                    return;
+                }
+                userId = selectedPatient.id;
+            } else {
+                const userString = await AsyncStorage.getItem('user');
+                if (!userString) {
+                    Alert.alert('Error', 'User data not found. Please log in again.');
+                    resetScan();
+                    return;
+                }
 
-            if (!userId) {
-                Alert.alert('Error', 'User ID not found. Please log in again.');
-                resetScan();
-                return;
+                const user = JSON.parse(userString);
+                userId = user.id || user.user_id;
+
+                if (!userId) {
+                    Alert.alert('Error', 'User ID not found. Please log in again.');
+                    resetScan();
+                    return;
+                }
             }
 
             const response = await Api.post('qr-codes/', {
@@ -69,7 +130,11 @@ export const Scan: FC = () => {
                 qr_data: pendingQR
             });
 
-            Alert.alert('Success', 'QR code scanned and linked successfully!', [
+            const successMessage = userType === 'doctor'
+                ? `QR code scanned and linked to patient '${selectedPatient?.full_name}' successfully!`
+                : 'QR code scanned and linked successfully!';
+
+            Alert.alert('Success', successMessage, [
                 { text: 'OK', onPress: () => resetScan() }
             ]);
         } catch (error) {
@@ -87,17 +152,20 @@ export const Scan: FC = () => {
     };
 
     const fetchOngoingTestKits = async () => {
-        const token = await AsyncStorage.getItem('token');
-        const response = await Api.get('qr-codes/list/', {
-            headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await Api.get('qr-codes/list/');
         return response.data.filter((kit: any) => kit.result_status !== 'closed');
     };
 
     const handlePictureTaken = async (photoUri: string) => {
         if (selectedScanType === 'test-strip') {
             setPendingPhoto(photoUri);
-            setShowTestKitModal(true);
+            if (userType === 'doctor') {
+                // For doctors, show test selection modal
+                setShowTestSelectModal(true);
+            } else {
+                // For patients, show test kit selection modal
+                setShowTestKitModal(true);
+            }
         }
     };
 
@@ -110,7 +178,6 @@ export const Scan: FC = () => {
         setShowTestKitModal(false);
         if (!pendingPhoto) return;
         try {
-            const token = await AsyncStorage.getItem('token');
             const formData = new FormData();
             formData.append('image', {
                 uri: pendingPhoto,
@@ -124,7 +191,6 @@ export const Scan: FC = () => {
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer ${token}`,
                     },
                     service: 'ml',
                 } as any
@@ -139,11 +205,48 @@ export const Scan: FC = () => {
         }
     };
 
+    const handleTestSelectModalClose = () => {
+        setShowTestSelectModal(false);
+        setPendingPhoto(null);
+    };
+
+    const handleTestSelectModalConfirm = async (qrData: string) => {
+        setShowTestSelectModal(false);
+        if (!pendingPhoto) return;
+        try {
+            const formData = new FormData();
+            formData.append('image', {
+                uri: pendingPhoto,
+                name: 'test_strip.jpg',
+                type: 'image/jpeg',
+            } as any);
+            const storage = 'local'; // TODO: Change to 'gcs' when deployed to Google Cloud Storage
+            await Api.post(
+                `upload/?qr_data=${encodeURIComponent(qrData)}&storage=${storage}`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    service: 'ml',
+                } as any
+            );
+            Alert.alert('Success', `Image uploaded successfully for patient '${selectedPatient?.full_name}'!`, [
+                { text: 'OK', onPress: () => resetScan() }
+            ]);
+        } catch (err) {
+            Alert.alert('Upload failed', 'Could not upload image.');
+        } finally {
+            setPendingPhoto(null);
+        }
+    };
+
     const resetScan = () => {
         setShowCamera(false);
         setSelectedScanType(null);
         setHasScanned(false);
         setPendingQR(null);
+        setSelectedPatient(null);
     };
 
     if (showCamera && selectedScanType) {
@@ -161,13 +264,22 @@ export const Scan: FC = () => {
                     isOpen={showConfirmModal}
                     onClose={handleCancelLinkKit}
                     onConfirm={handleConfirmLinkKit}
-                    message={"This test kit will be linked to your profile. Do you want to continue?"}
+                    message={userType === 'doctor'
+                        ? `This test kit will be linked to patient '${selectedPatient?.full_name}'. Do you want to continue?`
+                        : "This test kit will be linked to your profile. Do you want to continue?"
+                    }
                 />
                 <TestKitSelectModal
                     isOpen={showTestKitModal}
                     onClose={handleTestKitModalClose}
                     onConfirm={handleTestKitModalConfirm}
                     fetchTestKits={fetchOngoingTestKits}
+                />
+                <TestSelectModal
+                    isOpen={showTestSelectModal}
+                    onClose={handleTestSelectModalClose}
+                    onConfirm={handleTestSelectModalConfirm}
+                    patientId={selectedPatient?.id || 0}
                 />
             </>
         );
@@ -192,6 +304,15 @@ export const Scan: FC = () => {
                     <Text style={styles.optionDesc}>Scan the test strip result</Text>
                 </TouchableOpacity>
             </View>
+
+            {userType === 'doctor' && selectedPatient && (
+                <View style={styles.patientInfo}>
+                    <Text style={styles.patientInfoText}>
+                        Selected Patient: {selectedPatient.full_name}
+                    </Text>
+                </View>
+            )}
+
             <TouchableOpacity
                 style={[styles.launchButton, !selectedScanType && styles.disabledButton]}
                 onPress={handleLaunchCamera}
@@ -199,11 +320,18 @@ export const Scan: FC = () => {
             >
                 <Text style={styles.launchButtonText}>Launch Camera</Text>
             </TouchableOpacity>
+
             <ScanInstructionsModal
                 isOpen={showInstructionsModal}
                 onClose={handleInstructionsCancel}
                 onConfirm={handleInstructionsConfirm}
                 scanType={selectedScanType as 'qr-code' | 'test-strip'}
+            />
+
+            <PatientSelectModal
+                isOpen={showPatientModal}
+                onClose={handlePatientModalClose}
+                onConfirm={handlePatientSelect}
             />
         </View>
     );
