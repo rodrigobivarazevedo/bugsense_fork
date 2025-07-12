@@ -166,77 +166,79 @@ const ViewTest: FC = () => {
                 </View>
             </View>
 
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Upload Image</Text>
-                <View style={styles.imageButtonsWrapper}>
-                    <TouchableOpacity
-                        style={styles.uploadButton}
-                        onPress={handlePickFromGallery}
-                        activeOpacity={0.85}
-                    >
-                        <RenderIcon
-                            family="materialIcons"
-                            icon="photo-library"
-                            fontSize={20}
-                            color={themeColors.white}
-                        />
-                        <Text style={styles.uploadButtonText}>
-                            Pick from Gallery
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.scanButton}
-                        onPress={goToScan}
-                        activeOpacity={0.85}
-                    >
-                        <RenderIcon
-                            family="entypo"
-                            icon="camera"
-                            fontSize={20}
-                            color={themeColors.primary}
-                        />
-                        <Text style={styles.scanButtonText}>
-                            Launch Scanner
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-                {image && (
-                    <>
-                        <View style={styles.imageContainer}>
-                            <Image source={{ uri: image }} style={styles.image} resizeMode="cover" />
-                            <TouchableOpacity
-                                style={styles.deleteImageButton}
-                                onPress={() => setImage(null)}
-                                activeOpacity={0.7}
-                            >
-                                <RenderIcon
-                                    family="materialIcons"
-                                    icon="delete"
-                                    fontSize={22}
-                                    color={themeColors.white}
-                                />
-                            </TouchableOpacity>
-                        </View>
+            {result?.status !== 'closed' && (
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Upload Image</Text>
+                    <View style={styles.imageButtonsWrapper}>
                         <TouchableOpacity
-                            style={[styles.uploadButton, uploading && { backgroundColor: themeColors.themeGray }]}
-                            onPress={uploadImage}
-                            disabled={uploading}
+                            style={styles.uploadButton}
+                            onPress={handlePickFromGallery}
+                            activeOpacity={0.85}
                         >
-                            <Text style={styles.uploadButtonText}>{uploading ? 'Uploading...' : 'Upload Image'}</Text>
+                            <RenderIcon
+                                family="materialIcons"
+                                icon="photo-library"
+                                fontSize={20}
+                                color={themeColors.white}
+                            />
+                            <Text style={styles.uploadButtonText}>
+                                Pick from Gallery
+                            </Text>
                         </TouchableOpacity>
-                    </>
-                )}
-                <ScanInstructionsModal
-                    isOpen={showScanModal}
-                    onClose={handleScanModalClose}
-                    onConfirm={handleScanModalConfirm}
-                    scanType="upload-test-strip"
-                    onDismiss={handleScanModalDismiss}
-                />
-            </View>
+                        <TouchableOpacity
+                            style={styles.scanButton}
+                            onPress={goToScan}
+                            activeOpacity={0.85}
+                        >
+                            <RenderIcon
+                                family="entypo"
+                                icon="camera"
+                                fontSize={20}
+                                color={themeColors.primary}
+                            />
+                            <Text style={styles.scanButtonText}>
+                                Launch Scanner
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                    {image && (
+                        <>
+                            <View style={styles.imageContainer}>
+                                <Image source={{ uri: image }} style={styles.image} resizeMode="cover" />
+                                <TouchableOpacity
+                                    style={styles.deleteImageButton}
+                                    onPress={() => setImage(null)}
+                                    activeOpacity={0.7}
+                                >
+                                    <RenderIcon
+                                        family="materialIcons"
+                                        icon="delete"
+                                        fontSize={22}
+                                        color={themeColors.white}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            <TouchableOpacity
+                                style={[styles.uploadButton, uploading && { backgroundColor: themeColors.themeGray }]}
+                                onPress={uploadImage}
+                                disabled={uploading}
+                            >
+                                <Text style={styles.uploadButtonText}>{uploading ? 'Uploading...' : 'Upload Image'}</Text>
+                            </TouchableOpacity>
+                        </>
+                    )}
+                    <ScanInstructionsModal
+                        isOpen={showScanModal}
+                        onClose={handleScanModalClose}
+                        onConfirm={handleScanModalConfirm}
+                        scanType="upload-test-strip"
+                        onDismiss={handleScanModalDismiss}
+                    />
+                </View>
+            )}
 
             <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Test Results</Text>
+                <Text style={styles.sectionTitle}>Detailed Result</Text>
                 {loading ? (
                     <ActivityIndicator size="small" color={themeColors.primary} />
                 ) : error ? (
