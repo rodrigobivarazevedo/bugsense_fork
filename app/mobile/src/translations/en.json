@@ -285,5 +285,12 @@
     "gender": "Gender",
     "date_of_birth": "Date of Birth",
     "address": "Address",
-    "view_my_qr_code": "View my QR code"
+    "view_my_qr_code": "View my QR code",
+    "overview": "Overview",
+    "type": "Type",
+    "shape": "Shape",
+    "transmission": "Transmission",
+    "symptoms": "Symptoms",
+    "prevention": "Prevention",
+    "treatment": "Treatment"
 }
