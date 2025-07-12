@@ -1,3 +1,5 @@
+import i18n from '../translations/i18n';
+
 export const formatDateTimeGerman = (dateStr: string) => {
     if (!dateStr) return '-';
     const date = new Date(dateStr);
@@ -17,12 +19,23 @@ export const formatDate = (
     showDayOfWeek = false
 ) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString(undefined, { year: showYear ? 'numeric' : undefined, month: format, day: '2-digit', weekday: showDayOfWeek ? 'long' : undefined });
+    const currentLanguage = i18n.language;
+    const locale = currentLanguage === 'de' ? 'de-DE' : 'en-US';
+
+    return date.toLocaleDateString(locale, {
+        year: showYear ? 'numeric' : undefined,
+        month: format,
+        day: '2-digit',
+        weekday: showDayOfWeek ? 'long' : undefined
+    });
 }
 
 export const formatTime = (dateStr: string, timeFormat: '12' | '24') => {
     const date = new Date(dateStr);
-    return date.toLocaleTimeString(undefined, {
+    const currentLanguage = i18n.language;
+    const locale = currentLanguage === 'de' ? 'de-DE' : 'en-US';
+
+    return date.toLocaleTimeString(locale, {
         hour: '2-digit',
         minute: '2-digit',
         hour12: timeFormat === '12',
