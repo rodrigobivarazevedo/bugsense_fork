@@ -292,5 +292,13 @@
     "transmission": "Transmission",
     "symptoms": "Symptoms",
     "prevention": "Prevention",
-    "treatment": "Treatment"
+    "treatment": "Treatment",
+    "escherichia_coli_disoverPage_quick_description": "Common gut bacteria that can cause foodborne illness",
+    "enterococcus_faecalis_disoverPage_quick_description": "Common gut bacteria that can cause foodborne illness",
+    "klebsiella_pneumoniae_disoverPage_quick_description": "Common bacteria that can cause pneumonia",
+    "staphylococcus_saprophyticus_disoverPage_quick_description": "Common bacteria that can cause skin infections",
+    "staphylococcus_aureus_disoverPage_quick_description": "Common bacteria that can cause skin infections",
+    "enterobacter_hormaechei_disoverPage_quick_description": "Common bacteria that can cause foodborne illness",
+    "pseudomonas_aeruginosa_disoverPage_quick_description": "Common bacteria that can cause pneumonia",
+    "proteus_mirabilis_disoverPage_quick_description": "Common bacteria that can cause foodborne illness"
 }

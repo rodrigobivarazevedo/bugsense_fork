@@ -292,5 +292,13 @@
     "transmission": "Übertragung",
     "symptoms": "Symptome",
     "prevention": "Vorbeugung",
-    "treatment": "Behandlung"
+    "treatment": "Behandlung",
+    "escherichia_coli_disoverPage_quick_description": "Gemeinsame Bakterien im Darm, die Lebensmittelvergiftung verursachen können",
+    "enterococcus_faecalis_disoverPage_quick_description": "Gemeinsame Bakterien im Darm, die Lebensmittelvergiftung verursachen können",
+    "klebsiella_pneumoniae_disoverPage_quick_description": "Gemeinsame Bakterien, die Pneumonie verursachen können",
+    "staphylococcus_saprophyticus_disoverPage_quick_description": "Gemeinsame Bakterien, die Hautinfektionen verursachen können",
+    "staphylococcus_aureus_disoverPage_quick_description": "Gemeinsame Bakterien, die Hautinfektionen verursachen können",
+    "enterobacter_hormaechei_disoverPage_quick_description": "Gemeinsame Bakterien, die Lebensmittelvergiftung verursachen können",
+    "pseudomonas_aeruginosa_disoverPage_quick_description": "Gemeinsame Bakterien, die Pneumonie verursachen können",
+    "proteus_mirabilis_disoverPage_quick_description": "Gemeinsame Bakterien, die Lebensmittelvergiftung verursachen können"
 }
