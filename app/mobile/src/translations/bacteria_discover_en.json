@@ -1,0 +1,378 @@
+{
+    "bacteria": {
+        "pseudomonas_aeruginosa": {
+            "name": "Pseudomonas aeruginosa",
+            "scientific_name": "Pseudomonas aeruginosa",
+            "description": "Pseudomonas aeruginosa is a Gram-negative bacterium that is a major opportunistic pathogen, particularly dangerous for immunocompromised patients. It is known for its remarkable ability to develop resistance to multiple antibiotics and its ability to survive in diverse environments.",
+            "type": "Gram-negative",
+            "shape": "Rod-shaped",
+            "transmission": {
+                "title": "Transmission",
+                "methods": [
+                    "Contaminated medical equipment",
+                    "Hospital-acquired infections",
+                    "Contaminated water sources",
+                    "Person-to-person contact",
+                    "Environmental exposure"
+                ]
+            },
+            "symptoms": {
+                "title": "Symptoms",
+                "list": [
+                    "Pneumonia (especially in cystic fibrosis patients)",
+                    "Bloodstream infections (sepsis)",
+                    "Urinary tract infections",
+                    "Wound infections",
+                    "Ear infections (swimmer's ear)",
+                    "Eye infections"
+                ]
+            },
+            "prevention": {
+                "title": "Prevention",
+                "tips": [
+                    "Strict hand hygiene and infection control protocols",
+                    "Proper sterilization of medical equipment",
+                    "Avoid contaminated water sources",
+                    "Contact precautions for infected patients",
+                    "Antibiotic stewardship to prevent resistance"
+                ]
+            },
+            "treatment": {
+                "title": "Treatment",
+                "description": "Treatment of Pseudomonas aeruginosa infections is extremely challenging due to its intrinsic and acquired resistance to many antibiotics. It often requires combination therapy with agents like piperacillin-tazobactam, ceftazidime, or carbapenems. The bacterium can develop resistance during treatment, making susceptibility testing crucial. In severe cases, newer antibiotics like ceftolozane-tazobactam or ceftazidime-avibactam may be necessary."
+            }
+        },
+        "salmonella": {
+            "name": "Salmonella",
+            "scientific_name": "Salmonella enterica",
+            "description": "Salmonella is a group of bacteria that can cause foodborne illness. There are many different types of Salmonella bacteria, and they can cause a range of illnesses from mild gastroenteritis to severe systemic infections.",
+            "type": "Gram-negative",
+            "shape": "Rod-shaped",
+            "transmission": {
+                "title": "Transmission",
+                "methods": [
+                    "Contaminated food (especially eggs, poultry, and dairy)",
+                    "Contact with infected animals",
+                    "Person-to-person contact",
+                    "Contaminated water"
+                ]
+            },
+            "symptoms": {
+                "title": "Symptoms",
+                "list": [
+                    "Diarrhea",
+                    "Fever",
+                    "Abdominal cramps",
+                    "Nausea and vomiting",
+                    "Headache",
+                    "Dehydration"
+                ]
+            },
+            "prevention": {
+                "title": "Prevention",
+                "tips": [
+                    "Cook poultry, eggs, and meat thoroughly",
+                    "Wash hands after handling raw meat or eggs",
+                    "Clean kitchen surfaces and utensils properly",
+                    "Refrigerate food promptly and properly"
+                ]
+            },
+            "treatment": {
+                "title": "Treatment",
+                "description": "Most cases of Salmonella infection resolve on their own within 4-7 days. Treatment focuses on preventing dehydration by drinking plenty of fluids. In severe cases, antibiotics may be prescribed. Hospitalization may be necessary for severe cases or for people at high risk of complications."
+            }
+        },
+        "staphylococcus_aureus": {
+            "name": "Staphylococcus aureus",
+            "scientific_name": "Staphylococcus aureus",
+            "description": "Staphylococcus aureus is a Gram-positive bacterium that can cause a wide range of infections, from minor skin infections to life-threatening conditions. It is known for its ability to develop resistance to antibiotics, particularly methicillin-resistant S. aureus (MRSA).",
+            "type": "Gram-positive",
+            "shape": "Cocci (spherical)",
+            "transmission": {
+                "title": "Transmission",
+                "methods": [
+                    "Direct skin-to-skin contact",
+                    "Contaminated surfaces and objects",
+                    "Droplet transmission (coughing, sneezing)",
+                    "Healthcare settings (HA-MRSA)",
+                    "Community settings (CA-MRSA)"
+                ]
+            },
+            "symptoms": {
+                "title": "Symptoms",
+                "list": [
+                    "Skin infections (boils, abscesses, cellulitis)",
+                    "Pneumonia",
+                    "Bloodstream infections (sepsis)",
+                    "Bone and joint infections",
+                    "Endocarditis (heart valve infections)",
+                    "Toxic shock syndrome"
+                ]
+            },
+            "prevention": {
+                "title": "Prevention",
+                "tips": [
+                    "Frequent hand washing with soap and water",
+                    "Keep wounds clean and covered until healed",
+                    "Avoid sharing personal items (towels, razors)",
+                    "Complete prescribed antibiotic courses"
+                ]
+            },
+            "treatment": {
+                "title": "Treatment",
+                "description": "Treatment depends on the type and severity of infection. Methicillin-susceptible S. aureus (MSSA) can be treated with beta-lactam antibiotics. MRSA requires alternative antibiotics like vancomycin, daptomycin, or linezolid. Severe infections may require surgical drainage and intravenous antibiotics. Prevention of resistance through proper antibiotic stewardship is crucial."
+            }
+        },
+        "staphylococcus_saprophyticus": {
+            "name": "Staphylococcus saprophyticus",
+            "scientific_name": "Staphylococcus saprophyticus",
+            "description": "Staphylococcus saprophyticus is a Gram-positive bacterium that is a common cause of urinary tract infections, particularly in young sexually active women. It is part of the normal skin flora and is generally less pathogenic than other staphylococcal species.",
+            "type": "Gram-positive",
+            "shape": "Cocci (spherical)",
+            "transmission": {
+                "title": "Transmission",
+                "methods": [
+                    "Sexual activity",
+                    "Poor personal hygiene",
+                    "Contaminated surfaces",
+                    "Skin-to-skin contact",
+                    "Fecal contamination"
+                ]
+            },
+            "symptoms": {
+                "title": "Symptoms",
+                "list": [
+                    "Frequent urination",
+                    "Burning sensation during urination",
+                    "Urgency to urinate",
+                    "Cloudy or bloody urine",
+                    "Lower abdominal pain",
+                    "Fever (in some cases)"
+                ]
+            },
+            "prevention": {
+                "title": "Prevention",
+                "tips": [
+                    "Maintain good personal hygiene, especially after sexual activity",
+                    "Stay well-hydrated and urinate frequently",
+                    "Wipe from front to back after using the bathroom",
+                    "Wear cotton underwear and avoid tight-fitting clothing"
+                ]
+            },
+            "treatment": {
+                "title": "Treatment",
+                "description": "Staphylococcus saprophyticus is generally susceptible to common antibiotics used for urinary tract infections. Treatment typically involves a short course of antibiotics (3-7 days). However, antibiotic resistance is increasing, so susceptibility testing may be recommended. Drinking plenty of fluids and maintaining good hygiene practices are also important for recovery."
+            }
+        },
+        "escherichia_coli": {
+            "name": "Escherichia coli",
+            "scientific_name": "Escherichia coli",
+            "description": "Escherichia coli (E. coli) is a type of bacteria that normally lives in the intestines of people and animals. While most strains are harmless, some can cause serious food poisoning and other infections.",
+            "type": "Gram-negative",
+            "shape": "Rod-shaped",
+            "transmission": {
+                "title": "Transmission",
+                "methods": [
+                    "Contaminated food or water",
+                    "Contact with infected animals",
+                    "Person-to-person contact",
+                    "Poor hygiene practices"
+                ]
+            },
+            "symptoms": {
+                "title": "Symptoms",
+                "list": [
+                    "Severe stomach cramps",
+                    "Diarrhea (often bloody)",
+                    "Vomiting",
+                    "Fever (usually not very high)",
+                    "Dehydration",
+                    "Fatigue"
+                ]
+            },
+            "prevention": {
+                "title": "Prevention",
+                "tips": [
+                    "Wash hands thoroughly with soap and water",
+                    "Cook meat thoroughly to safe temperatures",
+                    "Wash fruits and vegetables before eating",
+                    "Drink only pasteurized milk and juices"
+                ]
+            },
+            "treatment": {
+                "title": "Treatment",
+                "description": "Most E. coli infections resolve on their own within 5-7 days. Treatment focuses on managing symptoms and preventing dehydration. Antibiotics are generally not recommended as they may increase the risk of complications. In severe cases, hospitalization may be required for intravenous fluids and supportive care."
+            }
+        },
+        "enterobacter_hormaechei": {
+            "name": "Enterobacter hormaechei",
+            "scientific_name": "Enterobacter hormaechei",
+            "description": "Enterobacter hormaechei is a Gram-negative bacterium that belongs to the Enterobacteriaceae family. It is an emerging opportunistic pathogen that can cause various infections, particularly in healthcare settings and immunocompromised patients.",
+            "type": "Gram-negative",
+            "shape": "Rod-shaped",
+            "transmission": {
+                "title": "Transmission",
+                "methods": [
+                    "Person-to-person contact",
+                    "Contaminated medical devices",
+                    "Hospital-acquired infections",
+                    "Contaminated surfaces",
+                    "Fecal-oral transmission"
+                ]
+            },
+            "symptoms": {
+                "title": "Symptoms",
+                "list": [
+                    "Urinary tract infections",
+                    "Bloodstream infections (sepsis)",
+                    "Respiratory tract infections",
+                    "Wound infections",
+                    "Intra-abdominal infections",
+                    "Meningitis (rare)"
+                ]
+            },
+            "prevention": {
+                "title": "Prevention",
+                "tips": [
+                    "Strict hand hygiene in healthcare settings",
+                    "Proper sterilization of medical equipment",
+                    "Contact precautions for infected patients",
+                    "Antibiotic stewardship to prevent resistance"
+                ]
+            },
+            "treatment": {
+                "title": "Treatment",
+                "description": "Treatment of Enterobacter hormaechei infections can be challenging due to intrinsic and acquired antibiotic resistance. The bacterium is naturally resistant to ampicillin and first-generation cephalosporins. Treatment requires susceptibility testing and often involves carbapenems or newer beta-lactam/beta-lactamase inhibitor combinations. In severe cases, combination therapy may be necessary."
+            }
+        },
+        "enterococcus_faecalis": {
+            "name": "Enterococcus faecalis",
+            "scientific_name": "Enterococcus faecalis",
+            "description": "Enterococcus faecalis is a Gram-positive bacterium that is part of the normal intestinal flora in humans and animals. While generally harmless in healthy individuals, it can cause serious infections, particularly in hospital settings and in immunocompromised patients.",
+            "type": "Gram-positive",
+            "shape": "Cocci (spherical)",
+            "transmission": {
+                "title": "Transmission",
+                "methods": [
+                    "Person-to-person contact",
+                    "Contaminated medical devices",
+                    "Hospital-acquired infections",
+                    "Fecal-oral transmission",
+                    "Contaminated food or water"
+                ]
+            },
+            "symptoms": {
+                "title": "Symptoms",
+                "list": [
+                    "Urinary tract infections",
+                    "Bacteremia (bloodstream infections)",
+                    "Endocarditis (heart valve infections)",
+                    "Intra-abdominal infections",
+                    "Wound infections",
+                    "Meningitis (rare)"
+                ]
+            },
+            "prevention": {
+                "title": "Prevention",
+                "tips": [
+                    "Practice good hand hygiene, especially in healthcare settings",
+                    "Proper sterilization of medical equipment",
+                    "Isolation protocols for infected patients",
+                    "Judicious use of antibiotics to prevent resistance"
+                ]
+            },
+            "treatment": {
+                "title": "Treatment",
+                "description": "Treatment of Enterococcus faecalis infections can be challenging due to increasing antibiotic resistance. Vancomycin-resistant Enterococcus (VRE) is a major concern. Treatment typically involves combination antibiotic therapy, and the choice of antibiotics depends on susceptibility testing. In severe cases, surgical intervention may be required for abscess drainage or infected device removal."
+            }
+        },
+        "klebsiella_pneumoniae": {
+            "name": "Klebsiella pneumoniae",
+            "scientific_name": "Klebsiella pneumoniae",
+            "description": "Klebsiella pneumoniae is a Gram-negative bacterium that can cause various infections, particularly in healthcare settings. It is known for its ability to develop resistance to multiple antibiotics, making it a significant concern in modern medicine.",
+            "type": "Gram-negative",
+            "shape": "Rod-shaped",
+            "transmission": {
+                "title": "Transmission",
+                "methods": [
+                    "Person-to-person contact",
+                    "Contaminated medical equipment",
+                    "Hospital-acquired infections",
+                    "Respiratory droplets",
+                    "Contaminated surfaces"
+                ]
+            },
+            "symptoms": {
+                "title": "Symptoms",
+                "list": [
+                    "Pneumonia (cough, fever, difficulty breathing)",
+                    "Urinary tract infections",
+                    "Bloodstream infections (sepsis)",
+                    "Wound infections",
+                    "Meningitis",
+                    "Liver abscesses"
+                ]
+            },
+            "prevention": {
+                "title": "Prevention",
+                "tips": [
+                    "Strict hand hygiene protocols in healthcare settings",
+                    "Contact precautions for infected patients",
+                    "Proper disinfection of medical equipment",
+                    "Antibiotic stewardship to prevent resistance"
+                ]
+            },
+            "treatment": {
+                "title": "Treatment",
+                "description": "Treatment of Klebsiella pneumoniae infections is challenging due to high rates of antibiotic resistance, including carbapenem-resistant strains (CRKP). Treatment requires susceptibility testing and often involves combination therapy with newer antibiotics. In severe cases, surgical intervention may be necessary for abscess drainage or infected tissue removal."
+            }
+        },
+        "proteus_mirabilis": {
+            "name": "Proteus mirabilis",
+            "scientific_name": "Proteus mirabilis",
+            "description": "Proteus mirabilis is a Gram-negative bacterium that is a common cause of urinary tract infections and can form urinary stones. It is known for its characteristic swarming motility and its ability to produce urease, which can lead to the formation of struvite stones in the urinary tract.",
+            "type": "Gram-negative",
+            "shape": "Rod-shaped",
+            "transmission": {
+                "title": "Transmission",
+                "methods": [
+                    "Fecal-oral transmission",
+                    "Contaminated medical devices",
+                    "Hospital-acquired infections",
+                    "Person-to-person contact",
+                    "Contaminated surfaces"
+                ]
+            },
+            "symptoms": {
+                "title": "Symptoms",
+                "list": [
+                    "Urinary tract infections",
+                    "Kidney stones (struvite stones)",
+                    "Bloodstream infections (sepsis)",
+                    "Wound infections",
+                    "Pneumonia",
+                    "Abdominal pain and discomfort"
+                ]
+            },
+            "prevention": {
+                "title": "Prevention",
+                "tips": [
+                    "Maintain good personal hygiene",
+                    "Stay well-hydrated to prevent urinary stasis",
+                    "Proper sterilization of urinary catheters",
+                    "Complete prescribed antibiotic courses"
+                ]
+            },
+            "treatment": {
+                "title": "Treatment",
+                "description": "Treatment of Proteus mirabilis infections typically involves antibiotics such as cephalosporins, fluoroquinolones, or aminoglycosides. However, the bacterium can develop resistance to multiple antibiotics. For urinary stones caused by P. mirabilis, treatment may require surgical intervention in addition to antibiotics. Prevention of stone formation through adequate hydration and prompt treatment of UTIs is important."
+            }
+        }
+    },
+    "common": {
+        "bacteria_type": "Bacteria Type",
+        "shape": "Shape",
+        "learn_more": "Learn More",
+        "back_to_discover": "Back to Discover"
+    }
+}

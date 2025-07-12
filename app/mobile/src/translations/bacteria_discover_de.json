@@ -1,0 +1,297 @@
+{
+    "bacteria": {
+        "pseudomonas_aeruginosa": {
+            "name": "Pseudomonas aeruginosa",
+            "scientific_name": "Pseudomonas aeruginosa",
+            "description": "Pseudomonas aeruginosa ist ein gramnegatives Bakterium, das ein wichtiger opportunistischer Krankheitserreger ist und besonders gefährlich für immungeschwächte Patienten. Es ist bekannt für seine bemerkenswerte Fähigkeit, Resistenzen gegen mehrere Antibiotika zu entwickeln und in verschiedenen Umgebungen zu überleben.",
+            "type": "Gram-negativ",
+            "shape": "Stäbchenförmig",
+            "transmission": {
+                "title": "Übertragung",
+                "methods": [
+                    "Kontaminierte medizinische Geräte",
+                    "Krankenhausinfektionen",
+                    "Kontaminierte Wasserquellen",
+                    "Mensch-zu-Mensch-Kontakt",
+                    "Umweltbelastung"
+                ]
+            },
+            "symptoms": {
+                "title": "Symptome",
+                "list": [
+                    "Lungenentzündung (besonders bei Mukoviszidose-Patienten)",
+                    "Blutstrominfektionen (Sepsis)",
+                    "Harnwegsinfektionen",
+                    "Wundinfektionen",
+                    "Ohrenentzündungen (Schwimmerohr)",
+                    "Augeninfektionen"
+                ]
+            },
+            "prevention": {
+                "title": "Prävention",
+                "tips": [
+                    "Strenge Handhygiene und Infektionskontrollprotokolle",
+                    "Ordnungsgemäße Sterilisation medizinischer Geräte",
+                    "Kontaminierte Wasserquellen vermeiden",
+                    "Kontaktvorsichtsmaßnahmen für infizierte Patienten",
+                    "Antibiotika-Stewardship zur Resistenzprävention"
+                ]
+            },
+            "treatment": {
+                "title": "Behandlung",
+                "description": "Die Behandlung von Pseudomonas aeruginosa-Infektionen ist aufgrund der intrinsischen und erworbenen Resistenz gegen viele Antibiotika äußerst schwierig. Sie erfordert oft eine Kombinationstherapie mit Wirkstoffen wie Piperacillin-Tazobactam, Ceftazidim oder Carbapenemen. Das Bakterium kann während der Behandlung Resistenzen entwickeln, was eine Empfindlichkeitstestung entscheidend macht. In schweren Fällen können neuere Antibiotika wie Ceftolozan-Tazobactam oder Ceftazidim-Avibactam erforderlich sein."
+            }
+        },
+        "escherichia_coli": {
+            "name": "Escherichia coli",
+            "scientific_name": "Escherichia coli",
+            "description": "Escherichia coli (E. coli) ist eine Bakterienart, die normalerweise im Darm von Menschen und Tieren lebt. Während die meisten Stämme harmlos sind, können einige schwere Lebensmittelvergiftungen und andere Infektionen verursachen.",
+            "type": "Gram-negativ",
+            "shape": "Stäbchenförmig",
+            "transmission": {
+                "title": "Übertragung",
+                "methods": [
+                    "Kontaminierte Lebensmittel oder Wasser",
+                    "Kontakt mit infizierten Tieren",
+                    "Mensch-zu-Mensch-Kontakt",
+                    "Schlechte Hygienepraxis"
+                ]
+            },
+            "symptoms": {
+                "title": "Symptome",
+                "list": [
+                    "Starke Bauchkrämpfe",
+                    "Durchfall (oft blutig)",
+                    "Erbrechen",
+                    "Fieber (meist nicht sehr hoch)",
+                    "Dehydration",
+                    "Müdigkeit"
+                ]
+            },
+            "prevention": {
+                "title": "Prävention",
+                "tips": [
+                    "Gründliches Händewaschen mit Seife und Wasser",
+                    "Fleisch gründlich auf sichere Temperaturen garen",
+                    "Obst und Gemüse vor dem Verzehr waschen",
+                    "Nur pasteurisierte Milch und Säfte trinken"
+                ]
+            },
+            "treatment": {
+                "title": "Behandlung",
+                "description": "Die meisten E. coli-Infektionen heilen innerhalb von 5-7 Tagen von selbst aus. Die Behandlung konzentriert sich auf die Linderung der Symptome und die Vermeidung von Dehydration. Antibiotika werden im Allgemeinen nicht empfohlen, da sie das Risiko von Komplikationen erhöhen können. In schweren Fällen kann eine Krankenhausaufnahme für intravenöse Flüssigkeiten und unterstützende Maßnahmen erforderlich sein."
+            }
+        },
+        "enterobacter_hormaechei": {
+            "name": "Enterobacter hormaechei",
+            "scientific_name": "Enterobacter hormaechei",
+            "description": "Enterobacter hormaechei ist ein gramnegatives Bakterium aus der Familie der Enterobacteriaceae. Es ist ein aufkommender opportunistischer Erreger, der verschiedene Infektionen verursachen kann, insbesondere im Gesundheitswesen und bei immungeschwächten Patienten.",
+            "type": "Gram-negativ",
+            "shape": "Stäbchenförmig",
+            "transmission": {
+                "title": "Übertragung",
+                "methods": [
+                    "Mensch-zu-Mensch-Kontakt",
+                    "Kontaminierte medizinische Geräte",
+                    "Krankenhausinfektionen",
+                    "Kontaminierte Oberflächen",
+                    "Fäkal-orale Übertragung"
+                ]
+            },
+            "symptoms": {
+                "title": "Symptome",
+                "list": [
+                    "Harnwegsinfektionen",
+                    "Blutstrominfektionen (Sepsis)",
+                    "Atemwegsinfektionen",
+                    "Wundinfektionen",
+                    "Intraabdominale Infektionen",
+                    "Meningitis (selten)"
+                ]
+            },
+            "prevention": {
+                "title": "Prävention",
+                "tips": [
+                    "Strenge Handhygiene im Gesundheitswesen",
+                    "Ordnungsgemäße Sterilisation medizinischer Geräte",
+                    "Kontaktvorsichtsmaßnahmen für infizierte Patienten",
+                    "Antibiotika-Stewardship zur Resistenzprävention"
+                ]
+            },
+            "treatment": {
+                "title": "Behandlung",
+                "description": "Die Behandlung von Enterobacter hormaechei-Infektionen kann aufgrund intrinsischer und erworbener Antibiotikaresistenzen schwierig sein. Das Bakterium ist von Natur aus resistent gegen Ampicillin und Cephalosporine der ersten Generation. Die Behandlung erfordert eine Empfindlichkeitstestung und umfasst häufig Carbapeneme oder neuere Beta-Lactam/Beta-Lactamase-Inhibitor-Kombinationen. In schweren Fällen kann eine Kombinationstherapie erforderlich sein."
+            }
+        },
+        "enterococcus_faecalis": {
+            "name": "Enterococcus faecalis",
+            "scientific_name": "Enterococcus faecalis",
+            "description": "Enterococcus faecalis ist ein grampositives Bakterium, das zur normalen Darmflora von Menschen und Tieren gehört. Während es bei gesunden Personen meist harmlos ist, kann es insbesondere in Krankenhäusern und bei immungeschwächten Patienten schwere Infektionen verursachen.",
+            "type": "Gram-positiv",
+            "shape": "Kokken (rund)",
+            "transmission": {
+                "title": "Übertragung",
+                "methods": [
+                    "Mensch-zu-Mensch-Kontakt",
+                    "Kontaminierte medizinische Geräte",
+                    "Krankenhausinfektionen",
+                    "Fäkal-orale Übertragung",
+                    "Kontaminierte Lebensmittel oder Wasser"
+                ]
+            },
+            "symptoms": {
+                "title": "Symptome",
+                "list": [
+                    "Harnwegsinfektionen",
+                    "Bakteriämie (Blutstrominfektionen)",
+                    "Endokarditis (Herzklappenentzündungen)",
+                    "Intraabdominale Infektionen",
+                    "Wundinfektionen",
+                    "Meningitis (selten)"
+                ]
+            },
+            "prevention": {
+                "title": "Prävention",
+                "tips": [
+                    "Gute Handhygiene, insbesondere im Gesundheitswesen",
+                    "Ordnungsgemäße Sterilisation medizinischer Geräte",
+                    "Isolationsprotokolle für infizierte Patienten",
+                    "Sorgfältiger Einsatz von Antibiotika zur Resistenzvermeidung"
+                ]
+            },
+            "treatment": {
+                "title": "Behandlung",
+                "description": "Die Behandlung von Enterococcus faecalis-Infektionen kann aufgrund zunehmender Antibiotikaresistenzen schwierig sein. Vancomycin-resistenter Enterococcus (VRE) ist ein großes Problem. Die Therapie umfasst in der Regel eine Kombination von Antibiotika, wobei die Auswahl von der Empfindlichkeitstestung abhängt. In schweren Fällen kann ein chirurgischer Eingriff zur Drainage von Abszessen oder zur Entfernung infizierter Geräte erforderlich sein."
+            }
+        },
+        "klebsiella_pneumoniae": {
+            "name": "Klebsiella pneumoniae",
+            "scientific_name": "Klebsiella pneumoniae",
+            "description": "Klebsiella pneumoniae ist ein gramnegatives Bakterium, das verschiedene Infektionen verursachen kann, insbesondere im Gesundheitswesen. Es ist bekannt für seine Fähigkeit, Resistenzen gegen mehrere Antibiotika zu entwickeln, was es zu einem bedeutenden Problem in der modernen Medizin macht.",
+            "type": "Gram-negativ",
+            "shape": "Stäbchenförmig",
+            "transmission": {
+                "title": "Übertragung",
+                "methods": [
+                    "Mensch-zu-Mensch-Kontakt",
+                    "Kontaminierte medizinische Geräte",
+                    "Krankenhausinfektionen",
+                    "Respiratorische Tröpfchen",
+                    "Kontaminierte Oberflächen"
+                ]
+            },
+            "symptoms": {
+                "title": "Symptome",
+                "list": [
+                    "Lungenentzündung (Husten, Fieber, Atemnot)",
+                    "Harnwegsinfektionen",
+                    "Blutstrominfektionen (Sepsis)",
+                    "Wundinfektionen",
+                    "Meningitis",
+                    "Leberabszesse"
+                ]
+            },
+            "prevention": {
+                "title": "Prävention",
+                "tips": [
+                    "Strikte Handhygieneprotokolle im Gesundheitswesen",
+                    "Kontaktvorsichtsmaßnahmen für infizierte Patienten",
+                    "Ordnungsgemäße Desinfektion medizinischer Geräte",
+                    "Antibiotika-Stewardship zur Resistenzprävention"
+                ]
+            },
+            "treatment": {
+                "title": "Behandlung",
+                "description": "Die Behandlung von Klebsiella pneumoniae-Infektionen ist aufgrund der hohen Antibiotikaresistenzraten, einschließlich carbapenemresistenter Stämme (CRKP), schwierig. Die Therapie erfordert eine Empfindlichkeitstestung und umfasst häufig eine Kombinationstherapie mit neueren Antibiotika. In schweren Fällen kann ein chirurgischer Eingriff zur Drainage von Abszessen oder zur Entfernung infizierten Gewebes erforderlich sein."
+            }
+        },
+        "proteus_mirabilis": {
+            "name": "Proteus mirabilis",
+            "scientific_name": "Proteus mirabilis",
+            "description": "Proteus mirabilis ist ein gramnegatives Bakterium, das eine häufige Ursache für Harnwegsinfektionen ist und Harnsteine bilden kann. Es ist bekannt für seine charakteristische Schwarmmotilität und seine Fähigkeit, Urease zu produzieren, was zur Bildung von Struvitsteinen in den Harnwegen führen kann.",
+            "type": "Gram-negativ",
+            "shape": "Stäbchenförmig",
+            "transmission": {
+                "title": "Übertragung",
+                "methods": [
+                    "Fäkal-orale Übertragung",
+                    "Kontaminierte medizinische Geräte",
+                    "Krankenhausinfektionen",
+                    "Mensch-zu-Mensch-Kontakt",
+                    "Kontaminierte Oberflächen"
+                ]
+            },
+            "symptoms": {
+                "title": "Symptome",
+                "list": [
+                    "Harnwegsinfektionen",
+                    "Nierensteine (Struvitsteine)",
+                    "Blutstrominfektionen (Sepsis)",
+                    "Wundinfektionen",
+                    "Lungenentzündung",
+                    "Bauchschmerzen und Unbehagen"
+                ]
+            },
+            "prevention": {
+                "title": "Prävention",
+                "tips": [
+                    "Gute persönliche Hygiene aufrechterhalten",
+                    "Ausreichend hydratisiert bleiben, um Harnstauung zu verhindern",
+                    "Ordnungsgemäße Sterilisation von Harnkathetern",
+                    "Verschriebene Antibiotikakuren vollständig einnehmen"
+                ]
+            },
+            "treatment": {
+                "title": "Behandlung",
+                "description": "Die Behandlung von Proteus mirabilis-Infektionen umfasst typischerweise Antibiotika wie Cephalosporine, Fluorchinolone oder Aminoglykoside. Das Bakterium kann jedoch Resistenzen gegen mehrere Antibiotika entwickeln. Bei Harnsteinen, die durch P. mirabilis verursacht werden, kann die Behandlung zusätzlich zu Antibiotika einen chirurgischen Eingriff erfordern. Die Vorbeugung der Steinbildung durch ausreichende Hydratation und schnelle Behandlung von Harnwegsinfektionen ist wichtig."
+            }
+        },
+        "staphylococcus_saprophyticus": {
+            "name": "Staphylococcus saprophyticus",
+            "scientific_name": "Staphylococcus saprophyticus",
+            "description": "Staphylococcus saprophyticus ist ein grampositives Bakterium, das eine häufige Ursache für Harnwegsinfektionen ist, insbesondere bei jungen sexuell aktiven Frauen. Es ist Teil der normalen Hautflora und ist im Allgemeinen weniger pathogen als andere Staphylokokken-Arten.",
+            "type": "Gram-positiv",
+            "shape": "Kokken (rund)",
+            "transmission": {
+                "title": "Übertragung",
+                "methods": [
+                    "Sexuelle Aktivität",
+                    "Schlechte persönliche Hygiene",
+                    "Kontaminierte Oberflächen",
+                    "Haut-zu-Haut-Kontakt",
+                    "Fäkale Kontamination"
+                ]
+            },
+            "symptoms": {
+                "title": "Symptome",
+                "list": [
+                    "Häufiges Wasserlassen",
+                    "Brennendes Gefühl beim Wasserlassen",
+                    "Harndrang",
+                    "Trüber oder blutiger Urin",
+                    "Unterbauchschmerzen",
+                    "Fieber (in einigen Fällen)"
+                ]
+            },
+            "prevention": {
+                "title": "Prävention",
+                "tips": [
+                    "Gute persönliche Hygiene aufrechterhalten, besonders nach sexueller Aktivität",
+                    "Ausreichend hydratisiert bleiben und häufig urinieren",
+                    "Von vorne nach hinten wischen nach dem Toilettengang",
+                    "Baumwollunterwäsche tragen und enge Kleidung vermeiden"
+                ]
+            },
+            "treatment": {
+                "title": "Behandlung",
+                "description": "Staphylococcus saprophyticus ist im Allgemeinen empfindlich gegenüber gängigen Antibiotika, die bei Harnwegsinfektionen verwendet werden. Die Behandlung umfasst typischerweise eine kurze Antibiotikakur (3-7 Tage). Allerdings nimmt die Antibiotikaresistenz zu, daher kann eine Empfindlichkeitstestung empfohlen werden. Viel Flüssigkeit zu trinken und gute Hygienepraktiken aufrechtzuerhalten sind ebenfalls wichtig für die Genesung."
+            }
+        }
+    },
+    "common": {
+        "bacteria_type": "Bakterientyp",
+        "shape": "Form",
+        "learn_more": "Mehr erfahren",
+        "back_to_discover": "Zurück zur Entdeckung"
+    }
+}
