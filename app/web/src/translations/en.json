@@ -179,5 +179,22 @@
   "Server error. Please try again later.": "Server error. Please try again later.",
   "Network error. Please check your connection.": "Network error. Please check your connection.",
   "Login failed. Please try again.": "Login failed. Please try again.",
-  "back": "Back"
+  "back": "Back",
+  "overview": "Overview",
+  "overview_subtitle_doctor": "Quick access to ongoing tests for all your patients",
+  "overview_subtitle_patient": "Quick access to your ongoing tests",
+  "ongoing_tests": "Ongoing Tests",
+  "ongoing_tests_for_patients": "Ongoing Tests for Patients",
+  "no_ongoing_tests": "No Ongoing Tests",
+  "no_ongoing_tests_for_patients": "No Ongoing Tests",
+  "no_ongoing_tests_description": "You don't have any tests in progress at the moment. Start a new test by scanning a test kit.",
+  "no_ongoing_tests_for_patients_description": "None of your patients have ongoing tests at the moment.",
+  "test": "Test",
+  "retry": "Retry",
+  "patient_name_colon": "Patient Name:",
+  "id_colon": "ID:",
+  "dob_colon": "DOB:",
+  "dob_not_available": "DOB: -",
+  "failed_to_load_results": "Failed to load results.",
+  "overviews": "Overviews"
 }

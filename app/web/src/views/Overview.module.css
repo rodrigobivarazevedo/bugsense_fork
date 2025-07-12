@@ -1,0 +1,264 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.headerTitle {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #2E2747;
+  margin-bottom: 0.5rem;
+}
+
+.headerSubtitle {
+  font-size: 1rem;
+  color: #757575;
+  line-height: 1.5;
+}
+
+.content {
+  flex: 1;
+}
+
+.ongoingTestsSection {
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2E2747;
+  margin-bottom: 1rem;
+}
+
+.testGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1rem;
+}
+
+.testCard {
+  background-color: #f7f7f7;
+  border-radius: 8px;
+  padding: 1.5rem;
+  border-left: 4px solid #2E2747;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.testCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.testCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.testCardTitle {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #2E2747;
+  margin: 0;
+}
+
+.testCardTime {
+  font-size: 0.9rem;
+  color: #757575;
+}
+
+.testCardStatus {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.statusIndicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.statusIndicatorOngoing {
+  background-color: #FFD600;
+}
+
+.statusIndicatorPreliminary {
+  background-color: #FF9800;
+}
+
+.statusIndicatorReady {
+  background-color: #4CAF50;
+}
+
+.statusText {
+  font-size: 1rem;
+  color: #2E2747;
+  font-weight: 500;
+}
+
+.patientInfo {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.patientInfoRow {
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+
+.patientInfoLabel {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #757575;
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.patientInfoValue {
+  font-size: 0.9rem;
+  color: #333333;
+  flex: 1;
+}
+
+.noTestsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.noTestsIcon {
+  font-size: 4rem;
+  color: #757575;
+  margin-bottom: 1rem;
+}
+
+.noTestsTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2E2747;
+  margin-bottom: 0.5rem;
+}
+
+.noTestsText {
+  font-size: 1rem;
+  color: #757575;
+  line-height: 1.5;
+  max-width: 500px;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #2E2747;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.errorText {
+  font-size: 1rem;
+  color: #d32f2f;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.retryButton {
+  background-color: #2E2747;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.retryButton:hover {
+  background-color: #1a1628;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .headerTitle {
+    font-size: 1.5rem;
+  }
+
+  .testGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .testCard {
+    padding: 1rem;
+  }
+
+  .patientInfoLabel {
+    width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0.5rem;
+  }
+
+  .headerTitle {
+    font-size: 1.25rem;
+  }
+
+  .testCardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .patientInfoRow {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .patientInfoLabel {
+    width: auto;
+  }
+} 

@@ -28,6 +28,7 @@ import TimeFormatSelection from "./views/TimeFormatSelection";
 import News from "./views/News";
 import Patients from "./views/Patients";
 import ViewTest from "./views/ViewTest";
+import Overview from "./views/Overview";
 
 const isAuthenticated = () => !!localStorage.getItem("accessToken");
 
@@ -83,6 +84,7 @@ const AppRoutes = () => {
             <Route path="/news" element={<News />} />
             <Route path="/patients" element={<Patients />} />
             <Route path="/view-test" element={<ViewTest />} />
+            <Route path="/overview" element={<Overview />} />
             <Route path="*" element={<Navigate to="/home" replace />} />
           </Routes>
         </Root>
