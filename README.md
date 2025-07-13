@@ -24,6 +24,17 @@ To access the mobile application, you need to install Expo Go on your device:
 
 After installing Expo Go, enter the URL `exp://172.208.64.16:8081` in the Expo Go app to access the mobile application.
 
+## Sample Login Credentials
+
+For first-time users, you can find a full list of sample users (patients and doctors) with their credentials in the [`app/user_database.md`](app/user_database.md) file.
+
+This file contains:
+- Patient accounts (emails, passwords, security questions)
+- Doctor accounts (IDs, emails, passwords, institution IDs)
+- Institution information
+
+Refer to that file for up-to-date test credentials for all roles.
+
 ## Getting Started
 
 ### Prerequisites
@@ -72,17 +83,6 @@ Once started, you can access the application through:
 - **API Documentation (ReDoc)**: http://{HOST_IP}:8000/api/redoc/
 
 Note: Your host IP will be displayed in the logs when the application starts.
-
-### Sample Login Credentials
-
-For first-time users, you can find a full list of sample users (patients and doctors) with their credentials in the [`app/user_database.md`](app/user_database.md) file.
-
-This file contains:
-- Patient accounts (emails, passwords, security questions)
-- Doctor accounts (IDs, emails, passwords, institution IDs)
-- Institution information
-
-Refer to that file for up-to-date test credentials for all roles.
 
 ### API Documentation
 
