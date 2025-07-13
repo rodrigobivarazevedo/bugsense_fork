@@ -95,5 +95,12 @@ services:
       - ./dump:/app/dump 
     ports:
       - "5001:5001"
-   
+    networks:
+      - app_network
 
+volumes:
+  postgres_data:
+
+networks:
+  app_network:
+    driver: bridge

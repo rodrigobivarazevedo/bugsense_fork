@@ -94,6 +94,7 @@ CORS_ALLOWED_ORIGINS = [
     f"exp://{HOST_IP}:19000",
     f"http://{HOST_IP}:19006",
     f"http://{HOST_IP}:3000",
+    "http://0.0.0.0:5001",
 ]
 
 # Additional CORS settings for development
