@@ -14,12 +14,14 @@ load_dotenv(dotenv_path=env_path)  # Load variables from .env file
 def create_test_token(expires_in_minutes: int = 60):
     SECRET_KEY = secrets_manager.security_secrets.get("DJANGO_SECRET_KEY")
     ALGORITHM = secrets_manager.security_secrets.get("ALGORITHM")
+    
+    print(SECRET_KEY)
 
-    now = datetime.now(timezone.utc)
+    #now = datetime.now(timezone.utc)
+    now = datetime.now()
     expiration = now + timedelta(minutes=expires_in_minutes)
 
     payload = {
-        "iat": int(now.timestamp()),
         "exp": int(expiration.timestamp()),
     }
 
