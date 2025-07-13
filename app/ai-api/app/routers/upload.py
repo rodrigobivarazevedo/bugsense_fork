@@ -21,7 +21,6 @@ async def upload_image(
     image: UploadFile = File(...),
     storage: str = Query("local", enum=["local", "gcs"]),
 ):
-    
     #token = await get_current_user(request)
     
     try:
@@ -61,8 +60,6 @@ async def upload_image(
             message = "Image uploaded locally."
             
         # try to predict and send results to main backend
-        results = await send_results(request, qr_data, storage=storage)
-        
         results = await send_results(request, qr_data, storage=storage)
         
         return JSONResponse(
@@ -132,12 +129,7 @@ async def send_results(
             if concentration is None or species is None:
                 print("no results")
                 return None
-                return None
-            
-            print("prediction ready")
-            print("species", species)
-            print("concentration", concentration)
-            
+             
             response = {
                 "species": species,
                 "concentration": concentration
@@ -184,11 +176,7 @@ async def send_results(
         except httpx.RequestError as e:
             raise HTTPException(status_code=500, detail=f"HTTPX request error: {str(e)}")
             
-            
-
         except Exception as e:
             print("Prediction error:", e)
-            return response
-            #raise HTTPException(status_code=500, detail="Failed to retrieve predictions.")
-        
+          
     return response

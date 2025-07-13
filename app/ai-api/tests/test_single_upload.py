@@ -11,7 +11,6 @@ HEADERS = {
 }
 
 def send_image(params, image_path, qr_data):
-def send_image(params, image_path, qr_data):
     API_URL = "http://0.0.0.0:5001/ml_api/upload/"
     
     
