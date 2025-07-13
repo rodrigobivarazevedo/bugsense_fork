@@ -61,7 +61,7 @@ describe('Home component', () => {
         mockApi.get.mockResolvedValueOnce({ data: { full_name: 'John Doe' } });
         mockAsyncStorage.getItem.mockResolvedValueOnce('patient');
 
-        const { getByText, getByTestId, queryByText } = render(<Home navigation={mockNavigation} />);
+        const { getByText, getByTestId } = render(<Home navigation={mockNavigation} />);
 
         await waitFor(() => {
             expect(getByText('Good morning')).toBeTruthy();

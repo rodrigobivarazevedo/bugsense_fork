@@ -235,7 +235,7 @@ describe('HeaderBar', () => {
         });
 
         it('translates headerTitle using t function', () => {
-            const { getByText } = render(<HeaderBar {...nonMainTabProps} />);
+            render(<HeaderBar {...nonMainTabProps} />);
             expect(mockT).toHaveBeenCalledWith('Custom Title');
         });
     });

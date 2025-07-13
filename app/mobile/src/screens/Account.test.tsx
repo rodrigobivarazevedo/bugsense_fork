@@ -238,7 +238,7 @@ describe('Account', () => {
         });
 
         it('should show confirmation modal for name and email changes', async () => {
-            const { getAllByTestId, getByTestId } = render(<Account />);
+            const { getAllByTestId } = render(<Account />);
 
             await waitFor(() => {
                 const editButtons = getAllByTestId('icon-materialIcons-edit');
@@ -269,7 +269,7 @@ describe('Account', () => {
         });
 
         it('should allow editing address fields', async () => {
-            const { getAllByTestId, getByText } = render(<Account />);
+            const { getAllByTestId } = render(<Account />);
 
             await waitFor(() => {
                 const editButtons = getAllByTestId('icon-materialIcons-edit');

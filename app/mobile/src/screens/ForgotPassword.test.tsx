@@ -288,7 +288,7 @@ describe('ForgotPassword component', () => {
         const { getByPlaceholderText, queryByText } = render(<ForgotPassword navigation={mockNavigation} />);
 
         const emailInput = getByPlaceholderText('Email address');
-        const longEmail = 'a'.repeat(50) + '@' + 'b'.repeat(50) + '.com';
+        const longEmail = `${'a'.repeat(50)}@${'b'.repeat(50)}.com`;
         fireEvent.changeText(emailInput, longEmail);
 
         expect(queryByText('Please enter a valid email address')).toBeFalsy();

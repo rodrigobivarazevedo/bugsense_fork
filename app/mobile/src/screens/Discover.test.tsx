@@ -26,27 +26,27 @@ jest.mock('react-i18next', () => ({
 jest.mock('styled-components/native', () => {
     const React = require('react');
     const styled = {
-        ScrollView: (styles: any) => {
+        ScrollView: () => {
             return React.forwardRef(({ children, testID, ...props }: any, ref: any) => {
                 return React.createElement('ScrollView', { ...props, ref, testID: testID || 'Root' }, children);
             });
         },
-        View: (styles: any) => {
+        View: () => {
             return React.forwardRef(({ children, testID, ...props }: any, ref: any) => {
                 return React.createElement('View', { ...props, ref, testID: testID || 'BacteriaGrid' }, children);
             });
         },
-        Text: (styles: any) => {
+        Text: () => {
             return React.forwardRef(({ children, testID, ...props }: any, ref: any) => {
                 return React.createElement('Text', { ...props, ref, testID: testID || 'Text' }, children);
             });
         },
-        TouchableOpacity: (styles: any) => {
+        TouchableOpacity: () => {
             return React.forwardRef(({ children, onPress, testID, ...props }: any, ref: any) => {
                 return React.createElement('TouchableOpacity', { ...props, onPress, ref, testID: testID || 'BacteriaCard' }, children);
             });
         },
-        Image: (styles: any) => {
+        Image: () => {
             return React.forwardRef(({ source, testID, ...props }: any, ref: any) => {
                 return React.createElement('Image', { ...props, source, ref, testID: testID || 'BacteriaImage' });
             });

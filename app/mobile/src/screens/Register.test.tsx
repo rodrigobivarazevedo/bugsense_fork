@@ -9,7 +9,7 @@ import { securityQuestions } from '../utils/SecurityQuestions';
 import { suppressConsoleError, resumeConsoleError } from '../utils/UnitTestUtils';
 
 if (typeof global.setImmediate === 'undefined') {
-    (global as any).setImmediate = (callback: Function) => {
+    (global as any).setImmediate = (callback: any) => {
         return setTimeout(callback, 0);
     };
 }

@@ -4,7 +4,7 @@ import NotificationIndicator from './NotificationIndicator';
 jest.mock('styled-components/native', () => {
     const React = require('react');
     const styled = {
-        View: (styles: any) => {
+        View: () => {
             return React.forwardRef(({ children, testID, ...props }: any, ref: any) => {
                 return React.createElement('View', { ...props, ref, testID }, children);
             });

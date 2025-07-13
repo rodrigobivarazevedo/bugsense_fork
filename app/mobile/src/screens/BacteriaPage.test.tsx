@@ -33,22 +33,22 @@ jest.mock('../components/RenderIcon', () => {
 jest.mock('styled-components/native', () => {
     const React = require('react');
     const styled = {
-        ScrollView: (styles: any) => {
+        ScrollView: () => {
             return React.forwardRef(({ children, ...props }: any, ref: any) => {
                 return React.createElement('ScrollView', { ...props, ref, testID: props.testID }, children);
             });
         },
-        View: (styles: any) => {
+        View: () => {
             return React.forwardRef(({ children, ...props }: any, ref: any) => {
                 return React.createElement('View', { ...props, ref, testID: props.testID }, children);
             });
         },
-        Text: (styles: any) => {
+        Text: () => {
             return React.forwardRef(({ children, ...props }: any, ref: any) => {
                 return React.createElement('Text', { ...props, ref, testID: props.testID }, children);
             });
         },
-        Image: (styles: any) => {
+        Image: () => {
             return React.forwardRef(({ children, ...props }: any, ref: any) => {
                 return React.createElement('Image', { ...props, ref, testID: props.testID }, children);
             });

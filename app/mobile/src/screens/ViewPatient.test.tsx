@@ -89,8 +89,6 @@ const mockTestResult = {
 };
 
 describe('ViewPatient', () => {
-    let consoleSpy: jest.SpyInstance;
-
     beforeEach(() => {
         jest.clearAllMocks();
         suppressConsoleError();
@@ -112,7 +110,7 @@ describe('ViewPatient', () => {
         it('should show loading indicator when fetching patient data', async () => {
             (Api.get as jest.Mock).mockImplementation(() => new Promise(() => { /* no-op */ }));
 
-            const { getByTestId } = render(<ViewPatient />);
+            render(<ViewPatient />);
 
             await waitFor(() => {
                 expect(Api.get).toHaveBeenCalledWith(`doctor/patients/?patient_id=${mockRoute.params.patientId}`, {

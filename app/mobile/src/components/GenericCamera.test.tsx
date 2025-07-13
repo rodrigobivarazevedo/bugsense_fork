@@ -251,7 +251,7 @@ describe('GenericCamera component', () => {
 
             const cameraView = getByTestId('camera-view');
 
-            const mockTakePictureAsync = jest.fn().mockResolvedValue({
+            jest.fn().mockResolvedValue({
                 uri: 'test-photo-uri'
             });
 
