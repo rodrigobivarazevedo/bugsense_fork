@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import Api from "../api/client";
 import { getTimeBasedGreeting } from "../utils/DateTimeFormatter";
 
-// MUI Icons
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import LightbulbIcon from "@mui/icons-material/Lightbulb";
 import NewspaperIcon from "@mui/icons-material/Newspaper";

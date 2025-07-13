@@ -45,13 +45,13 @@
 }
 
 .option:hover {
-  border-color: #007bff;
-  background-color: #f8f9fa;
+  border-color: #2e2747;
+  background: #ece6ff;
 }
 
 .option.selected {
-  border-color: #007bff;
-  background-color: #e3f2fd;
+  border-color: #2e2747;
+  background: #ece6ff;
 }
 
 .optionText {
@@ -61,7 +61,7 @@
 }
 
 .checkmark {
-  color: #007bff;
+  color: #2e2747;
   font-weight: bold;
   font-size: 18px;
 }

@@ -13,18 +13,13 @@ interface ResultItem {
   patient_id?: string;
   patient_dob?: string;
   qr_data?: string;
-  result_status?: string; // Added for new logic
+  result_status?: string;
 }
 
 type GroupedResults = {
   date: string;
   data: ResultItem[];
 };
-
-function formatDate(dateStr: string) {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString(undefined, { month: "long", day: "2-digit" });
-}
 
 function formatTime(dateStr: string, timeFormat: "12" | "24") {
   const date = new Date(dateStr);
@@ -45,7 +40,6 @@ function groupByDate(results: ResultItem[]): GroupedResults[] {
   return Object.entries(groups).map(([date, data]) => ({ date, data }));
 }
 
-// Helper for status color and label
 function getStatusProps(result_status: string, t: (key: string) => string) {
   if (
     result_status === "ongoing" ||

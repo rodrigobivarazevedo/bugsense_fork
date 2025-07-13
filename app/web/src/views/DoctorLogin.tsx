@@ -28,21 +28,7 @@ const DoctorLogin = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchInstitutions();
-    // Close dropdown on outside click
-    const handleClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest("." + styles.inputWrapper)) {
-        setShowInstitutionDropdown(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-    // eslint-disable-next-line
-  }, []);
-
-  const fetchInstitutions = async () => {
+  const fetchInstitutions = React.useCallback(async () => {
     try {
       setInstitutionsLoading(true);
       const response = await Api.get("institutions/");
@@ -52,7 +38,20 @@ const DoctorLogin = () => {
     } finally {
       setInstitutionsLoading(false);
     }
-  };
+  }, [t]);
+
+  useEffect(() => {
+    fetchInstitutions();
+
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest("." + styles.inputWrapper)) {
+        setShowInstitutionDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [fetchInstitutions]);
 
   const handleLogin = async () => {
     if (!selectedInstitution) {

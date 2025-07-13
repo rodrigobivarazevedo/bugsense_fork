@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import Api from "../api/client";
 import styles from "./Patients.module.css";
 
@@ -35,6 +36,7 @@ function groupPatientsAZ(patients: Patient[]): Section[] {
 
 const Patients: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [filtered, setFiltered] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,11 +51,11 @@ const Patients: React.FC = () => {
       setPatients(response.data);
       setFiltered(response.data);
     } catch (err: any) {
-      setError("Failed to load patients.");
+      setError(t("failed_to_load_patients"));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     fetchPatients();
@@ -81,7 +83,7 @@ const Patients: React.FC = () => {
       return (
         <div className={styles.genderIndicatorWrapper}>
           <span className={styles.genderIcon}>👨</span>
-          <span className={styles.patientDetails}>Male</span>
+          <span className={styles.patientDetails}>{t("male")}</span>
         </div>
       );
     }
@@ -89,7 +91,7 @@ const Patients: React.FC = () => {
       return (
         <div className={styles.genderIndicatorWrapper}>
           <span className={styles.genderIcon}>👩</span>
-          <span className={styles.patientDetails}>Female</span>
+          <span className={styles.patientDetails}>{t("female")}</span>
         </div>
       );
     }
@@ -97,17 +99,21 @@ const Patients: React.FC = () => {
       return (
         <div className={styles.genderIndicatorWrapper}>
           <span className={styles.genderIcon}>⚧</span>
-          <span className={styles.patientDetails}>Other</span>
+          <span className={styles.patientDetails}>{t("other")}</span>
         </div>
       );
     }
     return null;
   };
 
+  const handlePatientClick = (patient: Patient) => {
+    navigate("/view-patient", { state: { patientId: patient.id } });
+  };
+
   if (loading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loading}>Loading...</div>
+        <div className={styles.loading}>{t("loading")}</div>
       </div>
     );
   }
@@ -126,7 +132,7 @@ const Patients: React.FC = () => {
         <input
           type="text"
           className={styles.searchBar}
-          placeholder="Search patients..."
+          placeholder={t("search_patients")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           autoCapitalize="none"
@@ -136,7 +142,7 @@ const Patients: React.FC = () => {
 
       {sections.length === 0 ? (
         <div className={styles.emptyState}>
-          <div className={styles.emptyText}>No patients found.</div>
+          <div className={styles.emptyText}>{t("no_patients_found")}</div>
         </div>
       ) : (
         <div className={styles.sectionList}>
@@ -144,11 +150,15 @@ const Patients: React.FC = () => {
             <div key={section.title} className={styles.section}>
               <div className={styles.sectionHeader}>{section.title}</div>
               {section.data.map((item) => (
-                <div key={item.id} className={styles.patientItem}>
+                <div
+                  key={item.id}
+                  className={styles.patientItem}
+                  onClick={() => handlePatientClick(item)}
+                >
                   <div className={styles.patientName}>{item.full_name}</div>
                   <div className={styles.patientDetailsContainer}>
                     <div className={styles.patientDetails}>
-                      {item.dob ? item.dob : "DOB: -"}
+                      {item.dob ? item.dob : t("dob_placeholder")}
                     </div>
                     {genderIndicator(item.gender)}
                   </div>

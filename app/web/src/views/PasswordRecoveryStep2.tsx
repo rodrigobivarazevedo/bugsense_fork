@@ -11,8 +11,6 @@ interface LocationState {
 }
 
 const PasswordRecoveryStep2 = () => {
-  const [email, setEmail] = useState("");
-  const [questionId, setQuestionId] = useState("");
   const [answer, setAnswer] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -25,8 +23,6 @@ const PasswordRecoveryStep2 = () => {
 
   useEffect(() => {
     const state = location.state as LocationState;
-    if (state?.email) setEmail(state.email);
-    if (state?.questionId) setQuestionId(state.questionId);
     if (state?.answer) setAnswer(state.answer);
   }, [location]);
 
