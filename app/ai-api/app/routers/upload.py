@@ -61,12 +61,13 @@ async def upload_image(
             message = "Image uploaded locally."
             
         # try to predict and send results to main backend
-        await send_results(request, qr_data, storage=storage)
-            
+        results = await send_results(request, qr_data, storage=storage)
+        
         return JSONResponse(
                 status_code=200,
                 content={
                     "message": message,
+                    "results": results
                 }
             )
     except Exception as e:
@@ -127,11 +128,16 @@ async def send_results(
             
             if concentration is None or species is None:
                 print("no results")
-                return 
+                return None
             
             print("prediction ready")
             print("species", species)
             print("concentration", concentration)
+            
+            response = {
+                "species": species,
+                "concentration": concentration
+            }
             
         except httpx.RequestError as e:
             raise HTTPException(status_code=500, detail=f"HTTPX request error: {str(e)}")
@@ -168,7 +174,11 @@ async def send_results(
 
         except httpx.RequestError as e:
             raise HTTPException(status_code=500, detail=f"HTTPX request error: {str(e)}")
+            
 
         except Exception as e:
             print("Prediction error:", e)
-            raise HTTPException(status_code=500, detail="Failed to retrieve predictions.")
+            return response
+            #raise HTTPException(status_code=500, detail="Failed to retrieve predictions.")
+        
+    return response

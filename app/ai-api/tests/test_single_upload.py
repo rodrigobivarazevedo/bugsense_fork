@@ -10,10 +10,9 @@ HEADERS = {
     "Authorization": f"Bearer {JWT_TOKEN}"
 }
 
-def send_image(image_path, qr_data):
+def send_image(params, image_path, qr_data):
     API_URL = "http://0.0.0.0:5001/ml_api/upload/"
-    params = {"qr_data": qr_data, "storage": "local"}
-
+    
     try:
         with open(image_path, "rb") as image_file:
             files = {
@@ -27,10 +26,6 @@ def send_image(image_path, qr_data):
 
     print(f"Sent {image_path}")
     print("Status Code:", response.status_code)
-    try:
-        print("Response:", response.json())
-    except Exception:
-        print("Response content:", response.content)
         
     return response.json()
 
@@ -63,26 +58,73 @@ if __name__ == "__main__":
         #("test_data/Ste_L_0036_top/", "user1"), # sterile, low concentration
         #("test_data/S.S_L_0023_top/", "test_user_demo_4"), # S.Saprophyticus, low concentration
         # ("test_data/S.A_L_0026_top/", "user3"), # S.Aureus, high concentration
-        # ("test_data/P.M_L_0052_top/", "test_user_demo_29"), # Ehormaechei, high concentration
+        #("test_data/P.M_L_0052_top/", "test_user_demo_29"), # Ehormaechei, high concentration
         # ("test_data/P.A_L_0018_top/", "user5"), # P.Aeruginosa, low concentration
-        # ("test_data/K.P_L_0050_top/", "user6"), # K.Pneumoniae, high concentration
+        ("test_data/K.P_L_0050_top/", "user6"), # K.Pneumoniae, high concentration
         # ("test_data/E.H_L_0059_top/", "user7"), # E.Hormaechei, high concentration 
         # ("test_data/E.F_L_0035_top/", "user8"), # E.Faecalis, high concentration
         #("test_data/E.C_L_0039_top/", "test_user_demo_3"), # E.Coli, high concentration
     ]
-
-    count = 0
-
-    image_path = "test_data/P.M_L_0052_top/"
-    qr_data = "test_user_demo_29"
     
-    for dir_path, qr_data in data_users:
-        images = load_images(dir_path)
-        for image_path in images:
-            count += 1
-            
-            # if count > 40:
-            #     break
-            response = send_image(image_path, qr_data)
-            
-            print(response)
+    
+    print("LOCAL STORAGE")
+    
+    qr_data = "test_user_demo_38"
+    
+    params = {"qr_data": qr_data, "storage": "local"}
+        
+    dir_path = "test_data/K.P_L_0050_top/"
+    images = load_images(dir_path)
+    
+    count = 0
+    for image_path in images:
+ 
+        response = send_image(params, image_path, qr_data)
+        results = response.get('results', None)
+        
+        if results is not None:
+            concentration = results.get('concentration', None)
+            species = results.get('species', None) 
+            print("---------------------------")
+            print("PREDICTIONS")
+            print("---------------------------")
+            print("Number of images until prediction: ", count)
+            print("species", species)
+            print("concentration", concentration)
+            break
+        
+        count += 1
+        
+    print("\n")
+    print("---------------------------")
+    print("TESTING WITH GOOGLE BUCKET")
+    print("---------------------------")
+    
+    qr_data = "test_user_demo_37"
+    
+    params = {"qr_data": qr_data, "storage": "gcs"}
+        
+    dir_path = "test_data/K.P_L_0050_top/"
+    images = load_images(dir_path)
+    
+    count = 0
+    for image_path in images:
+ 
+        response = send_image(params, image_path, qr_data)
+        results = response.get('results', None)
+        
+        if results is not None:
+            concentration = results.get('concentration', None)
+            species = results.get('species', None) 
+            print("---------------------------")
+            print("PREDICTIONS")
+            print("---------------------------")
+            print("Number of images until prediction: ", count)
+            print("species", species)
+            print("concentration", concentration)
+            break
+        
+        count += 1
+
+
+
