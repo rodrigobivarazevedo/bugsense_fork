@@ -231,7 +231,7 @@ describe('GenericCamera component', () => {
 
             fireEvent(cameraView, 'onBarcodeScanned', { data: 'test-qr-data' });
 
-            expect(() => { }).not.toThrow();
+            expect(() => { /* no-op */ }).not.toThrow();
         });
     });
 

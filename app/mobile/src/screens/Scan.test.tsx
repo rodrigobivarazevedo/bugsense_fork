@@ -22,7 +22,7 @@ jest.mock('../components/modal/TestKitSelectModal', () => 'TestKitSelectModal');
 jest.mock('../components/modal/PatientSelectModal', () => 'PatientSelectModal');
 jest.mock('../components/modal/TestSelectModal', () => 'TestSelectModal');
 
-jest.spyOn(Alert, 'alert').mockImplementation(() => { });
+jest.spyOn(Alert, 'alert').mockImplementation(() => { /* no-op */ });
 
 describe('Scan', () => {
     beforeEach(() => {

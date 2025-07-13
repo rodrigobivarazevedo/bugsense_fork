@@ -79,7 +79,7 @@ describe('UserLogin', () => {
         (useTranslation as jest.Mock).mockReturnValue({ t: mockT });
         (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
         (Api.post as jest.Mock).mockResolvedValue(mockLoginResponse);
-        jest.spyOn(Alert, 'alert').mockImplementation(() => { });
+        jest.spyOn(Alert, 'alert').mockImplementation(() => { /* no-op */ });
     });
 
     afterEach(() => {

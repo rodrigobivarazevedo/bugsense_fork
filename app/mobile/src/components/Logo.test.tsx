@@ -47,7 +47,7 @@ describe('Logo component', () => {
                 testID="logo"
                 fill="red"
                 accessibilityLabel="company-logo"
-                onPress={() => { }}
+                onPress={() => { /* no-op */ }}
             />
         );
         const svg = getByTestId('logo');

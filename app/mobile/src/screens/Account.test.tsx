@@ -357,7 +357,7 @@ describe('Account', () => {
         });
 
         it('should handle delete account with confirmation', async () => {
-            const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => { });
+            const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => { /* no-op */ });
 
             const { getByText } = render(<Account />);
 
@@ -378,7 +378,7 @@ describe('Account', () => {
 
     describe('Error Handling', () => {
         it('should handle API errors gracefully', async () => {
-            const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => { });
+            const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => { /* no-op */ });
             (Api.get as jest.Mock).mockRejectedValue(new Error('Network error'));
 
             render(<Account />);

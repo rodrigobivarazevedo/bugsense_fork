@@ -47,7 +47,7 @@ describe('FavIcon component', () => {
                 testID="fav-icon"
                 fill="red"
                 accessibilityLabel="favorite-icon"
-                onPress={() => { }}
+                onPress={() => { /* no-op */ }}
             />
         );
         const svg = getByTestId('fav-icon');
@@ -115,7 +115,7 @@ describe('FavIcon component', () => {
             style: { backgroundColor: 'blue' },
             opacity: 0.8,
             transform: 'rotate(45deg)',
-            onLayout: () => { },
+            onLayout: () => { /* no-op */ },
         };
 
         const { getByTestId } = render(<FavIcon {...customProps} />);
