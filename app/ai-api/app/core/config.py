@@ -12,18 +12,7 @@ if not os.path.exists(env_path):
 load_dotenv(dotenv_path=env_path)  # Load variables from .env file
 
 class SecretsManager:
-    def __init__(self, alembic: bool = False):
-         
-        self.env = os.getenv("ENVIRONMENT").lower()
-        self.alembic = alembic
-
-        if self.env in "cloud":
-            print(f"Using {self.env} environment")
-        elif self.env == "local":
-            print("Using local environment")
-        else:
-            print(f"Warning: Unknown environment '{self.env}', defaulting to local")
-
+    def __init__(self):
         self.security_secrets = self.get_security_secrets()
 
     def get_security_secrets(self) -> Dict[str, Optional[str]]:
