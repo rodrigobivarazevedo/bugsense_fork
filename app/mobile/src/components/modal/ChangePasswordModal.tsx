@@ -72,7 +72,7 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({ visible, onClose, o
         setNewPassword(text);
         setPasswordError(validatePassword(t, text, userEmail, userFullName));
         if (confirmPassword && text !== confirmPassword) {
-            setConfirmError(t('Passwords do not match'));
+            setConfirmError(t('passwords_do_not_match'));
         } else {
             setConfirmError('');
         }
@@ -81,7 +81,7 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({ visible, onClose, o
     const handleConfirmPasswordChange = (text: string) => {
         setConfirmPassword(text);
         if (text !== newPassword) {
-            setConfirmError(t('Passwords do not match'));
+            setConfirmError(t('passwords_do_not_match'));
         } else {
             setConfirmError('');
         }
@@ -102,7 +102,7 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({ visible, onClose, o
                 new_password: newPassword,
             });
             setLoading(false);
-            Alert.alert(t('Success'), t('Password changed successfully'));
+            Alert.alert(t('success'), t('password_changed_successfully'));
             handleClose();
             if (onSuccess) onSuccess();
         } catch (err: any) {
@@ -127,7 +127,7 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({ visible, onClose, o
                 }
             }
 
-            Alert.alert(t('Error'), message);
+            Alert.alert(t('error'), message);
         }
     };
 
@@ -211,7 +211,7 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({ visible, onClose, o
                                 onPress={handleClose}
                                 disabled={loading}
                             >
-                                <Text style={styles.buttonText}>{t('Cancel')}</Text>
+                                <Text style={styles.buttonText}>{t('cancel')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.confirmButton, { backgroundColor: canSave && !loading ? themeColors.primary : '#bdbdbd' }]}
@@ -222,7 +222,7 @@ const ChangePasswordModal: FC<ChangePasswordModalProps> = ({ visible, onClose, o
                                     <ActivityIndicator color={themeColors.white} />
                                 ) : (
                                     <Text style={[styles.buttonText, { color: canSave && !loading ? themeColors.white : '#f5f5f5' }]}>
-                                        {t('Save')}
+                                        {t('save')}
                                     </Text>
                                 )}
                             </TouchableOpacity>

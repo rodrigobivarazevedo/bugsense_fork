@@ -61,11 +61,11 @@ const PasswordRecoveryStep1: FC<PasswordRecoveryStep1Props> = ({ navigation }) =
             const hasQuestions = questions.some((question: string) => question && question.trim() !== '');
             if (!hasQuestions) {
                 Alert.alert(
-                    t('Error'),
-                    t('You have no security questions set. Please contact the Admin to reset password'),
+                    t('error'),
+                    t('no_security_questions_set_contact_admin'),
                     [
                         {
-                            text: 'OK',
+                            text: t('ok'),
                             onPress: () => navigation.navigate('Login'),
                         },
                     ]
@@ -82,8 +82,8 @@ const PasswordRecoveryStep1: FC<PasswordRecoveryStep1Props> = ({ navigation }) =
                 err.response?.data?.detail ||
                 err.response?.data?.non_field_errors?.[0] ||
                 err.message ||
-                t('Failed to get security questions');
-            Alert.alert(t('Error'), message);
+                t('failed_to_get_security_questions');
+            Alert.alert(t('error'), message);
         } finally {
             setIsLoading(false);
         }
@@ -105,7 +105,7 @@ const PasswordRecoveryStep1: FC<PasswordRecoveryStep1Props> = ({ navigation }) =
                     <S.InputContainer>
                         <S.InputWrapper>
                             <S.StyledInput
-                                placeholder={t('Email Address')}
+                                placeholder={t('email_address')}
                                 placeholderTextColor={themeColors.primary}
                                 value={email}
                                 onChangeText={handleEmailChange}
@@ -122,14 +122,14 @@ const PasswordRecoveryStep1: FC<PasswordRecoveryStep1Props> = ({ navigation }) =
                     </S.InputContainer>
                     <S.ActionButton onPress={handleGetSecurityQuestions} disabled={!isFormValid || !!initialEmail}>
                         <S.ActionButtonText>
-                            {isLoading ? t('Loading...') : t('Get Security Questions')}
+                            {isLoading ? t('loading') : t('get_security_questions')}
                         </S.ActionButtonText>
                     </S.ActionButton>
                     <S.LinkContainer>
-                        <S.LinkText>{t('Remember your password?')}</S.LinkText>
+                        <S.LinkText>{t('remember_your_password')}</S.LinkText>
                         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                             <S.Link>
-                                {t('Login')}
+                                {t('login')}
                             </S.Link>
                         </TouchableOpacity>
                     </S.LinkContainer>

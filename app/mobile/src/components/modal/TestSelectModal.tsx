@@ -3,6 +3,7 @@ import { Modal, View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndic
 import { styles } from './Modal.styles';
 import { themeColors } from '../../theme/GlobalTheme';
 import { formatDateTimeGerman } from '../../utils/DateTimeFormatter';
+import Api from '../../api/Client';
 import { useTranslation } from 'react-i18next';
 
 interface TestKit {
@@ -10,20 +11,21 @@ interface TestKit {
     qr_data: string;
     created_at: string;
     status: string;
+    user_id: number;
 }
 
-interface TestKitSelectModalProps {
+interface TestSelectModalProps {
     isOpen: boolean;
     onClose: () => void;
     onConfirm: (qrData: string) => void;
-    fetchTestKits: () => Promise<TestKit[]>;
+    patientId: number;
 }
 
-const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
+const TestSelectModal: FC<TestSelectModalProps> = ({
     isOpen,
     onClose,
     onConfirm,
-    fetchTestKits,
+    patientId,
 }) => {
     const { t } = useTranslation();
     const [testKits, setTestKits] = useState<TestKit[]>([]);
@@ -32,18 +34,28 @@ const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
     const [selectedQr, setSelectedQr] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
+    const fetchPatientTestKits = async () => {
+        try {
+            const response = await Api.get(`qr-codes/list/?user_id=${patientId}`);
+            return response.data.filter((kit: any) => kit.result_status !== 'closed');
+        } catch (error) {
+            console.error('Error fetching patient test kits:', error);
+            return [];
+        }
+    };
+
     useEffect(() => {
-        if (isOpen) {
+        if (isOpen && patientId) {
             setLoading(true);
             setSelectedQr(null);
             setSearch('');
-            fetchTestKits().then(kits => {
+            fetchPatientTestKits().then(kits => {
                 setTestKits(kits);
                 setFiltered(kits);
                 setLoading(false);
             });
         }
-    }, [isOpen]);
+    }, [isOpen, patientId]);
 
     useEffect(() => {
         if (!search) {
@@ -75,6 +87,9 @@ const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
                 <View style={styles.modal}>
                     <View style={styles.modalBody}>
                         <Text style={styles.heading}>{t('select_test_kit')}</Text>
+                        <Text style={styles.messageSubtitle}>
+                            {t('choose_which_test_kit_to_upload_the_picture_for')}
+                        </Text>
                         <TextInput
                             style={styles.input}
                             placeholder={t('search_test_kits_by_qr_data')}
@@ -86,7 +101,7 @@ const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
                             <ActivityIndicator size="small" />
                         ) : filtered.length === 0 ? (
                             <Text style={styles.openTestKitsListText}>
-                                {t('no_ongoing_test_kits_found_please_scan_a_new_test_kit')}
+                                {t('no_ongoing_test_kits_found_for_this_patient_please_scan_a_new_test_kit_first')}
                             </Text>
                         ) : (
                             <FlatList
@@ -140,4 +155,4 @@ const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
     );
 };
 
-export default TestKitSelectModal; 
+export default TestSelectModal; 

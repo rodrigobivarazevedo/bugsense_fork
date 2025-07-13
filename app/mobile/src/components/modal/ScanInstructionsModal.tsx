@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { Modal, View, Text, TouchableOpacity } from 'react-native';
 import { styles } from './Modal.styles';
+import { useTranslation } from 'react-i18next';
 
 interface ScanInstructionsModalProps {
     isOpen: boolean;
@@ -17,43 +18,44 @@ const ScanInstructionsModal: FC<ScanInstructionsModalProps> = ({
     scanType,
     onDismiss,
 }) => {
+    const { t } = useTranslation();
     const getInstructionsList = () => {
         if (scanType === 'qr-code') {
             return {
-                title: 'QR Code Scanning Instructions',
-                subtitle: 'To scan a QR code:',
+                title: t('qr_scan_title'),
+                subtitle: t('qr_scan_subtitle'),
                 instructions: [
-                    'Make sure the QR code is clearly visible',
-                    'Hold the camera close enough to capture the entire code',
-                    'Ensure good lighting and avoid shadows',
-                    'Keep the camera steady to avoid blurry images',
-                    'The QR code should fill most of the screen',
+                    t('qr_scan_instruction_1'),
+                    t('qr_scan_instruction_2'),
+                    t('qr_scan_instruction_3'),
+                    t('qr_scan_instruction_4'),
+                    t('qr_scan_instruction_5'),
                 ],
             };
         } else if (scanType === 'test-strip') {
             return {
-                title: 'Test Strip Scanning Instructions',
-                subtitle: 'To scan a test strip:',
+                title: t('test_strip_scan_title'),
+                subtitle: t('test_strip_scan_subtitle'),
                 instructions: [
-                    'Place the test strip on a flat, well-lit surface',
-                    'Hold the camera directly above the strip',
-                    'Make sure the entire strip is visible in the frame',
-                    'Ensure good lighting and avoid shadows',
-                    'Keep the camera steady to avoid blurry images',
-                    'The strip should be clearly focused and readable',
+                    t('test_strip_scan_instruction_1'),
+                    t('test_strip_scan_instruction_2'),
+                    t('test_strip_scan_instruction_3'),
+                    t('test_strip_scan_instruction_4'),
+                    t('test_strip_scan_instruction_5'),
+                    t('test_strip_scan_instruction_6'),
                 ],
             };
         } else if (scanType === 'upload-test-strip') {
             return {
-                title: 'Upload Test Strip Instructions',
-                subtitle: 'To upload a test strip:',
+                title: t('upload_test_strip_title'),
+                subtitle: t('upload_test_strip_subtitle'),
                 instructions: [
-                    'Select a clear photo of the test strip from your gallery',
-                    'Ensure the test strip is fully visible in the image',
-                    'The photo should be well-lit and in focus',
-                    'Avoid images with glare, shadows, or obstructions',
-                    'Do not use edited or filtered images',
-                    'If possible, use a recent photo taken under good lighting conditions',
+                    t('upload_test_strip_instruction_1'),
+                    t('upload_test_strip_instruction_2'),
+                    t('upload_test_strip_instruction_3'),
+                    t('upload_test_strip_instruction_4'),
+                    t('upload_test_strip_instruction_5'),
+                    t('upload_test_strip_instruction_6'),
                 ],
             };
         }
@@ -94,10 +96,10 @@ const ScanInstructionsModal: FC<ScanInstructionsModalProps> = ({
                     </View>
                     <View style={styles.buttonRow}>
                         <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
-                            <Text style={styles.buttonText}>Cancel</Text>
+                            <Text style={styles.buttonText}>{t('cancel')}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={onConfirm} style={styles.confirmButton}>
-                            <Text style={styles.buttonText}>Understood</Text>
+                            <Text style={styles.buttonText}>{t('understood')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

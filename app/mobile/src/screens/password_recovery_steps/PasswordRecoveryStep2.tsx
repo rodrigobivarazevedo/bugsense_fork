@@ -28,11 +28,11 @@ const PasswordRecoveryStep2: FC<PasswordRecoveryStep2Props> = ({ navigation }) =
 
     const handleValidateAnswer = async () => {
         if (selectedQuestionIndex === null) {
-            Alert.alert(t('Error'), t('Please select a security question'));
+            Alert.alert(t('error'), t('please_select_a_security_question'));
             return;
         }
         if (!answer.trim()) {
-            Alert.alert(t('Error'), t('Please enter your answer'));
+            Alert.alert(t('error'), t('please_enter_your_answer'));
             return;
         }
         setIsLoading(true);
@@ -53,8 +53,8 @@ const PasswordRecoveryStep2: FC<PasswordRecoveryStep2Props> = ({ navigation }) =
                 err.response?.data?.detail ||
                 err.response?.data?.non_field_errors?.[0] ||
                 err.message ||
-                t('Failed to validate answer');
-            Alert.alert(t('Error'), message);
+                t('failed_to_validate_answer');
+            Alert.alert(t('error'), message);
         } finally {
             setIsLoading(false);
         }
@@ -71,12 +71,12 @@ const PasswordRecoveryStep2: FC<PasswordRecoveryStep2Props> = ({ navigation }) =
             >
                 <S.ScrollView keyboardShouldPersistTaps="handled">
                     <S.LogoContainer>
-                        <S.StepTitle>{t('Select a security question')}</S.StepTitle>
+                        <S.StepTitle>{t('select_a_security_question')}</S.StepTitle>
                     </S.LogoContainer>
                     <S.InputContainer>
                         <S.InputWrapper>
                             <S.StyledInput
-                                placeholder={t('Email Address')}
+                                placeholder={t('email_address')}
                                 placeholderTextColor={themeColors.primary}
                                 value={email}
                                 editable={false}
@@ -92,7 +92,7 @@ const PasswordRecoveryStep2: FC<PasswordRecoveryStep2Props> = ({ navigation }) =
                                 disabled={isLoading}
                             >
                                 <S.StyledInput
-                                    placeholder={t('Select a security question')}
+                                    placeholder={t('select_a_security_question')}
                                     placeholderTextColor={themeColors.primary}
                                     value={selectedQuestionIndex !== null ? questions[selectedQuestionIndex] : ''}
                                     editable={false}
@@ -140,7 +140,7 @@ const PasswordRecoveryStep2: FC<PasswordRecoveryStep2Props> = ({ navigation }) =
                                         </Pressable>
                                     ))}
                                     <Pressable onPress={() => setDropdownVisible(false)} style={{ marginTop: 8 }}>
-                                        <Text style={{ color: themeColors.themeGray, textAlign: 'center' }}>{t('Cancel')}</Text>
+                                        <Text style={{ color: themeColors.themeGray, textAlign: 'center' }}>{t('cancel')}</Text>
                                     </Pressable>
                                 </View>
                             </View>
@@ -149,7 +149,7 @@ const PasswordRecoveryStep2: FC<PasswordRecoveryStep2Props> = ({ navigation }) =
                     <S.InputContainer>
                         <S.InputWrapper>
                             <S.StyledInput
-                                placeholder={t('Enter your answer')}
+                                placeholder={t('enter_your_answer')}
                                 placeholderTextColor={themeColors.primary}
                                 value={answer}
                                 onChangeText={setAnswer}
@@ -160,14 +160,14 @@ const PasswordRecoveryStep2: FC<PasswordRecoveryStep2Props> = ({ navigation }) =
                     </S.InputContainer>
                     <S.ActionButton onPress={handleValidateAnswer} disabled={!isFormValid}>
                         <S.ActionButtonText>
-                            {isLoading ? t('Loading...') : t('Validate Answer')}
+                            {isLoading ? t('loading') : t('validate_answer')}
                         </S.ActionButtonText>
                     </S.ActionButton>
                     <S.LinkContainer>
-                        <S.LinkText>{t('Back to login?')}</S.LinkText>
+                        <S.LinkText>{t('back_to_login')}</S.LinkText>
                         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                             <S.Link>
-                                {t('Login')}
+                                {t('login')}
                             </S.Link>
                         </TouchableOpacity>
                     </S.LinkContainer>

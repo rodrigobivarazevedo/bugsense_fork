@@ -1,14 +1,11 @@
 import { useRef } from 'react';
-import './translations/i18n';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './translations/i18n';
-import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer, type NavigationContainerRef } from '@react-navigation/native';
+import { createNativeStackNavigator, type NativeStackHeaderProps } from '@react-navigation/native-stack';
+import { createBottomTabNavigator, type BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
-import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import type { NativeStackHeaderProps } from '@react-navigation/native-stack';
 
 import { handleThirdPartyLibraryWarnings } from './utils/HandleThirdPartyLibraryWarnings';
 handleThirdPartyLibraryWarnings();
@@ -37,6 +34,8 @@ import ViewPatient from './screens/ViewPatient';
 import PatientTests from './screens/PatientTests';
 import News from './screens/News';
 import Notifications from './screens/Notifications';
+import Overview from './screens/Overview';
+import { NotificationProvider } from './context/NotificationContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -64,6 +63,7 @@ const WRAPPED_SCREENS_AND_TITLES_TRANSLATION_KEYS: Record<string, string> = {
   PatientTests: 'patient_tests',
   News: 'news',
   Notifications: 'notifications',
+  Overview: 'overview',
 };
 
 function MainTabs() {
@@ -97,45 +97,48 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <I18nextProvider i18n={i18n}>
-        <NavigationContainer ref={navRef}>
-          <AppContainer>
-            <ContentContainer>
-              <Stack.Navigator
-                screenOptions={{
-                  header: (props: NativeStackHeaderProps) => {
-                    if (Object.keys(WRAPPED_SCREENS_AND_TITLES_TRANSLATION_KEYS).includes(props.route.name)) {
-                      return (
-                        <HeaderBar
-                          {...props}
-                          headerTitle={WRAPPED_SCREENS_AND_TITLES_TRANSLATION_KEYS[props.route.name] || props.route.name}
-                        />
-                      );
-                    }
-                    return null;
-                  },
-                }}
-              >
-                <Stack.Screen name="Login" component={UserLogin} />
-                <Stack.Screen name="Register" component={Register} />
-                <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-                <Stack.Screen name="PasswordRecoveryStep1" component={PasswordRecoveryStep1} />
-                <Stack.Screen name="PasswordRecoveryStep2" component={PasswordRecoveryStep2} />
-                <Stack.Screen name="PasswordRecoveryStep3" component={PasswordRecoveryStep3} />
-                <Stack.Screen name="DoctorLogin" component={DoctorLogin} />
-                <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
-                <Stack.Screen name="LanguageSelection" component={LanguageSelection} />
-                <Stack.Screen name="TimeFormatSelection" component={TimeFormatSelection} />
-                <Stack.Screen name="Discover" component={Discover} />
-                <Stack.Screen name="BacteriaRouter" component={BacteriaRouter} />
-                <Stack.Screen name="ViewTest" component={ViewTest} />
-                <Stack.Screen name="ViewPatient" component={ViewPatient} />
-                <Stack.Screen name="PatientTests" component={PatientTests} />
-                <Stack.Screen name="News" component={News} />
-                <Stack.Screen name="Notifications" component={Notifications} />
-              </Stack.Navigator>
-            </ContentContainer>
-          </AppContainer>
-        </NavigationContainer>
+        <NotificationProvider>
+          <NavigationContainer ref={navRef}>
+            <AppContainer>
+              <ContentContainer>
+                <Stack.Navigator
+                  screenOptions={{
+                    header: (props: NativeStackHeaderProps) => {
+                      if (Object.keys(WRAPPED_SCREENS_AND_TITLES_TRANSLATION_KEYS).includes(props.route.name)) {
+                        return (
+                          <HeaderBar
+                            {...props}
+                            headerTitle={WRAPPED_SCREENS_AND_TITLES_TRANSLATION_KEYS[props.route.name] || props.route.name}
+                          />
+                        );
+                      }
+                      return null;
+                    },
+                  }}
+                >
+                  <Stack.Screen name="Login" component={UserLogin} />
+                  <Stack.Screen name="Register" component={Register} />
+                  <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+                  <Stack.Screen name="PasswordRecoveryStep1" component={PasswordRecoveryStep1} />
+                  <Stack.Screen name="PasswordRecoveryStep2" component={PasswordRecoveryStep2} />
+                  <Stack.Screen name="PasswordRecoveryStep3" component={PasswordRecoveryStep3} />
+                  <Stack.Screen name="DoctorLogin" component={DoctorLogin} />
+                  <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
+                  <Stack.Screen name="LanguageSelection" component={LanguageSelection} />
+                  <Stack.Screen name="TimeFormatSelection" component={TimeFormatSelection} />
+                  <Stack.Screen name="Discover" component={Discover} />
+                  <Stack.Screen name="BacteriaRouter" component={BacteriaRouter} />
+                  <Stack.Screen name="ViewTest" component={ViewTest} />
+                  <Stack.Screen name="ViewPatient" component={ViewPatient} />
+                  <Stack.Screen name="PatientTests" component={PatientTests} />
+                  <Stack.Screen name="News" component={News} />
+                  <Stack.Screen name="Notifications" component={Notifications} />
+                  <Stack.Screen name="Overview" component={Overview} />
+                </Stack.Navigator>
+              </ContentContainer>
+            </AppContainer>
+          </NavigationContainer>
+        </NotificationProvider>
       </I18nextProvider>
     </SafeAreaProvider>
   );

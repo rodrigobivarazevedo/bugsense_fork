@@ -179,5 +179,22 @@
   "Server error. Please try again later.": "Serverfehler. Bitte versuchen Sie es später erneut.",
   "Network error. Please check your connection.": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.",
   "Login failed. Please try again.": "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.",
-  "back": "Zurück"
+  "back": "Zurück",
+  "overview": "Übersicht",
+  "overview_subtitle_doctor": "Schneller Zugriff auf laufende Tests für alle Ihre Patienten",
+  "overview_subtitle_patient": "Schneller Zugriff auf Ihre laufenden Tests",
+  "ongoing_tests": "Laufende Tests",
+  "ongoing_tests_for_patients": "Laufende Tests für Patienten",
+  "no_ongoing_tests": "Keine laufenden Tests",
+  "no_ongoing_tests_for_patients": "Keine laufenden Tests",
+  "no_ongoing_tests_description": "Sie haben derzeit keine Tests in Bearbeitung. Starten Sie einen neuen Test, indem Sie ein Testkit scannen.",
+  "no_ongoing_tests_for_patients_description": "Keiner Ihrer Patienten hat derzeit laufende Tests.",
+  "test": "Test",
+  "retry": "Wiederholen",
+  "patient_name_colon": "Patientenname:",
+  "id_colon": "ID:",
+  "dob_colon": "Geburtsdatum:",
+  "dob_not_available": "Geburtsdatum: -",
+  "failed_to_load_results": "Ergebnisse konnten nicht geladen werden.",
+  "overviews": "Übersichten"
 }
