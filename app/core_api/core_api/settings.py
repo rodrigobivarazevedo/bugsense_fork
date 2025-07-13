@@ -29,6 +29,7 @@ DEBUG = True
 HOST_IP = os.environ.get("HOST_IP")
 ALLOWED_HOSTS = [
     HOST_IP,
+    'localhost'
 ]
 
 
