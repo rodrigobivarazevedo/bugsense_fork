@@ -1,4 +1,4 @@
-import React from 'react';
+import { ReactElement } from 'react';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import { I18nextProvider } from 'react-i18next';
@@ -46,7 +46,7 @@ const defaultProps = {
     onSuccess: jest.fn(),
 };
 
-const renderWithI18n = async (component: React.ReactElement, shouldWaitForAsync = true) => {
+const renderWithI18n = async (component: ReactElement, shouldWaitForAsync = true) => {
     const result = render(
         <I18nextProvider i18n={i18n}>
             {component}
