@@ -63,10 +63,13 @@ async def upload_image(
         # try to predict and send results to main backend
         results = await send_results(request, qr_data, storage=storage)
         
+        results = await send_results(request, qr_data, storage=storage)
+        
         return JSONResponse(
                 status_code=200,
                 content={
                     "message": message,
+                    "results": results
                     "results": results
                 }
             )
@@ -129,10 +132,16 @@ async def send_results(
             if concentration is None or species is None:
                 print("no results")
                 return None
+                return None
             
             print("prediction ready")
             print("species", species)
             print("concentration", concentration)
+            
+            response = {
+                "species": species,
+                "concentration": concentration
+            }
             
             response = {
                 "species": species,
@@ -174,6 +183,7 @@ async def send_results(
 
         except httpx.RequestError as e:
             raise HTTPException(status_code=500, detail=f"HTTPX request error: {str(e)}")
+            
             
 
         except Exception as e:

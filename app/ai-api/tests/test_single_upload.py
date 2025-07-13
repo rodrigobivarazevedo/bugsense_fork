@@ -11,7 +11,9 @@ HEADERS = {
 }
 
 def send_image(params, image_path, qr_data):
+def send_image(params, image_path, qr_data):
     API_URL = "http://0.0.0.0:5001/ml_api/upload/"
+    
     
     try:
         with open(image_path, "rb") as image_file:
@@ -102,6 +104,32 @@ if __name__ == "__main__":
     
     qr_data = "test_user_demo_37"
     
+    params = {"qr_data": qr_data, "storage": "gcs"}
+        
+    dir_path = "test_data/K.P_L_0050_top/"
+    images = load_images(dir_path)
+    
+    count = 0
+    for image_path in images:
+ 
+        response = send_image(params, image_path, qr_data)
+        results = response.get('results', None)
+        
+        if results is not None:
+            concentration = results.get('concentration', None)
+            species = results.get('species', None) 
+            print("---------------------------")
+            print("PREDICTIONS")
+            print("---------------------------")
+            print("Number of images until prediction: ", count)
+            print("species", species)
+            print("concentration", concentration)
+            break
+        
+        count += 1
+
+
+
     params = {"qr_data": qr_data, "storage": "gcs"}
         
     dir_path = "test_data/K.P_L_0050_top/"
