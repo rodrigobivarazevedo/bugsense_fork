@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -9,10 +9,10 @@ import {
 import { styles } from './Notifications.styles';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useNavigation, useIsFocused, useFocusEffect } from '@react-navigation/native';
 import { formatDateTimeGerman } from '../utils/DateTimeFormatter';
-import { getTranslatedTestStatus } from '../utils/TestResultsStatus';
 import { useTranslation } from 'react-i18next';
+import { useNotificationContext } from '../context/NotificationContext';
 
 interface NotificationItem {
     id: number;
@@ -34,6 +34,7 @@ export const Notifications: FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [userType, setUserType] = useState<string>('patient');
+    const { refetch } = useNotificationContext();
 
     useEffect(() => {
         AsyncStorage.getItem('userType').then(type => {
@@ -61,7 +62,7 @@ export const Notifications: FC = () => {
 
                 setNotifications(readyTests);
             } catch (err: any) {
-                setError('Failed to load notifications.');
+                setError(t('failed_to_load_notifications'));
             } finally {
                 setLoading(false);
             }
@@ -73,6 +74,12 @@ export const Notifications: FC = () => {
         navigation.navigate('ViewTest', { test: notification });
     };
 
+    useFocusEffect(
+        React.useCallback(() => {
+            refetch();
+        }, [refetch])
+    );
+
     const renderNotificationItem = ({ item }: { item: NotificationItem }) => (
         <TouchableOpacity
             onPress={() => handleNotificationPress(item)}
@@ -81,19 +88,19 @@ export const Notifications: FC = () => {
             <View style={styles.notificationItem}>
                 <View style={styles.notificationHeader}>
                     <Text style={styles.notificationTitle}>
-                        Test Result Ready
+                        {t('test_result_ready')}
                     </Text>
                     <Text style={styles.notificationTime}>
                         {formatDateTimeGerman(item.created_at)}
                     </Text>
                 </View>
                 <Text style={styles.notificationMessage}>
-                    Your test result is now ready. Tap to view the detailed results.
+                    {t('test_result_ready_message')}
                 </Text>
                 {userType === 'doctor' && item.patient && (
                     <View style={styles.notificationPatient}>
                         <Text style={styles.notificationPatientText}>
-                            Patient: {item.patient.full_name || 'N/A'}
+                            {t('patient_colon', { name: item.patient.full_name || 'N/A' })}
                         </Text>
                     </View>
                 )}
@@ -115,7 +122,7 @@ export const Notifications: FC = () => {
         return (
             <View style={styles.container}>
                 <View style={styles.errorContainer}>
-                    <Text style={styles.errorText}>{error}</Text>
+                    <Text style={styles.errorText}>{t('failed_to_load_notifications')}</Text>
                 </View>
             </View>
         );
@@ -126,7 +133,7 @@ export const Notifications: FC = () => {
             <View style={styles.container}>
                 <View style={styles.noNotificationsContainer}>
                     <Text style={styles.noNotificationsText}>
-                        You do not have any new notifications
+                        {t('no_new_notifications')}
                     </Text>
                 </View>
             </View>

@@ -50,7 +50,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
         setPassword(text);
         setPasswordError(validatePassword(t, text, email, fullName));
         if (confirmPassword && text !== confirmPassword) {
-            setConfirmPasswordError(t('Passwords do not match'));
+            setConfirmPasswordError(t('passwords_do_not_match'));
         } else {
             setConfirmPasswordError('');
         }
@@ -59,7 +59,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
     const handleConfirmPasswordChange = (text: string) => {
         setConfirmPassword(text);
         if (text !== password) {
-            setConfirmPasswordError(t('Passwords do not match'));
+            setConfirmPasswordError(t('passwords_do_not_match'));
         } else {
             setConfirmPasswordError('');
         }
@@ -126,7 +126,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
 
     const handleRegister = async () => {
         if (!isStep2Valid) {
-            Alert.alert(t('Error'), t('Please answer all security questions'));
+            Alert.alert(t('error'), t('please_answer_all_security_questions'));
             return;
         }
 
@@ -147,8 +147,8 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
 
             if (response.data) {
                 Alert.alert(
-                    t('Success'),
-                    t('Registration successful! Please login.'),
+                    t('success'),
+                    t('registration_successful_please_login'),
                     [
                         {
                             text: 'OK',
@@ -163,7 +163,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                 err.response?.data?.detail ||
                 err.response?.data?.non_field_errors?.[0] ||
                 err.message;
-            Alert.alert(t('Registration failed'), message);
+            Alert.alert(t('registration_failed'), message);
         }
     };
 
@@ -175,7 +175,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
             <S.InputContainer>
                 <S.InputWrapper>
                     <S.StyledInput
-                        placeholder={t('Full Name')}
+                        placeholder={t('full_name')}
                         placeholderTextColor={themeColors.primary}
                         value={fullName}
                         onChangeText={setFullName}
@@ -187,7 +187,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
             <S.InputContainer>
                 <S.InputWrapper>
                     <S.StyledInput
-                        placeholder={t('Email Address')}
+                        placeholder={t('email_address')}
                         placeholderTextColor={themeColors.primary}
                         value={email}
                         onChangeText={handleEmailChange}
@@ -201,7 +201,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
             <S.InputContainer>
                 <S.InputWrapper>
                     <S.StyledInput
-                        placeholder={t('Password')}
+                        placeholder={t('password')}
                         placeholderTextColor={themeColors.primary}
                         secureTextEntry={!passwordVisible}
                         value={password}
@@ -224,7 +224,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
             <S.InputContainer>
                 <S.InputWrapper>
                     <S.StyledInput
-                        placeholder={t('Confirm Password')}
+                        placeholder={t('confirm_password')}
                         placeholderTextColor={themeColors.primary}
                         secureTextEntry={!confirmPasswordVisible}
                         value={confirmPassword}
@@ -249,9 +249,9 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
     const renderStep2 = () => (
         <>
             <S.StepText>{t('Step 2 of 2')}</S.StepText>
-            <S.StepTitle>{t('Security Questions')}</S.StepTitle>
+            <S.StepTitle>{t('security_questions')}</S.StepTitle>
             <S.NoteText>
-                {t('We need these questions so we can help you reset your password if you forget your password')}
+                {t('we_need_these_questions_so_we_can_help_you_reset_your_password_if_you_forget_your_password')}
             </S.NoteText>
 
             {securityQuestionsData.map((question, index) => (
@@ -274,7 +274,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                             activeOpacity={0.8}
                         >
                             <S.SelectorText>
-                                {question.question || t('Select Security Question')}
+                                {question.question || t('select_security_question')}
                             </S.SelectorText>
                             <S.SelectorIcon>▼</S.SelectorIcon>
                         </S.SelectorRow>
@@ -296,7 +296,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                     <S.InputContainer>
                         <S.InputWrapper>
                             <S.StyledInput
-                                placeholder={t('Your Answer')}
+                                placeholder={t('your_answer')}
                                 placeholderTextColor={themeColors.primary}
                                 value={question.answer}
                                 onChangeText={(text: string) => updateSecurityAnswer(index, text)}
@@ -309,7 +309,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
 
             {securityQuestionsData.length < 3 && (
                 <S.AddQuestionButton onPress={addSecurityQuestion}>
-                    <S.AddQuestionText>{t('Add Security Question')}</S.AddQuestionText>
+                    <S.AddQuestionText>{t('add_security_question')}</S.AddQuestionText>
                 </S.AddQuestionButton>
             )}
         </>
@@ -332,16 +332,16 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                     {currentStep === 1 && (
                         <>
                             <S.LinkContainer>
-                                <S.LinkText>{t('Already have an account?')}</S.LinkText>
+                                <S.LinkText>{t('already_have_an_account')}</S.LinkText>
                                 <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                                    <S.Link>{t('Login')}</S.Link>
+                                    <S.Link>{t('login')}</S.Link>
                                 </TouchableOpacity>
                             </S.LinkContainer>
 
                             <S.LinkContainer>
-                                <S.LinkText>{t('Are you medical personnel?')}</S.LinkText>
+                                <S.LinkText>{t('are_you_medical_personnel')}</S.LinkText>
                                 <TouchableOpacity onPress={() => navigation.navigate('DoctorLogin')}>
-                                    <S.Link>{t('Login as Doctor')}</S.Link>
+                                    <S.Link>{t('login_as_doctor')}</S.Link>
                                 </TouchableOpacity>
                             </S.LinkContainer>
                         </>
@@ -349,18 +349,18 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
 
                     {currentStep === 1 ? (
                         <S.ActionButton onPress={handleNext} disabled={!isStep1Valid}>
-                            <S.ActionButtonText>{t('Next')}</S.ActionButtonText>
+                            <S.ActionButtonText>{t('next')}</S.ActionButtonText>
                         </S.ActionButton>
                     ) : (
                         <S.ButtonRow>
                             <S.SecondaryButton onPress={handleBack}>
-                                <S.SecondaryButtonText>{t('Back')}</S.SecondaryButtonText>
+                                <S.SecondaryButtonText>{t('back')}</S.SecondaryButtonText>
                             </S.SecondaryButton>
                             <S.ActionButtonRegister
                                 onPress={handleRegister}
                                 disabled={!isStep2Valid}
                             >
-                                <S.ActionButtonText>{t('Register')}</S.ActionButtonText>
+                                <S.ActionButtonText>{t('register')}</S.ActionButtonText>
                             </S.ActionButtonRegister>
                         </S.ButtonRow>
                     )}

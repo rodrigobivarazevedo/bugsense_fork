@@ -3,6 +3,8 @@ import { initReactI18next } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import en from './en.json';
 import de from './de.json';
+import bacteriaDiscoverEn from './bacteria_discover_en.json';
+import bacteriaDiscoverDe from './bacteria_discover_de.json';
 
 const LANGUAGE_KEY = '@language';
 
@@ -34,9 +36,17 @@ const initializeI18n = async () => {
             lng: storedLanguage,
             fallbackLng: 'en',
             resources: {
-                en: { translation: en },
-                de: { translation: de },
+                en: {
+                    translation: en,
+                    bacteria_discover: bacteriaDiscoverEn
+                },
+                de: {
+                    translation: de,
+                    bacteria_discover: bacteriaDiscoverDe
+                },
             },
+            ns: ['translation', 'bacteria_discover'],
+            defaultNS: 'translation',
             interpolation: {
                 escapeValue: false,
             },

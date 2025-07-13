@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -9,7 +9,7 @@ import {
     Alert,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { styles } from './ViewTest.styles';
@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import ScanInstructionsModal from '../components/modal/ScanInstructionsModal';
 import { formatDateTimeGerman } from '../utils/DateTimeFormatter';
 import { navigateToBacteriaDiscoverPage, getSpeciesDisplayName } from '../utils/BacteriaSpeciesUtils';
+import { useNotificationContext } from '../context/NotificationContext';
 
 const ViewTest: FC = () => {
     const { t } = useTranslation();
@@ -36,6 +37,7 @@ const ViewTest: FC = () => {
     const [copied, setCopied] = useState(false);
     const [showScanModal, setShowScanModal] = useState(false);
     const [shouldOpenPicker, setShouldOpenPicker] = useState(false);
+    const { refetch } = useNotificationContext();
 
     useEffect(() => {
         const fetchResult = async () => {
@@ -51,7 +53,7 @@ const ViewTest: FC = () => {
                 });
                 setResult(response.data && response.data.length > 0 ? response.data[0] : null);
             } catch (err) {
-                setError('Failed to load test results.');
+                setError(t('failed_to_load_test_results'));
             } finally {
                 setLoading(false);
             }
@@ -59,10 +61,16 @@ const ViewTest: FC = () => {
         fetchResult();
     }, [test?.qr_data]);
 
+    useFocusEffect(
+        React.useCallback(() => {
+            refetch();
+        }, [refetch])
+    );
+
     const pickImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (!permissionResult.granted) {
-            Alert.alert('Permission required', 'Permission to access media library is required!');
+            Alert.alert(t('permission_required'), t('permission_to_access_media_library_required'));
             return;
         }
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -99,10 +107,10 @@ const ViewTest: FC = () => {
                     service: 'ml',
                 } as any
             );
-            Alert.alert('Success', 'Image uploaded successfully!');
+            Alert.alert(t('success'), t('image_uploaded_successfully'));
             setImage(null);
         } catch (err) {
-            Alert.alert('Upload failed', 'Could not upload image.');
+            Alert.alert(t('upload_failed'), t('could_not_upload_image'));
         } finally {
             setUploading(false);
         }
@@ -142,11 +150,11 @@ const ViewTest: FC = () => {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.section}>
-                <Text style={styles.label}>Test Started At:</Text>
+                <Text style={styles.label}>{t('test_started_at_colon')}</Text>
                 <Text style={styles.value}>{formatDateTimeGerman(result?.created_at)}</Text>
-                <Text style={styles.label}>Test Status:</Text>
+                <Text style={styles.label}>{t('test_status_colon')}</Text>
                 <Text style={styles.value}>{getTranslatedTestStatus(result?.status, t) || '-'}</Text>
-                <Text style={styles.label}>Test QR Data:</Text>
+                <Text style={styles.label}>{t('test_qr_data_colon')}</Text>
                 <View style={styles.qrRow}>
                     <Text
                         style={styles.qrValue}
@@ -166,88 +174,90 @@ const ViewTest: FC = () => {
                 </View>
             </View>
 
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Upload Image</Text>
-                <View style={styles.imageButtonsWrapper}>
-                    <TouchableOpacity
-                        style={styles.uploadButton}
-                        onPress={handlePickFromGallery}
-                        activeOpacity={0.85}
-                    >
-                        <RenderIcon
-                            family="materialIcons"
-                            icon="photo-library"
-                            fontSize={20}
-                            color={themeColors.white}
-                        />
-                        <Text style={styles.uploadButtonText}>
-                            Pick from Gallery
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.scanButton}
-                        onPress={goToScan}
-                        activeOpacity={0.85}
-                    >
-                        <RenderIcon
-                            family="entypo"
-                            icon="camera"
-                            fontSize={20}
-                            color={themeColors.primary}
-                        />
-                        <Text style={styles.scanButtonText}>
-                            Launch Scanner
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-                {image && (
-                    <>
-                        <View style={styles.imageContainer}>
-                            <Image source={{ uri: image }} style={styles.image} resizeMode="cover" />
-                            <TouchableOpacity
-                                style={styles.deleteImageButton}
-                                onPress={() => setImage(null)}
-                                activeOpacity={0.7}
-                            >
-                                <RenderIcon
-                                    family="materialIcons"
-                                    icon="delete"
-                                    fontSize={22}
-                                    color={themeColors.white}
-                                />
-                            </TouchableOpacity>
-                        </View>
+            {result?.status !== 'closed' && (
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>{t('upload_image')}</Text>
+                    <View style={styles.imageButtonsWrapper}>
                         <TouchableOpacity
-                            style={[styles.uploadButton, uploading && { backgroundColor: themeColors.themeGray }]}
-                            onPress={uploadImage}
-                            disabled={uploading}
+                            style={styles.uploadButton}
+                            onPress={handlePickFromGallery}
+                            activeOpacity={0.85}
                         >
-                            <Text style={styles.uploadButtonText}>{uploading ? 'Uploading...' : 'Upload Image'}</Text>
+                            <RenderIcon
+                                family="materialIcons"
+                                icon="photo-library"
+                                fontSize={20}
+                                color={themeColors.white}
+                            />
+                            <Text style={styles.uploadButtonText}>
+                                {t('pick_from_gallery')}
+                            </Text>
                         </TouchableOpacity>
-                    </>
-                )}
-                <ScanInstructionsModal
-                    isOpen={showScanModal}
-                    onClose={handleScanModalClose}
-                    onConfirm={handleScanModalConfirm}
-                    scanType="upload-test-strip"
-                    onDismiss={handleScanModalDismiss}
-                />
-            </View>
+                        <TouchableOpacity
+                            style={styles.scanButton}
+                            onPress={goToScan}
+                            activeOpacity={0.85}
+                        >
+                            <RenderIcon
+                                family="entypo"
+                                icon="camera"
+                                fontSize={20}
+                                color={themeColors.primary}
+                            />
+                            <Text style={styles.scanButtonText}>
+                                {t('launch_scanner')}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                    {image && (
+                        <>
+                            <View style={styles.imageContainer}>
+                                <Image source={{ uri: image }} style={styles.image} resizeMode="cover" />
+                                <TouchableOpacity
+                                    style={styles.deleteImageButton}
+                                    onPress={() => setImage(null)}
+                                    activeOpacity={0.7}
+                                >
+                                    <RenderIcon
+                                        family="materialIcons"
+                                        icon="delete"
+                                        fontSize={22}
+                                        color={themeColors.white}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            <TouchableOpacity
+                                style={[styles.uploadButton, uploading && { backgroundColor: themeColors.themeGray }]}
+                                onPress={uploadImage}
+                                disabled={uploading}
+                            >
+                                <Text style={styles.uploadButtonText}>{uploading ? 'Uploading...' : 'Upload Image'}</Text>
+                            </TouchableOpacity>
+                        </>
+                    )}
+                    <ScanInstructionsModal
+                        isOpen={showScanModal}
+                        onClose={handleScanModalClose}
+                        onConfirm={handleScanModalConfirm}
+                        scanType="upload-test-strip"
+                        onDismiss={handleScanModalDismiss}
+                    />
+                </View>
+            )}
 
             <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Test Results</Text>
+                <Text style={styles.sectionTitle}>{t('detailed_result')}</Text>
                 {loading ? (
                     <ActivityIndicator size="small" color={themeColors.primary} />
                 ) : error ? (
                     <Text style={styles.error}>{error}</Text>
                 ) : result ? (
                     <View style={styles.resultBox}>
-                        <Text style={styles.resultLabel}>Infection Detected: <Text style={styles.resultValue}>{
+                        <Text style={styles.resultLabel}>{t('infection_detected_colon')}: <Text style={styles.resultValue}>{
                             result.infection_detected ? result.infection_detected ? t('yes') : t('no') : '-'
                         }</Text></Text>
                         <View style={styles.speciesRow}>
-                            <Text style={styles.resultLabel}>Specie: <Text style={styles.resultValue}>{getSpeciesDisplayName(result.species) || '-'}</Text></Text>
+                            <Text style={styles.resultLabel}>{t('species_colon')}: <Text style={styles.resultValue}>{getSpeciesDisplayName(result.species) || '-'}</Text></Text>
                             {result.species && result.species !== 'Sterile' && (
                                 <TouchableOpacity
                                     style={styles.infoButton}
@@ -263,13 +273,13 @@ const ViewTest: FC = () => {
                                 </TouchableOpacity>
                             )}
                         </View>
-                        <Text style={styles.resultLabel}>Concentration: <Text style={styles.resultValue}>{
+                        <Text style={styles.resultLabel}>{t('concentration_colon')}: <Text style={styles.resultValue}>{
                             result.concentration ? `${result.concentration} CFU/mL` : '-'
                         }</Text></Text>
-                        <Text style={styles.resultLabel}>Test Completed At: <Text style={styles.resultValue}>{test.closed_at ? formatDateTimeGerman(test.closed_at) : '-'}</Text></Text>
+                        <Text style={styles.resultLabel}>{t('test_completed_at_colon')}: <Text style={styles.resultValue}>{test.closed_at ? formatDateTimeGerman(test.closed_at) : '-'}</Text></Text>
                     </View>
                 ) : (
-                    <Text style={styles.placeholder}>No results available for this test yet.</Text>
+                    <Text style={styles.placeholder}>{t('no_results_available_for_this_test_yet')}</Text>
                 )}
             </View>
         </ScrollView>

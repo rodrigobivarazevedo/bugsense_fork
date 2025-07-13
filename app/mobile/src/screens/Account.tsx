@@ -70,7 +70,6 @@ export const Account: FC = () => {
     const [showSecurityQuestionDropdown, setShowSecurityQuestionDropdown] = useState(false);
     const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number | null>(null);
     const [securityQuestionsEditMode, setSecurityQuestionsEditMode] = useState(false);
-    const [showCountryPicker, setShowCountryPicker] = useState(false);
     const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
 
     const navigation = useNavigation();
@@ -110,7 +109,7 @@ export const Account: FC = () => {
                 setEditingField(null);
             } catch (error) {
                 console.error('Error updating field:', error);
-                Alert.alert(t('Error'), t('Failed to update field. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_field'));
             }
         }
     };
@@ -125,7 +124,7 @@ export const Account: FC = () => {
                 setUser(response.data);
             } catch (error) {
                 console.error('Error updating field:', error);
-                Alert.alert(t('Error'), t('Failed to update field. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_field'));
             }
         }
         setEditingField(null);
@@ -154,7 +153,7 @@ export const Account: FC = () => {
                 setUser(response.data);
             } catch (error) {
                 console.error('Error updating gender:', error);
-                Alert.alert(t('Error'), t('Failed to update gender. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_gender'));
             }
         }
         setEditingField(null);
@@ -171,7 +170,7 @@ export const Account: FC = () => {
                 setUser(response.data);
             } catch (error) {
                 console.error('Error updating date of birth:', error);
-                Alert.alert(t('Error'), t('Failed to update date of birth. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_date_of_birth'));
             }
         }
         setEditingField(null);
@@ -196,10 +195,10 @@ export const Account: FC = () => {
                 const response = await Api.put('users/me/', addressFields);
                 setUser(response.data);
                 setOriginalAddressFields(addressFields);
-                Alert.alert(t('Success'), t('Address updated successfully'));
+                Alert.alert(t('success'), t('address_updated_successfully'));
             } catch (error) {
                 console.error('Error updating address:', error);
-                Alert.alert(t('Error'), t('Failed to update address. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_address'));
             }
         }
     };
@@ -270,11 +269,11 @@ export const Account: FC = () => {
                 const response = await Api.put('users/me/', dataToSend);
                 setUser(response.data);
                 setOriginalSecurityQuestions(securityQuestionsData);
-                Alert.alert(t('Success'), t('Security questions updated successfully'));
+                Alert.alert(t('success'), t('security_questions_updated_successfully'));
                 setSecurityQuestionsEditMode(false);
             } catch (error) {
                 console.error('Error updating security questions:', error);
-                Alert.alert(t('Error'), t('Failed to update security questions. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_security_questions'));
             }
         }
     };
@@ -297,7 +296,6 @@ export const Account: FC = () => {
         setSelectedCountry(country);
         const countryName = typeof country.name === 'string' ? country.name : String(country.name);
         handleAddressFieldChange('country', countryName);
-        setShowCountryPicker(false);
     };
 
     // Check if security questions have changed
@@ -325,20 +323,20 @@ export const Account: FC = () => {
                     >
                         <S.ModalOverlay onPress={handleCancel}>
                             <S.ModalContent>
-                                <S.ModalTitle>{t('Select Gender')}</S.ModalTitle>
+                                <S.ModalTitle>{t('select_gender')}</S.ModalTitle>
                                 <TouchableOpacity onPress={() => handleGenderSelect('Male')}>
                                     <S.ModalOption>
-                                        <S.ModalOptionText>Male</S.ModalOptionText>
+                                        <S.ModalOptionText>{t('male')}</S.ModalOptionText>
                                     </S.ModalOption>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => handleGenderSelect('Female')}>
                                     <S.ModalOption>
-                                        <S.ModalOptionText>Female</S.ModalOptionText>
+                                        <S.ModalOptionText>{t('female')}</S.ModalOptionText>
                                     </S.ModalOption>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => handleGenderSelect('Not Specified')}>
                                     <S.ModalOption>
-                                        <S.ModalOptionText>Not Specified</S.ModalOptionText>
+                                        <S.ModalOptionText>{t('not_specified')}</S.ModalOptionText>
                                     </S.ModalOption>
                                 </TouchableOpacity>
                             </S.ModalContent>
@@ -513,7 +511,7 @@ export const Account: FC = () => {
                         });
                     } else {
                         console.error('Could not load profile', err);
-                        Alert.alert(t('Error'), t('Could not load profile'));
+                        Alert.alert(t('error'), t('could_not_load_profile'));
                     }
                 }
             })();
@@ -538,12 +536,12 @@ export const Account: FC = () => {
 
     const handleDelete = () => {
         Alert.alert(
-            t('Delete My Account'),
-            t('Are you sure you want to delete your account? This cannot be undone.'),
+            t('delete_my_account'),
+            t('are_you_sure_you_want_to_delete_your_account_this_cannot_be_undone'),
             [
-                { text: t('Cancel'), style: 'cancel' },
+                { text: t('cancel'), style: 'cancel' },
                 {
-                    text: t('Delete'),
+                    text: t('delete'),
                     style: 'destructive',
                     onPress: async () => {
                         try {
@@ -555,7 +553,7 @@ export const Account: FC = () => {
                             });
                         } catch (err: any) {
                             console.error('Delete failed', err);
-                            Alert.alert(t('Error'), t('Could not delete account. Please try again.'));
+                            Alert.alert(t('error'), t('could_not_delete_account'));
                         }
                     }
                 }
@@ -566,7 +564,7 @@ export const Account: FC = () => {
     if (!user) {
         return (
             <S.Scroll>
-                <S.UserName>{t('Loading...')}</S.UserName>
+                <S.UserName>{t('loading')}</S.UserName>
             </S.Scroll>
         );
     }
@@ -588,24 +586,24 @@ export const Account: FC = () => {
                     </S.ProfileImage>
                     <S.ProfileInfo>
                         <S.UserName>{user?.full_name}</S.UserName>
-                        <S.DateJoined>{t('Joined')} {user?.date_joined}</S.DateJoined>
+                        <S.DateJoined>{t('joined')} {user?.date_joined}</S.DateJoined>
 
                         <S.UserTypeIndicator>
                             <S.UserTypeText>
-                                {userType === 'doctor' ? t('Medical Personnel') : t('Patient')}
+                                {userType === 'doctor' ? t('medical_personnel') : t('patient')}
                             </S.UserTypeText>
                         </S.UserTypeIndicator>
 
                         {userType === 'doctor' && user?.institution_name && (
                             <S.InstitutionInfo>
-                                <S.InstitutionLabel>{t('Institution')}</S.InstitutionLabel>
+                                <S.InstitutionLabel>{t('institution')}</S.InstitutionLabel>
                                 <S.InstitutionName>{user.institution_name}</S.InstitutionName>
                             </S.InstitutionInfo>
                         )}
 
                         {userType === 'doctor' && user?.doctor_id && (
                             <S.DoctorIdInfo>
-                                <S.DoctorIdLabel>{t('Doctor ID')}</S.DoctorIdLabel>
+                                <S.DoctorIdLabel>{t('doctor_id')}</S.DoctorIdLabel>
                                 <S.DoctorIdValue>{user.doctor_id}</S.DoctorIdValue>
                             </S.DoctorIdInfo>
                         )}
@@ -618,19 +616,19 @@ export const Account: FC = () => {
                                     fontSize={rem(1.5)}
                                     color="primary"
                                 />
-                                <S.QRButtonText>{t('View my QR code')}</S.QRButtonText>
+                                <S.QRButtonText>{t('view_my_qr_code')}</S.QRButtonText>
                             </S.QRButton>
                         )}
                     </S.ProfileInfo>
                 </S.ProfileCardContent>
             </S.ProfileCard>
 
-            <S.SectionTitle>{t('Account Details')}</S.SectionTitle>
+            <S.SectionTitle>{t('account_details')}</S.SectionTitle>
 
             <S.LightCard>
                 <S.ItemRow>
                     <S.ItemTextCol>
-                        <S.ItemLabel>{t('Name')}</S.ItemLabel>
+                        <S.ItemLabel>{t('full_name')}</S.ItemLabel>
                         {renderEditableField('full_name', user?.full_name)}
                     </S.ItemTextCol>
                     {userType === 'patient' && (
@@ -644,7 +642,7 @@ export const Account: FC = () => {
                     <>
                         <S.ItemRow>
                             <S.ItemTextCol>
-                                <S.ItemLabel>{t('Gender')}</S.ItemLabel>
+                                <S.ItemLabel>{t('gender')}</S.ItemLabel>
                                 {renderEditableField('gender', user?.gender)}
                             </S.ItemTextCol>
                             <S.EditIconBtnLight onPress={() => handleEdit('gender')}>
@@ -653,7 +651,7 @@ export const Account: FC = () => {
                         </S.ItemRow>
                         <S.ItemRow>
                             <S.ItemTextCol>
-                                <S.ItemLabel>{t('Date of birth')}</S.ItemLabel>
+                                <S.ItemLabel>{t('date_of_birth')}</S.ItemLabel>
                                 {renderEditableField('dob', formatDate(user?.dob, 'long', true))}
                             </S.ItemTextCol>
                             <S.EditIconBtnLight onPress={() => handleEdit('dob')}>
@@ -664,12 +662,12 @@ export const Account: FC = () => {
                 )}
             </S.LightCard>
 
-            <S.SectionTitle>{t('Contact Data')}</S.SectionTitle>
+            <S.SectionTitle>{t('contact_data')}</S.SectionTitle>
 
             <S.LightCard>
                 <S.ItemRow>
                     <S.ItemTextCol>
-                        <S.ItemLabel>{t('Email address')}</S.ItemLabel>
+                        <S.ItemLabel>{t('email_address')}</S.ItemLabel>
                         {renderEditableField('email', user?.email)}
                     </S.ItemTextCol>
                     {userType === 'patient' && (
@@ -680,7 +678,7 @@ export const Account: FC = () => {
                 </S.ItemRow>
                 <S.ItemRow>
                     <S.ItemTextCol>
-                        <S.ItemLabel>{t('Phone number')}</S.ItemLabel>
+                        <S.ItemLabel>{t('phone_number')}</S.ItemLabel>
                         {renderEditableField('phone_number', user?.phone_number)}
                     </S.ItemTextCol>
                     {userType === 'patient' && (
@@ -693,16 +691,16 @@ export const Account: FC = () => {
 
             {userType === 'patient' && (
                 <>
-                    <S.SectionTitle>{t('Address')}</S.SectionTitle>
+                    <S.SectionTitle>{t('address')}</S.SectionTitle>
                     <S.LightCard>
                         <S.ItemRow>
                             <S.ItemTextCol>
-                                <S.ItemLabel>{t('Street')}</S.ItemLabel>
+                                <S.ItemLabel>{t('street')}</S.ItemLabel>
                                 {editingField === 'street' ? (
                                     <TextInput
                                         value={addressFields.street}
                                         onChangeText={(value) => handleAddressFieldChange('street', value)}
-                                        placeholder={t('Enter street address')}
+                                        placeholder={t('enter_street_address')}
                                         style={{
                                             color: themeColors.primary,
                                             fontSize: 16,
@@ -726,12 +724,12 @@ export const Account: FC = () => {
                         </S.ItemRow>
                         <S.ItemRow>
                             <S.ItemTextCol>
-                                <S.ItemLabel>{t('City')}</S.ItemLabel>
+                                <S.ItemLabel>{t('city')}</S.ItemLabel>
                                 {editingField === 'city' ? (
                                     <TextInput
                                         value={addressFields.city}
                                         onChangeText={(value) => handleAddressFieldChange('city', value)}
-                                        placeholder={t('Enter city')}
+                                        placeholder={t('enter_city')}
                                         style={{
                                             color: themeColors.primary,
                                             fontSize: 16,
@@ -755,12 +753,12 @@ export const Account: FC = () => {
                         </S.ItemRow>
                         <S.ItemRow>
                             <S.ItemTextCol>
-                                <S.ItemLabel>{t('Postcode')}</S.ItemLabel>
+                                <S.ItemLabel>{t('postcode')}</S.ItemLabel>
                                 {editingField === 'postcode' ? (
                                     <TextInput
                                         value={addressFields.postcode}
                                         onChangeText={(value) => handleAddressFieldChange('postcode', value)}
-                                        placeholder={t('Enter postcode')}
+                                        placeholder={t('enter_postcode')}
                                         style={{
                                             color: themeColors.primary,
                                             fontSize: 16,
@@ -784,7 +782,7 @@ export const Account: FC = () => {
                         </S.ItemRow>
                         <S.ItemRow>
                             <S.ItemTextCol>
-                                <S.ItemLabel>{t('Country')}</S.ItemLabel>
+                                <S.ItemLabel>{t('country')}</S.ItemLabel>
                                 <S.ItemValue>{addressFields.country || t('Select a country')}</S.ItemValue>
                             </S.ItemTextCol>
                             {editingField !== 'country' && (
@@ -816,22 +814,22 @@ export const Account: FC = () => {
                         {hasAddressChanges() && (
                             <S.AccountActionContainer>
                                 <S.AccountCancelButton onPress={handleAddressCancel}>
-                                    <S.AccountCancelButtonText>{t('Cancel')}</S.AccountCancelButtonText>
+                                    <S.AccountCancelButtonText>{t('cancel')}</S.AccountCancelButtonText>
                                 </S.AccountCancelButton>
                                 <S.AccountSaveButton onPress={handleAddressSave}>
-                                    <S.AccountSaveButtonText>{t('Save Changes')}</S.AccountSaveButtonText>
+                                    <S.AccountSaveButtonText>{t('save_changes')}</S.AccountSaveButtonText>
                                 </S.AccountSaveButton>
                             </S.AccountActionContainer>
                         )}
                     </S.LightCard>
 
-                    <S.SectionTitle>{t('Security Questions')}</S.SectionTitle>
+                    <S.SectionTitle>{t('security_questions')}</S.SectionTitle>
                     <S.LightCard style={{ position: 'relative' }}>
                         {securityQuestionsEditMode ? (
                             <>
                                 {[1, 2, 3].map((num) => (
                                     <S.SecurityQuestionBlock key={`qna${num}`}>
-                                        <S.ItemLabel>{t('Question')} {num}</S.ItemLabel>
+                                        <S.ItemLabel>{t('question')} {num}</S.ItemLabel>
                                         <S.SelectorRow
                                             onPress={() => {
                                                 setSelectedQuestionIndex(num);
@@ -860,7 +858,7 @@ export const Account: FC = () => {
                                         <S.AnswerInput
                                             value={securityQuestionsData[`security_answer_${num}` as keyof typeof securityQuestionsData]}
                                             onChangeText={(value: string) => handleSecurityQuestionChange(num, 'answer', value)}
-                                            placeholder={t('Enter your answer')}
+                                            placeholder={t('enter_your_answer')}
                                             placeholderTextColor={themeColors.themeGray}
                                             ref={num === 1 ? securityAnswer1Ref : num === 2 ? securityAnswer2Ref : securityAnswer3Ref}
                                         />
@@ -872,7 +870,7 @@ export const Account: FC = () => {
                                             setSecurityQuestionsEditMode(false);
                                             handleSecurityQuestionsCancel();
                                         }}>
-                                            <S.AccountCancelButtonText>{t('Cancel')}</S.AccountCancelButtonText>
+                                            <S.AccountCancelButtonText>{t('cancel')}</S.AccountCancelButtonText>
                                         </S.AccountCancelButton>
                                         <S.AccountSaveButton
                                             disabled={!(hasSecurityQuestionsChanges() && canSaveSecurityQuestions())}
@@ -881,7 +879,7 @@ export const Account: FC = () => {
                                             <S.AccountSaveButtonText
                                                 disabled={!(hasSecurityQuestionsChanges() && canSaveSecurityQuestions())}
                                             >
-                                                {t('Save Changes')}
+                                                {t('save_changes')}
                                             </S.AccountSaveButtonText>
                                         </S.AccountSaveButton>
                                     </S.AccountActionContainer>
@@ -897,7 +895,7 @@ export const Account: FC = () => {
                                             securityQuestionsData[`security_question_${num}` as keyof typeof securityQuestionsData] ? (
                                                 <S.ItemRow key={`viewq${num}`}>
                                                     <S.ItemTextCol>
-                                                        <S.ItemLabel>{t('Question')} {num}</S.ItemLabel>
+                                                        <S.ItemLabel>{t('question')} {num}</S.ItemLabel>
                                                         <S.ItemValue>
                                                             {securityQuestionsData[`security_question_${num}` as keyof typeof securityQuestionsData]}
                                                         </S.ItemValue>
@@ -906,7 +904,7 @@ export const Account: FC = () => {
                                             ) : null
                                         ))}
                                         <S.ActionButton onPress={() => setSecurityQuestionsEditMode(true)}>
-                                            <S.ActionButtonText>{t('Update Security Questions')}</S.ActionButtonText>
+                                            <S.ActionButtonText>{t('update_security_questions')}</S.ActionButtonText>
                                         </S.ActionButton>
                                     </>
                                 ) : (
@@ -914,12 +912,12 @@ export const Account: FC = () => {
                                         <S.ItemRow>
                                             <S.ItemTextCol>
                                                 <S.ItemLabel>
-                                                    {t('You have not set any security questions.Please set security questions to make sure you can reset your password.')}
+                                                    {t('no_security_questions_set')}
                                                 </S.ItemLabel>
                                             </S.ItemTextCol>
                                         </S.ItemRow>
                                         <S.ActionButton onPress={() => setSecurityQuestionsEditMode(true)}>
-                                            <S.ActionButtonText>{t('Add Security Questions')}</S.ActionButtonText>
+                                            <S.ActionButtonText>{t('add_security_questions')}</S.ActionButtonText>
                                         </S.ActionButton>
                                     </>
                                 )}
@@ -931,41 +929,41 @@ export const Account: FC = () => {
 
             {userType === 'patient' && (
                 <S.DeleteButton onPress={handleDelete}>
-                    <S.DeleteButtonText>{t('Delete My Account')}</S.DeleteButtonText>
+                    <S.DeleteButtonText>{t('delete_my_account')}</S.DeleteButtonText>
                 </S.DeleteButton>
             )}
 
             <S.ActionButton onPress={() => setShowChangePasswordModal(true)}>
-                <S.ActionButtonText>{t('Change password')}</S.ActionButtonText>
+                <S.ActionButtonText>{t('change_password')}</S.ActionButtonText>
             </S.ActionButton>
             <S.ActionButton onPress={handleSignOut}>
-                <S.ActionButtonText>{t('Sign out')}</S.ActionButtonText>
+                <S.ActionButtonText>{t('sign_out')}</S.ActionButtonText>
             </S.ActionButton>
 
             <ConfirmationModal
                 isOpen={showConfirmationModal}
                 onClose={handleCancel}
                 onConfirm={handleConfirmSave}
-                heading={"Save Changes"}
+                heading={t('save_changes')}
                 message={editingField === 'full_name'
-                    ? t('Are you sure you want to update your name?')
-                    : t('Are you sure you want to update your email address?')}
-                confirmText={t('Confirm')}
-                cancelText={t('Cancel')}
+                    ? t('confirm_update_name')
+                    : t('confirm_update_email')}
+                confirmText={t('confirm')}
+                cancelText={t('cancel')}
             />
             <ConfirmationModal
                 isOpen={showSecurityQuestionsConfirmationModal}
                 onClose={() => setShowSecurityQuestionsConfirmationModal(false)}
                 onConfirm={handleSecurityQuestionsSaveConfirm}
-                heading={t('Update Security Questions')}
-                message={t('Are you sure you want to update your security questions? The answers to the questions you edited will be updated.')}
-                confirmText={t('Confirm')}
-                cancelText={t('Cancel')}
+                heading={t('update_security_questions')}
+                message={t('confirm_update_security_questions')}
+                confirmText={t('confirm')}
+                cancelText={t('cancel')}
             />
             <ChangePasswordModal
                 visible={showChangePasswordModal}
                 onClose={() => setShowChangePasswordModal(false)}
-                onSuccess={() => { }}
+                onSuccess={() => { /* no-op */ }}
             />
         </S.Scroll>
     );

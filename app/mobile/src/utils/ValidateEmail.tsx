@@ -21,14 +21,14 @@ export const validateEmail = ({
     if (!email) {
         return {
             isValid: false,
-            errorMessage: customRequiredMessage || t('Email is required'),
+            errorMessage: customRequiredMessage || t('email_is_required'),
         };
     }
 
     if (!emailRegex.test(email)) {
         return {
             isValid: false,
-            errorMessage: customInvalidMessage || t('Please enter a valid email address'),
+            errorMessage: customInvalidMessage || t('please_enter_a_valid_email_address'),
         };
     }
 

@@ -18,7 +18,7 @@ const ICON_MAP: Record<string, React.ReactElement> = {
 };
 
 const GRID_ITEMS = [
-  { key: "overviews", label: "Overviews" },
+  { key: "overviews", label: "Overviews", route: "/overview" },
   { key: "discover", label: "Discover", route: "/discover" },
   { key: "news", label: "News", route: "/news" },
   { key: "contactUs", label: "Contact Us" },

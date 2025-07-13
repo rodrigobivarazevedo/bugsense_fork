@@ -1,56 +1,36 @@
 import { FC } from 'react';
 import BacteriaPage from '../BacteriaPage';
+import { useTranslation } from 'react-i18next';
 
-const klebsiellaPneumoniaeData = {
-    id: '3',
-    name: 'Klebsiella pneumoniae',
-    scientificName: 'Klebsiella pneumoniae',
-    image: require('../../assets/images/bacteria/klebsiella-pneumoniae.png'),
-    description: 'Klebsiella pneumoniae is a Gram-negative bacterium that can cause various infections, particularly in healthcare settings. It is known for its ability to develop resistance to multiple antibiotics, making it a significant concern in modern medicine.',
-    type: 'Gram-negative',
-    shape: 'Rod-shaped',
-    transmission: [
-        'Person-to-person contact',
-        'Contaminated medical equipment',
-        'Hospital-acquired infections',
-        'Respiratory droplets',
-        'Contaminated surfaces'
-    ],
-    symptoms: [
-        'Pneumonia (cough, fever, difficulty breathing)',
-        'Urinary tract infections',
-        'Bloodstream infections (sepsis)',
-        'Wound infections',
-        'Meningitis',
-        'Liver abscesses'
-    ],
-    prevention: [
-        {
-            family: 'fontAwesome5',
-            icon: 'hands-wash',
-            text: 'Strict hand hygiene protocols in healthcare settings'
-        },
-        {
-            family: 'materialIcons',
-            icon: 'do-not-touch',
-            text: 'Contact precautions for infected patients'
-        },
-        {
-            family: 'materialIcons',
-            icon: 'clean-hands',
-            text: 'Proper disinfection of medical equipment'
-        },
-        {
-            family: 'fontAwesome6',
-            icon: 'prescription-bottle-medical',
-            text: 'Antibiotic stewardship to prevent resistance'
-        }
-    ],
-    treatment: 'Treatment of Klebsiella pneumoniae infections is challenging due to high rates of antibiotic resistance, including carbapenem-resistant strains (CRKP). Treatment requires susceptibility testing and often involves combination therapy with newer antibiotics. In severe cases, surgical intervention may be necessary for abscess drainage or infected tissue removal.'
-};
+const preventionIcons = [
+    { family: 'fontAwesome5', icon: 'hands-wash' },
+    { family: 'materialIcons', icon: 'do-not-touch' },
+    { family: 'materialIcons', icon: 'clean-hands' },
+    { family: 'fontAwesome6', icon: 'prescription-bottle-medical' }
+];
 
 const KlebsiellaPneumoniae: FC = () => {
-    return <BacteriaPage bacteria={klebsiellaPneumoniaeData} />;
+    const { t } = useTranslation('bacteria_discover');
+    const transmission = t('bacteria.klebsiella_pneumoniae.transmission.methods', { returnObjects: true }) as string[];
+    const symptoms = t('bacteria.klebsiella_pneumoniae.symptoms.list', { returnObjects: true }) as string[];
+    const preventionTips = t('bacteria.klebsiella_pneumoniae.prevention.tips', { returnObjects: true }) as string[];
+    const bacteria = {
+        id: '3',
+        name: t('bacteria.klebsiella_pneumoniae.name'),
+        scientificName: t('bacteria.klebsiella_pneumoniae.scientific_name_abbreviated'),
+        image: require('../../assets/images/bacteria/klebsiella-pneumoniae.png'),
+        description: t('bacteria.klebsiella_pneumoniae.description'),
+        type: t('bacteria.klebsiella_pneumoniae.type'),
+        shape: t('bacteria.klebsiella_pneumoniae.shape'),
+        transmission,
+        symptoms,
+        prevention: preventionTips.map((text, idx) => ({
+            ...preventionIcons[idx],
+            text
+        })),
+        treatment: t('bacteria.klebsiella_pneumoniae.treatment.description')
+    };
+    return <BacteriaPage bacteria={bacteria} />;
 };
 
 export default KlebsiellaPneumoniae;

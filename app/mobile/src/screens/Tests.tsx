@@ -64,7 +64,7 @@ export const Tests: FC = () => {
                 });
                 setResults(response.data);
             } catch (err: any) {
-                setError('Failed to load results.');
+                setError(t('failed_to_load_results'));
             } finally {
                 setLoading(false);
             }
@@ -84,7 +84,7 @@ export const Tests: FC = () => {
     if (error) {
         return (
             <View style={styles.container}>
-                <Text>{error}</Text>
+                <Text>{t('failed_to_load_results')}</Text>
             </View>
         );
     }
@@ -106,11 +106,11 @@ export const Tests: FC = () => {
                                 color={styles.addButtonIcon.color}
                             />
                         </View>
-                        <Text style={styles.addButtonText}>Add new</Text>
+                        <Text style={styles.addButtonText}>{t('add_new')}</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.noTestsContainer}>
-                    <Text style={styles.noTestsText}>No tests available</Text>
+                    <Text style={styles.noTestsText}>{t('no_tests_available')}</Text>
                 </View>
             </View>
         );
@@ -132,7 +132,7 @@ export const Tests: FC = () => {
                             color={styles.addButtonIcon.color}
                         />
                     </View>
-                    <Text style={styles.addButtonText}>Add new</Text>
+                    <Text style={styles.addButtonText}>{t('add_new')}</Text>
                 </TouchableOpacity>
             </View>
             <SectionList
@@ -168,11 +168,11 @@ export const Tests: FC = () => {
                             </View>
                             {userType === 'doctor' && item.patient && (
                                 <View style={styles.listItemPatient}>
-                                    <Text style={styles.listItemLabel}>Patient Name:</Text>
+                                    <Text style={styles.listItemLabel}>{t('patient_name_colon')}</Text>
                                     <Text style={styles.listItemValue}>{item.patient.full_name || '-'}</Text>
-                                    <Text style={styles.listItemLabel}>ID:</Text>
+                                    <Text style={styles.listItemLabel}>{t('id_colon')}</Text>
                                     <Text style={styles.listItemValue}>{item.patient.id || '-'}</Text>
-                                    <Text style={styles.listItemLabel}>DOB:</Text>
+                                    <Text style={styles.listItemLabel}>{t('dob_colon')}</Text>
                                     <Text style={styles.listItemValue}>{item.patient.dob || '-'}</Text>
                                 </View>
                             )}
