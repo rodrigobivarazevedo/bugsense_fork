@@ -10,33 +10,6 @@ export const Root = styled.View`
   padding: ${rem(1.25)}px;
 `;
 
-// TODO: remove this after other screens are implemented
-export const Title = styled.Text`
-  ${themeTypography.h1};
-  color: ${themeColors.primary};
-  margin-bottom: ${rem(0.75)}px;
-`;
-
-export const Subtitle = styled.Text`
-  ${themeTypography.p};
-  text-align: center;
-  margin-bottom: ${rem(1.5)}px;
-  color: ${themeColors.text};
-`;
-
-export const Button = styled.TouchableOpacity`
-  padding-vertical: ${rem(0.875)}px;
-  padding-horizontal: ${rem(2)}px;
-  border-radius: ${rem(0.5)}px;
-  background-color: ${themeColors.primary};
-`;
-
-export const ButtonText = styled.Text`
-  ${themeTypography.p};
-  font-weight: 600;
-  color: ${themeColors.white};
-`;
-
 export const Header = styled.View`
   width: 100%;
   flex-direction: column;

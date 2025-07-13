@@ -66,7 +66,6 @@ const ScanInstructionsModal: FC<ScanInstructionsModalProps> = ({
         };
     };
 
-    // TODO: Verify look on Android
     return (
         <Modal
             visible={isOpen}

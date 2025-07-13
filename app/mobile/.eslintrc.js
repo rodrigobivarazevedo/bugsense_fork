@@ -84,4 +84,15 @@ module.exports = {
     '*.config.js',
     '*.config.ts',
   ],
+  overrides: [
+    {
+      files: ['**/*.test.tsx', '**/*.test.ts', '**/*.spec.tsx', '**/*.spec.ts'],
+      rules: {
+        'react/display-name': 'off',
+        '@typescript-eslint/no-require-imports': 'off',
+        '@typescript-eslint/no-var-requires': 'off',
+        'no-empty-function': 'off',
+      },
+    },
+  ],
 }; 
