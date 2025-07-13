@@ -79,8 +79,10 @@ Once started, you can access the application through:
 
 - **Web App**: http://{HOST_IP}:3000
 - **Mobile App**: exp://{HOST_IP}:8081
-- **API Documentation (Swagger UI)**: http://{HOST_IP}:8000/api/docs/
-- **API Documentation (ReDoc)**: http://{HOST_IP}:8000/api/redoc/
+- **DJANGO API Documentation (Swagger UI)**: http://{HOST_IP}:8000/api/docs/
+- **DJANGO API Documentation (ReDoc)**: http://{HOST_IP}:8000/api/redoc/
+- **AI API Documentation (Swagger UI)**: http://{HOST_IP}:5001/docs
+- **AI API Documentation (ReDoc)**: http://{HOST_IP}:5001/redoc/
 
 Note: Your host IP will be displayed in the logs when the application starts.
 
