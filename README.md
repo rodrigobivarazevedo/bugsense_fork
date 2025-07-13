@@ -2,6 +2,28 @@
 
 BugSense is a full-stack application with a Django backend, React web frontend, React Native mobile app, and a Python-based machine learning (ML) service for automated analysis.
 
+## 🚀 Live Demo
+
+### Web Application
+**URL**: http://172.208.64.16:3000
+
+### Mobile Application
+**URL**: exp://172.208.64.16:8081
+
+#### Installing Expo Go for Mobile App
+To access the mobile application, you need to install Expo Go on your device:
+
+**For iOS:**
+- Download from the [App Store](https://apps.apple.com/app/expo-go/id982107779)
+
+**For Android:**
+- Download from the [Google Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent)
+
+**Alternative for Android:**
+- Download the APK directly from [Expo's website](https://expo.dev/tools#client)
+
+After installing Expo Go, enter the URL `exp://172.208.64.16:8081` in the Expo Go app to access the mobile application.
+
 ## Getting Started
 
 ### Prerequisites
