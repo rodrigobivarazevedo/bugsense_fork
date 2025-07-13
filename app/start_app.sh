@@ -28,6 +28,7 @@ get_host_ip() {
   ifconfig en0 | awk '/inet / && $2 != "127.0.0.1" {print $2; exit}'
 }
 
+
 # Function to run docker compose with proper cleanup
 run_docker_compose() {
   local compose_cmd="$1"
