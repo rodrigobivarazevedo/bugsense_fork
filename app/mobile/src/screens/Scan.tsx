@@ -127,6 +127,11 @@ export const Scan: FC = () => {
                 }
             }
 
+            await Api.post('qr-codes/', {
+                user_id: userId,
+                qr_data: pendingQR
+            });
+
             const successMessage = userType === 'doctor'
                 ? t('qr_linked_to_patient', { name: selectedPatient?.full_name })
                 : t('qr_linked_to_profile');

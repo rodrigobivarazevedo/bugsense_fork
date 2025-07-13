@@ -257,7 +257,7 @@ const ViewTest: FC = () => {
                             result.infection_detected ? result.infection_detected ? t('yes') : t('no') : '-'
                         }</Text></Text>
                         <View style={styles.speciesRow}>
-                            <Text style={styles.resultLabel}>{t('species_colon')}: <Text style={styles.resultValue}>{getSpeciesDisplayName(result.species) || '-'}</Text></Text>
+                            <Text style={styles.resultLabel}>{t('species_colon')} <Text style={styles.resultValue}>{getSpeciesDisplayName(result.species) || '-'}</Text></Text>
                             {result.species && result.species !== 'Sterile' && (
                                 <TouchableOpacity
                                     style={styles.infoButton}
