@@ -25,8 +25,6 @@ class SecretsManager:
             "HOST_IP"
         ]
 
-        print(f"Loading security secrets for {self.env} environment")
-
         secrets = {}
         for key in keys:
             value = os.getenv(key)
