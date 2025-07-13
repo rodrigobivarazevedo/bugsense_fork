@@ -25,7 +25,7 @@ const Register = () => {
 
   const validateEmail = (value: string) => {
     if (!value) return t("Email is required");
-    // Simple email regex
+
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value))
       return t("Invalid email address");
     return "";

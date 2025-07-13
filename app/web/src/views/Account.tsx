@@ -10,13 +10,10 @@ import {
   validateSecurityQuestionsForUpdate,
   hasSecurityQuestionsChanges as hasSecurityQuestionsChangesUtil,
 } from "../utils/SecurityQuestions";
-import validateEmail from "../utils/ValidateEmail";
-import { validatePassword } from "../utils/ValidatePassword";
 import {
   AccountCircle,
   Edit,
   QrCode,
-  ArrowDropDown,
   Delete,
   CheckCircle,
   Cancel,
@@ -58,7 +55,6 @@ const Account: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // State for editable fields
   const [editingField, setEditingField] = useState<string | null>(null);
   const [tempValue, setTempValue] = useState<string>("");
   const [pendingValue, setPendingValue] = useState<string>("");
@@ -69,7 +65,6 @@ const Account: React.FC = () => {
     setShowSecurityQuestionsConfirmationModal,
   ] = useState(false);
 
-  // Address editing states
   const [addressFields, setAddressFields] = useState({
     street: "",
     city: "",
@@ -83,7 +78,6 @@ const Account: React.FC = () => {
     country: "",
   });
 
-  // Security questions editing states
   const [securityQuestionsData, setSecurityQuestionsData] =
     useState<SecurityQuestionsData>({
       security_question_1: "",
@@ -102,13 +96,12 @@ const Account: React.FC = () => {
       security_question_3: "",
       security_answer_3: "",
     });
-  const [showSecurityQuestionDropdown, setShowSecurityQuestionDropdown] =
-    useState(false);
-  const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<
-    number | null
-  >(null);
+
   const [securityQuestionsEditMode, setSecurityQuestionsEditMode] =
     useState(false);
+
+  const [, setShowSecurityQuestionDropdown] = useState(false);
+  const [, setSelectedQuestionIndex] = useState<number | null>(null);
 
   const availableQuestions = securityQuestions(t);
 
@@ -120,7 +113,6 @@ const Account: React.FC = () => {
       const userData = response.data;
       setUser(userData);
 
-      // Set address fields
       const addressData = {
         street: userData.street || "",
         city: userData.city || "",
@@ -130,7 +122,6 @@ const Account: React.FC = () => {
       setAddressFields(addressData);
       setOriginalAddressFields(addressData);
 
-      // Set security questions
       const securityData = {
         security_question_1: userData.security_question_1 || "",
         security_answer_1: userData.security_answer_1 || "",
@@ -142,7 +133,6 @@ const Account: React.FC = () => {
       setSecurityQuestionsData(securityData);
       setOriginalSecurityQuestions(securityData);
 
-      // Set user type
       const type = localStorage.getItem("userType") || "patient";
       setUserType(type);
     } catch (err: any) {
@@ -212,11 +202,6 @@ const Account: React.FC = () => {
     setPendingValue("");
   };
 
-  const handlePhoneChange = (text: string) => {
-    const cleanedText = text.replace(/[^0-9\s-]/g, "");
-    setTempValue(cleanedText);
-  };
-
   const handleGenderSelect = async (gender: string) => {
     if (user) {
       try {
@@ -247,7 +232,6 @@ const Account: React.FC = () => {
     setEditingField(null);
   };
 
-  // Address field handlers
   const handleAddressFieldChange = (field: string, value: string) => {
     setAddressFields((prev) => ({
       ...prev,
@@ -283,7 +267,6 @@ const Account: React.FC = () => {
     );
   };
 
-  // Security questions handlers
   const handleSecurityQuestionChange = (
     questionNumber: number,
     field: "question" | "answer",
@@ -782,7 +765,7 @@ const Account: React.FC = () => {
                           top: dropdownPos.top,
                           left: dropdownPos.left,
                           width: dropdownPos.width,
-                          border: "2px solid red", // DEBUG: Remove after confirming overlay
+                          border: "2px solid red",
                           background: "#fff",
                           zIndex: 99999,
                         }}

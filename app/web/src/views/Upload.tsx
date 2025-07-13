@@ -8,13 +8,13 @@ import { authUtils } from "../utils/auth";
 const SCAN_TYPES = [
   {
     key: "qr-code",
-    label: "Test Kit QR Code",
-    desc: "Upload a photo of the QR code on your test kit",
+    label: "test_kit_qr_code",
+    desc: "test_kit_qr_code_desc",
   },
   {
     key: "test-strip",
-    label: "Test Strip",
-    desc: "Upload a photo of the test strip result",
+    label: "test_strip",
+    desc: "test_strip_desc",
   },
 ];
 
@@ -22,6 +22,7 @@ type ScanType = "qr-code" | "test-strip" | null;
 
 const Upload: React.FC = () => {
   const { t } = useTranslation();
+  const translate = (key: string): string => t(key) || key;
   const [selectedScanType, setSelectedScanType] = useState<ScanType>(null);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -42,25 +43,41 @@ const Upload: React.FC = () => {
   };
 
   const drawBoundingBox = (location: any, image: HTMLImageElement) => {
+    const previewWidth = 200;
+    const scale = previewWidth / image.width;
+    const previewHeight = image.height * scale;
+
     const canvas = document.createElement("canvas");
-    canvas.width = image.width;
-    canvas.height = image.height;
+    canvas.width = previewWidth;
+    canvas.height = previewHeight;
+    canvas.style.width = `${previewWidth}px`;
+    canvas.style.height = `${previewHeight}px`;
+    canvas.style.display = "block";
+    canvas.style.margin = "0 auto";
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.drawImage(image, 0, 0);
+    ctx.drawImage(image, 0, 0, previewWidth, previewHeight);
     ctx.strokeStyle = "#FF3B58";
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 2;
+
+    const scalePoint = (pt: { x: number; y: number }) => ({
+      x: pt.x * scale,
+      y: pt.y * scale,
+    });
+    const tl = scalePoint(location.topLeftCorner);
+    const tr = scalePoint(location.topRightCorner);
+    const br = scalePoint(location.bottomRightCorner);
+    const bl = scalePoint(location.bottomLeftCorner);
 
     ctx.beginPath();
-    ctx.moveTo(location.topLeftCorner.x, location.topLeftCorner.y);
-    ctx.lineTo(location.topRightCorner.x, location.topRightCorner.y);
-    ctx.lineTo(location.bottomRightCorner.x, location.bottomRightCorner.y);
-    ctx.lineTo(location.bottomLeftCorner.x, location.bottomLeftCorner.y);
+    ctx.moveTo(tl.x, tl.y);
+    ctx.lineTo(tr.x, tr.y);
+    ctx.lineTo(br.x, br.y);
+    ctx.lineTo(bl.x, bl.y);
     ctx.closePath();
     ctx.stroke();
 
-    // Append canvas for visual aid (optional - can be removed or styled)
     document.getElementById("preview")?.appendChild(canvas);
   };
 
@@ -101,7 +118,6 @@ const Upload: React.FC = () => {
       setSuccessMsg("");
       setErrorMsg("");
 
-      // Clear previous preview
       const preview = document.getElementById("preview");
       if (preview) preview.innerHTML = "";
 
@@ -109,9 +125,9 @@ const Upload: React.FC = () => {
         const result = await extractQrCodeFromImage(uploadedFile);
         if (result) {
           setQrData(result);
-          setSuccessMsg("QR code successfully extracted!");
+          setSuccessMsg(translate("qr_code_successfully_extracted"));
         } else {
-          setErrorMsg("Could not detect a QR code in the image.");
+          setErrorMsg(translate("could_not_detect_qr_code"));
         }
       }
     }
@@ -122,7 +138,7 @@ const Upload: React.FC = () => {
     setSuccessMsg("");
     setErrorMsg("");
     if (!selectedScanType || !file) {
-      setErrorMsg("Please select a scan type and choose a file.");
+      setErrorMsg(translate("please_select_scan_type_and_file"));
       return;
     }
     const user = authUtils.getUser();
@@ -131,16 +147,13 @@ const Upload: React.FC = () => {
       return;
     }
     try {
-      // 1. Register the kit for the user (if not already registered)
       try {
         await Api.post("qr-codes/", { user_id: user.id, qr_data: qrData });
       } catch (err: any) {
-        // If already exists, ignore and continue
         if (
           err.response?.data?.detail &&
           err.response.data.detail.toLowerCase().includes("already exists")
         ) {
-          // continue
         } else {
           setErrorMsg(
             err.response?.data?.detail ||
@@ -150,10 +163,10 @@ const Upload: React.FC = () => {
           return;
         }
       }
-      // 2. Upload the image as before
+
       const formData = new FormData();
       formData.append("image", file);
-      const storage = "local"; // TODO: Change to 'gcs' when deployed to Google Cloud Storage
+      const storage = "local";
       const uploadUrl = qrData.trim()
         ? `upload/?qr_data=${encodeURIComponent(
             qrData.trim()
@@ -178,7 +191,9 @@ const Upload: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>What would you like to upload?</h2>
+      <h2 className={styles.heading}>
+        {translate("what_would_you_like_to_upload")}
+      </h2>
       <div className={styles.optionsRow}>
         {SCAN_TYPES.map((type) => (
           <button
@@ -189,8 +204,8 @@ const Upload: React.FC = () => {
             onClick={() => handleSelectScanType(type.key as ScanType)}
             type="button"
           >
-            <div className={styles.optionTitle}>{type.label}</div>
-            <div className={styles.optionDesc}>{type.desc}</div>
+            <div className={styles.optionTitle}>{translate(type.label)}</div>
+            <div className={styles.optionDesc}>{translate(type.desc)}</div>
           </button>
         ))}
       </div>
@@ -199,8 +214,8 @@ const Upload: React.FC = () => {
           <div className={styles.inputGroup}>
             <label className={styles.inputLabel}>
               {selectedScanType === "qr-code"
-                ? "QR Code Value (optional)"
-                : "Kit ID (optional)"}
+                ? translate("qr_code_value")
+                : translate("kit_id")}
               <input
                 type="text"
                 value={qrData}
@@ -208,15 +223,15 @@ const Upload: React.FC = () => {
                 className={styles.textInput}
                 placeholder={
                   selectedScanType === "qr-code"
-                    ? "Enter QR code value (optional)"
-                    : "Enter kit ID (optional)"
+                    ? translate("enter_qr_code_value")
+                    : translate("enter_kit_id_before_uploading")
                 }
               />
             </label>
           </div>
           <div className={styles.inputGroup}>
             <label className={styles.inputLabel}>
-              Upload Image
+              {translate("upload_image")}
               <input
                 type="file"
                 accept="image/*"
@@ -237,7 +252,7 @@ const Upload: React.FC = () => {
             className={styles.uploadButton}
             disabled={uploading}
           >
-            {uploading ? "Uploading..." : "Upload"}
+            {uploading ? translate("uploading") : translate("upload")}
           </button>
         </form>
       )}
