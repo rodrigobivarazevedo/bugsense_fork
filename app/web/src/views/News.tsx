@@ -10,7 +10,7 @@ const News = () => {
       <div className={styles.content}>
         <div className={styles.placeholderContainer}>
           <p className={styles.placeholderText}>
-            Updates from BugSense coming soon...
+            {t("updates_coming_soon")}
           </p>
         </div>
       </div>

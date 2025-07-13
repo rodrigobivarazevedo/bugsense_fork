@@ -35,6 +35,8 @@ const ViewTest: React.FC = () => {
   const location = useLocation();
   const test = location.state?.test as TestData;
 
+  console.log("ViewTest component - test data:", test);
+
   const [result, setResult] = useState<TestResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +48,19 @@ const ViewTest: React.FC = () => {
   useEffect(() => {
     const fetchResult = async () => {
       if (!test?.qr_data) return;
+
+      const token = localStorage.getItem("accessToken");
+      console.log("Authentication check:", {
+        hasToken: !!token,
+        tokenLength: token?.length,
+        qrData: test.qr_data,
+      });
+
+      if (!token) {
+        setError("Not authenticated. Please log in again.");
+        return;
+      }
+
       setLoading(true);
       setError(null);
       try {
@@ -55,8 +70,31 @@ const ViewTest: React.FC = () => {
         setResult(
           response.data && response.data.length > 0 ? response.data[0] : null
         );
-      } catch (err) {
-        setError("Failed to load test results.");
+      } catch (err: any) {
+        console.error("Error fetching test results:", err);
+        if (err.response) {
+          if (err.response.status === 401) {
+            setError("Authentication failed. Please log in again.");
+          } else if (err.response.status === 403) {
+            setError(
+              "Access denied. You don't have permission to view these results."
+            );
+          } else if (err.response.status === 404) {
+            setError("Test results not found.");
+          } else {
+            setError(
+              `Server error: ${err.response.status} - ${
+                err.response.data?.detail || err.response.statusText
+              }`
+            );
+          }
+        } else if (err.request) {
+          setError(
+            "Network error. Please check your connection and try again."
+          );
+        } else {
+          setError(`Failed to load test results: ${err.message}`);
+        }
       } finally {
         setLoading(false);
       }
@@ -64,20 +102,13 @@ const ViewTest: React.FC = () => {
     fetchResult();
   }, [test?.qr_data]);
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setImage(file);
-    }
-  };
-
   const uploadImage = async () => {
     if (!image || !test?.qr_data) return;
     setUploading(true);
     try {
       const formData = new FormData();
       formData.append("image", image);
-      const storage = "local"; // TODO: Change to 'gcs' when deployed to Google Cloud Storage
+      const storage = "local";
 
       await Api.post(
         `upload/?qr_data=${encodeURIComponent(
@@ -93,7 +124,7 @@ const ViewTest: React.FC = () => {
       );
       alert("Image uploaded successfully!");
       setImage(null);
-      // Refresh results
+
       const response = await Api.get(
         `results/list/?qr_data=${encodeURIComponent(test.qr_data)}`
       );
@@ -119,16 +150,12 @@ const ViewTest: React.FC = () => {
 
   const handleScanModalConfirm = () => {
     setShowScanModal(false);
-    // Navigate to scan page
+
     navigate("/upload", { state: { testId: test?.id } });
   };
 
   const handleScanModalClose = () => {
     setShowScanModal(false);
-  };
-
-  const handlePickFromGallery = () => {
-    setShowScanModal(true);
   };
 
   if (!test) {
@@ -184,7 +211,7 @@ const ViewTest: React.FC = () => {
             <div className={styles.imageContainer}>
               <img
                 src={URL.createObjectURL(image)}
-                alt="Selected image"
+                alt="Selected"
                 className={styles.image}
               />
               <button

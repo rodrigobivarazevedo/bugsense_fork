@@ -35,13 +35,11 @@ const More: React.FC = () => {
   const [timeFormat, setTimeFormat] = useState<"12" | "24">("12");
 
   useEffect(() => {
-    // Fetch user type from API
     Api.get("users/me/")
       .then((res) => {
         setUserType(res.data.is_doctor ? "doctor" : "patient");
       })
       .catch(() => setUserType("patient"));
-    // Get time format from localStorage
     const tf = localStorage.getItem(TIME_FORMAT_KEY);
     if (tf === "24" || tf === "12") setTimeFormat(tf);
   }, []);

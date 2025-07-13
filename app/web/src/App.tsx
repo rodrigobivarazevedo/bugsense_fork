@@ -28,7 +28,8 @@ import TimeFormatSelection from "./views/TimeFormatSelection";
 import News from "./views/News";
 import Patients from "./views/Patients";
 import ViewTest from "./views/ViewTest";
-import Overview from "./views/Overview";
+import ViewPatient from "./views/ViewPatient";
+import PatientTests from "./views/PatientTests";
 
 const isAuthenticated = () => !!localStorage.getItem("accessToken");
 
@@ -36,7 +37,7 @@ const AppRoutes = () => {
   const location = useLocation();
   const authed = isAuthenticated();
 
-  // Redirect logic for root and login
+
   if (
     !authed &&
     location.pathname !== "/login" &&
@@ -61,7 +62,7 @@ const AppRoutes = () => {
     return <Navigate to="/home" replace />;
   }
 
-  // Authenticated routes
+
   if (authed) {
     return (
       <>
@@ -84,7 +85,8 @@ const AppRoutes = () => {
             <Route path="/news" element={<News />} />
             <Route path="/patients" element={<Patients />} />
             <Route path="/view-test" element={<ViewTest />} />
-            <Route path="/overview" element={<Overview />} />
+            <Route path="/view-patient" element={<ViewPatient />} />
+            <Route path="/patient-tests" element={<PatientTests />} />
             <Route path="*" element={<Navigate to="/home" replace />} />
           </Routes>
         </Root>
@@ -92,7 +94,7 @@ const AppRoutes = () => {
     );
   }
 
-  // Unauthenticated: allow login, register, doctor-login, password recovery
+
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
