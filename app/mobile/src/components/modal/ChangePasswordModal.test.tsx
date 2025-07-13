@@ -223,7 +223,7 @@ describe('ChangePasswordModal', () => {
     });
 
     it('clears all fields when modal is closed', async () => {
-        const { getByPlaceholderText, getByText, rerender } = render(
+        const { getByPlaceholderText, rerender } = render(
             <ChangePasswordModal visible={true} onClose={mockOnClose} />
         );
 
@@ -253,7 +253,7 @@ describe('ChangePasswordModal', () => {
     });
 
     it('handles AsyncStorage error gracefully', async () => {
-        const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+        const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { /* no-op */ });
         (AsyncStorage.getItem as jest.Mock).mockRejectedValue(new Error('Storage error'));
 
         render(<ChangePasswordModal visible={true} onClose={mockOnClose} />);
