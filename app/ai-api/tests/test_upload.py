@@ -2,34 +2,32 @@ import os
 import re
 import requests
 
-JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTIyNTM0OTN9.9sbs9A0woJLyK3omtbyRI0DWnXv9YqqXBBoDP_U5ff8"  # Replace with your actual JWT token or generate it
+# inside ai-api folder run python -m app.utils.create_token and make sure to have a venv running with jwt package
+
+JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTI0NDIxODZ9.ct-5vNrAB8x8yBFK1tekzCTSgiy3XeU4uI6ca5Ixioc"  # Replace with your actual JWT token or generate it
 
 HEADERS = {
     "Authorization": f"Bearer {JWT_TOKEN}"
 }
 
-
-def send_image(image_path, qr_data):
-    API_URL = "http://0.0.0.0:5001/ml_api/upload/"
-    params = {"qr_data": qr_data, "storage": "local"}
+def send_image(api_url, params, image_path):
 
     try:
         with open(image_path, "rb") as image_file:
             files = {
                 "image": (os.path.basename(image_path), image_file, "image/png"),
             }
-            response = requests.post(API_URL, files=files, params=params)
+            response = requests.post(api_url, files=files, params=params)
             response.raise_for_status()
+            
     except requests.RequestException as e:
         print(f"Failed to send {image_path}: {e}")
         return
 
     print(f"Sent {image_path}")
     print("Status Code:", response.status_code)
-    try:
-        print("Response:", response.json())
-    except Exception:
-        print("Response content:", response.content)
+        
+    return response.json()
 
 
 def get_time_from_filename(filename):
@@ -57,18 +55,81 @@ def load_images(dir_path):
 if __name__ == "__main__":
 
     data_users = [
-        # ("test_data/Ste_L_0036_top/", "user1"), # sterile, low concentration
-        # ("test_data/S.S_L_0023_top/", "user2"), # S.Saprophyticus, low concentration
+        #("test_data/Ste_L_0036_top/", "user1"), # sterile, low concentration
+        #("test_data/S.S_L_0023_top/", "test_user_demo_4"), # S.Saprophyticus, low concentration
         # ("test_data/S.A_L_0026_top/", "user3"), # S.Aureus, high concentration
-        # ("test_data/P.M_L_0052_top/", "user4"), # P.Mirabilis, high concentration
+        #("test_data/P.M_L_0052_top/", "test_user_demo_29"), # Ehormaechei, high concentration
         # ("test_data/P.A_L_0018_top/", "user5"), # P.Aeruginosa, low concentration
         # ("test_data/K.P_L_0050_top/", "user6"), # K.Pneumoniae, high concentration
         # ("test_data/E.H_L_0059_top/", "user7"), # E.Hormaechei, high concentration 
         # ("test_data/E.F_L_0035_top/", "user8"), # E.Faecalis, high concentration
-        ("test_data/E.C_L_0039_top/", "user9"), # E.Coli, high concentration
+        #("test_data/E.C_L_0039_top/", "test_user_demo_3"), # E.Coli, high concentration
     ]
+    
+    API_URL = "http://0.0.0.0:5001/ml_api/upload/"  
+    
+    dir_path = "test_data/K.P_L_0050_top/" # K.Pneumoniae, high concentration
+    
+    
+    print("LOCAL STORAGE")
+    
+    qr_data = "test_user_demo_48"
+    params = {"qr_data": qr_data, "storage": "local"}
+        
+    images = load_images(dir_path)
+    
+    count = 0
+    for image_path in images:
+ 
+        response = send_image(API_URL, params, image_path)
+        results = response.get('results', None) if response else None
+        
+        if results is not None:
+            concentration = results.get('concentration', None)
+            species = results.get('species', None) 
+            print("---------------------------")
+            print("PREDICTIONS")
+            print("---------------------------")
+            print("Number of images until prediction: ", count)
+            print("species", species)
+            print("concentration", concentration)
+            break
+        
+        count += 1
+        
+    # print("\n")
+    # print("---------------------------")
+    # print("TESTING WITH GOOGLE BUCKET")
+    # print("---------------------------")
+    
+    # qr_data = "test_user_demo_47"
+    # params = {"qr_data": qr_data, "storage": "gcs"}
+        
+  
+    # images = load_images(dir_path)
+    
+    # count = 0
+    # for image_path in images:
+ 
+    #     response = send_image(API_URL, params, image_path)
+    #     results = response.get('results', None) if response else None
+        
+    #     if results is not None:
+    #         concentration = results.get('concentration', None)
+    #         species = results.get('species', None) 
+    #         print("---------------------------")
+    #         print("PREDICTIONS")
+    #         print("---------------------------")
+    #         print("Number of images until prediction: ", count)
+    #         print("species", species)
+    #         print("concentration", concentration)
+    #         break
+        
+    #     count += 1
 
-    for dir_path, qr_data in data_users:
-        images = load_images(dir_path)
-        for image_path in images:
-            send_image(image_path, qr_data)
+
+
+   
+
+
+

@@ -37,7 +37,7 @@ class SecretsManager:
                     print(f"⚠️ Failed to decode GOOGLE_CREDENTIALS: {e}")
                     value = None
 
-            secrets[key] = value
+            secrets[key] = value if value else None
 
         return secrets
 

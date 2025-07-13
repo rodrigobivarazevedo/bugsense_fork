@@ -7,41 +7,9 @@ services:
       - ./dump:/app/dump  # Ensure the data directory is mounted
     ports:
       - "5001:5001"
-    depends_on:
-      ml-db:
-        condition: service_healthy
-      ml-redis-service:
-        condition: service_started  # Ensure Redis is running before the app starts
-    environment:
-      - REDIS_HOST=ml-redis-service
-      - REDIS_PORT=6379  # Inside container Redis still runs on 6379
+    networks:
+      - ai_network
 
-  ml-redis-service:
-    image: "redis:latest"
-    restart: always
-    ports:
-      - "6380:6379"  # Updated host port to avoid conflict
-    volumes:
-      - ml-redis_data:/data
-
-  ml-db:
-    image: postgres:15-alpine
-    restart: always
-    ports:
-      - "5434:5432"  # Changed host port to 5434 to avoid conflicts
-    volumes:
-      - ./dump/users_db:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=ml_bugsense
-      - POSTGRES_USER=bugsense
-      - POSTGRES_PASSWORD=bugsense
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d ml_bugsense -U bugsense"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-volumes:
-  ml-db_data:
-  ml-redis_data:
-    driver: local
+networks:
+  ai_network:
+    driver: bridge

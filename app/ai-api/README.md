@@ -1,3 +1,108 @@
+## Testing the AI API
+
+The AI API includes comprehensive testing capabilities for both the upload and prediction endpoints. You can test the machine learning functionality independently.
+
+### Running the AI API Independently
+
+1. **Start the AI API service**:
+```bash
+cd app/ai-api
+docker compose up
+```
+
+The service will be available at `http://localhost:5001`
+
+2. **Access API Documentation**:
+- **Swagger UI**: http://localhost:5001/docs
+- **ReDoc**: http://localhost:5001/redoc
+
+### Testing Upload Functionality
+
+The upload test simulates sending images to the API and tests the complete prediction pipeline:
+
+```bash
+cd app/ai-api
+python tests/test_upload.py
+```
+
+**What it tests**:
+- Image upload to local storage
+- Image upload to Google Cloud Storage (if configured)
+- Automatic species and concentration prediction
+
+**Test Data**: The test uses sample bacterial images from `tests/test_data/` with known species and concentrations:
+- `E.C_L_0039_top/` - E. Coli (high concentration)
+- `E.F_L_0035_top/` - E. Faecalis (high concentration)
+- `E.H_L_0059_top/` - E. Hormaechei (high concentration)
+- `K.P_L_0050_top/` - K. Pneumoniae (high concentration)
+- `P.A_L_0018_top/` - P. Aeruginosa (low concentration)
+- `P.M_L_0052_top/` - P. Mirabilis (high concentration)
+- `S.A_L_0026_top/` - S. Aureus (high concentration)
+- `S.S_L_0023_top/` - S. Saprophyticus (low concentration)
+- `Ste_L_0036_top/` - Sterile (low concentration)
+
+### Testing Prediction Endpoints
+
+Test the prediction endpoints directly:
+
+```bash
+cd app/ai-api
+python tests/test_prediction.py
+```
+**What it tests**:
+- Species prediction endpoint (`/ml_api/prediction/species/`)
+- Concentration prediction endpoint (`/ml_api/prediction/concentration/`)
+- Date-specific predictions
+
+### Manual API Testing
+
+You can also test the API manually using curl or any HTTP client:
+
+**Upload an image**:
+```bash
+curl -X POST "http://localhost:5001/ml_api/upload/" \
+  -H "Content-Type: multipart/form-data" \
+  -F "image=@path/to/your/image.png" \
+  -F "qr_data=test_user_123" \
+  -F "storage=local"
+```
+
+**Get species prediction**:
+```bash
+curl -X GET "http://localhost:5001/ml_api/prediction/species/?qr_data=test_user_123&storage=local"
+```
+
+**Get concentration prediction**:
+```bash
+curl -X GET "http://localhost:5001/ml_api/prediction/concentration/?qr_data=test_user_123&storage=local"
+```
+
+### Configuration
+
+The AI API can be configured for different storage backends:
+
+- **Local Storage**: Images stored locally in `storage/uploads/`
+- **Google Cloud Storage**: Images uploaded to GCS bucket (requires credentials)
+
+Set environment variables in your `.env` file:
+```bash
+GCS_BUCKET_NAME=your-bucket-name
+GOOGLE_CREDENTIALS=base64 encoded google credentials.json
+ML_API_KEY=your-ml-api-key
+DJANGO_SECRET_KEY=your-django-api-key
+```
+
+### Expected Test Results
+
+When running the tests, you should see:
+- Successful image uploads
+- Species predictions (e.g., "Ecoli", "Saureus", "Kpneumoniae")
+- Concentration predictions (e.g., "high", "low")
+- Integration with the main backend (results posted to Django API)
+
+The tests will show how many images are needed before a prediction is made, typically requiring a time series of images for accurate results.
+
+
 ## Image Upload, Prediction, and Stopping Mechanism Flow
 
 ### 1. Image Upload

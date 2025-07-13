@@ -4,7 +4,7 @@ from app.core.security import get_current_user
 from app.core.config import secrets_manager
 from app.utils.upload import save_file_locally, upload_image_to_gcs
 from typing import Optional
-from fastapi import Request, HTTPException  # ← Needed
+from fastapi import Request, HTTPException  
 
 router = APIRouter(prefix="/upload", tags=["Uploads"])
 
@@ -25,14 +25,25 @@ async def upload_image(
     
     try:
         if storage == "gcs":
+            
+            bucket_name = secrets_manager.security_secrets.get("GCS_BUCKET_NAME")
+            google_credentials_json = secrets_manager.security_secrets.get("GOOGLE_CREDENTIALS")
+            
+            if bucket_name is None or google_credentials_json is None:
+                return JSONResponse(
+                    status_code=400,
+                    content={
+                        "message": "No Google credentials found",
+                    })
+            
             # Upload to GCS
             image.file.seek(0)
             gcs_url = upload_image_to_gcs(
                 file_obj=image.file,
                 filename=image.filename,
                 qr_data=qr_data,
-                bucket_name=secrets_manager.security_secrets.get("GCS_BUCKET_NAME"),
-                credentials_json=secrets_manager.security_secrets.get("GOOGLE_CREDENTIALS")
+                bucket_name=bucket_name,
+                credentials_json=google_credentials_json
             )
             
             if not gcs_url:
@@ -60,13 +71,12 @@ async def upload_image(
             message = "Image uploaded locally."
             
         # try to predict and send results to main backend
-        results = await send_results(request, qr_data, storage=storage)
+        results = await get_results(qr_data, storage=storage)
         
         return JSONResponse(
                 status_code=200,
                 content={
                     "message": message,
-                    "results": results
                     "results": results
                 }
             )
@@ -78,105 +88,73 @@ async def upload_image(
         )
 
 
-import httpx
+from app.routers.prediction import predict_species_core, predict_concentration_core
 
-async def send_results(
-    request: Request,
+
+async def get_results(
     qr_data: str,
     storage: Optional[str] = "local"
 ):
-    # Extract access token from headers (same as get_current_user does)
-    # auth_header = request.headers.get("Authorization")
-    # if not auth_header:
-    #     raise HTTPException(status_code=401, detail="Authorization header missing.")
-    
-    # headers = {
-    #     "Authorization": auth_header
-    # }
+    try:
+        # Call prediction core functions
+        species_result = await predict_species_core(qr_data, storage)
+        concentration_result = await predict_concentration_core(qr_data, storage)
 
-    # Build query parameters
-    query_params = {
-        "qr_data": qr_data,
-        "storage": storage,
-    }
-    
+        species = species_result.get("species")
+        concentration = concentration_result.get("concentration")
 
-    async with httpx.AsyncClient(base_url="http://ml_service:5001/ml_api") as client:
-        try:
-            # Fire off both requests concurrently using asyncio.gather
-            species_response =  await client.get("/prediction/species/", params=query_params)#, headers=headers)
-            concentration_response = await client.get("/prediction/concentration/", params=query_params)#, headers=headers)
-            
-            if species_response.status_code != 200:
-                raise HTTPException(
-                    status_code=species_response.status_code, 
-                    detail=f"Species prediction failed: {species_response.text}"
-                )
+        if species is None or concentration is None:
+            return None
 
-            if concentration_response.status_code != 200:
-                raise HTTPException(
-                    status_code=concentration_response.status_code, 
-                    detail=f"Concentration prediction failed: {concentration_response.text}"
-                )
-            
-            predictions =  {
-                "species_prediction": species_response.json(),
-                "concentration_prediction": concentration_response.json()
-            }
-            concentration = predictions["concentration_prediction"].get('concentration')
-            species = predictions["species_prediction"].get('species')
-            
-            if concentration is None or species is None:
-                print("no results")
-                return None
-             
-            response = {
-                "species": species,
-                "concentration": concentration
-            }
-            
-            response = {
-                "species": species,
-                "concentration": concentration
-            }
-            
-        except httpx.RequestError as e:
-            raise HTTPException(status_code=500, detail=f"HTTPX request error: {str(e)}")
+        response = {
+            "species": species,
+            "concentration": concentration
+        }
 
-        except Exception as e:
-            print("Prediction error:", e)
-            raise HTTPException(status_code=500, detail="Failed to retrieve predictions.")
-            
-            
-    # Send results to Django backend
+    except Exception as e:
+        print("Prediction error:", e)
+        raise HTTPException(status_code=500, detail="Prediction failed.")
+
+    # Send to Django backend (but don't crash if it fails)
+    upload_success = await post_results_to_backend(qr_data, species, concentration)
+    if not upload_success:
+        print("Upload failed. Returning local prediction only.")
+
+    return response
+
+
+
+import httpx
+
+async def post_results_to_backend(qr_data: str, species: str, concentration: str):
     HOST_IP = secrets_manager.security_secrets.get("HOST_IP", "http://localhost:8000")
     ML_API_KEY = secrets_manager.security_secrets.get("ML_API_KEY")
-    
-    async with httpx.AsyncClient(base_url=f"http://{HOST_IP}:8000") as client:
-        try:
-            headers = {
-                "Content-Type": "application/json",
-                "X-ML-API-Key": ML_API_KEY,
-            }
-            payload = {
-                "qr_data": qr_data,
-                "species": species if species else None,
-                "concentration": concentration,
-                "infection_detected": True if concentration == "high" else False
-            }
-            
+
+    payload = {
+        "qr_data": qr_data,
+        "species": species,
+        "concentration": concentration,
+        "infection_detected": True if concentration == "high" else False
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        "X-ML-API-Key": ML_API_KEY,
+    }
+
+    try:
+        async with httpx.AsyncClient(base_url=f"http://{HOST_IP}:8000") as client:
             post_response = await client.post("/api/results/", json=payload, headers=headers)
 
             if post_response.status_code != 201:
-                raise HTTPException(
-                    status_code=post_response.status_code, 
-                    detail=f"Posting results failed: {post_response.text}"
-                )
+                print(f"Upload warning: {post_response.status_code}: {post_response.text}")
+                return False
 
-        except httpx.RequestError as e:
-            raise HTTPException(status_code=500, detail=f"HTTPX request error: {str(e)}")
-            
-        except Exception as e:
-            print("Prediction error:", e)
-          
-    return response
+    except httpx.RequestError as e:
+        print(f"Upload error: HTTPX request error: {str(e)}")
+        return False
+    except Exception as e:
+        print(f"Unexpected upload error: {str(e)}")
+        return False
+
+    return True
