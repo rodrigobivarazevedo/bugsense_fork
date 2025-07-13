@@ -21,7 +21,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
-from .models import QRCode, Results
+from .models import QRCode, Results, CustomUser
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from institutions.models import Doctor
 from django.conf import settings
@@ -100,7 +100,8 @@ class CurrentUserView(RetrieveUpdateDestroyAPIView):
     def update(self, request, *args, **kwargs):
         partial = True
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
@@ -178,14 +179,23 @@ class QRCodeCreateView(CreateAPIView):
     @extend_schema(
         tags=["qr-codes"],
         summary="Create QR Code",
-        description="Create a new QR code entry for a user. The QR code data is stored as a string and linked to the specified user ID. An empty result with status 'ongoing' is automatically created for this QR code.",
+        description="Create a new QR code entry for a user. The QR code data is stored as a string and linked to the specified user ID. An empty result with status 'ongoing' is automatically created for this QR code. If a QR code with the same data already exists, a 400 error will be returned.",
         request=QRCodeCreateSerializer,
-        responses={201: QRCodeSerializer},
+        responses={
+            201: QRCodeSerializer,
+            400: {"type": "object", "properties": {"detail": {"type": "string"}}}
+        },
         examples=[
             OpenApiExample(
                 "Valid QR Code Creation",
-                value={"user_id": 8, "qr_data": "https://example.com/sample-qr-data"},
+                value={"user_id": 8,
+                       "qr_data": "https://example.com/sample-qr-data"},
                 description='Example of creating a QR code for user ID 8. This will also create an empty result with status "ongoing".',
+            ),
+            OpenApiExample(
+                "Duplicate QR Code Error",
+                value={"detail": "This QR code has already been scanned."},
+                description="Error response when attempting to create a QR code with data that already exists",
             )
         ],
     )
@@ -195,9 +205,16 @@ class QRCodeCreateView(CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        qr_data = request.data.get("qr_data")
+        if QRCode.objects.filter(qr_data=qr_data).exists():
+            return Response(
+                {"detail": "This QR code has already been scanned."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         qr_code = serializer.save()
 
-        # Return the created QR code with full details
         response_serializer = QRCodeSerializer(qr_code)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
@@ -232,11 +249,9 @@ class QRCodeListView(ListAPIView):
     def get_queryset(self):
         user_id = self.request.query_params.get("user_id")
 
-        # If user_id is provided and user is staff, return QR codes for that user
         if user_id and self.request.user.is_staff:
             return QRCode.objects.filter(user_id=user_id)
 
-        # Otherwise, return QR codes for the authenticated user
         return QRCode.objects.filter(user=self.request.user)
 
 
@@ -279,7 +294,6 @@ class QRCodeDetailView(RetrieveUpdateDestroyAPIView):
         return super().delete(request, *args, **kwargs)
 
     def get_queryset(self):
-        # Staff can access any QR code, regular users only their own
         if self.request.user.is_staff:
             return QRCode.objects.all()
         return QRCode.objects.filter(user=self.request.user)
@@ -293,11 +307,9 @@ class MLModelPermission(BasePermission):
     """
 
     def has_permission(self, request, view):
-        # Check if user is authenticated (JWT token)
         if request.user and request.user.is_authenticated:
             return True
 
-        # Check for ML model API key
         api_key = request.headers.get("X-ML-API-Key")
         if api_key and api_key == os.getenv("ML_API_KEY", "your-secure-ml-api-key"):
             return True
@@ -305,8 +317,6 @@ class MLModelPermission(BasePermission):
         return False
 
     def has_object_permission(self, request, view, obj):
-        # For object-level permissions, only allow authenticated users
-        # ML model can only create/update, not access specific objects
         return request.user and request.user.is_authenticated
 
 
@@ -407,7 +417,6 @@ class ResultsCreateView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # Check if a result already exists for this QR code
         qr_data = request.data.get("qr_data")
         try:
             qr_code = QRCode.objects.get(qr_data=qr_data)
@@ -417,10 +426,8 @@ class ResultsCreateView(CreateAPIView):
 
         result = serializer.save()
 
-        # Return the created/updated result with full details
         response_serializer = ResultsSerializer(result)
 
-        # Return 200 for updates, 201 for new creations
         status_code = status.HTTP_200_OK if existing_result else status.HTTP_201_CREATED
         return Response(response_serializer.data, status=status_code)
 
@@ -526,7 +533,6 @@ class ResultsListView(ListAPIView):
         ],
     )
     def get(self, request, *args, **kwargs):
-        # If doctor and no qr_data/user_id, return summary for all patients
         qr_data = request.query_params.get("qr_data")
         user_id = request.query_params.get("user_id")
         pending = request.query_params.get("pending", "").lower() == "true"
@@ -537,16 +543,12 @@ class ResultsListView(ListAPIView):
             and hasattr(request.user, "is_doctor")
             and request.user.is_doctor
         ):
-            # Get all patients assigned to this doctor
             patients = Doctor.objects.get(id=request.user.id).patients.all()
-            # Get all QR codes for these patients
             qr_codes = QRCode.objects.filter(user__in=patients)
-            # Get all results for these QR codes
             results = Results.objects.filter(qr_code__in=qr_codes)
-            # Filter by pending status if requested
             if pending:
-                results = results.filter(status__in=["ready", "preliminary_assessment"])
-            # Return user_id, qr_data, status, species, infection_detected, and closed_at
+                results = results.filter(
+                    status__in=["ready", "preliminary_assessment"])
             data = [
                 {
                     "user_id": r.user.id,
@@ -559,10 +561,8 @@ class ResultsListView(ListAPIView):
                 for r in results
             ]
             return Response(data, status=200)
-        # Otherwise, default behavior
         response = super().get(request, *args, **kwargs)
 
-        # If status is 'ready', change it to 'closed' for all results in the response
         if response.status_code == 200 and response.data:
             for result_data in response.data:
                 if result_data.get("status") == "ready":
@@ -579,7 +579,8 @@ class ResultsListView(ListAPIView):
 
     def get_queryset(self):
         qr_data = self.request.query_params.get("qr_data")
-        pending = self.request.query_params.get("pending", "").lower() == "true"
+        pending = self.request.query_params.get(
+            "pending", "").lower() == "true"
 
         if qr_data:
             try:
@@ -595,7 +596,6 @@ class ResultsListView(ListAPIView):
 
         user_id = self.request.query_params.get("user_id")
 
-        # If user_id is provided and user is staff, return results for that user
         if user_id and self.request.user.is_staff:
             queryset = Results.objects.filter(user_id=user_id)
             if pending:
@@ -604,10 +604,10 @@ class ResultsListView(ListAPIView):
                 )
             return queryset
 
-        # Otherwise, return results for the authenticated user
         queryset = Results.objects.filter(user=self.request.user)
         if pending:
-            queryset = queryset.filter(status__in=["ready", "preliminary_assessment"])
+            queryset = queryset.filter(
+                status__in=["ready", "preliminary_assessment"])
         return queryset
 
 
@@ -628,10 +628,8 @@ class ResultsDetailView(RetrieveUpdateDestroyAPIView):
         responses={200: ResultsSerializer},
     )
     def get(self, request, *args, **kwargs):
-        # Get the result first
         result = self.get_object()
 
-        # If status is 'ready', automatically change to 'closed'
         if result.status == "ready":
             result.status = "closed"
             result.save()
@@ -658,7 +656,6 @@ class ResultsDetailView(RetrieveUpdateDestroyAPIView):
         return super().delete(request, *args, **kwargs)
 
     def get_queryset(self):
-        # Staff can access any result, regular users only their own
         if self.request.user.is_staff:
             return Results.objects.all()
         return Results.objects.filter(user=self.request.user)
@@ -727,7 +724,6 @@ class PasswordRecoveryQuestionsView(APIView):
             return Response(
                 {"detail": "Email is required."}, status=status.HTTP_400_BAD_REQUEST
             )
-        from .models import CustomUser
 
         try:
             user = CustomUser.objects.get(email=email)
@@ -811,7 +807,6 @@ class PasswordRecoveryValidateView(APIView):
         question_number = request.data.get("question_number")
         answer = request.data.get("answer", "").strip()
 
-        # Validate inputs
         if not email:
             return Response(
                 {"detail": "Email is required."}, status=status.HTTP_400_BAD_REQUEST
@@ -826,9 +821,6 @@ class PasswordRecoveryValidateView(APIView):
                 {"detail": "Answer is required."}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Find user
-        from .models import CustomUser
-
         try:
             user = CustomUser.objects.get(email=email)
         except CustomUser.DoesNotExist:
@@ -836,16 +828,13 @@ class PasswordRecoveryValidateView(APIView):
                 {"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND
             )
 
-        # Check if the answer is correct
         if not user.check_security_answer(question_number, answer):
             return Response(
                 {"detail": "Incorrect answer."}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Generate a secure one-time token
         token = secrets.token_urlsafe(32)
 
-        # Store token in user model (we'll add a field for this)
         user.password_reset_token = token
         user.password_reset_token_created = timezone.now()
         user.save()
@@ -924,7 +913,6 @@ class PasswordRecoveryResetView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        from .models import CustomUser
 
         try:
             user = CustomUser.objects.get(email=email)
@@ -933,7 +921,6 @@ class PasswordRecoveryResetView(APIView):
                 {"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND
             )
 
-        # Check token validity (15 min expiry)
         if not user.password_reset_token or user.password_reset_token != token:
             return Response(
                 {"detail": "Invalid or expired token."},
@@ -944,15 +931,12 @@ class PasswordRecoveryResetView(APIView):
                 {"detail": "Invalid or expired token."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        from django.utils import timezone
-        from datetime import timedelta
 
         if timezone.now() - user.password_reset_token_created > timedelta(minutes=15):
             return Response(
                 {"detail": "Token expired."}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Set new password
         user.set_password(new_password)
         user.password_reset_token = None
         user.password_reset_token_created = None

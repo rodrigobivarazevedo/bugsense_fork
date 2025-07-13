@@ -3,7 +3,6 @@ from rest_framework import serializers
 from .models import CustomUser, QRCode, Results
 from django.utils import timezone
 
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -46,7 +45,6 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def update(self, instance, validated_data):
-        # Handle security answers separately to ensure they get hashed
         security_answers = {}
         for i in range(1, 4):
             answer_field = f"security_answer_{i}"
@@ -54,11 +52,9 @@ class UserSerializer(serializers.ModelSerializer):
                 security_answers[answer_field] = validated_data.pop(
                     answer_field)
 
-        # Update the instance with non-security fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
-        # Set security answers (will be hashed by the model's save method)
         for field, value in security_answers.items():
             setattr(instance, field, value)
 
@@ -119,7 +115,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             date_joined=timezone.now().date()
         )
 
-        # Set security questions and answers (will be hashed by the model's save method)
         for i in range(1, 4):
             question_field = f"security_question_{i}"
             answer_field = f"security_answer_{i}"
@@ -165,10 +160,8 @@ class QRCodeCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {'user_id': 'User with this ID does not exist.'})
 
-        # Create the QR code
         qr_code = QRCode.objects.create(user=user, **validated_data)
 
-        # Automatically create an empty result with status 'ongoing'
         Results.objects.create(
             user=user,
             qr_code=qr_code,
@@ -225,7 +218,6 @@ class ResultsCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         qr_data = validated_data.pop('qr_data')
 
-        # Find the QR code and associated user
         try:
             qr_code = QRCode.objects.get(qr_data=qr_data)
             user = qr_code.user
@@ -233,40 +225,31 @@ class ResultsCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {'qr_data': 'QR code not found.'})
 
-        # Check if result already exists for this QR code
         try:
             result = Results.objects.get(qr_code=qr_code)
-            # Update existing result
             for field, value in validated_data.items():
                 setattr(result, field, value)
 
-            # Auto-update status based on what was updated
-            if validated_data:  # If any fields were updated
+            if validated_data:
                 if 'infection_detected' in validated_data and validated_data['infection_detected'] is False:
-                    # If infection_detected was set to False, change status to 'ready', set species to "sterile", and clear other fields
                     result.status = 'ready'
                     result.species = 'sterile'
                     result.concentration = ''
                     result.antibiotic = ''
-                    # Set QR code closed_at when result becomes ready
                     if not qr_code.closed_at:
                         qr_code.closed_at = timezone.now()
                         qr_code.save()
                 elif 'infection_detected' in validated_data and validated_data['infection_detected'] is True:
-                    # If infection_detected was set to True, check if all required fields are filled
                     if result.species and result.concentration:
                         result.status = 'ready'
-                        # Set QR code closed_at when result becomes ready
                         if not qr_code.closed_at:
                             qr_code.closed_at = timezone.now()
                             qr_code.save()
                     else:
                         result.status = 'preliminary_assessment'
                 else:
-                    # For other updates, check if infection is true and all required fields are filled
                     if result.infection_detected and result.species and result.concentration:
                         result.status = 'ready'
-                        # Set QR code closed_at when result becomes ready
                         if not qr_code.closed_at:
                             qr_code.closed_at = timezone.now()
                             qr_code.save()
@@ -276,23 +259,18 @@ class ResultsCreateSerializer(serializers.ModelSerializer):
             result.save()
             return result
         except Results.DoesNotExist:
-            # Create new result
-            # Set default status if not provided
             if 'status' not in validated_data:
                 validated_data['status'] = 'ongoing'
 
-            # If infection_detected is False in new creation, set species to "sterile" and clear other fields
             if 'infection_detected' in validated_data and validated_data['infection_detected'] is False:
                 validated_data['species'] = 'sterile'
                 validated_data['concentration'] = ''
                 validated_data['antibiotic'] = ''
 
-            # If infection_detected is True and all required fields are provided, set status to ready
             if ('infection_detected' in validated_data and validated_data['infection_detected'] is True and
                 'species' in validated_data and validated_data['species'] and
                     'concentration' in validated_data and validated_data['concentration']):
                 validated_data['status'] = 'ready'
-                # Set QR code closed_at when result becomes ready
                 if not qr_code.closed_at:
                     qr_code.closed_at = timezone.now()
                     qr_code.save()
