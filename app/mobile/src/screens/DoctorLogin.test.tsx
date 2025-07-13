@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DoctorLogin from './DoctorLogin';
 import Api from '../api/Client';
+import { resumeConsoleError, suppressConsoleError } from '../utils/UnitTestUtils';
 
 jest.mock('@react-navigation/native-stack', () => ({
     NativeStackNavigationProp: jest.fn(),
@@ -90,6 +91,15 @@ describe('DoctorLogin component', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
+        suppressConsoleError();
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+    afterAll(() => {
+        resumeConsoleError();
     });
 
     it('renders without crashing', () => {
