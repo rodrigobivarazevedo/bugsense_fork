@@ -1,0 +1,232 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #212529;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6c757d;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.closeButton:hover {
+  background-color: #f8f9fa;
+}
+
+.modalBody {
+  padding: 24px;
+}
+
+.modalMessage {
+  margin: 0;
+  color: #495057;
+  line-height: 1.5;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid #e9ecef;
+}
+
+.cancelButton,
+.confirmButton {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.cancelButton {
+  background-color: #6c757d;
+  color: white;
+}
+
+.cancelButton:hover {
+  background-color: #545b62;
+}
+
+.confirmButton {
+  background-color: #dc3545;
+  color: white;
+}
+
+.confirmButton:hover {
+  background-color: #c82333;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(236, 230, 255, 0.85); /* soft purple overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 1.25rem;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(46, 39, 71, 0.18), 0 1.5px 6px rgba(0, 0, 0, 0.08);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.modal h3 {
+  margin: 0 0 1.5rem 0;
+  color: #2e2747;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.editableInput {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #ece6ff;
+  border-radius: 0.75rem;
+  font-size: 1.1rem;
+  color: #2e2747;
+  background: #fff;
+  margin-bottom: 0.5rem;
+  box-sizing: border-box;
+}
+
+.editableInput:focus {
+  outline: none;
+  border-color: #2e2747;
+}
+
+.accountSaveButton {
+  width: 100%;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 0.75rem;
+  background: #2e2747;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.2s;
+}
+
+.accountSaveButton:disabled {
+  background: #757575;
+  cursor: not-allowed;
+}
+
+.closeButton {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 1.7rem;
+  color: #757575;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.showHideButton {
+  background: #ece6ff;
+  color: #2e2747;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.4rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.showHideButton:hover {
+  background: #d6cfff;
+}
+
+.errorText {
+  color: #dc3545;
+  font-size: 0.98rem;
+  margin-bottom: 0.5rem;
+}
+
+.successText {
+  color: #2e2747;
+  font-size: 0.98rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .overlay {
+    padding: 10px;
+  }
+
+  .modal {
+    max-width: 100%;
+  }
+
+  .modalHeader,
+  .modalBody,
+  .modalFooter {
+    padding: 16px 20px;
+  }
+}

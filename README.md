@@ -1,6 +1,6 @@
 # BugSense
 
-BugSense is a full-stack application with a Django backend, React web frontend, and React Native mobile app.
+BugSense is a full-stack application with a Django backend, React web frontend, React Native mobile app, and a Python-based machine learning (ML) service for automated analysis.
 
 ## Getting Started
 
@@ -53,10 +53,14 @@ Note: Your host IP will be displayed in the logs when the application starts.
 
 ### Sample Login Credentials
 
-For first-time users, you can log in with these sample credentials:
+For first-time users, you can find a full list of sample users (patients and doctors) with their credentials in the [`app/user_database.md`](app/user_database.md) file.
 
-- Email: test@example.com
-- Password: Password123!
+This file contains:
+- Patient accounts (emails, passwords, security questions)
+- Doctor accounts (IDs, emails, passwords, institution IDs)
+- Institution information
+
+Refer to that file for up-to-date test credentials for all roles.
 
 ### API Documentation
 

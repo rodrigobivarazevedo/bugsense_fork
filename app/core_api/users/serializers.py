@@ -20,8 +20,11 @@ class UserSerializer(serializers.ModelSerializer):
             "country",
             "date_joined",
             "security_question_1",
+            "security_answer_1",
             "security_question_2",
+            "security_answer_2",
             "security_question_3",
+            "security_answer_3",
         ]
         read_only_fields = ["id"]
         extra_kwargs = {
@@ -35,8 +38,11 @@ class UserSerializer(serializers.ModelSerializer):
             "postcode": {"required": False},
             "country": {"required": False},
             "security_question_1": {"required": False},
+            "security_answer_1": {"required": False, "write_only": True},
             "security_question_2": {"required": False},
+            "security_answer_2": {"required": False, "write_only": True},
             "security_question_3": {"required": False},
+            "security_answer_3": {"required": False, "write_only": True},
         }
 
     def update(self, instance, validated_data):
@@ -174,6 +180,7 @@ class QRCodeCreateSerializer(serializers.ModelSerializer):
 
 class ResultsSerializer(serializers.ModelSerializer):
     qr_data = serializers.CharField(source='qr_code.qr_data', read_only=True)
+    closed_at = serializers.DateTimeField(source='qr_code.closed_at', read_only=True)
 
     class Meta:
         model = Results
@@ -187,9 +194,10 @@ class ResultsSerializer(serializers.ModelSerializer):
             'species',
             'concentration',
             'antibiotic',
-            'created_at'
+            'created_at',
+            'closed_at'
         ]
-        read_only_fields = ['id', 'created_at', 'qr_data']
+        read_only_fields = ['id', 'created_at', 'qr_data', 'closed_at']
 
 
 class ResultsCreateSerializer(serializers.ModelSerializer):
@@ -211,76 +219,71 @@ class ResultsCreateSerializer(serializers.ModelSerializer):
             'infection_detected': {'required': False},
             'species': {'required': False},
             'concentration': {'required': False},
-            'antibiotic': {'required': False},
+            'antibiotic': {'required': False}
         }
 
     def create(self, validated_data):
         qr_data = validated_data.pop('qr_data')
 
-        # Find the QR code by its data string
+        # Find the QR code and associated user
         try:
             qr_code = QRCode.objects.get(qr_data=qr_data)
+            user = qr_code.user
         except QRCode.DoesNotExist:
-            raise serializers.ValidationError({
-                'qr_data': f'No QR code found with data: {qr_data}'
-            })
+            raise serializers.ValidationError(
+                {'qr_data': 'QR code not found.'})
 
-        # Get the user from the QR code
-        user = qr_code.user
-
-        # Check if a result already exists for this QR code
-        existing_result = Results.objects.filter(qr_code=qr_code).first()
-
-        if existing_result:
-            # Update the existing result with new data
+        # Check if result already exists for this QR code
+        try:
+            result = Results.objects.get(qr_code=qr_code)
+            # Update existing result
             for field, value in validated_data.items():
-                if value is not None:  # Only update if value is provided
-                    setattr(existing_result, field, value)
+                setattr(result, field, value)
 
             # Auto-update status based on what was updated
             if validated_data:  # If any fields were updated
                 if 'infection_detected' in validated_data and validated_data['infection_detected'] is False:
-                    # If infection_detected was set to False, change status to 'ready' and clear other fields
-                    existing_result.status = 'ready'
-                    existing_result.species = ''
-                    existing_result.concentration = ''
-                    existing_result.antibiotic = ''
+                    # If infection_detected was set to False, change status to 'ready', set species to "sterile", and clear other fields
+                    result.status = 'ready'
+                    result.species = 'sterile'
+                    result.concentration = ''
+                    result.antibiotic = ''
                     # Set QR code closed_at when result becomes ready
                     if not qr_code.closed_at:
                         qr_code.closed_at = timezone.now()
                         qr_code.save()
                 elif 'infection_detected' in validated_data and validated_data['infection_detected'] is True:
                     # If infection_detected was set to True, check if all required fields are filled
-                    if existing_result.species and existing_result.concentration:
-                        existing_result.status = 'ready'
+                    if result.species and result.concentration:
+                        result.status = 'ready'
                         # Set QR code closed_at when result becomes ready
                         if not qr_code.closed_at:
                             qr_code.closed_at = timezone.now()
                             qr_code.save()
                     else:
-                        existing_result.status = 'preliminary_assessment'
+                        result.status = 'preliminary_assessment'
                 else:
                     # For other updates, check if infection is true and all required fields are filled
-                    if existing_result.infection_detected and existing_result.species and existing_result.concentration:
-                        existing_result.status = 'ready'
+                    if result.infection_detected and result.species and result.concentration:
+                        result.status = 'ready'
                         # Set QR code closed_at when result becomes ready
                         if not qr_code.closed_at:
                             qr_code.closed_at = timezone.now()
                             qr_code.save()
                     else:
-                        existing_result.status = 'preliminary_assessment'
+                        result.status = 'preliminary_assessment'
 
-            existing_result.save()
-            return existing_result
-        else:
-            # Create a new result with the found user and QR code
+            result.save()
+            return result
+        except Results.DoesNotExist:
+            # Create new result
             # Set default status if not provided
             if 'status' not in validated_data:
                 validated_data['status'] = 'ongoing'
 
-            # If infection_detected is False in new creation, clear other fields
+            # If infection_detected is False in new creation, set species to "sterile" and clear other fields
             if 'infection_detected' in validated_data and validated_data['infection_detected'] is False:
-                validated_data['species'] = ''
+                validated_data['species'] = 'sterile'
                 validated_data['concentration'] = ''
                 validated_data['antibiotic'] = ''
 
@@ -299,3 +302,28 @@ class ResultsCreateSerializer(serializers.ModelSerializer):
                 qr_code=qr_code,
                 **validated_data
             )
+
+
+class PasswordChangeSerializer(serializers.Serializer):
+    old_password = serializers.CharField(write_only=True, required=True)
+    new_password = serializers.CharField(
+        write_only=True, min_length=8, required=True)
+
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Current password is incorrect.")
+        return value
+
+    def validate_new_password(self, value):
+        user = self.context['request'].user
+        if user.check_password(value):
+            raise serializers.ValidationError(
+                "New password must be different from current password.")
+        return value
+
+    def save(self):
+        user = self.context['request'].user
+        user.set_password(self.validated_data['new_password'])
+        user.save()
+        return user

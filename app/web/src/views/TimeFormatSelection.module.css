@@ -1,0 +1,67 @@
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.optionsContainer {
+  width: 100%;
+  max-width: 400px;
+}
+
+.option {
+  width: 100%;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.option:hover {
+  border-color: #2e2747;
+  background: #ece6ff;
+}
+
+.option.selected {
+  border-color: #2e2747;
+  background: #ece6ff;
+}
+
+.optionText {
+  font-size: 16px;
+  color: #212529;
+  font-weight: 500;
+}
+
+.checkmark {
+  color: #2e2747;
+  font-weight: bold;
+  font-size: 18px;
+}
