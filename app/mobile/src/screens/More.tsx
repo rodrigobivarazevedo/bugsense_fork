@@ -105,7 +105,7 @@ export const More: FC = () => {
                 <S.OptionButton onPress={() => Linking.openURL(`mailto:${companyInfo.email}`)}>
                     <S.OptionIconTextWrapper>
                         <RenderIcon family="materialIcons" icon="admin-panel-settings" fontSize={22} color="primary" />
-                        <S.OptionText>{t('Contact Admin')}</S.OptionText>
+                        <S.OptionText>{t('contact_admin')}</S.OptionText>
                     </S.OptionIconTextWrapper>
                     <S.OptionArrow>
                         <RenderIcon family="feather" icon="external-link" fontSize={22} color="primary" />

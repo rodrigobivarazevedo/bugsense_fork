@@ -43,7 +43,7 @@ const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
             <S.InputContainer>
                 <S.InputWrapper>
                     <S.StyledInput
-                        placeholder={t('Email Address')}
+                        placeholder={t('email_address')}
                         placeholderTextColor={themeColors.primary}
                         value={email}
                         onChangeText={handleEmailChange}
@@ -59,14 +59,14 @@ const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
             </S.InputContainer>
 
             <S.ActionButton onPress={handleSubmit} disabled={!isFormValid}>
-                <S.ActionButtonText>{t('Continue')}</S.ActionButtonText>
+                <S.ActionButtonText>{t('continue')}</S.ActionButtonText>
             </S.ActionButton>
 
             <S.LinkContainer>
-                <S.LinkText>{t('Remember your password?')}</S.LinkText>
+                <S.LinkText>{t('remember_your_password')}</S.LinkText>
                 <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                     <S.Link>
-                        {t('Login')}
+                        {t('login')}
                     </S.Link>
                 </TouchableOpacity>
             </S.LinkContainer>

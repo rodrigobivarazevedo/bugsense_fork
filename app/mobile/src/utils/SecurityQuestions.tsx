@@ -2,16 +2,16 @@ import { TFunction } from "i18next";
 
 export const securityQuestions = (t: TFunction) => {
     return [
-        t("What was your first pet's name?"),
-        t("In which city were you born?"),
-        t("What is your mother's maiden name?"),
-        t("What was the name of your first school?"),
-        t("What is your favorite childhood memory?"),
-        t("What is your favorite color?"),
-        t("What is your hometown?"),
-        t("What was your first car?"),
-        t("What is your favorite food?"),
-        t("What is your dream job?")
+        t("what_was_your_first_pets_name"),
+        t("in_which_city_were_you_born"),
+        t("what_is_your_mothers_maiden_name"),
+        t("what_was_the_name_of_your_first_school"),
+        t("what_is_your_favorite_childhood_memory"),
+        t("what_is_your_favorite_color"),
+        t("what_is_your_hometown"),
+        t("what_was_your_first_car"),
+        t("what_is_your_favorite_food"),
+        t("what_is_your_dream_job")
     ];
 };
 

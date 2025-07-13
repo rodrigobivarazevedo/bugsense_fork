@@ -71,10 +71,10 @@ const ViewPatient: FC = () => {
                 if (response.data && response.data.length > 0) {
                     setPatient(response.data[0]);
                 } else {
-                    setError('Patient not found.');
+                    setError(t('patient_not_found'));
                 }
             } catch (err) {
-                setError('Failed to load patient details.');
+                setError(t('failed_to_load_patient_details'));
             } finally {
                 setLoading(false);
             }
@@ -111,11 +111,6 @@ const ViewPatient: FC = () => {
         navigation.navigate('PatientTests', { patientId, patientName: patient?.full_name });
     };
 
-    const handleTestPress = (test: TestResult) => {
-        // @ts-ignore
-        navigation.navigate('ViewTest', { test });
-    };
-
     if (loading) {
         return (
             <View style={styles.container}>
@@ -135,7 +130,7 @@ const ViewPatient: FC = () => {
     if (!patient) {
         return (
             <View style={styles.container}>
-                <Text style={styles.error}>Patient not found.</Text>
+                <Text style={styles.error}>{t('patient_not_found')}</Text>
             </View>
         );
     }
@@ -144,17 +139,17 @@ const ViewPatient: FC = () => {
         <ScrollView contentContainerStyle={styles.container}>
             {/* Patient Details Section */}
             <View style={styles.section}>
-                <Text style={styles.label}>Full Name:</Text>
+                <Text style={styles.label}>{t('full_name')}:</Text>
                 <Text style={styles.value}>{patient.full_name}</Text>
-                <Text style={styles.label}>Email:</Text>
+                <Text style={styles.label}>{t('email')}:</Text>
                 <Text style={styles.value}>{patient.email}</Text>
-                <Text style={styles.label}>Gender:</Text>
+                <Text style={styles.label}>{t('gender')}:</Text>
                 <Text style={styles.value}>{patient.gender || '-'}</Text>
-                <Text style={styles.label}>Date of Birth:</Text>
+                <Text style={styles.label}>{t('date_of_birth')}:</Text>
                 <Text style={styles.value}>{patient.dob || '-'}</Text>
-                <Text style={styles.label}>Phone Number:</Text>
+                <Text style={styles.label}>{t('phone_number')}:</Text>
                 <Text style={styles.value}>{patient.phone_number || '-'}</Text>
-                <Text style={styles.label}>Address:</Text>
+                <Text style={styles.label}>{t('address')}:</Text>
                 <View style={styles.patientInfoRow}>
                     <Text style={styles.patientInfoValue}>
                         {patient.street ? `${patient.street}, ` : ''}
@@ -167,7 +162,7 @@ const ViewPatient: FC = () => {
 
             {/* Most Recent Test Section */}
             <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Most Recent Test</Text>
+                <Text style={styles.sectionTitle}>{t('most_recent_test')}</Text>
                 {loadingTest ? (
                     <ActivityIndicator size="small" color={themeColors.primary} />
                 ) : recentTest ? (
@@ -201,7 +196,7 @@ const ViewPatient: FC = () => {
                         )}
                     </View>
                 ) : (
-                    <Text style={styles.noTestsMessage}>Patient has no previous tests</Text>
+                    <Text style={styles.noTestsMessage}>{t('patient_has_no_previous_tests')}</Text>
                 )}
             </View>
 
@@ -219,7 +214,7 @@ const ViewPatient: FC = () => {
                         color={themeColors.white}
                     />
                     <Text style={styles.viewAllTestsButtonText}>
-                        View All Tests
+                        {t('view_all_tests')}
                     </Text>
                 </TouchableOpacity>
             </View>

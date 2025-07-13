@@ -8,49 +8,49 @@ const bacteriaList = [
     {
         id: 'escherichia-coli',
         name: 'Escherichia coli',
-        description: 'Common gut bacteria that can cause foodborne illness',
+        description: 'escherichia_coli_disoverPage_quick_description',
         image: require('../assets/images/bacteria/escherichia-coli.png')
     },
     {
         id: 'enterococcus-faecalis',
         name: 'Enterococcus faecalis',
-        description: 'Common gut bacteria that can cause foodborne illness',
+        description: 'enterococcus_faecalis_disoverPage_quick_description',
         image: require('../assets/images/bacteria/enterococcus-faecalis.png')
     },
     {
         id: 'klebsiella-pneumoniae',
         name: 'Klebsiella pneumoniae',
-        description: 'Common bacteria that can cause pneumonia',
+        description: 'klebsiella_pneumoniae_disoverPage_quick_description',
         image: require('../assets/images/bacteria/klebsiella-pneumoniae.png')
     },
     {
         id: 'staphylococcus-saprophyticus',
         name: 'Staphylococcus saprophyticus',
-        description: 'Common bacteria that can cause skin infections',
+        description: 'staphylococcus_saprophyticus_disoverPage_quick_description',
         image: require('../assets/images/bacteria/staphylococcus-saprophyticus.png')
     },
     {
         id: 'staphylococcus-aureus',
         name: 'Staphylococcus aureus',
-        description: 'Common bacteria that can cause skin infections',
+        description: 'staphylococcus_aureus_disoverPage_quick_description',
         image: require('../assets/images/bacteria/staphylococcus-aureus.png')
     },
     {
         id: 'enterobacter-hormaechei',
         name: 'Enterobacter hormaechei',
-        description: 'Common bacteria that can cause foodborne illness',
+        description: 'enterobacter_hormaechei_disoverPage_quick_description',
         image: require('../assets/images/bacteria/enterobacter-hormaechei.png')
     },
     {
         id: 'pseudomonas-aeruginosa',
         name: 'Pseudomonas aeruginosa',
-        description: 'Common bacteria that can cause pneumonia',
+        description: 'pseudomonas_aeruginosa_disoverPage_quick_description',
         image: require('../assets/images/bacteria/pseudomonas-aeruginosa.png')
     },
     {
         id: 'proteus-mirabilis',
         name: 'Proteus mirabilis',
-        description: 'Common bacteria that can cause foodborne illness',
+        description: 'proteus_mirabilis_disoverPage_quick_description',
         image: require('../assets/images/bacteria/proteus-mirabilis.png')
     }
 ];
@@ -78,7 +78,7 @@ export const Discover: FC<any> = ({ navigation }) => {
                         />
                         <S.BacteriaName>{bacteria.name}</S.BacteriaName>
                         <S.BacteriaDescription>
-                            {bacteria.description}
+                            {t(bacteria.description)}
                         </S.BacteriaDescription>
                     </S.BacteriaCard>
                 ))}

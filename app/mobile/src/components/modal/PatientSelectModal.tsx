@@ -1,45 +1,62 @@
 import { FC, useEffect, useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator } from 'react-native';
+import {
+    Modal,
+    View,
+    Text,
+    TouchableOpacity,
+    TextInput,
+    FlatList,
+    ActivityIndicator
+} from 'react-native';
 import { styles } from './Modal.styles';
 import { themeColors } from '../../theme/GlobalTheme';
-import { formatDateTimeGerman } from '../../utils/DateTimeFormatter';
+import Api from '../../api/Client';
 import { useTranslation } from 'react-i18next';
 
-interface TestKit {
+interface Patient {
     id: number;
-    qr_data: string;
-    created_at: string;
-    status: string;
+    email: string;
+    full_name: string;
+    gender: string;
+    dob: string | null;
 }
 
-interface TestKitSelectModalProps {
+interface PatientSelectModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (qrData: string) => void;
-    fetchTestKits: () => Promise<TestKit[]>;
+    onConfirm: (patient: Patient) => void;
 }
 
-const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
+const PatientSelectModal: FC<PatientSelectModalProps> = ({
     isOpen,
     onClose,
     onConfirm,
-    fetchTestKits,
 }) => {
     const { t } = useTranslation();
-    const [testKits, setTestKits] = useState<TestKit[]>([]);
-    const [filtered, setFiltered] = useState<TestKit[]>([]);
+    const [patients, setPatients] = useState<Patient[]>([]);
+    const [filtered, setFiltered] = useState<Patient[]>([]);
     const [search, setSearch] = useState('');
-    const [selectedQr, setSelectedQr] = useState<string | null>(null);
+    const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
     const [loading, setLoading] = useState(false);
+
+    const fetchPatients = async () => {
+        try {
+            const response = await Api.get('doctor/patients/');
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching patients:', error);
+            return [];
+        }
+    };
 
     useEffect(() => {
         if (isOpen) {
             setLoading(true);
-            setSelectedQr(null);
+            setSelectedPatient(null);
             setSearch('');
-            fetchTestKits().then(kits => {
-                setTestKits(kits);
-                setFiltered(kits);
+            fetchPatients().then(patientList => {
+                setPatients(patientList);
+                setFiltered(patientList);
                 setLoading(false);
             });
         }
@@ -47,20 +64,23 @@ const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
 
     useEffect(() => {
         if (!search) {
-            setFiltered(testKits);
+            setFiltered(patients);
         } else {
             const s = search.toLowerCase();
-            setFiltered(testKits.filter(kit => kit.qr_data.toLowerCase().includes(s)));
+            setFiltered(patients.filter(patient =>
+                patient.full_name.toLowerCase().includes(s) ||
+                (patient.email && patient.email.toLowerCase().includes(s))
+            ));
         }
-    }, [search, testKits]);
+    }, [search, patients]);
 
-    const handleSelect = (qr: string) => {
-        setSelectedQr(qr);
+    const handleSelect = (patient: Patient) => {
+        setSelectedPatient(patient);
     };
 
     const handleConfirm = () => {
-        if (selectedQr) {
-            onConfirm(selectedQr);
+        if (selectedPatient) {
+            onConfirm(selectedPatient);
         }
     };
 
@@ -74,10 +94,10 @@ const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
             <View style={styles.overlay}>
                 <View style={styles.modal}>
                     <View style={styles.modalBody}>
-                        <Text style={styles.heading}>{t('select_test_kit')}</Text>
+                        <Text style={styles.heading}>{t('select_patient')}</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder={t('search_test_kits_by_qr_data')}
+                            placeholder={t('search_patients_by_name_or_email')}
                             value={search}
                             onChangeText={setSearch}
                         />
@@ -86,7 +106,7 @@ const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
                             <ActivityIndicator size="small" />
                         ) : filtered.length === 0 ? (
                             <Text style={styles.openTestKitsListText}>
-                                {t('no_ongoing_test_kits_found_please_scan_a_new_test_kit')}
+                                {t('no_patients_found_please_check_your_patient_assignments')}
                             </Text>
                         ) : (
                             <FlatList
@@ -97,25 +117,25 @@ const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
                                     <TouchableOpacity
                                         style={[
                                             styles.openTestKitListItem,
-                                            selectedQr === item.qr_data && {
+                                            selectedPatient?.id === item.id && {
                                                 backgroundColor: themeColors.primary,
                                                 borderWidth: 2,
                                                 borderColor: themeColors.primary,
                                             }
                                         ]}
-                                        onPress={() => handleSelect(item.qr_data)}
+                                        onPress={() => handleSelect(item)}
                                     >
                                         <Text style={[
                                             styles.openTestKitListItemQRData,
-                                            selectedQr === item.qr_data && { color: themeColors.white }
+                                            selectedPatient?.id === item.id && { color: themeColors.white }
                                         ]}>
-                                            {item.qr_data}
+                                            {item.full_name}
                                         </Text>
                                         <Text style={[
                                             styles.openTestKitListItemCreatedAt,
-                                            selectedQr === item.qr_data && { color: themeColors.white }
+                                            selectedPatient?.id === item.id && { color: themeColors.white }
                                         ]}>
-                                            Created at: {formatDateTimeGerman(item.created_at)}
+                                            {`DOB: ${item.dob || '-'} | Gender: ${item.gender || '-'}`}
                                         </Text>
                                     </TouchableOpacity>
                                 )}
@@ -128,8 +148,8 @@ const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={handleConfirm}
-                            style={[styles.confirmButton, { opacity: selectedQr ? 1 : 0.5 }]}
-                            disabled={!selectedQr}
+                            style={[styles.confirmButton, { opacity: selectedPatient ? 1 : 0.5 }]}
+                            disabled={!selectedPatient}
                         >
                             <Text style={styles.buttonText}>{t('confirm')}</Text>
                         </TouchableOpacity>
@@ -140,4 +160,4 @@ const TestKitSelectModal: FC<TestKitSelectModalProps> = ({
     );
 };
 
-export default TestKitSelectModal; 
+export default PatientSelectModal; 

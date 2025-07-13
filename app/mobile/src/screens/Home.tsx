@@ -16,13 +16,6 @@ type GridItem = {
   route?: string;
 };
 
-const GRID_ITEMS: GridItem[] = [
-  { key: 'overviews', label: 'Overviews', family: 'materialCommunity', icon: 'format-list-checkbox' },
-  { key: 'discover', label: 'Discover', family: 'octicons', icon: 'light-bulb', route: 'Discover' },
-  { key: 'news', label: 'News', family: 'fontAwesome', icon: 'newspaper-o', route: 'News' },
-  { key: 'contactUs', label: 'Contact Us', family: 'materialCommunity', icon: 'email-send-outline' },
-];
-
 export const Home: FC<any> = ({ navigation }) => {
   const { t } = useTranslation();
   const [userName, setUserName] = useState<string>('');
@@ -43,6 +36,13 @@ export const Home: FC<any> = ({ navigation }) => {
   const handlePress = (route?: string) => {
     if (route) navigation.navigate(route);
   };
+
+  const GRID_ITEMS: GridItem[] = [
+    { key: 'overviews', label: t('overviews'), family: 'materialCommunity', icon: 'format-list-checkbox', route: 'Overview' },
+    { key: 'discover', label: t('discover'), family: 'octicons', icon: 'light-bulb', route: 'Discover' },
+    { key: 'news', label: t('news'), family: 'fontAwesome', icon: 'newspaper-o', route: 'News' },
+    { key: 'contactUs', label: t('contact_us'), family: 'materialCommunity', icon: 'email-send-outline' },
+  ];
 
   const filteredGridItems = GRID_ITEMS.filter(item => {
     if (userType === 'doctor') {

@@ -43,6 +43,18 @@ export const styles = StyleSheet.create({
         color: '#555',
         textAlign: 'center',
     },
+    patientInfo: {
+        backgroundColor: themeColors.accent,
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 16,
+        alignItems: 'center',
+    },
+    patientInfoText: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: themeColors.primary,
+    },
     launchButton: {
         backgroundColor: themeColors.primary,
         paddingVertical: 16,

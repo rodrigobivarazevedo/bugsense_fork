@@ -1,56 +1,36 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import BacteriaPage from '../BacteriaPage';
 
-const proteusMirabilisData = {
-    id: '8',
-    name: 'Proteus mirabilis',
-    scientificName: 'Proteus mirabilis',
-    image: require('../../assets/images/bacteria/proteus-mirabilis.png'),
-    description: 'Proteus mirabilis is a Gram-negative bacterium that is a common cause of urinary tract infections and can form urinary stones. It is known for its characteristic swarming motility and its ability to produce urease, which can lead to the formation of struvite stones in the urinary tract.',
-    type: 'Gram-negative',
-    shape: 'Rod-shaped',
-    transmission: [
-        'Fecal-oral transmission',
-        'Contaminated medical devices',
-        'Hospital-acquired infections',
-        'Person-to-person contact',
-        'Contaminated surfaces'
-    ],
-    symptoms: [
-        'Urinary tract infections',
-        'Kidney stones (struvite stones)',
-        'Bloodstream infections (sepsis)',
-        'Wound infections',
-        'Pneumonia',
-        'Abdominal pain and discomfort'
-    ],
-    prevention: [
-        {
-            family: 'fontAwesome5',
-            icon: 'hands-wash',
-            text: 'Maintain good personal hygiene'
-        },
-        {
-            family: 'fontAwesome6',
-            icon: 'glass-water',
-            text: 'Stay well-hydrated to prevent urinary stasis'
-        },
-        {
-            family: 'materialIcons',
-            icon: 'clean-hands',
-            text: 'Proper sterilization of urinary catheters'
-        },
-        {
-            family: 'fontAwesome6',
-            icon: 'prescription-bottle-medical',
-            text: 'Complete prescribed antibiotic courses'
-        }
-    ],
-    treatment: 'Treatment of Proteus mirabilis infections typically involves antibiotics such as cephalosporins, fluoroquinolones, or aminoglycosides. However, the bacterium can develop resistance to multiple antibiotics. For urinary stones caused by P. mirabilis, treatment may require surgical intervention in addition to antibiotics. Prevention of stone formation through adequate hydration and prompt treatment of UTIs is important.'
-};
+const preventionIcons = [
+    { family: 'fontAwesome5', icon: 'hands-wash' },
+    { family: 'fontAwesome6', icon: 'glass-water' },
+    { family: 'materialIcons', icon: 'clean-hands' },
+    { family: 'fontAwesome6', icon: 'prescription-bottle-medical' }
+];
 
 const ProteusMirabilis: FC = () => {
-    return <BacteriaPage bacteria={proteusMirabilisData} />;
+    const { t } = useTranslation('bacteria_discover');
+    const transmission = t('bacteria.proteus_mirabilis.transmission.methods', { returnObjects: true }) as string[];
+    const symptoms = t('bacteria.proteus_mirabilis.symptoms.list', { returnObjects: true }) as string[];
+    const preventionTips = t('bacteria.proteus_mirabilis.prevention.tips', { returnObjects: true }) as string[];
+    const bacteria = {
+        id: '8',
+        name: t('bacteria.proteus_mirabilis.name'),
+        scientificName: t('bacteria.proteus_mirabilis.scientific_name_abbreviated'),
+        image: require('../../assets/images/bacteria/proteus-mirabilis.png'),
+        description: t('bacteria.proteus_mirabilis.description'),
+        type: t('bacteria.proteus_mirabilis.type'),
+        shape: t('bacteria.proteus_mirabilis.shape'),
+        transmission,
+        symptoms,
+        prevention: preventionTips.map((text, idx) => ({
+            ...preventionIcons[idx],
+            text
+        })),
+        treatment: t('bacteria.proteus_mirabilis.treatment.description')
+    };
+    return <BacteriaPage bacteria={bacteria} />;
 };
 
 export default ProteusMirabilis;

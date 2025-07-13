@@ -17,6 +17,8 @@ export const styles = StyleSheet.create({
     },
     modalBody: {
         padding: rem(1.25),
+        width: '100%',
+        alignItems: 'stretch',
     },
     heading: {
         fontSize: rem(1.25),
@@ -119,6 +121,10 @@ export const styles = StyleSheet.create({
         shadowOpacity: 0.06,
         shadowRadius: 2,
         elevation: 1,
+        width: '100%',
+        alignSelf: 'stretch',
+        minWidth: 0,
+        flex: 1,
     },
     openTestKitListItemQRData: {
         fontWeight: 'bold',
