@@ -4,11 +4,11 @@ import requests
 
 # inside ai-api folder run python -m app.utils.create_token and make sure to have a venv running with jwt package
 
-JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTIyNTc0NTZ9.HYJ2s16ZcvEM9ep5kfGYokcUu1q3M8gGlqxg0sSRUow"  # Replace with your actual JWT token or generate it
+# JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTIyNTc0NTZ9.HYJ2s16ZcvEM9ep5kfGYokcUu1q3M8gGlqxg0sSRUow"  # Replace with your actual JWT token or generate it
 
-HEADERS = {
-    "Authorization": f"Bearer {JWT_TOKEN}"
-}
+# HEADERS = {
+#     "Authorization": f"Bearer {JWT_TOKEN}"
+# }
 
 def send_image(image_path, qr_data):
     API_URL = "http://0.0.0.0:5001/ml_api/upload/"
@@ -19,7 +19,7 @@ def send_image(image_path, qr_data):
             files = {
                 "image": (os.path.basename(image_path), image_file, "image/png"),
             }
-            response = requests.post(API_URL, files=files, params=params, headers=HEADERS)
+            response = requests.post(API_URL, files=files, params=params)#, headers=HEADERS)
             response.raise_for_status()
     except requests.RequestException as e:
         print(f"Failed to send {image_path}: {e}")
@@ -63,7 +63,7 @@ if __name__ == "__main__":
         #("test_data/Ste_L_0036_top/", "user1"), # sterile, low concentration
         #("test_data/S.S_L_0023_top/", "test_user_demo_4"), # S.Saprophyticus, low concentration
         # ("test_data/S.A_L_0026_top/", "user3"), # S.Aureus, high concentration
-        ("test_data/P.M_L_0052_top/", "test_user_demo_11"), # Ehormaechei, high concentration
+        ("test_data/P.M_L_0052_top/", "test_user_demo_21"), # Ehormaechei, high concentration
         # ("test_data/P.A_L_0018_top/", "user5"), # P.Aeruginosa, low concentration
         # ("test_data/K.P_L_0050_top/", "user6"), # K.Pneumoniae, high concentration
         # ("test_data/E.H_L_0059_top/", "user7"), # E.Hormaechei, high concentration 
