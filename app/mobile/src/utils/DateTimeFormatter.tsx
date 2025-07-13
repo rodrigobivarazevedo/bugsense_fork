@@ -49,7 +49,6 @@ export const getTimeBasedGreeting = (): string => {
         return 'good_morning';
     } else if (hour >= 12 && hour < 17) {
         return 'good_afternoon';
-    } else {
-        return 'good_evening';
     }
+    return 'good_evening';
 };

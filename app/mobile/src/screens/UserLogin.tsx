@@ -24,7 +24,7 @@ const UserLogin: FC<LoginScreenProps> = ({ navigation }) => {
         try {
             const response = await Api.post('login/', {
                 email: username,
-                password: password,
+                password,
             });
 
             const { access, refresh, user } = response.data;

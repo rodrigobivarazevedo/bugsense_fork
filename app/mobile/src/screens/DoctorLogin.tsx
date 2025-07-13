@@ -65,7 +65,7 @@ const DoctorLogin: FC<DoctorLoginScreenProps> = ({ navigation }) => {
             const response = await Api.post('doctor-login/', {
                 institution_id: selectedInstitution.id,
                 doctor_id: doctorId,
-                password: password,
+                password,
             });
 
             const { access, refresh, doctor } = response.data;

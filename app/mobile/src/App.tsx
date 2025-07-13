@@ -1,14 +1,11 @@
 import { useRef } from 'react';
-import './translations/i18n';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './translations/i18n';
-import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer, type NavigationContainerRef } from '@react-navigation/native';
+import { createNativeStackNavigator, type NativeStackHeaderProps } from '@react-navigation/native-stack';
+import { createBottomTabNavigator, type BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
-import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import type { NativeStackHeaderProps } from '@react-navigation/native-stack';
 
 import { handleThirdPartyLibraryWarnings } from './utils/HandleThirdPartyLibraryWarnings';
 handleThirdPartyLibraryWarnings();

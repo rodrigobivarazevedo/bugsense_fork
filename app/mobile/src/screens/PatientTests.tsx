@@ -30,7 +30,7 @@ const PatientTests: FC = () => {
     const route = useRoute();
     const isFocused = useIsFocused();
     // @ts-ignore
-    const { patientId, patientName } = route.params || {};
+    const { patientId } = route.params || {};
 
     const [results, setResults] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);

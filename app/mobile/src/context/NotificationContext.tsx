@@ -19,7 +19,7 @@ interface NotificationContextProps {
 const NotificationContext = createContext<NotificationContextProps>({
     hasNotifications: false,
     loading: false,
-    refetch: async () => { },
+    refetch: async () => { /* no-op */ },
 });
 
 export const NotificationProvider: FC<{ children: React.ReactNode }> = ({ children }) => {

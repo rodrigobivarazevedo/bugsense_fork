@@ -70,7 +70,6 @@ export const Account: FC = () => {
     const [showSecurityQuestionDropdown, setShowSecurityQuestionDropdown] = useState(false);
     const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number | null>(null);
     const [securityQuestionsEditMode, setSecurityQuestionsEditMode] = useState(false);
-    const [showCountryPicker, setShowCountryPicker] = useState(false);
     const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
 
     const navigation = useNavigation();
@@ -297,7 +296,6 @@ export const Account: FC = () => {
         setSelectedCountry(country);
         const countryName = typeof country.name === 'string' ? country.name : String(country.name);
         handleAddressFieldChange('country', countryName);
-        setShowCountryPicker(false);
     };
 
     // Check if security questions have changed
@@ -965,7 +963,7 @@ export const Account: FC = () => {
             <ChangePasswordModal
                 visible={showChangePasswordModal}
                 onClose={() => setShowChangePasswordModal(false)}
-                onSuccess={() => { }}
+                onSuccess={() => { /* no-op */ }}
             />
         </S.Scroll>
     );

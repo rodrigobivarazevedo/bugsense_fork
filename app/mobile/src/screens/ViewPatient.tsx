@@ -111,11 +111,6 @@ const ViewPatient: FC = () => {
         navigation.navigate('PatientTests', { patientId, patientName: patient?.full_name });
     };
 
-    const handleTestPress = (test: TestResult) => {
-        // @ts-ignore
-        navigation.navigate('ViewTest', { test });
-    };
-
     if (loading) {
         return (
             <View style={styles.container}>
