@@ -29,57 +29,59 @@ export HOST_IP=localhost
 ML_API_KEY=$(generate_secret_key)
 DJANGO_SECRET_KEY=$(generate_secret_key)
 
-# ai-api
+# Define env file paths
+AI_ENV_FILE="/workspaces/bugsense/app/ai-api/.env"
+CORE_ENV_FILE="/workspaces/bugsense/app/.env"
 
-if grep -q '^DJANGO_SECRET_KEY=' /workspaces/bugsense/app/ai-api/.env; then
-    sed -i '' "s/^DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}/" /workspaces/bugsense/app/ai-api/.env  # macOS version
+# Ensure env files exist
+[ ! -f "$AI_ENV_FILE" ] && touch "$AI_ENV_FILE"
+[ ! -f "$CORE_ENV_FILE" ] && touch "$CORE_ENV_FILE"
+
+# Update ai-api .env
+if grep -q '^DJANGO_SECRET_KEY=' "$AI_ENV_FILE"; then
+    sed -i "s/^DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}/" "$AI_ENV_FILE"
 else
-    echo "DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}" >> /workspaces/bugsense/app/ai-api/.env
-    
+    echo "DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}" >> "$AI_ENV_FILE"
 fi
 
-if grep -q '^ENVIRONMENT=' /workspaces/bugsense/app/ai-api/.env; then
-    sed -i '' "s/^ENVIRONMENT=.*/ENVIRONMENT=codespaces/" /workspaces/bugsense/app/ai-api/.env  # macOS version
+if grep -q '^ENVIRONMENT=' "$AI_ENV_FILE"; then
+    sed -i "s/^ENVIRONMENT=.*/ENVIRONMENT=codespaces/" "$AI_ENV_FILE"
 else
-    echo "ENVIRONMENT=codespaces" >> /workspaces/bugsense/app/ai-api/.env
-    
-f
-
-if grep -q '^ML_API_KEY=' /workspaces/bugsense/app/ai-api/.env; then
-    sed -i '' "s/^ML_API_KEY=.*/ML_API_KEY=${ML_API_KEY}/" /workspaces/bugsense/app/ai-api/.env  # macOS version
-else
-    echo "ML_API_KEY=${ML_API_KEY}" >> /workspaces/bugsense/app/ai-api/.env
+    echo "ENVIRONMENT=codespaces" >> "$AI_ENV_FILE"
 fi
 
-if grep -q '^HOST_IP=' /workspaces/bugsense/app/ai-api/.env; then
-    sed -i '' "s/^HOST_IP=.*/HOST_IP=localhost/" /workspaces/bugsense/app/ai-api/.env  # macOS version
+if grep -q '^ML_API_KEY=' "$AI_ENV_FILE"; then
+    sed -i "s/^ML_API_KEY=.*/ML_API_KEY=${ML_API_KEY}/" "$AI_ENV_FILE"
 else
-    echo "HOST_IP=localhost" >> /workspaces/bugsense/app/ai-api/.env
+    echo "ML_API_KEY=${ML_API_KEY}" >> "$AI_ENV_FILE"
 fi
 
-
-# core-api
-
-if grep -q '^DJANGO_SECRET_KEY=' .env; then
-    sed -i '' "s/^DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}/" .env  
+if grep -q '^HOST_IP=' "$AI_ENV_FILE"; then
+    sed -i "s/^HOST_IP=.*/HOST_IP=localhost/" "$AI_ENV_FILE"
 else
-    echo "DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}" >> .env
-    
+    echo "HOST_IP=localhost" >> "$AI_ENV_FILE"
 fi
 
-if grep -q '^ML_API_KEY=' .env; then
-    sed -i '' "s/^ML_API_KEY=.*/ML_API_KEY=${ML_API_KEY}/" .env  
+# Update core-api .env
+if grep -q '^DJANGO_SECRET_KEY=' "$CORE_ENV_FILE"; then
+    sed -i "s/^DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}/" "$CORE_ENV_FILE"
 else
-    echo "ML_API_KEY=${ML_API_KEY}" >> ./ai-api/.env
+    echo "DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}" >> "$CORE_ENV_FILE"
 fi
 
-if grep -q '^HOST_IP=' .env; then
-    sed -i '' "s/^HOST_IP=.*/HOST_IP=localhost/" .env  
+if grep -q '^ML_API_KEY=' "$CORE_ENV_FILE"; then
+    sed -i "s/^ML_API_KEY=.*/ML_API_KEY=${ML_API_KEY}/" "$CORE_ENV_FILE"
 else
-    echo "HOST_IP=localhost" >> .env
+    echo "ML_API_KEY=${ML_API_KEY}" >> "$CORE_ENV_FILE"
 fi
 
+if grep -q '^HOST_IP=' "$CORE_ENV_FILE"; then
+    sed -i "s/^HOST_IP=.*/HOST_IP=localhost/" "$CORE_ENV_FILE"
+else
+    echo "HOST_IP=localhost" >> "$CORE_ENV_FILE"
+fi
 
+# Main CLI options
 if [ "$1" = "--help" ]; then
   show_help
   exit 0

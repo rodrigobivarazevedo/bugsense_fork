@@ -27,10 +27,6 @@ get_host_ip() {
   ifconfig en0 | awk '/inet / && $2 != "127.0.0.1" {print $2; exit}'
 }
 
-
-# export HOST_IP=$(ifconfig en0 \
-#   | awk '/inet / && !/127/ {print $2; exit}')
-
 export HOST_IP=$(get_host_ip)
 
 # Generate new keys
