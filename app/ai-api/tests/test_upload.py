@@ -11,7 +11,7 @@ HEADERS = {
 
 def send_image(image_path, qr_data):
     API_URL = "http://0.0.0.0:5001/ml_api/upload/"
-    params = {"qr_data": qr_data, "storage": "gcs"}
+    params = {"qr_data": qr_data, "storage": "local"}
 
     try:
         with open(image_path, "rb") as image_file:

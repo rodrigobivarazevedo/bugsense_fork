@@ -21,9 +21,7 @@ async def get_species_prediction(
     storage: Optional[str] = Query("local", enum=["local", "gcs"])
 ):
     
-
     #token = await get_current_user(request)
-        
     try:
         
         if date:
@@ -119,6 +117,7 @@ async def get_concentration_prediction(
     date: Optional[str] = Query(None, description="Format: YYYY-MM-DD"), 
     storage: Optional[str] = Query("local", enum=["local", "gcs"])
 ):
+    
     #token = await get_current_user(request)
         
     try:
