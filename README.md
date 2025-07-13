@@ -116,7 +116,8 @@ docker system prune
 
 ## Testing the AI API
 
-The AI API includes comprehensive testing capabilities for both the upload and prediction endpoints. You can test the machine learning functionality independently.
+The tests include the upload and prediction endpoints. NOTE: the google bucket uploading is commented out
+Ig configured with the credentials it will work
 
 ### Running the AI API Independently
 
