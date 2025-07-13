@@ -12,7 +12,7 @@ HEADERS = {
 
 def send_image(image_path, qr_data):
     API_URL = "http://0.0.0.0:5001/ml_api/upload/"
-    params = {"qr_data": qr_data, "storage": "gcs"}
+    params = {"qr_data": qr_data, "storage": "local"}
 
     try:
         with open(image_path, "rb") as image_file:
@@ -63,7 +63,7 @@ if __name__ == "__main__":
         #("test_data/Ste_L_0036_top/", "user1"), # sterile, low concentration
         #("test_data/S.S_L_0023_top/", "test_user_demo_4"), # S.Saprophyticus, low concentration
         # ("test_data/S.A_L_0026_top/", "user3"), # S.Aureus, high concentration
-        ("test_data/P.M_L_0052_top/", "test_user_demo_22"), # Ehormaechei, high concentration
+        # ("test_data/P.M_L_0052_top/", "test_user_demo_29"), # Ehormaechei, high concentration
         # ("test_data/P.A_L_0018_top/", "user5"), # P.Aeruginosa, low concentration
         # ("test_data/K.P_L_0050_top/", "user6"), # K.Pneumoniae, high concentration
         # ("test_data/E.H_L_0059_top/", "user7"), # E.Hormaechei, high concentration 
@@ -72,6 +72,9 @@ if __name__ == "__main__":
     ]
 
     count = 0
+
+    image_path = "test_data/P.M_L_0052_top/"
+    qr_data = "test_user_demo_29"
     
     for dir_path, qr_data in data_users:
         images = load_images(dir_path)
@@ -80,7 +83,6 @@ if __name__ == "__main__":
             
             # if count > 40:
             #     break
-            
             response = send_image(image_path, qr_data)
             
             print(response)
