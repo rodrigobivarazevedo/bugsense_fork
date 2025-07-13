@@ -4,11 +4,11 @@ import requests
 
 # inside ai-api folder run python -m app.utils.create_token and make sure to have a venv running with jwt package
 
-# JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTIyNTc0NTZ9.HYJ2s16ZcvEM9ep5kfGYokcUu1q3M8gGlqxg0sSRUow"  # Replace with your actual JWT token or generate it
+JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTIyNTc0NTZ9.HYJ2s16ZcvEM9ep5kfGYokcUu1q3M8gGlqxg0sSRUow"  # Replace with your actual JWT token or generate it
 
-# HEADERS = {
-#     "Authorization": f"Bearer {JWT_TOKEN}"
-# }
+HEADERS = {
+    "Authorization": f"Bearer {JWT_TOKEN}"
+}
 
 def send_image(image_path, qr_data):
     API_URL = "http://0.0.0.0:5001/ml_api/upload/"
