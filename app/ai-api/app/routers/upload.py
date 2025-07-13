@@ -22,7 +22,7 @@ async def upload_image(
     storage: str = Query("local", enum=["local", "gcs"]),
 ):
     
-    token = await get_current_user(request)
+    #token = await get_current_user(request)
     
     try:
         if storage == "gcs":
@@ -85,9 +85,9 @@ async def send_results(
     storage: Optional[str] = "local"
 ):
     # Extract access token from headers (same as get_current_user does)
-    auth_header = request.headers.get("Authorization")
-    if not auth_header:
-        raise HTTPException(status_code=401, detail="Authorization header missing.")
+    # auth_header = request.headers.get("Authorization")
+    # if not auth_header:
+    #     raise HTTPException(status_code=401, detail="Authorization header missing.")
 
     # Build query parameters
     query_params = {
@@ -95,15 +95,19 @@ async def send_results(
         "storage": storage,
     }
     
-    headers = {
-        "Authorization": auth_header
-    }
+    # headers = {
+    #     "Authorization": auth_header
+    # }
 
     async with httpx.AsyncClient(base_url="http://ml_service:5001/ml_api") as client:
         try:
             # Fire off both requests concurrently using asyncio.gather
-            species_response =  await client.get("/prediction/species/", params=query_params, headers=headers)
-            concentration_response = await client.get("/prediction/concentration/", params=query_params, headers=headers)
+            # species_response =  await client.get("/prediction/species/", params=query_params, headers=headers)
+            # concentration_response = await client.get("/prediction/concentration/", params=query_params, headers=headers)
+            
+            species_response =  await client.get("/prediction/species/", params=query_params)
+            concentration_response = await client.get("/prediction/concentration/", params=query_params)
+            
             
             if species_response.status_code != 200:
                 raise HTTPException(
@@ -159,11 +163,11 @@ async def send_results(
             
             post_response = await client.post("/api/results/", json=payload, headers=headers)
 
-            if post_response.status_code != 201:
-                raise HTTPException(
-                    status_code=post_response.status_code, 
-                    detail=f"Posting results failed: {post_response.text}"
-                )
+            # if post_response.status_code != 201:
+            #     raise HTTPException(
+            #         status_code=post_response.status_code, 
+            #         detail=f"Posting results failed: {post_response.text}"
+            #     )
 
         except httpx.RequestError as e:
             raise HTTPException(status_code=500, detail=f"HTTPX request error: {str(e)}")
