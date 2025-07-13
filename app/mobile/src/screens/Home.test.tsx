@@ -19,7 +19,6 @@ jest.mock('react-i18next', () => ({
 }));
 
 jest.mock('../components/RenderLottie', () => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
     const React = require('react');
     return React.forwardRef(({ testID, ...props }: any, ref: any) => {
         return React.createElement('View', { ref, testID: testID || 'render-lottie', ...props });
@@ -27,7 +26,6 @@ jest.mock('../components/RenderLottie', () => {
 });
 
 jest.mock('../components/RenderIcon', () => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
     const React = require('react');
     return React.forwardRef(({ testID, ...props }: any, ref: any) => {
         return React.createElement('View', { ref, testID: testID || 'render-icon', ...props });
@@ -46,9 +44,7 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
     getItem: jest.fn(),
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
 const mockApi = require('../api/Client');
-// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
 const mockAsyncStorage = require('@react-native-async-storage/async-storage');
 const mockNavigation = { navigate: jest.fn() };
 

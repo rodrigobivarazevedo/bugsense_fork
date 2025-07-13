@@ -31,7 +31,6 @@ jest.mock('../utils/DateTimeFormatter', () => ({
 
 jest.mock('../components/RenderIcon', () => {
     return function MockRenderIcon({ family, icon, fontSize, color }: any) {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
         const React = require('react');
         return React.createElement('Text', {
             testID: `icon-${family}-${icon}`,

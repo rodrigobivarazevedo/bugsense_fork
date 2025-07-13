@@ -41,7 +41,6 @@ jest.mock('../utils/SecurityQuestions', () => ({
 
 jest.mock('../components/RenderIcon', () => {
     return function MockRenderIcon({ family, icon, fontSize, color }: any) {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
         const React = require('react');
         return React.createElement('Text', {
             testID: `icon-${family}-${icon}`,
@@ -52,7 +51,6 @@ jest.mock('../components/RenderIcon', () => {
 
 jest.mock('../components/Logo', () => {
     return function MockLogo() {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
         const React = require('react');
         return React.createElement('Text', { testID: 'logo' }, 'Logo');
     };
@@ -60,7 +58,6 @@ jest.mock('../components/Logo', () => {
 
 jest.mock('../components/LanguageSwitcher', () => {
     return function MockLanguageSwitcher() {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
         const React = require('react');
         return React.createElement('Text', { testID: 'language-switcher' }, 'LanguageSwitcher');
     };

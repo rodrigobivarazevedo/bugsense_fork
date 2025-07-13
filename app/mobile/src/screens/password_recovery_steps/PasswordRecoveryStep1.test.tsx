@@ -26,7 +26,6 @@ jest.mock('../../utils/ValidateEmail', () => ({
 
 jest.mock('../../components/Logo', () => {
     return function MockLogo() {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
         const React = require('react');
         return React.createElement('View', { testID: 'logo' }, 'Logo');
     };

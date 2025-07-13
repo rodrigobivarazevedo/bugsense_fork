@@ -21,7 +21,6 @@ const mockOnSelect = jest.fn();
 
 jest.mock('../components/SimpleSelectPage', () => {
     return ({ title, options, selected, onSelect }: any) => {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
         const { Text, TouchableOpacity } = require('react-native');
 
         mockOnSelect.mockImplementation(onSelect);
