@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import ForgotPassword from './ForgotPassword';
 
@@ -375,7 +374,6 @@ describe('ForgotPassword component', () => {
 
         const emailInput = getByPlaceholderText('Email address');
 
-        // Rapidly change the email
         fireEvent.changeText(emailInput, 'a');
         fireEvent.changeText(emailInput, 'ab');
         fireEvent.changeText(emailInput, 'abc');
