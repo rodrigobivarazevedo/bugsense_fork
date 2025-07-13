@@ -47,7 +47,7 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
     // General rules
-    'no-console': 'warn',
+    'no-console': 'off',
     'prefer-const': 'warn',
     'no-var': 'error',
     'object-shorthand': 'warn',
