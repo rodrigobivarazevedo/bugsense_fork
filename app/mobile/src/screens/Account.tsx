@@ -9,9 +9,19 @@ import { Platform, TextInput, Modal, TouchableOpacity, Alert } from 'react-nativ
 import { themeColors } from '../theme/GlobalTheme';
 import ConfirmationModal from '../components/modal/ConfirmationModal';
 import GenericDateTimePicker from '../components/GenericDateTimePicker';
+import CountryPicker, { Country, CountryCode } from 'react-native-country-picker-modal';
 import Api from '../api/Client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { formatDate } from '../utils/DateTimeFormatter';
+import ChangePasswordModal from '../components/modal/ChangePasswordModal';
+import {
+    securityQuestions,
+    SecurityQuestionsData,
+    validateSecurityQuestionsForUpdate,
+    getAvailableQuestionsForIndex as getAvailableQuestionsUtil,
+    hasSecurityQuestionsChanges as hasSecurityQuestionsChangesUtil
+} from '../utils/SecurityQuestions';
 
 export const Account: FC = () => {
     const { t } = useTranslation();
@@ -22,6 +32,8 @@ export const Account: FC = () => {
     const [tempValue, setTempValue] = useState<string>('');
     const [pendingValue, setPendingValue] = useState<string>('');
     const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+    const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+    const [showSecurityQuestionsConfirmationModal, setShowSecurityQuestionsConfirmationModal] = useState(false);
 
     // Address editing states
     const [addressFields, setAddressFields] = useState({
@@ -38,13 +50,41 @@ export const Account: FC = () => {
     });
     const [showDatePicker, setShowDatePicker] = useState(false);
 
+    // Security questions editing states
+    const [securityQuestionsData, setSecurityQuestionsData] = useState<SecurityQuestionsData>({
+        security_question_1: '',
+        security_answer_1: '',
+        security_question_2: '',
+        security_answer_2: '',
+        security_question_3: '',
+        security_answer_3: ''
+    });
+    const [originalSecurityQuestions, setOriginalSecurityQuestions] = useState<SecurityQuestionsData>({
+        security_question_1: '',
+        security_answer_1: '',
+        security_question_2: '',
+        security_answer_2: '',
+        security_question_3: '',
+        security_answer_3: ''
+    });
+    const [showSecurityQuestionDropdown, setShowSecurityQuestionDropdown] = useState(false);
+    const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number | null>(null);
+    const [securityQuestionsEditMode, setSecurityQuestionsEditMode] = useState(false);
+    const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
+
     const navigation = useNavigation();
 
     // Refs for address TextInput fields
     const streetInputRef = useRef<TextInput>(null);
     const cityInputRef = useRef<TextInput>(null);
     const postcodeInputRef = useRef<TextInput>(null);
-    const countryInputRef = useRef<TextInput>(null);
+
+    // Refs for security answer TextInput fields
+    const securityAnswer1Ref = useRef<TextInput>(null);
+    const securityAnswer2Ref = useRef<TextInput>(null);
+    const securityAnswer3Ref = useRef<TextInput>(null);
+
+    const availableQuestions = securityQuestions(t);
 
     const handleEdit = (field: string) => {
         setEditingField(field);
@@ -69,7 +109,7 @@ export const Account: FC = () => {
                 setEditingField(null);
             } catch (error) {
                 console.error('Error updating field:', error);
-                Alert.alert(t('Error'), t('Failed to update field. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_field'));
             }
         }
     };
@@ -84,7 +124,7 @@ export const Account: FC = () => {
                 setUser(response.data);
             } catch (error) {
                 console.error('Error updating field:', error);
-                Alert.alert(t('Error'), t('Failed to update field. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_field'));
             }
         }
         setEditingField(null);
@@ -113,7 +153,7 @@ export const Account: FC = () => {
                 setUser(response.data);
             } catch (error) {
                 console.error('Error updating gender:', error);
-                Alert.alert(t('Error'), t('Failed to update gender. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_gender'));
             }
         }
         setEditingField(null);
@@ -121,7 +161,7 @@ export const Account: FC = () => {
 
     const handleDateChange = async (date: Date) => {
         setShowDatePicker(false);
-        const formatted = date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+        const formatted = date.toISOString().split('T')[0];
         if (user) {
             try {
                 const response = await Api.put('users/me/', {
@@ -130,25 +170,10 @@ export const Account: FC = () => {
                 setUser(response.data);
             } catch (error) {
                 console.error('Error updating date of birth:', error);
-                Alert.alert(t('Error'), t('Failed to update date of birth. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_date_of_birth'));
             }
         }
         setEditingField(null);
-    };
-
-    const handlePhoneSave = async () => {
-        if (user) {
-            try {
-                const response = await Api.put('users/me/', {
-                    phone_number: tempValue
-                });
-                setUser(response.data);
-                setEditingField(null);
-            } catch (error) {
-                console.error('Error updating phone number:', error);
-                Alert.alert(t('Error'), t('Failed to update phone number. Please try again.'));
-            }
-        }
     };
 
     // Address field handlers
@@ -164,17 +189,16 @@ export const Account: FC = () => {
         streetInputRef.current?.blur();
         cityInputRef.current?.blur();
         postcodeInputRef.current?.blur();
-        countryInputRef.current?.blur();
 
         if (user) {
             try {
                 const response = await Api.put('users/me/', addressFields);
                 setUser(response.data);
                 setOriginalAddressFields(addressFields);
-                Alert.alert(t('Success'), t('Address updated successfully'));
+                Alert.alert(t('success'), t('address_updated_successfully'));
             } catch (error) {
                 console.error('Error updating address:', error);
-                Alert.alert(t('Error'), t('Failed to update address. Please try again.'));
+                Alert.alert(t('error'), t('failed_to_update_address'));
             }
         }
     };
@@ -184,7 +208,6 @@ export const Account: FC = () => {
         streetInputRef.current?.blur();
         cityInputRef.current?.blur();
         postcodeInputRef.current?.blur();
-        countryInputRef.current?.blur();
 
         setAddressFields(originalAddressFields);
     };
@@ -197,6 +220,91 @@ export const Account: FC = () => {
             addressFields.postcode !== originalAddressFields.postcode ||
             addressFields.country !== originalAddressFields.country
         );
+    };
+
+    // Security questions handlers
+    const handleSecurityQuestionChange = (questionNumber: number, field: 'question' | 'answer', value: string) => {
+        const questionKey = `security_question_${questionNumber}` as keyof typeof securityQuestionsData;
+        const answerKey = `security_answer_${questionNumber}` as keyof typeof securityQuestionsData;
+
+        setSecurityQuestionsData(prev => ({
+            ...prev,
+            [field === 'question' ? questionKey : answerKey]: value
+        }));
+    };
+
+    const handleSecurityQuestionSelect = (question: string, questionNumber: number) => {
+        handleSecurityQuestionChange(questionNumber, 'question', question);
+        setShowSecurityQuestionDropdown(false);
+        setSelectedQuestionIndex(null);
+    };
+
+    const getAvailableQuestionsForIndex = (questionNumber: number) => {
+        return getAvailableQuestionsUtil(securityQuestionsData, questionNumber, availableQuestions);
+    };
+
+    const handleSecurityQuestionsSave = async () => {
+        // Blur all security answer input fields
+        securityAnswer1Ref.current?.blur();
+        securityAnswer2Ref.current?.blur();
+        securityAnswer3Ref.current?.blur();
+
+        if (user) {
+            try {
+                const dataToSend: Partial<SecurityQuestionsData> = {};
+
+                if (securityQuestionsData.security_question_1 && securityQuestionsData.security_answer_1) {
+                    dataToSend.security_question_1 = securityQuestionsData.security_question_1;
+                    dataToSend.security_answer_1 = securityQuestionsData.security_answer_1;
+                }
+                if (securityQuestionsData.security_question_2 && securityQuestionsData.security_answer_2) {
+                    dataToSend.security_question_2 = securityQuestionsData.security_question_2;
+                    dataToSend.security_answer_2 = securityQuestionsData.security_answer_2;
+                }
+                if (securityQuestionsData.security_question_3 && securityQuestionsData.security_answer_3) {
+                    dataToSend.security_question_3 = securityQuestionsData.security_question_3;
+                    dataToSend.security_answer_3 = securityQuestionsData.security_answer_3;
+                }
+
+                const response = await Api.put('users/me/', dataToSend);
+                setUser(response.data);
+                setOriginalSecurityQuestions(securityQuestionsData);
+                Alert.alert(t('success'), t('security_questions_updated_successfully'));
+                setSecurityQuestionsEditMode(false);
+            } catch (error) {
+                console.error('Error updating security questions:', error);
+                Alert.alert(t('error'), t('failed_to_update_security_questions'));
+            }
+        }
+    };
+
+    const handleSecurityQuestionsSaveConfirm = async () => {
+        setShowSecurityQuestionsConfirmationModal(false);
+        await handleSecurityQuestionsSave();
+    };
+
+    const handleSecurityQuestionsCancel = () => {
+        // Blur all security answer input fields
+        securityAnswer1Ref.current?.blur();
+        securityAnswer2Ref.current?.blur();
+        securityAnswer3Ref.current?.blur();
+
+        setSecurityQuestionsData(originalSecurityQuestions);
+    };
+
+    const handleCountrySelect = (country: Country) => {
+        setSelectedCountry(country);
+        const countryName = typeof country.name === 'string' ? country.name : String(country.name);
+        handleAddressFieldChange('country', countryName);
+    };
+
+    // Check if security questions have changed
+    const hasSecurityQuestionsChanges = () => {
+        return hasSecurityQuestionsChangesUtil(securityQuestionsData, originalSecurityQuestions);
+    };
+
+    const canSaveSecurityQuestions = () => {
+        return validateSecurityQuestionsForUpdate(securityQuestionsData, originalSecurityQuestions);
     };
 
     const renderEditableField = (field: string, value: string) => {
@@ -215,20 +323,20 @@ export const Account: FC = () => {
                     >
                         <S.ModalOverlay onPress={handleCancel}>
                             <S.ModalContent>
-                                <S.ModalTitle>{t('Select Gender')}</S.ModalTitle>
+                                <S.ModalTitle>{t('select_gender')}</S.ModalTitle>
                                 <TouchableOpacity onPress={() => handleGenderSelect('Male')}>
                                     <S.ModalOption>
-                                        <S.ModalOptionText>Male</S.ModalOptionText>
+                                        <S.ModalOptionText>{t('male')}</S.ModalOptionText>
                                     </S.ModalOption>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => handleGenderSelect('Female')}>
                                     <S.ModalOption>
-                                        <S.ModalOptionText>Female</S.ModalOptionText>
+                                        <S.ModalOptionText>{t('female')}</S.ModalOptionText>
                                     </S.ModalOption>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => handleGenderSelect('Not Specified')}>
                                     <S.ModalOption>
-                                        <S.ModalOptionText>Not Specified</S.ModalOptionText>
+                                        <S.ModalOptionText>{t('not_specified')}</S.ModalOptionText>
                                     </S.ModalOption>
                                 </TouchableOpacity>
                             </S.ModalContent>
@@ -284,6 +392,9 @@ export const Account: FC = () => {
         city: string;
         postcode: string;
         country: string;
+        security_question_1: string;
+        security_question_2: string;
+        security_question_3: string;
         is_doctor?: boolean;
         institution_name?: string;
         doctor_id?: string;
@@ -307,6 +418,23 @@ export const Account: FC = () => {
                     city: res.data.city || '',
                     postcode: res.data.postcode || '',
                     country: res.data.country || ''
+                });
+                // Initialize security questions fields
+                setSecurityQuestionsData({
+                    security_question_1: res.data.security_question_1 || '',
+                    security_answer_1: '',
+                    security_question_2: res.data.security_question_2 || '',
+                    security_answer_2: '',
+                    security_question_3: res.data.security_question_3 || '',
+                    security_answer_3: ''
+                });
+                setOriginalSecurityQuestions({
+                    security_question_1: res.data.security_question_1 || '',
+                    security_answer_1: '',
+                    security_question_2: res.data.security_question_2 || '',
+                    security_answer_2: '',
+                    security_question_3: res.data.security_question_3 || '',
+                    security_answer_3: ''
                 });
             })
             .catch(err => console.error('Could not load profile', err));
@@ -350,6 +478,23 @@ export const Account: FC = () => {
                             postcode: res.data.postcode || '',
                             country: res.data.country || ''
                         });
+                        // Update security questions fields
+                        setSecurityQuestionsData({
+                            security_question_1: res.data.security_question_1 || '',
+                            security_answer_1: '',
+                            security_question_2: res.data.security_question_2 || '',
+                            security_answer_2: '',
+                            security_question_3: res.data.security_question_3 || '',
+                            security_answer_3: ''
+                        });
+                        setOriginalSecurityQuestions({
+                            security_question_1: res.data.security_question_1 || '',
+                            security_answer_1: '',
+                            security_question_2: res.data.security_question_2 || '',
+                            security_answer_2: '',
+                            security_question_3: res.data.security_question_3 || '',
+                            security_answer_3: ''
+                        });
                     }
 
                     // Get user type from AsyncStorage
@@ -366,7 +511,7 @@ export const Account: FC = () => {
                         });
                     } else {
                         console.error('Could not load profile', err);
-                        Alert.alert(t('Error'), t('Could not load profile'));
+                        Alert.alert(t('error'), t('could_not_load_profile'));
                     }
                 }
             })();
@@ -391,12 +536,12 @@ export const Account: FC = () => {
 
     const handleDelete = () => {
         Alert.alert(
-            t('Delete My Account'),
-            t('Are you sure you want to delete your account? This cannot be undone.'),
+            t('delete_my_account'),
+            t('are_you_sure_you_want_to_delete_your_account_this_cannot_be_undone'),
             [
-                { text: t('Cancel'), style: 'cancel' },
+                { text: t('cancel'), style: 'cancel' },
                 {
-                    text: t('Delete'),
+                    text: t('delete'),
                     style: 'destructive',
                     onPress: async () => {
                         try {
@@ -408,7 +553,7 @@ export const Account: FC = () => {
                             });
                         } catch (err: any) {
                             console.error('Delete failed', err);
-                            Alert.alert(t('Error'), t('Could not delete account. Please try again.'));
+                            Alert.alert(t('error'), t('could_not_delete_account'));
                         }
                     }
                 }
@@ -419,7 +564,7 @@ export const Account: FC = () => {
     if (!user) {
         return (
             <S.Scroll>
-                <S.UserName>{t('Loading...')}</S.UserName>
+                <S.UserName>{t('loading')}</S.UserName>
             </S.Scroll>
         );
     }
@@ -441,24 +586,24 @@ export const Account: FC = () => {
                     </S.ProfileImage>
                     <S.ProfileInfo>
                         <S.UserName>{user?.full_name}</S.UserName>
-                        <S.DateJoined>{t('Joined')} {user?.date_joined}</S.DateJoined>
+                        <S.DateJoined>{t('joined')} {user?.date_joined}</S.DateJoined>
 
                         <S.UserTypeIndicator>
                             <S.UserTypeText>
-                                {userType === 'doctor' ? t('Medical Personnel') : t('Patient')}
+                                {userType === 'doctor' ? t('medical_personnel') : t('patient')}
                             </S.UserTypeText>
                         </S.UserTypeIndicator>
 
                         {userType === 'doctor' && user?.institution_name && (
                             <S.InstitutionInfo>
-                                <S.InstitutionLabel>{t('Institution')}</S.InstitutionLabel>
+                                <S.InstitutionLabel>{t('institution')}</S.InstitutionLabel>
                                 <S.InstitutionName>{user.institution_name}</S.InstitutionName>
                             </S.InstitutionInfo>
                         )}
 
                         {userType === 'doctor' && user?.doctor_id && (
                             <S.DoctorIdInfo>
-                                <S.DoctorIdLabel>{t('Doctor ID')}</S.DoctorIdLabel>
+                                <S.DoctorIdLabel>{t('doctor_id')}</S.DoctorIdLabel>
                                 <S.DoctorIdValue>{user.doctor_id}</S.DoctorIdValue>
                             </S.DoctorIdInfo>
                         )}
@@ -471,19 +616,19 @@ export const Account: FC = () => {
                                     fontSize={rem(1.5)}
                                     color="primary"
                                 />
-                                <S.QRButtonText>{t('View my QR code')}</S.QRButtonText>
+                                <S.QRButtonText>{t('view_my_qr_code')}</S.QRButtonText>
                             </S.QRButton>
                         )}
                     </S.ProfileInfo>
                 </S.ProfileCardContent>
             </S.ProfileCard>
 
-            <S.SectionTitle>{t('Account Details')}</S.SectionTitle>
+            <S.SectionTitle>{t('account_details')}</S.SectionTitle>
 
             <S.LightCard>
                 <S.ItemRow>
                     <S.ItemTextCol>
-                        <S.ItemLabel>{t('Name')}</S.ItemLabel>
+                        <S.ItemLabel>{t('full_name')}</S.ItemLabel>
                         {renderEditableField('full_name', user?.full_name)}
                     </S.ItemTextCol>
                     {userType === 'patient' && (
@@ -497,7 +642,7 @@ export const Account: FC = () => {
                     <>
                         <S.ItemRow>
                             <S.ItemTextCol>
-                                <S.ItemLabel>{t('Gender')}</S.ItemLabel>
+                                <S.ItemLabel>{t('gender')}</S.ItemLabel>
                                 {renderEditableField('gender', user?.gender)}
                             </S.ItemTextCol>
                             <S.EditIconBtnLight onPress={() => handleEdit('gender')}>
@@ -506,8 +651,8 @@ export const Account: FC = () => {
                         </S.ItemRow>
                         <S.ItemRow>
                             <S.ItemTextCol>
-                                <S.ItemLabel>{t('Date of birth')}</S.ItemLabel>
-                                {renderEditableField('dob', user?.dob)}
+                                <S.ItemLabel>{t('date_of_birth')}</S.ItemLabel>
+                                {renderEditableField('dob', formatDate(user?.dob, 'long', true))}
                             </S.ItemTextCol>
                             <S.EditIconBtnLight onPress={() => handleEdit('dob')}>
                                 <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
@@ -517,12 +662,12 @@ export const Account: FC = () => {
                 )}
             </S.LightCard>
 
-            <S.SectionTitle>{t('Contact Data')}</S.SectionTitle>
+            <S.SectionTitle>{t('contact_data')}</S.SectionTitle>
 
             <S.LightCard>
                 <S.ItemRow>
                     <S.ItemTextCol>
-                        <S.ItemLabel>{t('Email address')}</S.ItemLabel>
+                        <S.ItemLabel>{t('email_address')}</S.ItemLabel>
                         {renderEditableField('email', user?.email)}
                     </S.ItemTextCol>
                     {userType === 'patient' && (
@@ -533,7 +678,7 @@ export const Account: FC = () => {
                 </S.ItemRow>
                 <S.ItemRow>
                     <S.ItemTextCol>
-                        <S.ItemLabel>{t('Phone number')}</S.ItemLabel>
+                        <S.ItemLabel>{t('phone_number')}</S.ItemLabel>
                         {renderEditableField('phone_number', user?.phone_number)}
                     </S.ItemTextCol>
                     {userType === 'patient' && (
@@ -546,89 +691,237 @@ export const Account: FC = () => {
 
             {userType === 'patient' && (
                 <>
-                    <S.SectionTitle>{t('Address')}</S.SectionTitle>
+                    <S.SectionTitle>{t('address')}</S.SectionTitle>
                     <S.LightCard>
                         <S.ItemRow>
                             <S.ItemTextCol>
-                                <S.ItemLabel>{t('Street')}</S.ItemLabel>
-                                <TextInput
-                                    value={addressFields.street}
-                                    onChangeText={(value) => handleAddressFieldChange('street', value)}
-                                    placeholder={t('Enter street address')}
-                                    style={{
-                                        color: themeColors.primary,
-                                        fontSize: 16,
-                                        fontWeight: '600',
-                                        padding: 0,
-                                        marginBottom: rem(0.5),
-                                    }}
-                                    ref={streetInputRef}
-                                />
+                                <S.ItemLabel>{t('street')}</S.ItemLabel>
+                                {editingField === 'street' ? (
+                                    <TextInput
+                                        value={addressFields.street}
+                                        onChangeText={(value) => handleAddressFieldChange('street', value)}
+                                        placeholder={t('enter_street_address')}
+                                        style={{
+                                            color: themeColors.primary,
+                                            fontSize: 16,
+                                            fontWeight: '600',
+                                            padding: 0,
+                                            marginBottom: rem(0.5),
+                                        }}
+                                        ref={streetInputRef}
+                                        autoFocus
+                                        onBlur={() => setEditingField(null)}
+                                    />
+                                ) : (
+                                    <S.ItemValue>{addressFields.street}</S.ItemValue>
+                                )}
                             </S.ItemTextCol>
+                            {editingField !== 'street' && (
+                                <S.EditIconBtnLight onPress={() => setEditingField('street')}>
+                                    <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                                </S.EditIconBtnLight>
+                            )}
                         </S.ItemRow>
                         <S.ItemRow>
                             <S.ItemTextCol>
-                                <S.ItemLabel>{t('City')}</S.ItemLabel>
-                                <TextInput
-                                    value={addressFields.city}
-                                    onChangeText={(value) => handleAddressFieldChange('city', value)}
-                                    placeholder={t('Enter city')}
-                                    style={{
-                                        color: themeColors.primary,
-                                        fontSize: 16,
-                                        fontWeight: '600',
-                                        padding: 0,
-                                        marginBottom: rem(0.5),
-                                    }}
-                                    ref={cityInputRef}
-                                />
+                                <S.ItemLabel>{t('city')}</S.ItemLabel>
+                                {editingField === 'city' ? (
+                                    <TextInput
+                                        value={addressFields.city}
+                                        onChangeText={(value) => handleAddressFieldChange('city', value)}
+                                        placeholder={t('enter_city')}
+                                        style={{
+                                            color: themeColors.primary,
+                                            fontSize: 16,
+                                            fontWeight: '600',
+                                            padding: 0,
+                                            marginBottom: rem(0.5),
+                                        }}
+                                        ref={cityInputRef}
+                                        autoFocus
+                                        onBlur={() => setEditingField(null)}
+                                    />
+                                ) : (
+                                    <S.ItemValue>{addressFields.city}</S.ItemValue>
+                                )}
                             </S.ItemTextCol>
+                            {editingField !== 'city' && (
+                                <S.EditIconBtnLight onPress={() => setEditingField('city')}>
+                                    <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                                </S.EditIconBtnLight>
+                            )}
                         </S.ItemRow>
                         <S.ItemRow>
                             <S.ItemTextCol>
-                                <S.ItemLabel>{t('Postcode')}</S.ItemLabel>
-                                <TextInput
-                                    value={addressFields.postcode}
-                                    onChangeText={(value) => handleAddressFieldChange('postcode', value)}
-                                    placeholder={t('Enter postcode')}
-                                    style={{
-                                        color: themeColors.primary,
-                                        fontSize: 16,
-                                        fontWeight: '600',
-                                        padding: 0,
-                                        marginBottom: rem(0.5),
-                                    }}
-                                    ref={postcodeInputRef}
-                                />
+                                <S.ItemLabel>{t('postcode')}</S.ItemLabel>
+                                {editingField === 'postcode' ? (
+                                    <TextInput
+                                        value={addressFields.postcode}
+                                        onChangeText={(value) => handleAddressFieldChange('postcode', value)}
+                                        placeholder={t('enter_postcode')}
+                                        style={{
+                                            color: themeColors.primary,
+                                            fontSize: 16,
+                                            fontWeight: '600',
+                                            padding: 0,
+                                            marginBottom: rem(0.5),
+                                        }}
+                                        ref={postcodeInputRef}
+                                        autoFocus
+                                        onBlur={() => setEditingField(null)}
+                                    />
+                                ) : (
+                                    <S.ItemValue>{addressFields.postcode}</S.ItemValue>
+                                )}
                             </S.ItemTextCol>
+                            {editingField !== 'postcode' && (
+                                <S.EditIconBtnLight onPress={() => setEditingField('postcode')}>
+                                    <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                                </S.EditIconBtnLight>
+                            )}
                         </S.ItemRow>
                         <S.ItemRow>
                             <S.ItemTextCol>
-                                <S.ItemLabel>{t('Country')}</S.ItemLabel>
-                                <TextInput
-                                    value={addressFields.country}
-                                    onChangeText={(value) => handleAddressFieldChange('country', value)}
-                                    placeholder={t('Enter country')}
-                                    style={{
-                                        color: themeColors.primary,
-                                        fontSize: 16,
-                                        fontWeight: '600',
-                                        padding: 0,
-                                        marginBottom: rem(0.5),
-                                    }}
-                                    ref={countryInputRef}
-                                />
+                                <S.ItemLabel>{t('country')}</S.ItemLabel>
+                                <S.ItemValue>{addressFields.country || t('Select a country')}</S.ItemValue>
                             </S.ItemTextCol>
+                            {editingField !== 'country' && (
+                                <S.EditIconBtnLight style={{ alignSelf: 'center' }} onPress={() => setEditingField('country')}>
+                                    <RenderIcon family="materialIcons" icon="edit" fontSize={rem(1.25)} color="primary" />
+                                </S.EditIconBtnLight>
+                            )}
                         </S.ItemRow>
+                        {editingField === 'country' && (
+                            <CountryPicker
+                                visible={true}
+                                onClose={() => setEditingField(null)}
+                                onSelect={handleCountrySelect}
+                                countryCode={selectedCountry?.cca2 as CountryCode}
+                                withFilter
+                                withFlag
+                                withCountryNameButton
+                                withModal
+                                withAlphaFilter
+                                theme={{
+                                    backgroundColor: themeColors.white,
+                                    primaryColor: themeColors.primary,
+                                    primaryColorVariant: themeColors.secondary,
+                                    onBackgroundTextColor: themeColors.primary,
+                                    filterPlaceholderTextColor: themeColors.themeGray,
+                                }}
+                            />
+                        )}
                         {hasAddressChanges() && (
-                            <S.AddressActionContainer>
-                                <S.AddressCancelButton onPress={handleAddressCancel}>
-                                    <S.AddressCancelButtonText>{t('Cancel')}</S.AddressCancelButtonText>
-                                </S.AddressCancelButton>
-                                <S.AddressSaveButton onPress={handleAddressSave}>
-                                    <S.AddressSaveButtonText>{t('Save Changes')}</S.AddressSaveButtonText>
-                                </S.AddressSaveButton>
-                            </S.AddressActionContainer>
+                            <S.AccountActionContainer>
+                                <S.AccountCancelButton onPress={handleAddressCancel}>
+                                    <S.AccountCancelButtonText>{t('cancel')}</S.AccountCancelButtonText>
+                                </S.AccountCancelButton>
+                                <S.AccountSaveButton onPress={handleAddressSave}>
+                                    <S.AccountSaveButtonText>{t('save_changes')}</S.AccountSaveButtonText>
+                                </S.AccountSaveButton>
+                            </S.AccountActionContainer>
+                        )}
+                    </S.LightCard>
+
+                    <S.SectionTitle>{t('security_questions')}</S.SectionTitle>
+                    <S.LightCard style={{ position: 'relative' }}>
+                        {securityQuestionsEditMode ? (
+                            <>
+                                {[1, 2, 3].map((num) => (
+                                    <S.SecurityQuestionBlock key={`qna${num}`}>
+                                        <S.ItemLabel>{t('question')} {num}</S.ItemLabel>
+                                        <S.SelectorRow
+                                            onPress={() => {
+                                                setSelectedQuestionIndex(num);
+                                                setShowSecurityQuestionDropdown(selectedQuestionIndex !== num || !showSecurityQuestionDropdown);
+                                            }}
+                                            activeOpacity={0.8}
+                                        >
+                                            <S.SelectorText>
+                                                {securityQuestionsData[`security_question_${num}` as keyof typeof securityQuestionsData] || t('Select Security Question')}
+                                            </S.SelectorText>
+                                            <S.SelectorIcon>▼</S.SelectorIcon>
+                                        </S.SelectorRow>
+                                        {showSecurityQuestionDropdown && selectedQuestionIndex === num && (
+                                            <S.DropdownContainer>
+                                                {getAvailableQuestionsForIndex(num).map((question, idx) => (
+                                                    <S.DropdownItem
+                                                        key={idx}
+                                                        onPress={() => handleSecurityQuestionSelect(question, num)}
+                                                        activeOpacity={0.7}
+                                                    >
+                                                        <S.DropdownText>{question}</S.DropdownText>
+                                                    </S.DropdownItem>
+                                                ))}
+                                            </S.DropdownContainer>
+                                        )}
+                                        <S.AnswerInput
+                                            value={securityQuestionsData[`security_answer_${num}` as keyof typeof securityQuestionsData]}
+                                            onChangeText={(value: string) => handleSecurityQuestionChange(num, 'answer', value)}
+                                            placeholder={t('enter_your_answer')}
+                                            placeholderTextColor={themeColors.themeGray}
+                                            ref={num === 1 ? securityAnswer1Ref : num === 2 ? securityAnswer2Ref : securityAnswer3Ref}
+                                        />
+                                    </S.SecurityQuestionBlock>
+                                ))}
+                                {hasSecurityQuestionsChanges() && (
+                                    <S.AccountActionContainer>
+                                        <S.AccountCancelButton onPress={() => {
+                                            setSecurityQuestionsEditMode(false);
+                                            handleSecurityQuestionsCancel();
+                                        }}>
+                                            <S.AccountCancelButtonText>{t('cancel')}</S.AccountCancelButtonText>
+                                        </S.AccountCancelButton>
+                                        <S.AccountSaveButton
+                                            disabled={!(hasSecurityQuestionsChanges() && canSaveSecurityQuestions())}
+                                            onPress={() => setShowSecurityQuestionsConfirmationModal(true)}
+                                        >
+                                            <S.AccountSaveButtonText
+                                                disabled={!(hasSecurityQuestionsChanges() && canSaveSecurityQuestions())}
+                                            >
+                                                {t('save_changes')}
+                                            </S.AccountSaveButtonText>
+                                        </S.AccountSaveButton>
+                                    </S.AccountActionContainer>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                {securityQuestionsData.security_question_1 ||
+                                    securityQuestionsData.security_question_2 ||
+                                    securityQuestionsData.security_question_3 ? (
+                                    <>
+                                        {[1, 2, 3].map((num) => (
+                                            securityQuestionsData[`security_question_${num}` as keyof typeof securityQuestionsData] ? (
+                                                <S.ItemRow key={`viewq${num}`}>
+                                                    <S.ItemTextCol>
+                                                        <S.ItemLabel>{t('question')} {num}</S.ItemLabel>
+                                                        <S.ItemValue>
+                                                            {securityQuestionsData[`security_question_${num}` as keyof typeof securityQuestionsData]}
+                                                        </S.ItemValue>
+                                                    </S.ItemTextCol>
+                                                </S.ItemRow>
+                                            ) : null
+                                        ))}
+                                        <S.ActionButton onPress={() => setSecurityQuestionsEditMode(true)}>
+                                            <S.ActionButtonText>{t('update_security_questions')}</S.ActionButtonText>
+                                        </S.ActionButton>
+                                    </>
+                                ) : (
+                                    <>
+                                        <S.ItemRow>
+                                            <S.ItemTextCol>
+                                                <S.ItemLabel>
+                                                    {t('no_security_questions_set')}
+                                                </S.ItemLabel>
+                                            </S.ItemTextCol>
+                                        </S.ItemRow>
+                                        <S.ActionButton onPress={() => setSecurityQuestionsEditMode(true)}>
+                                            <S.ActionButtonText>{t('add_security_questions')}</S.ActionButtonText>
+                                        </S.ActionButton>
+                                    </>
+                                )}
+                            </>
                         )}
                     </S.LightCard>
                 </>
@@ -636,27 +929,41 @@ export const Account: FC = () => {
 
             {userType === 'patient' && (
                 <S.DeleteButton onPress={handleDelete}>
-                    <S.DeleteButtonText>{t('Delete My Account')}</S.DeleteButtonText>
+                    <S.DeleteButtonText>{t('delete_my_account')}</S.DeleteButtonText>
                 </S.DeleteButton>
             )}
 
-            <S.ActionButton>
-                <S.ActionButtonText>{t('Change password')}</S.ActionButtonText>
+            <S.ActionButton onPress={() => setShowChangePasswordModal(true)}>
+                <S.ActionButtonText>{t('change_password')}</S.ActionButtonText>
             </S.ActionButton>
             <S.ActionButton onPress={handleSignOut}>
-                <S.ActionButtonText>{t('Sign out')}</S.ActionButtonText>
+                <S.ActionButtonText>{t('sign_out')}</S.ActionButtonText>
             </S.ActionButton>
 
             <ConfirmationModal
                 isOpen={showConfirmationModal}
                 onClose={handleCancel}
                 onConfirm={handleConfirmSave}
-                heading={"Save Changes"}
+                heading={t('save_changes')}
                 message={editingField === 'full_name'
-                    ? t('Are you sure you want to update your name?')
-                    : t('Are you sure you want to update your email address?')}
-                confirmText={t('Confirm')}
-                cancelText={t('Cancel')}
+                    ? t('confirm_update_name')
+                    : t('confirm_update_email')}
+                confirmText={t('confirm')}
+                cancelText={t('cancel')}
+            />
+            <ConfirmationModal
+                isOpen={showSecurityQuestionsConfirmationModal}
+                onClose={() => setShowSecurityQuestionsConfirmationModal(false)}
+                onConfirm={handleSecurityQuestionsSaveConfirm}
+                heading={t('update_security_questions')}
+                message={t('confirm_update_security_questions')}
+                confirmText={t('confirm')}
+                cancelText={t('cancel')}
+            />
+            <ChangePasswordModal
+                visible={showChangePasswordModal}
+                onClose={() => setShowChangePasswordModal(false)}
+                onSuccess={() => { /* no-op */ }}
             />
         </S.Scroll>
     );

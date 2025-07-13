@@ -6,16 +6,17 @@ show_help() {
   echo "Options:"
   echo "  --help     Display this help message"
   echo "  --build    Build and start all services"
-  echo "  --load-data Start services and load initial data"
+  echo "  --load-data Start services and load initial data (will reset database if data exists)"
   echo ""
   echo "Description:"
   echo "  This script manages the BugSense application services."
   echo "  Without any options, it starts all services without building."
+  echo "  The --load-data option will always reset the database and load fresh data."
   echo ""
   echo "Examples:"
   echo "  ./start_app.sh --help     # Show this help message"
   echo "  ./start_app.sh --build    # Build and start all services"
-  echo "  ./start_app.sh --load-data # Start services and load initial data"
+  echo "  ./start_app.sh --load-data # Start services and load initial data (resets DB)"
   echo "  ./start_app.sh            # Start services without building"
 }
 
@@ -26,6 +27,25 @@ generate_secret_key() {
 get_host_ip() {
   ifconfig en0 | awk '/inet / && $2 != "127.0.0.1" {print $2; exit}'
 }
+
+
+# Function to run docker compose with proper cleanup
+run_docker_compose() {
+  local compose_cmd="$1"
+  echo "Starting services with: $compose_cmd"
+  $compose_cmd &
+  local docker_pid=$!
+  
+  # Wait for the docker compose process
+  wait $docker_pid
+  
+  # When docker compose exits (either normally or via Ctrl+C), run down
+  echo "Stopping and removing containers..."
+  docker compose down
+}
+
+# Trap Ctrl+C (SIGINT) and run docker compose down
+trap 'echo -e "\nCaught Ctrl+C, stopping containers..."; docker compose down; exit 0' SIGINT SIGTERM
 
 export HOST_IP=$(get_host_ip)
 
@@ -67,6 +87,7 @@ fi
 if grep -q '^ML_API_KEY=' .env; then
     sed -i '' "s/^ML_API_KEY=.*/ML_API_KEY=${ML_API_KEY}/" .env  # macOS version
 else
+    echo "ML_API_KEY=${ML_API_KEY}" >> .env
     echo "ML_API_KEY=${ML_API_KEY}" >> ./ai-api/.env
 fi
 
@@ -84,32 +105,48 @@ elif [ "$1" = "--build" ]; then
   echo "✨✨✨ Mobile App visible on exp://$HOST_IP:8081 ✨✨✨"
   echo "✨✨✨ Web App visible on http://$HOST_IP:3000 ✨✨✨"
   echo "✨✨✨ Local Web App visible on http://localhost:3000 ✨✨✨"
-  docker compose up --build
+  run_docker_compose "docker compose up --build"
 elif [ "$1" = "--load-data" ]; then
   echo "✨✨✨ Mobile App visible on exp://$HOST_IP:8081 ✨✨✨"
   echo "✨✨✨ Web App visible on http://$HOST_IP:3000 ✨✨✨"
   echo "✨✨✨ Local Web App visible on http://localhost:3000 ✨✨✨"
-  docker compose up -d
   
-  echo "Waiting for database to be ready..."
-  sleep 10
+  # Start services first
+  docker compose up --build -d
   
-  echo "Loading initial data..."
-  docker compose exec db psql -U bugsenseadmin -d bugsense -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+  # Wait a moment for services to start
+  sleep 5
   
-  echo "Copying SQL file to container..."
-  docker cp ./setup/database_backup.sql $(docker compose ps -q db):/tmp/database_backup.sql
-  
-  echo "Loading SQL file..."
-  docker compose exec db psql -U bugsenseadmin -d bugsense -f /tmp/database_backup.sql
-  
-  echo "Running database migrations..."
-  docker compose exec backend python manage.py migrate
-  
-  docker compose logs -f
+  # Load data only if containers are running
+  if docker compose ps | grep -q "Up"; then
+    echo "Resetting database and loading fresh data..."
+    
+    # Reset the database completely
+    echo "Dropping all existing data..."
+    docker compose exec -T db psql -U bugsenseadmin bugsense -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+    
+    # Load the database backup
+    echo "Loading database backup..."
+    docker compose exec -T db psql -U bugsenseadmin bugsense < ./setup/database_backup.sql
+    
+    # Run migrations to ensure everything is up to date
+    echo "Running migrations..."
+    docker compose exec backend python manage.py migrate
+    
+    # Load additional user data if needed
+    echo "Loading user data..."
+    docker compose exec backend python manage.py loaddata /app/setup/user_data.json
+    
+    echo "Database reset and data loading completed!"
+    
+    echo "Showing logs..."
+    docker compose logs -f
+  else
+    echo "Services failed to start. Check logs with: docker compose logs"
+  fi
 else
   echo "✨✨✨ Mobile App visible on exp://$HOST_IP:8081 ✨✨✨"
   echo "✨✨✨ Web App visible on http://$HOST_IP:3000 ✨✨✨"
   echo "✨✨✨ Local Web App visible on http://localhost:3000 ✨✨✨"
-  docker compose up
+  run_docker_compose "docker compose up"
 fi

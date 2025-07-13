@@ -1,5 +1,9 @@
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView, ListAPIView
+from rest_framework.generics import (
+    RetrieveUpdateDestroyAPIView,
+    CreateAPIView,
+    ListAPIView,
+)
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.authentication import TokenAuthentication
 from .serializers import (
@@ -11,6 +15,7 @@ from .serializers import (
     QRCodeCreateSerializer,
     ResultsSerializer,
     ResultsCreateSerializer,
+    PasswordChangeSerializer,
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -42,11 +47,10 @@ class LoginView(TokenObtainPairView):
         except Exception:
             raise
 
-        user = getattr(serializer, 'user', None)
-        if user is not None and getattr(user, 'is_doctor', False):
+        user = getattr(serializer, "user", None)
+        if user is not None and getattr(user, "is_doctor", False):
             return Response(
-                {'detail': 'Invalid credentials.'},
-                status=status.HTTP_400_BAD_REQUEST
+                {"detail": "Invalid credentials."}, status=status.HTTP_400_BAD_REQUEST
             )
 
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
@@ -63,29 +67,29 @@ class CurrentUserView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=['users'],
+        tags=["users"],
         summary="Get Current User Profile",
         description="Retrieve the current authenticated user's profile information including security questions and answers.",
-        responses={200: UserSerializer}
+        responses={200: UserSerializer},
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
     @extend_schema(
-        tags=['users'],
+        tags=["users"],
         summary="Update Current User Profile",
         description="Update the current authenticated user's profile information. Partial updates are allowed.",
         request=UserSerializer,
-        responses={200: UserSerializer}
+        responses={200: UserSerializer},
     )
     def put(self, request, *args, **kwargs):
         return super().put(request, *args, **kwargs)
 
     @extend_schema(
-        tags=['users'],
+        tags=["users"],
         summary="Delete Current User Account",
         description="Delete the current authenticated user's account.",
-        responses={204: None}
+        responses={204: None},
     )
     def delete(self, request, *args, **kwargs):
         return super().delete(request, *args, **kwargs)
@@ -96,8 +100,7 @@ class CurrentUserView(RetrieveUpdateDestroyAPIView):
     def update(self, request, *args, **kwargs):
         partial = True
         instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
@@ -120,10 +123,11 @@ class RegisterView(CreateAPIView):
     """
     POST /api/register/ with user data including required security questions
     """
+
     serializer_class = RegisterSerializer
 
     @extend_schema(
-        tags=['authentication'],
+        tags=["authentication"],
         summary="User Registration",
         description="Register a new user account. All security questions and answers are required for account security.",
         request=RegisterSerializer,
@@ -137,26 +141,26 @@ class RegisterView(CreateAPIView):
                     "security_question_1": {"type": "string"},
                     "security_question_2": {"type": "string"},
                     "security_question_3": {"type": "string"},
-                }
+                },
             }
         },
         examples=[
             OpenApiExample(
-                'User Registration with Security Questions',
+                "User Registration with Security Questions",
                 value={
-                    'email': 'newuser@example.com',
-                    'full_name': 'John Doe',
-                    'password': 'securepassword123',
-                    'security_question_1': 'What was your first pet name?',
-                    'security_answer_1': 'Fluffy',
-                    'security_question_2': 'In which city were you born?',
-                    'security_answer_2': 'New York',
-                    'security_question_3': 'What is your mothers maiden name?',
-                    'security_answer_3': 'Smith'
+                    "email": "newuser@example.com",
+                    "full_name": "John Doe",
+                    "password": "securepassword123",
+                    "security_question_1": "What was your first pet name?",
+                    "security_answer_1": "Fluffy",
+                    "security_question_2": "In which city were you born?",
+                    "security_answer_2": "New York",
+                    "security_question_3": "What is your mothers maiden name?",
+                    "security_answer_3": "Smith",
                 },
-                description='Example of user registration with all required security questions and answers'
+                description="Example of user registration with all required security questions and answers",
             )
-        ]
+        ],
     )
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
@@ -167,25 +171,23 @@ class QRCodeCreateView(CreateAPIView):
     POST /api/qr-codes/ with { user_id, qr_data }
     Creates a new QR code entry for the specified user and automatically creates an empty result with status 'ongoing'
     """
+
     serializer_class = QRCodeCreateSerializer
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=['qr-codes'],
+        tags=["qr-codes"],
         summary="Create QR Code",
         description="Create a new QR code entry for a user. The QR code data is stored as a string and linked to the specified user ID. An empty result with status 'ongoing' is automatically created for this QR code.",
         request=QRCodeCreateSerializer,
         responses={201: QRCodeSerializer},
         examples=[
             OpenApiExample(
-                'Valid QR Code Creation',
-                value={
-                    'user_id': 8,
-                    'qr_data': 'https://example.com/sample-qr-data'
-                },
-                description='Example of creating a QR code for user ID 8. This will also create an empty result with status "ongoing".'
+                "Valid QR Code Creation",
+                value={"user_id": 8, "qr_data": "https://example.com/sample-qr-data"},
+                description='Example of creating a QR code for user ID 8. This will also create an empty result with status "ongoing".',
             )
-        ]
+        ],
     )
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
@@ -205,29 +207,30 @@ class QRCodeListView(ListAPIView):
     GET /api/qr-codes/list/ - List all QR codes for the authenticated user
     GET /api/qr-codes/list/?user_id=X - List QR codes for a specific user (admin only)
     """
+
     serializer_class = QRCodeSerializer
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=['qr-codes'],
+        tags=["qr-codes"],
         summary="List QR Codes",
         description="Retrieve a list of QR codes. Regular users can only see their own QR codes. Staff users can optionally filter by user_id parameter.",
         parameters=[
             OpenApiParameter(
-                name='user_id',
+                name="user_id",
                 type=int,
                 location=OpenApiParameter.QUERY,
-                description='Filter QR codes by user ID (staff only)',
-                required=False
+                description="Filter QR codes by user ID (staff only)",
+                required=False,
             )
         ],
-        responses={200: QRCodeSerializer(many=True)}
+        responses={200: QRCodeSerializer(many=True)},
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        user_id = self.request.query_params.get('user_id')
+        user_id = self.request.query_params.get("user_id")
 
         # If user_id is provided and user is staff, return QR codes for that user
         if user_id and self.request.user.is_staff:
@@ -243,33 +246,34 @@ class QRCodeDetailView(RetrieveUpdateDestroyAPIView):
     PUT /api/qr-codes/{id}/ - Update QR code
     DELETE /api/qr-codes/{id}/ - Delete QR code
     """
+
     serializer_class = QRCodeSerializer
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=['qr-codes'],
+        tags=["qr-codes"],
         summary="Get QR Code Details",
         description="Retrieve details of a specific QR code. Users can only access their own QR codes unless they are staff.",
-        responses={200: QRCodeSerializer}
+        responses={200: QRCodeSerializer},
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
     @extend_schema(
-        tags=['qr-codes'],
+        tags=["qr-codes"],
         summary="Update QR Code",
         description="Update an existing QR code. Users can only update their own QR codes unless they are staff.",
         request=QRCodeSerializer,
-        responses={200: QRCodeSerializer}
+        responses={200: QRCodeSerializer},
     )
     def put(self, request, *args, **kwargs):
         return super().put(request, *args, **kwargs)
 
     @extend_schema(
-        tags=['qr-codes'],
+        tags=["qr-codes"],
         summary="Delete QR Code",
         description="Delete a QR code. Users can only delete their own QR codes unless they are staff.",
-        responses={204: None}
+        responses={204: None},
     )
     def delete(self, request, *args, **kwargs):
         return super().delete(request, *args, **kwargs)
@@ -294,8 +298,8 @@ class MLModelPermission(BasePermission):
             return True
 
         # Check for ML model API key
-        api_key = request.headers.get('X-ML-API-Key')
-        if api_key and api_key == os.getenv('ML_API_KEY', 'your-secure-ml-api-key'):
+        api_key = request.headers.get("X-ML-API-Key")
+        if api_key and api_key == os.getenv("ML_API_KEY", "your-secure-ml-api-key"):
             return True
 
         return False
@@ -324,79 +328,77 @@ class ResultsCreateView(CreateAPIView):
     - When retrieving a result with status 'ready' via GET request, status automatically changes to 'closed'
 
     Field Clearing:
-    - When infection_detected is set to False, species, concentration, and antibiotic fields are automatically cleared
+    - When infection_detected is set to False, species is set to "sterile", concentration and antibiotic fields are automatically cleared
 
     Required Fields for Ready Status:
     - When infection_detected is True, both species and concentration must be filled to set status to 'ready'
     - Antibiotic field is optional and does not affect the ready status
     """
+
     serializer_class = ResultsCreateSerializer
     permission_classes = [MLModelPermission]
 
     @extend_schema(
-        tags=['results'],
+        tags=["results"],
         summary="Create or Update Analysis Result",
-        description="Create a new analysis result or update an existing one by providing the QR code string and any analysis data. The system will automatically find the user linked to the QR code. If a result already exists for this QR code, it will be updated with the new data. All fields except qr_data are optional.\n\nAuthentication:\n- JWT token (for doctors/patients)\n- X-ML-API-Key header (for ML model)\n\nNote: Results are automatically created with status 'ongoing' when QR codes are created via /api/qr-codes/. When updating existing results, the status automatically changes to 'preliminary_assessment' for any field update, or 'ready' if infection_detected is set to False. When infection_detected is set to False, the species, concentration, and antibiotic fields are automatically cleared. When infection_detected is True and both species and concentration are filled, the status automatically changes to 'ready' (antibiotic is optional). When retrieving a result with status 'ready' via GET request, the status automatically changes to 'closed'.",
+        description="Create a new analysis result or update an existing one by providing the QR code string and any analysis data. The system will automatically find the user linked to the QR code. If a result already exists for this QR code, it will be updated with the new data. All fields except qr_data are optional.\n\nAuthentication:\n- JWT token (for doctors/patients)\n- X-ML-API-Key header (for ML model)\n\nNote: Results are automatically created with status 'ongoing' when QR codes are created via /api/qr-codes/. When updating existing results, the status automatically changes to 'preliminary_assessment' for any field update, or 'ready' if infection_detected is set to False. When infection_detected is set to False, species is set to 'sterile' and concentration/antibiotic fields are automatically cleared. When infection_detected is True and both species and concentration are filled, the status automatically changes to 'ready' (antibiotic is optional). When retrieving a result with status 'ready' via GET request, the status automatically changes to 'closed'.",
         request=ResultsCreateSerializer,
-        responses={
-            201: ResultsSerializer,
-            200: ResultsSerializer
-        },
+        responses={201: ResultsSerializer, 200: ResultsSerializer},
         examples=[
             OpenApiExample(
-                'Create New Result',
+                "Create New Result",
                 value={
-                    'qr_data': 'https://example.com/sample-qr-data',
-                    'status': 'ongoing'
+                    "qr_data": "https://example.com/sample-qr-data",
+                    "status": "ongoing",
                 },
-                description='Example of creating a new result with minimal data'
+                description="Example of creating a new result with minimal data",
             ),
             OpenApiExample(
-                'ML Model Update',
+                "ML Model Update",
                 value={
-                    'qr_data': 'https://example.com/sample-qr-data',
-                    'infection_detected': True,
-                    'species': 'E. coli',
-                    'concentration': '10^6 CFU/ml'
+                    "qr_data": "https://example.com/sample-qr-data",
+                    "infection_detected": True,
+                    "species": "E. coli",
+                    "concentration": "10^6 CFU/ml",
                 },
-                description='Example of ML model updating results with analysis data'
+                description="Example of ML model updating results with analysis data",
             ),
             OpenApiExample(
-                'Update with Species (Status → preliminary_assessment)',
+                "Update with Species (Status → preliminary_assessment)",
                 value={
-                    'qr_data': 'https://example.com/sample-qr-data',
-                    'species': 'Escherichia coli'
+                    "qr_data": "https://example.com/sample-qr-data",
+                    "species": "Escherichia coli",
                 },
-                description='Example of updating with species - status automatically changes to preliminary_assessment'
+                description="Example of updating with species - status automatically changes to preliminary_assessment",
             ),
             OpenApiExample(
-                'Update with Infection Detected (Status → preliminary_assessment)',
+                "Update with Infection Detected (Status → preliminary_assessment)",
                 value={
-                    'qr_data': 'https://example.com/sample-qr-data',
-                    'infection_detected': True,
-                    'species': 'Salmonella'
+                    "qr_data": "https://example.com/sample-qr-data",
+                    "infection_detected": True,
+                    "species": "Salmonella",
                 },
-                description='Example of updating with infection detected - status automatically changes to preliminary_assessment'
+                description="Example of updating with infection detected - status automatically changes to preliminary_assessment",
             ),
             OpenApiExample(
-                'Complete Required Fields (Status → ready)',
+                "Complete Required Fields (Status → ready)",
                 value={
-                    'qr_data': 'https://example.com/sample-qr-data',
-                    'infection_detected': True,
-                    'species': 'E. coli',
-                    'concentration': 'High'
+                    "qr_data": "https://example.com/sample-qr-data",
+                    "infection_detected": True,
+                    "species": "E. coli",
+                    "concentration": "High",
                 },
-                description='Example of completing required fields - status automatically changes to ready (antibiotic optional)'
+                description="Example of completing required fields - status automatically changes to ready (antibiotic optional)",
             ),
             OpenApiExample(
-                'Update with No Infection (Status → ready, Fields Cleared)',
+                "Update with No Infection (Status → ready, Species → sterile)",
                 value={
-                    'qr_data': 'https://example.com/sample-qr-data',
-                    'infection_detected': False
+                    "qr_data": "https://example.com/sample-qr-data",
+                    "infection_detected": False,
                 },
-                description='Example of updating with no infection detected - status automatically changes to ready and species/concentration/antibiotic fields are cleared'
-            )
-        ]
+                description='Example of updating with no infection detected - status automatically changes to ready, species is set to "sterile", and concentration/antibiotic fields are cleared',
+            ),
+        ],
     )
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
@@ -406,7 +408,7 @@ class ResultsCreateView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
 
         # Check if a result already exists for this QR code
-        qr_data = request.data.get('qr_data')
+        qr_data = request.data.get("qr_data")
         try:
             qr_code = QRCode.objects.get(qr_data=qr_data)
             existing_result = Results.objects.filter(qr_code=qr_code).first()
@@ -433,67 +435,77 @@ class ResultsListView(ListAPIView):
     - Use pending=true to filter results that need attention (status 'ready' or 'preliminary_assessment').
     - Note: When retrieving individual results via GET /api/results/{id}/, results with status 'ready' automatically change to 'closed'.
     """
+
     serializer_class = ResultsSerializer
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=['results'],
+        tags=["results"],
         summary="List Analysis Results (Doctor/Patient) — /api/results/list/?user_id={patient_id}",
         description="Retrieve a list of analysis results.\n\n- Regular users see only their own results.\n- Staff (doctors) can use the user_id query parameter to view any patient's results.\n- Use pending=true to filter results that need attention (status 'ready' or 'preliminary_assessment').\n- Note: When retrieving individual results via GET /api/results/{id}/, results with status 'ready' automatically change to 'closed'.",
         parameters=[
             OpenApiParameter(
-                name='user_id',
+                name="user_id",
                 type=int,
                 location=OpenApiParameter.QUERY,
-                description='(Doctor only) Filter results by patient user ID',
-                required=False
+                description="(Doctor only) Filter results by patient user ID",
+                required=False,
             ),
             OpenApiParameter(
-                name='pending',
+                name="pending",
                 type=bool,
                 location=OpenApiParameter.QUERY,
                 description='Filter to show only results with status "ready" or "preliminary_assessment" (results that need attention)',
-                required=False
+                required=False,
             ),
             OpenApiParameter(
-                name='qr_data',
+                name="qr_data",
                 type=str,
                 location=OpenApiParameter.QUERY,
-                description='Filter results by QR code data string',
-                required=False
-            )
+                description="Filter results by QR code data string",
+                required=False,
+            ),
         ],
         responses={200: ResultsSerializer(many=True)},
         examples=[
             OpenApiExample(
-                'List All Results (Doctor)',
+                "List All Results (Doctor)",
                 value=[
                     {
                         "user_id": 38,
                         "qr_data": "QR_TEST_DATA_001",
-                        "status": "closed"
+                        "status": "closed",
+                        "species": "E. coli",
+                        "infection_detected": True,
+                        "closed_at": "2025-07-05T15:02:35.347783Z",
                     },
                     {
                         "user_id": 38,
                         "qr_data": "test-test-test",
-                        "status": "preliminary_assessment"
-                    }
+                        "status": "preliminary_assessment",
+                        "species": "",
+                        "infection_detected": True,
+                        "closed_at": None,
+                    },
                 ],
-                description='Doctor view showing all results for assigned patients (summary format)'
+                description="Doctor view showing all results for assigned patients (summary format with species, infection status, and closed_at timestamp)",
             ),
             OpenApiExample(
-                'List Pending Results Only',
+                "List Pending Results Only",
                 value=[
                     {
                         "user_id": 38,
                         "qr_data": "test-test-test",
-                        "status": "preliminary_assessment"
+                        "status": "preliminary_assessment",
+                        "species": "",
+                        "infection_detected": True,
+                        "closed_at": None,
                     }
                 ],
-                description='Filtered view showing only results that need attention (pending=true)'
+                description="Filtered view showing only results that need attention (pending=true) with species, infection status, and closed_at timestamp",
             ),
             OpenApiExample(
-                'Patient Results (Full Details)',
+                "Patient Results (Full Details)",
                 value=[
                     {
                         "id": 23,
@@ -505,20 +517,26 @@ class ResultsListView(ListAPIView):
                         "species": "E. coli",
                         "concentration": "10^6 CFU/ml",
                         "antibiotic": "",
-                        "created_at": "2025-07-05T15:02:35.347783Z"
+                        "created_at": "2025-07-05T15:02:35.347783Z",
+                        "closed_at": "2025-07-05T15:02:35.347783Z",
                     }
                 ],
-                description='Full result details when using qr_data or user_id filters'
-            )
-        ]
+                description="Full result details when using qr_data or user_id filters",
+            ),
+        ],
     )
     def get(self, request, *args, **kwargs):
         # If doctor and no qr_data/user_id, return summary for all patients
-        qr_data = request.query_params.get('qr_data')
-        user_id = request.query_params.get('user_id')
-        pending = request.query_params.get('pending', '').lower() == 'true'
+        qr_data = request.query_params.get("qr_data")
+        user_id = request.query_params.get("user_id")
+        pending = request.query_params.get("pending", "").lower() == "true"
 
-        if not qr_data and not user_id and hasattr(request.user, 'is_doctor') and request.user.is_doctor:
+        if (
+            not qr_data
+            and not user_id
+            and hasattr(request.user, "is_doctor")
+            and request.user.is_doctor
+        ):
             # Get all patients assigned to this doctor
             patients = Doctor.objects.get(id=request.user.id).patients.all()
             # Get all QR codes for these patients
@@ -527,14 +545,16 @@ class ResultsListView(ListAPIView):
             results = Results.objects.filter(qr_code__in=qr_codes)
             # Filter by pending status if requested
             if pending:
-                results = results.filter(
-                    status__in=['ready', 'preliminary_assessment'])
-            # Return only user_id, qr_data, and result status
+                results = results.filter(status__in=["ready", "preliminary_assessment"])
+            # Return user_id, qr_data, status, species, infection_detected, and closed_at
             data = [
                 {
-                    'user_id': r.user.id,
-                    'qr_data': r.qr_code.qr_data,
-                    'status': r.status
+                    "user_id": r.user.id,
+                    "qr_data": r.qr_code.qr_data,
+                    "status": r.status,
+                    "species": r.species or "",
+                    "infection_detected": r.infection_detected,
+                    "closed_at": r.qr_code.closed_at,
                 }
                 for r in results
             ]
@@ -545,22 +565,21 @@ class ResultsListView(ListAPIView):
         # If status is 'ready', change it to 'closed' for all results in the response
         if response.status_code == 200 and response.data:
             for result_data in response.data:
-                if result_data.get('status') == 'ready':
-                    result_id = result_data.get('id')
+                if result_data.get("status") == "ready":
+                    result_id = result_data.get("id")
                     try:
                         result = Results.objects.get(id=result_id)
-                        result.status = 'closed'
+                        result.status = "closed"
                         result.save()
-                        result_data['status'] = 'closed'
+                        result_data["status"] = "closed"
                     except Results.DoesNotExist:
                         pass
 
         return response
 
     def get_queryset(self):
-        qr_data = self.request.query_params.get('qr_data')
-        pending = self.request.query_params.get(
-            'pending', '').lower() == 'true'
+        qr_data = self.request.query_params.get("qr_data")
+        pending = self.request.query_params.get("pending", "").lower() == "true"
 
         if qr_data:
             try:
@@ -568,26 +587,27 @@ class ResultsListView(ListAPIView):
                 queryset = Results.objects.filter(qr_code=qr_code)
                 if pending:
                     queryset = queryset.filter(
-                        status__in=['ready', 'preliminary_assessment'])
+                        status__in=["ready", "preliminary_assessment"]
+                    )
                 return queryset
             except QRCode.DoesNotExist:
                 return Results.objects.none()
 
-        user_id = self.request.query_params.get('user_id')
+        user_id = self.request.query_params.get("user_id")
 
         # If user_id is provided and user is staff, return results for that user
         if user_id and self.request.user.is_staff:
             queryset = Results.objects.filter(user_id=user_id)
             if pending:
                 queryset = queryset.filter(
-                    status__in=['ready', 'preliminary_assessment'])
+                    status__in=["ready", "preliminary_assessment"]
+                )
             return queryset
 
         # Otherwise, return results for the authenticated user
         queryset = Results.objects.filter(user=self.request.user)
         if pending:
-            queryset = queryset.filter(
-                status__in=['ready', 'preliminary_assessment'])
+            queryset = queryset.filter(status__in=["ready", "preliminary_assessment"])
         return queryset
 
 
@@ -597,41 +617,42 @@ class ResultsDetailView(RetrieveUpdateDestroyAPIView):
     PUT /api/results/{id}/ - Update result
     DELETE /api/results/{id}/ - Delete result
     """
+
     serializer_class = ResultsSerializer
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        tags=['results'],
+        tags=["results"],
         summary="Get Result Details",
         description="Retrieve details of a specific analysis result. Users can only access their own results unless they are staff. If the result status is 'ready', it will automatically be changed to 'closed' when retrieved.",
-        responses={200: ResultsSerializer}
+        responses={200: ResultsSerializer},
     )
     def get(self, request, *args, **kwargs):
         # Get the result first
         result = self.get_object()
 
         # If status is 'ready', automatically change to 'closed'
-        if result.status == 'ready':
-            result.status = 'closed'
+        if result.status == "ready":
+            result.status = "closed"
             result.save()
 
         return super().get(request, *args, **kwargs)
 
     @extend_schema(
-        tags=['results'],
+        tags=["results"],
         summary="Update Result",
         description="Update an existing analysis result. Users can only update their own results unless they are staff.",
         request=ResultsSerializer,
-        responses={200: ResultsSerializer}
+        responses={200: ResultsSerializer},
     )
     def put(self, request, *args, **kwargs):
         return super().put(request, *args, **kwargs)
 
     @extend_schema(
-        tags=['results'],
+        tags=["results"],
         summary="Delete Result",
         description="Delete an analysis result. Users can only delete their own results unless they are staff.",
-        responses={204: None}
+        responses={204: None},
     )
     def delete(self, request, *args, **kwargs):
         return super().delete(request, *args, **kwargs)
@@ -651,7 +672,7 @@ class PasswordRecoveryQuestionsView(APIView):
     """
 
     @extend_schema(
-        tags=['authentication'],
+        tags=["authentication"],
         summary="Get Security Questions for Password Recovery",
         description="Retrieve the security questions for a user by their email address. This is the first step in the password recovery process.",
         request={
@@ -661,10 +682,10 @@ class PasswordRecoveryQuestionsView(APIView):
                     "email": {
                         "type": "string",
                         "format": "email",
-                        "description": "User's email address"
+                        "description": "User's email address",
                     }
                 },
-                "required": ["email"]
+                "required": ["email"],
             }
         },
         responses={
@@ -674,47 +695,50 @@ class PasswordRecoveryQuestionsView(APIView):
                     "questions": {
                         "type": "array",
                         "items": {"type": "string"},
-                        "description": "Array of 3 security questions"
+                        "description": "Array of 3 security questions",
                     }
-                }
+                },
             },
             400: {"type": "object", "properties": {"detail": {"type": "string"}}},
-            404: {"type": "object", "properties": {"detail": {"type": "string"}}}
+            404: {"type": "object", "properties": {"detail": {"type": "string"}}},
         },
         examples=[
             OpenApiExample(
-                'Get Security Questions',
-                value={
-                    'email': 'user@example.com'
-                },
-                description='Request to get security questions for password recovery'
+                "Get Security Questions",
+                value={"email": "user@example.com"},
+                description="Request to get security questions for password recovery",
             ),
             OpenApiExample(
-                'Security Questions Response',
+                "Security Questions Response",
                 value={
-                    'questions': [
-                        'What is your mother\'s maiden name?',
-                        'What was your first pet\'s name?',
-                        'What city were you born in?'
+                    "questions": [
+                        "What is your mother's maiden name?",
+                        "What was your first pet's name?",
+                        "What city were you born in?",
                     ]
                 },
-                description='Response with user\'s security questions'
-            )
-        ]
+                description="Response with user's security questions",
+            ),
+        ],
     )
     def post(self, request):
-        email = request.data.get('email', '').strip().lower()
+        email = request.data.get("email", "").strip().lower()
         if not email:
-            return Response({"detail": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Email is required."}, status=status.HTTP_400_BAD_REQUEST
+            )
         from .models import CustomUser
+
         try:
             user = CustomUser.objects.get(email=email)
         except CustomUser.DoesNotExist:
-            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND
+            )
         questions = [
             user.security_question_1 or "",
             user.security_question_2 or "",
-            user.security_question_3 or ""
+            user.security_question_3 or "",
         ]
         return Response({"questions": questions})
 
@@ -727,7 +751,7 @@ class PasswordRecoveryValidateView(APIView):
     """
 
     @extend_schema(
-        tags=['authentication'],
+        tags=["authentication"],
         summary="Validate Security Answer and Get Recovery Token",
         description="Validate a user's answer to one of their security questions. If correct, returns a one-time recovery token that can be used to reset the password. The token expires after 15 minutes and can only be used once.",
         request={
@@ -737,19 +761,19 @@ class PasswordRecoveryValidateView(APIView):
                     "email": {
                         "type": "string",
                         "format": "email",
-                        "description": "User's email address"
+                        "description": "User's email address",
                     },
                     "question_number": {
                         "type": "integer",
                         "enum": [1, 2, 3],
-                        "description": "Which security question to answer (1, 2, or 3)"
+                        "description": "Which security question to answer (1, 2, or 3)",
                     },
                     "answer": {
                         "type": "string",
-                        "description": "User's answer to the security question"
-                    }
+                        "description": "User's answer to the security question",
+                    },
                 },
-                "required": ["email", "question_number", "answer"]
+                "required": ["email", "question_number", "answer"],
             }
         },
         responses={
@@ -758,55 +782,65 @@ class PasswordRecoveryValidateView(APIView):
                 "properties": {
                     "token": {
                         "type": "string",
-                        "description": "One-time recovery token (valid for 15 minutes)"
+                        "description": "One-time recovery token (valid for 15 minutes)",
                     }
-                }
+                },
             },
             400: {"type": "object", "properties": {"detail": {"type": "string"}}},
-            404: {"type": "object", "properties": {"detail": {"type": "string"}}}
+            404: {"type": "object", "properties": {"detail": {"type": "string"}}},
         },
         examples=[
             OpenApiExample(
-                'Validate Security Answer',
+                "Validate Security Answer",
                 value={
-                    'email': 'user@example.com',
-                    'question_number': 1,
-                    'answer': 'Smith'
+                    "email": "user@example.com",
+                    "question_number": 1,
+                    "answer": "Smith",
                 },
-                description='Request to validate security answer and get recovery token'
+                description="Request to validate security answer and get recovery token",
             ),
             OpenApiExample(
-                'Recovery Token Response',
-                value={
-                    'token': 'ag7VNxQ1zmu8WJofu24-Uz7Vsw8FfJwI-VXjLWbAGvc'
-                },
-                description='Response with one-time recovery token'
-            )
-        ]
+                "Recovery Token Response",
+                value={"token": "ag7VNxQ1zmu8WJofu24-Uz7Vsw8FfJwI-VXjLWbAGvc"},
+                description="Response with one-time recovery token",
+            ),
+        ],
     )
     def post(self, request):
-        email = request.data.get('email', '').strip().lower()
-        question_number = request.data.get('question_number')
-        answer = request.data.get('answer', '').strip()
+        email = request.data.get("email", "").strip().lower()
+        question_number = request.data.get("question_number")
+        answer = request.data.get("answer", "").strip()
 
         # Validate inputs
         if not email:
-            return Response({"detail": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Email is required."}, status=status.HTTP_400_BAD_REQUEST
+            )
         if not question_number or question_number not in [1, 2, 3]:
-            return Response({"detail": "Question number must be 1, 2, or 3."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Question number must be 1, 2, or 3."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         if not answer:
-            return Response({"detail": "Answer is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Answer is required."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         # Find user
         from .models import CustomUser
+
         try:
             user = CustomUser.objects.get(email=email)
         except CustomUser.DoesNotExist:
-            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         # Check if the answer is correct
         if not user.check_security_answer(question_number, answer):
-            return Response({"detail": "Incorrect answer."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Incorrect answer."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         # Generate a secure one-time token
         token = secrets.token_urlsafe(32)
@@ -827,7 +861,7 @@ class PasswordRecoveryResetView(APIView):
     """
 
     @extend_schema(
-        tags=['authentication'],
+        tags=["authentication"],
         summary="Reset Password Using Recovery Token",
         description="Reset a user's password using the one-time recovery token obtained from validating a security answer. The token must be valid and not expired (15-minute expiry). After successful password reset, the token is invalidated.",
         request={
@@ -837,80 +871,181 @@ class PasswordRecoveryResetView(APIView):
                     "email": {
                         "type": "string",
                         "format": "email",
-                        "description": "User's email address"
+                        "description": "User's email address",
                     },
                     "token": {
                         "type": "string",
-                        "description": "One-time recovery token obtained from validate endpoint"
+                        "description": "One-time recovery token obtained from validate endpoint",
                     },
                     "new_password": {
                         "type": "string",
                         "minLength": 8,
-                        "description": "New password (minimum 8 characters)"
-                    }
+                        "description": "New password (minimum 8 characters)",
+                    },
                 },
-                "required": ["email", "token", "new_password"]
+                "required": ["email", "token", "new_password"],
             }
         },
         responses={
             200: {
                 "type": "object",
                 "properties": {
-                    "detail": {
-                        "type": "string",
-                        "description": "Success message"
-                    }
-                }
+                    "detail": {"type": "string", "description": "Success message"}
+                },
             },
             400: {"type": "object", "properties": {"detail": {"type": "string"}}},
-            404: {"type": "object", "properties": {"detail": {"type": "string"}}}
+            404: {"type": "object", "properties": {"detail": {"type": "string"}}},
         },
         examples=[
             OpenApiExample(
-                'Reset Password',
+                "Reset Password",
                 value={
-                    'email': 'user@example.com',
-                    'token': 'ag7VNxQ1zmu8WJofu24-Uz7Vsw8FfJwI-VXjLWbAGvc',
-                    'new_password': 'newsecurepassword123'
+                    "email": "user@example.com",
+                    "token": "ag7VNxQ1zmu8WJofu24-Uz7Vsw8FfJwI-VXjLWbAGvc",
+                    "new_password": "newsecurepassword123",
                 },
-                description='Request to reset password using recovery token'
+                description="Request to reset password using recovery token",
             ),
             OpenApiExample(
-                'Password Reset Success',
-                value={
-                    'detail': 'Password reset successful.'
-                },
-                description='Response confirming successful password reset'
-            )
-        ]
+                "Password Reset Success",
+                value={"detail": "Password reset successful."},
+                description="Response confirming successful password reset",
+            ),
+        ],
     )
     def post(self, request):
-        email = request.data.get('email', '').strip().lower()
-        token = request.data.get('token', '').strip()
-        new_password = request.data.get('new_password', '').strip()
+        email = request.data.get("email", "").strip().lower()
+        token = request.data.get("token", "").strip()
+        new_password = request.data.get("new_password", "").strip()
 
         if not email or not token or not new_password:
-            return Response({"detail": "Email, token, and new_password are required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Email, token, and new_password are required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         from .models import CustomUser
+
         try:
             user = CustomUser.objects.get(email=email)
         except CustomUser.DoesNotExist:
-            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         # Check token validity (15 min expiry)
         if not user.password_reset_token or user.password_reset_token != token:
-            return Response({"detail": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Invalid or expired token."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         if not user.password_reset_token_created:
-            return Response({"detail": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Invalid or expired token."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         from django.utils import timezone
         from datetime import timedelta
+
         if timezone.now() - user.password_reset_token_created > timedelta(minutes=15):
-            return Response({"detail": "Token expired."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Token expired."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         # Set new password
         user.set_password(new_password)
         user.password_reset_token = None
         user.password_reset_token_created = None
         user.save()
-        return Response({"detail": "Password reset successful."})
+        return Response(
+            {"detail": "Password reset successful."}, status=status.HTTP_200_OK
+        )
+
+
+class PasswordChangeView(APIView):
+    """
+    POST /api/change-password/ with { old_password, new_password }
+    Changes the authenticated user's password after verifying the old password
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["authentication"],
+        summary="Change User Password",
+        description="Change the authenticated user's password. Requires verification of the current password before allowing the change. The new password must be at least 8 characters long and different from the current password.",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "old_password": {
+                        "type": "string",
+                        "description": "Current password for verification",
+                    },
+                    "new_password": {
+                        "type": "string",
+                        "minLength": 8,
+                        "description": "New password (minimum 8 characters)",
+                    },
+                },
+                "required": ["old_password", "new_password"],
+            }
+        },
+        responses={
+            200: {
+                "type": "object",
+                "properties": {
+                    "detail": {"type": "string", "description": "Success message"}
+                },
+            },
+            400: {
+                "type": "object",
+                "properties": {
+                    "detail": {"type": "string"},
+                    "old_password": {"type": "array", "items": {"type": "string"}},
+                    "new_password": {"type": "array", "items": {"type": "string"}},
+                },
+            },
+        },
+        examples=[
+            OpenApiExample(
+                "Change Password Request",
+                value={
+                    "old_password": "currentpassword123",
+                    "new_password": "newsecurepassword456",
+                },
+                description="Request to change password with current and new password",
+            ),
+            OpenApiExample(
+                "Password Change Success",
+                value={"detail": "Password changed successfully."},
+                description="Response confirming successful password change",
+            ),
+            OpenApiExample(
+                "Incorrect Old Password Error",
+                value={"old_password": ["Current password is incorrect."]},
+                description="Error when old password is incorrect",
+            ),
+            OpenApiExample(
+                "Same Password Error",
+                value={
+                    "new_password": [
+                        "New password must be different from current password."
+                    ]
+                },
+                description="Error when new password is the same as current password",
+            ),
+        ],
+    )
+    def post(self, request):
+        serializer = PasswordChangeSerializer(
+            data=request.data, context={"request": request}
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"detail": "Password changed successfully."}, status=status.HTTP_200_OK
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

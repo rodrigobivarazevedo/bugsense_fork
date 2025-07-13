@@ -17,6 +17,8 @@ export const styles = StyleSheet.create({
     },
     modalBody: {
         padding: rem(1.25),
+        width: '100%',
+        alignItems: 'stretch',
     },
     heading: {
         fontSize: rem(1.25),
@@ -81,5 +83,57 @@ export const styles = StyleSheet.create({
     buttonText: {
         color: themeColors.primary,
         fontWeight: 'bold',
+    },
+    input: {
+        flexWrap: 'wrap',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 6,
+        padding: rem(0.75),
+        fontSize: rem(1),
+        backgroundColor: '#fafafa',
+    },
+    openTestKitsListContainer: {
+        height: 1,
+        backgroundColor: '#E5E7EB',
+        marginVertical: 12,
+        width: '100%',
+    },
+    openTestKitsListText: {
+        textAlign: 'center',
+        color: '#888',
+        marginVertical: 18,
+        fontSize: rem(1),
+    },
+    openTestKitsList: {
+        maxHeight: rem(12.5),
+        width: '100%',
+    },
+    openTestKitListItem: {
+        padding: rem(1),
+        backgroundColor: '#F3F4F6',
+        borderRadius: rem(1),
+        marginBottom: rem(0.75),
+        borderWidth: 0,
+        flexDirection: 'column',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.06,
+        shadowRadius: 2,
+        elevation: 1,
+        width: '100%',
+        alignSelf: 'stretch',
+        minWidth: 0,
+        flex: 1,
+    },
+    openTestKitListItemQRData: {
+        fontWeight: 'bold',
+        color: '#333',
+        fontSize: rem(1),
+    },
+    openTestKitListItemCreatedAt: {
+        fontSize: rem(0.85),
+        color: '#555',
+        marginTop: rem(0.25),
     },
 });

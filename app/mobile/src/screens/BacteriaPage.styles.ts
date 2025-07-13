@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import { Platform } from 'react-native';
 
 export const Root = styled.ScrollView`
   flex: 1;

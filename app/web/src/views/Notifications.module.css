@@ -1,0 +1,102 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 60vh;
+  background: #fff;
+  padding-top: 24px;
+}
+
+.contentContainer {
+  padding: 0 16px 24px 16px;
+}
+
+.notificationItem {
+  background: #f7f7f7;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  border-left: 4px solid #4caf50;
+  transition: box-shadow 0.2s;
+  cursor: pointer;
+}
+.notificationItem:hover {
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.08);
+}
+
+.notificationHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.notificationTitle {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #1976d2;
+  flex: 1;
+}
+
+.notificationTime {
+  font-size: 0.95rem;
+  color: #666;
+  margin-left: 12px;
+}
+
+.notificationMessage {
+  font-size: 1rem;
+  color: #222;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.noNotificationsContainer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 16px;
+}
+
+.noNotificationsText {
+  font-size: 1.15rem;
+  color: #666;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.notificationPatient {
+  margin-top: 8px;
+}
+
+.notificationPatientText {
+  font-size: 0.95rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.loadingContainer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 0;
+}
+
+.errorContainer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 16px;
+}
+
+.errorText {
+  font-size: 1.1rem;
+  color: #d32f2f;
+  text-align: center;
+  line-height: 1.4;
+}

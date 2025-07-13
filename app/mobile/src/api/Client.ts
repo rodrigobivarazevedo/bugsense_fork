@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 
 const API_BASE_URL = Constants.expoConfig?.extra?.API_URL;
+const ML_BASE_URL = 'http://0.0.0.0:5001/ml_api/';
 
 const Api = axios.create({
     baseURL: API_BASE_URL,
@@ -13,16 +14,25 @@ const Api = axios.create({
     },
 });
 
+// TODO: Remove console logs after testing in development
+
 Api.interceptors.request.use(async (config: any) => {
     const token = await AsyncStorage.getItem('accessToken');
     if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
     }
 
+    if (config.service === 'ml') {
+        config.baseURL = ML_BASE_URL;
+    } else {
+        config.baseURL = API_BASE_URL;
+    }
+
     console.log('API Request:', JSON.stringify({
         method: config.method.toUpperCase(),
         url: config.url,
         baseURL: config.baseURL,
+        service: config.service || 'backend',
         data: config.data,
         headers: {
             ...config.headers,

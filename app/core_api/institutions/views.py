@@ -260,11 +260,27 @@ class IsDoctorPermission(BasePermission):
 class DoctorPatientsListView(ListAPIView):
     """
     GET /api/doctor/patients/ - List all users (patients) assigned to the authenticated doctor.
+    GET /api/doctor/patients/?patient_id={id} - Get specific patient by ID
+    GET /api/doctor/patients/?limit=1 - Get only the first patient
+    GET /api/doctor/patients/?email={email} - Get patient by email
+    GET /api/doctor/patients/?patient_id={id}&limit=1 - Get specific patient with limit
 
-    This endpoint returns all users (patients) whose `assigned_doctor` is the currently authenticated doctor. The doctor must be authenticated and have `is_doctor=True`.
+    This endpoint returns all users (patients) whose `assigned_doctor` is the currently authenticated doctor. 
+    The doctor must be authenticated and have `is_doctor=True`.
+
+    **Query Parameters:**
+    - `patient_id` (int): Filter by specific patient ID
+    - `email` (string): Filter by patient email (case-insensitive)
+    - `limit` (int): Limit number of results (e.g., 1 for single patient)
 
     **Authentication:** Bearer JWT token (doctor)
     **Response:** List of user objects (id, email, full_name, etc.)
+
+    **Examples:**
+    - GET /api/doctor/patients/?patient_id=3 → Returns Sarah Johnson
+    - GET /api/doctor/patients/?email=sarah.johnson@email.com → Returns Sarah Johnson
+    - GET /api/doctor/patients/?limit=1 → Returns first patient only
+    - GET /api/doctor/patients/?patient_id=999 → Returns empty array (patient not assigned)
     """
 
     serializer_class = UserSerializer
@@ -273,34 +289,129 @@ class DoctorPatientsListView(ListAPIView):
     @extend_schema(
         tags=["doctor"],
         summary="List Patients Linked to Doctor",
-        description="Returns all users (patients) whose assigned_doctor is the currently authenticated doctor. Only accessible to authenticated doctors.",
+        description="Returns all users (patients) whose assigned_doctor is the currently authenticated doctor. Only accessible to authenticated doctors. Use query parameters to filter results and get specific patients.",
+        parameters=[
+            OpenApiParameter(
+                name="patient_id",
+                type=int,
+                location=OpenApiParameter.QUERY,
+                description="Filter by specific patient ID. Returns only the patient with this ID if they are assigned to the authenticated doctor.",
+                required=False,
+                examples=[
+                    OpenApiExample("Get patient by ID", value=3),
+                    OpenApiExample("Get patient by ID", value=5),
+                ],
+            ),
+            OpenApiParameter(
+                name="email",
+                type=str,
+                location=OpenApiParameter.QUERY,
+                description="Filter by patient email (case-insensitive). Returns only the patient with this email if they are assigned to the authenticated doctor.",
+                required=False,
+                examples=[
+                    OpenApiExample("Get patient by email",
+                                   value="sarah.johnson@email.com"),
+                    OpenApiExample("Get patient by email",
+                                   value="michael.chen@email.com"),
+                ],
+            ),
+            OpenApiParameter(
+                name="limit",
+                type=int,
+                location=OpenApiParameter.QUERY,
+                description="Limit number of results. Use 1 to get only the first patient, or any number to limit the total results returned.",
+                required=False,
+                examples=[
+                    OpenApiExample("Get single patient", value=1),
+                    OpenApiExample("Get first 2 patients", value=2),
+                ],
+            ),
+        ],
         responses={200: UserSerializer(many=True)},
         examples=[
             OpenApiExample(
-                "Successful Response",
+                "All Patients Response",
                 value=[
                     {
-                        "id": 19,
-                        "email": "patient.test@example.com",
-                        "full_name": "Test Patient",
-                        "gender": "",
-                        "dob": None,
-                        "phone_number": None,
-                        "street": "",
-                        "city": "",
-                        "postcode": "",
-                        "country": "",
-                        "date_joined": "2025-07-04",
+                        "id": 5,
+                        "email": "emily.rodriguez@email.com",
+                        "full_name": "Emily Rodriguez",
+                        "gender": "Female",
+                        "dob": "1995-11-08",
+                        "phone_number": "+49-40-11223344",
+                        "street": "Teststraße 789",
+                        "city": "Hamburg",
+                        "postcode": "20095",
+                        "country": "Germany",
+                        "date_joined": "2025-07-07",
+                    },
+                    {
+                        "id": 4,
+                        "email": "michael.chen@email.com",
+                        "full_name": "Michael Chen",
+                        "gender": "Male",
+                        "dob": "1988-07-22",
+                        "phone_number": "018987654321",
+                        "street": "Beispielweg 456",
+                        "city": "Munich",
+                        "postcode": "80331",
+                        "country": "Germany",
+                        "date_joined": "2025-07-07",
                     }
                 ],
-                description="Example response with one patient linked to the doctor.",
-            )
+                description="Example response with multiple patients linked to the doctor.",
+            ),
+            OpenApiExample(
+                "Single Patient Response",
+                value=[
+                    {
+                        "id": 3,
+                        "email": "sarah.johnson@email.com",
+                        "full_name": "Sarah Johnson",
+                        "gender": "Female",
+                        "dob": "1992-03-15",
+                        "phone_number": "015550123",
+                        "street": "Musterstrasse 123",
+                        "city": "Berlin",
+                        "postcode": "10115",
+                        "country": "Germany",
+                        "date_joined": "2025-07-07",
+                    }
+                ],
+                description="Example response when filtering for a specific patient.",
+            ),
+            OpenApiExample(
+                "Empty Response",
+                value=[],
+                description="Example response when no patients match the filter criteria or when accessing a patient not assigned to the doctor.",
+            ),
         ],
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        return self.serializer_class.Meta.model.objects.filter(
+        queryset = self.serializer_class.Meta.model.objects.filter(
             assigned_doctor=self.request.user
         )
+
+        # Filter by patient ID
+        patient_id = self.request.query_params.get("patient_id")
+        if patient_id:
+            queryset = queryset.filter(id=patient_id)
+
+        # Filter by email
+        email = self.request.query_params.get("email")
+        if email:
+            queryset = queryset.filter(email__iexact=email)
+
+        # Limit results
+        limit = self.request.query_params.get("limit")
+        if limit:
+            try:
+                limit_int = int(limit)
+                queryset = queryset[:limit_int]
+            except ValueError:
+                pass  # Invalid limit parameter, ignore
+
+        return queryset

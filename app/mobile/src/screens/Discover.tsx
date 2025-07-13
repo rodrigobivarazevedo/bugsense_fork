@@ -8,51 +8,51 @@ const bacteriaList = [
     {
         id: 'escherichia-coli',
         name: 'Escherichia coli',
-        description: 'Common gut bacteria that can cause foodborne illness',
+        description: 'escherichia_coli_disoverPage_quick_description',
         image: require('../assets/images/bacteria/escherichia-coli.png')
     },
     {
-        id: 'salmonella',
-        name: 'Salmonella',
-        description: 'Bacteria that can cause food poisoning and typhoid fever',
-        image: require('../assets/images/bacteria/salmonella.png')
+        id: 'enterococcus-faecalis',
+        name: 'Enterococcus faecalis',
+        description: 'enterococcus_faecalis_disoverPage_quick_description',
+        image: require('../assets/images/bacteria/enterococcus-faecalis.png')
     },
     {
-        id: 'listeria-monocytogenes',
-        name: 'Listeria monocytogenes',
-        description: 'Can cause serious infections, especially in pregnant women',
-        image: require('../assets/images/bacteria/listeria-monocytogenes.png')
+        id: 'klebsiella-pneumoniae',
+        name: 'Klebsiella pneumoniae',
+        description: 'klebsiella_pneumoniae_disoverPage_quick_description',
+        image: require('../assets/images/bacteria/klebsiella-pneumoniae.png')
+    },
+    {
+        id: 'staphylococcus-saprophyticus',
+        name: 'Staphylococcus saprophyticus',
+        description: 'staphylococcus_saprophyticus_disoverPage_quick_description',
+        image: require('../assets/images/bacteria/staphylococcus-saprophyticus.png')
     },
     {
         id: 'staphylococcus-aureus',
         name: 'Staphylococcus aureus',
-        description: 'Common bacteria that can cause skin infections',
+        description: 'staphylococcus_aureus_disoverPage_quick_description',
         image: require('../assets/images/bacteria/staphylococcus-aureus.png')
     },
     {
-        id: 'campylobacter',
-        name: 'Campylobacter',
-        description: 'Leading cause of bacterial foodborne illness',
-        image: require('../assets/images/bacteria/campylobacter.png')
+        id: 'enterobacter-hormaechei',
+        name: 'Enterobacter hormaechei',
+        description: 'enterobacter_hormaechei_disoverPage_quick_description',
+        image: require('../assets/images/bacteria/enterobacter-hormaechei.png')
     },
     {
-        id: 'clostridium-perfringens',
-        name: 'Clostridium perfringens',
-        description: 'Bacteria that can cause food poisoning and gas gangrene',
-        image: require('../assets/images/bacteria/clostridium-perfringens.png')
+        id: 'pseudomonas-aeruginosa',
+        name: 'Pseudomonas aeruginosa',
+        description: 'pseudomonas_aeruginosa_disoverPage_quick_description',
+        image: require('../assets/images/bacteria/pseudomonas-aeruginosa.png')
     },
     {
-        id: 'streptococcus-pyogenes',
-        name: 'Streptococcus pyogenes',
-        description: 'Bacteria that can cause strep throat and scarlet fever',
-        image: require('../assets/images/bacteria/streptococcus-pyogenes.png')
-    },
-    {
-        id: 'streptococcus-pneumoniae',
-        name: 'Streptococcus pneumoniae',
-        description: 'Bacteria that can cause pneumonia and meningitis',
-        image: require('../assets/images/bacteria/streptococcus-pneumoniae.png')
-    },
+        id: 'proteus-mirabilis',
+        name: 'Proteus mirabilis',
+        description: 'proteus_mirabilis_disoverPage_quick_description',
+        image: require('../assets/images/bacteria/proteus-mirabilis.png')
+    }
 ];
 
 export const Discover: FC<any> = ({ navigation }) => {
@@ -65,7 +65,6 @@ export const Discover: FC<any> = ({ navigation }) => {
 
     return (
         <S.Root contentContainerStyle={{ paddingBottom: Platform.OS === 'ios' ? insets.bottom + 30 : 60 }}>
-            <S.Title>{t('discover_bacteria')}</S.Title>
             <S.Subtitle>{t('discover_bacteria_subtitle')}</S.Subtitle>
             <S.BacteriaGrid>
                 {bacteriaList.map((bacteria) => (
@@ -79,7 +78,7 @@ export const Discover: FC<any> = ({ navigation }) => {
                         />
                         <S.BacteriaName>{bacteria.name}</S.BacteriaName>
                         <S.BacteriaDescription>
-                            {bacteria.description}
+                            {t(bacteria.description)}
                         </S.BacteriaDescription>
                     </S.BacteriaCard>
                 ))}
