@@ -48,6 +48,7 @@ module.exports = {
     '@typescript-eslint/ban-ts-comment': 'off',
     // General rules
     'no-console': 'off',
+    'no-use-before-define': 'off',
     'prefer-const': 'warn',
     'no-var': 'error',
     'object-shorthand': 'warn',
