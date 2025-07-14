@@ -1,9 +1,13 @@
 {
   "name": "My Codespace",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-  "features": {},
-  "containerEnv": {
-    "GOOGLE_APPLICATION_CREDENTIALS_JSON": "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}"
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest"
+    }
   },
-  "postStartCommand": "bash .devcontainer/init-env.sh"
+  "containerEnv": {
+    "GOOGLE_CREDENTIALS": "${{ secrets.GOOGLE_CREDENTIALS }}"
+  },
+  "postStartCommand": "bash .devcontainer/init-env.sh && cd /workspaces/repo_name/app/ai-api && docker compose up -d"
 }
