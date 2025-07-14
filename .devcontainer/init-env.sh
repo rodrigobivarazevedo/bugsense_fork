@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define repo-specific paths
-REPO_NAME="repo_name"  # 🔁 Replace with your actual repo name if needed
+REPO_NAME="bugsense_fork"  # 🔁 Replace with your actual repo name if needed
 ENV_PATH="/workspaces/$REPO_NAME/app/ai-api/.env"
 
 # Ensure target directory exists

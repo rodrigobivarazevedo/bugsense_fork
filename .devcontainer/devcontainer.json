@@ -9,5 +9,5 @@
   "containerEnv": {
     "GOOGLE_CREDENTIALS": "${{ secrets.GOOGLE_CREDENTIALS }}"
   },
-  "postStartCommand": "bash .devcontainer/init-env.sh && cd /workspaces/repo_name/app/ai-api && docker compose up -d"
+  "postStartCommand": "bash .devcontainer/init-env.sh && cd /workspaces/bugsense_fork/app/ai-api && docker compose up -d"
 }
