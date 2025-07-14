@@ -1,17 +1,19 @@
 #!/bin/bash
+set -e
 
-# Define repo-specific paths
-REPO_NAME="bugsense_fork"  # 🔁 Replace with your actual repo name if needed
-ENV_PATH="/workspaces/$REPO_NAME/app/ai-api/.env"
+echo "🔧 Starting init script..."
 
-# Ensure target directory exists
-mkdir -p "$(dirname "$ENV_PATH")"
+REPO_NAME="bugsense_fork"
+APP_DIR="/workspaces/$REPO_NAME/app/ai-api"
+ENV_PATH="$APP_DIR/.env"
 
-# Create or update the .env file with GOOGLE_APPLICATION_CREDENTIALS path
-# Remove any previous line setting this variable
+# Ensure app directory exists
+mkdir -p "$APP_DIR"
+
+# Inject GOOGLE_CREDENTIALS into .env without decoding
+echo "🌱 Updating .env at $ENV_PATH"
 grep -v "^GOOGLE_CREDENTIALS=" "$ENV_PATH" 2>/dev/null > "${ENV_PATH}.tmp" || true
-echo "GOOGLE_CREDENTIALS=$CREDENTIALS_PATH" >> "${ENV_PATH}.tmp"
+echo "GOOGLE_CREDENTIALS=$GOOGLE_CREDENTIALS" >> "${ENV_PATH}.tmp"
 mv "${ENV_PATH}.tmp" "$ENV_PATH"
 
-echo "✅ Credentials written to: $CREDENTIALS_PATH"
-echo "✅ .env updated at: $ENV_PATH"
+echo "✅ .env updated with base64-encoded GOOGLE_CREDENTIALS"
