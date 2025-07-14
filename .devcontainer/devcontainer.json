@@ -1,0 +1,9 @@
+{
+  "name": "My Codespace",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {},
+  "containerEnv": {
+    "GOOGLE_APPLICATION_CREDENTIALS_JSON": "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}"
+  },
+  "postStartCommand": "bash .devcontainer/init-env.sh"
+}
